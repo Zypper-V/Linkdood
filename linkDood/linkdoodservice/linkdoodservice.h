@@ -2,6 +2,7 @@
 #define LINKDOODSERVICE_H
 
 #include <QObject>
+#include "authcontroler.h"
 
 class LinkDoodService : public QObject
 {
@@ -17,6 +18,8 @@ public:
 
 private:
     LinkDoodService(QObject *parent = 0);
+        static AuthControler* m_auth;
+
 
     ~LinkDoodService();
 };

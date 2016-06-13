@@ -12,15 +12,58 @@ TARGET = linkdoodservice
 TEMPLATE = app
 
 CONFIG += link_pkgconfig
+CONFIG += c++11
+
 PKGCONFIG += syberos-application syberos-application-cache
+INCLUDEPATH +=linkdood_sdk/include/data
+INCLUDEPATH +=linkdood_sdk/include/interface
+INCLUDEPATH +=linkdood_sdk/include/utils
 
 HEADERS += linkdoodservice_workspace.h \
-    linkdoodservice.h
+    linkdoodservice.h \
+    authcontroler.h \
+    linkdood_sdk/include/data/Account.h \
+    linkdood_sdk/include/data/Chat.h \
+    linkdood_sdk/include/data/Contact.h \
+    linkdood_sdk/include/data/ErrorInfo.hpp \
+    linkdood_sdk/include/data/Group.h \
+    linkdood_sdk/include/data/LoginInfo.hpp \
+    linkdood_sdk/include/data/Member.h \
+    linkdood_sdk/include/data/Msg.h \
+    linkdood_sdk/include/data/Org.h \
+    linkdood_sdk/include/data/packet.h \
+    linkdood_sdk/include/data/ReqLoginParamBean.hpp \
+    linkdood_sdk/include/data/SDKTypes.h \
+    linkdood_sdk/include/data/SysMsg.h \
+    linkdood_sdk/include/data/TinyGroup.h \
+    linkdood_sdk/include/data/User.h \
+    linkdood_sdk/include/interface/IAuthObserver.h \
+    linkdood_sdk/include/interface/IAuthService.h \
+    linkdood_sdk/include/interface/IChatObserver.h \
+    linkdood_sdk/include/interface/IChatService.h \
+    linkdood_sdk/include/interface/IContactObserver.h \
+    linkdood_sdk/include/interface/IContactService.h \
+    linkdood_sdk/include/interface/IEnterpriseService.h \
+    linkdood_sdk/include/interface/IFileService.h \
+    linkdood_sdk/include/interface/IGroupObserver.h \
+    linkdood_sdk/include/interface/IGroupService.h \
+    linkdood_sdk/include/interface/IMClient.h \
+    linkdood_sdk/include/interface/INotifyService.h \
+    linkdood_sdk/include/interface/ISearchService.h \
+    linkdood_sdk/include/interface/ISysMsgObserver.h \
+    linkdood_sdk/include/interface/ISysMsgService.h \
+    linkdood_sdk/include/interface/ISysSetService.h \
+    linkdood_sdk/include/utils/FileUtils.h \
+    linkdood_sdk/include/utils/MsgUtils.h
 
 SOURCES += main.cpp \
 	   linkdoodservice_workspace.cpp \
-    linkdoodservice.cpp
+    linkdoodservice.cpp \
+    authcontroler.cpp
 
 target.path = $$INSTALL_DIR/bin
 
 INSTALLS += target
+
+
+unix:!macx: LIBS += -lservice

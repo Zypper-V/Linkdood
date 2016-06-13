@@ -3,6 +3,7 @@
 #include <QDebug>
 
 LinkDoodService* LinkDoodService::m_pInstance = 0;
+AuthControler* LinkDoodService::m_auth = 0;
 
 void LinkDoodService::createService()
 {
@@ -10,9 +11,12 @@ void LinkDoodService::createService()
     if (!m_pInstance) {
         qDebug() << " create LinkDoodService !!!";
         m_pInstance = new LinkDoodService();
+        m_auth= new AuthControler();
+        m_auth->init();
     } else {
         qDebug() << "alreadly create LinkDoodService !!!";
     }
+
 }
 
 LinkDoodService *LinkDoodService::instance()

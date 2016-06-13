@@ -1,0 +1,83 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1048624 (0x100030)
+    Signature Algorithm: sha384WithRSAEncryption
+        Issuer: O=Beijing VRV Software Corporation Limited., OU=Mobile Interconnection Center, CN=VRV Trust NetWork
+        Validity
+            Not Before: Mar 17 11:09:22 2016 GMT
+            Not After : Mar 18 11:09:22 2017 GMT
+        Subject: C=CN, ST=Beijing, O=\xE5\x8C\x97\xE4\xBF\xA1\xE6\xBA\x90, OU=/it?c=linkdood&an=com.vrv.linkdood&ios=com.vrv.linkdood, CN=\xE4\xBF\xA1\xE6\xBA\x90\xE8\xB1\x86\xE8\xB1\x86\xE8\xBD\xBB\xE8\x81\x8A\xE7\x89\x88
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:d5:b3:57:1d:49:0f:96:e7:14:96:22:45:45:53:
+                    93:07:56:a1:9e:1f:0b:ee:1e:f5:c4:fd:56:86:5d:
+                    f1:aa:00:43:3d:b3:3a:cf:9f:d3:c4:d7:45:95:29:
+                    b3:ce:3a:21:b8:15:3d:52:86:47:58:f1:40:3e:29:
+                    13:5b:99:c1:3c:67:ec:0e:0a:2c:bc:be:c0:86:a5:
+                    d5:24:5d:5b:2e:c1:6b:3b:c0:40:dd:36:ef:8e:5f:
+                    f6:9f:25:fa:8d:a4:7f:1c:cd:79:70:26:98:89:f1:
+                    c9:ff:92:1e:47:c0:b9:08:9b:51:7e:8d:4f:3a:db:
+                    53:ab:d0:26:6c:a8:db:f8:cc:0a:6c:cb:47:e8:49:
+                    35:17:94:63:2a:31:d8:3c:7e:d9:22:88:8d:3e:81:
+                    2c:6d:03:94:9e:96:da:d9:c5:9b:8a:b3:23:ff:a0:
+                    e0:13:9e:a2:22:8a:33:34:53:21:1b:df:f7:c2:d6:
+                    59:6f:b7:cf:84:ab:b1:54:f0:aa:42:35:76:4f:3c:
+                    75:f8:5f:e9:1b:bb:f9:c0:06:4f:7d:f0:71:0c:21:
+                    ee:16:92:ba:89:90:1c:52:71:7d:33:01:09:59:a0:
+                    f4:d9:a6:59:7e:7b:f7:a2:41:40:45:9c:20:02:bd:
+                    1f:43:d4:20:cf:5f:48:9f:9a:9d:01:ab:d4:4f:a7:
+                    f0:b9
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Comment: 
+                www.linkdood.com
+            X509v3 Subject Key Identifier: 
+                E2:33:09:07:17:55:DD:96:2F:1B:D2:45:F1:7E:DD:67:43:36:F1:98
+            X509v3 Authority Key Identifier: 
+                keyid:73:CE:F9:8F:ED:CD:76:66:60:5F:C4:1E:17:CF:52:90:D3:90:FC:33
+
+    Signature Algorithm: sha384WithRSAEncryption
+         30:31:f8:65:cb:4f:b1:29:32:8f:22:0e:90:68:1d:62:c9:83:
+         a2:23:f7:a2:4e:d4:8c:68:3b:be:c4:fb:d4:7e:7e:23:8b:ce:
+         c9:9a:f6:41:4c:61:7e:2d:fa:55:42:a1:26:90:8f:c2:14:c0:
+         7c:a1:34:d1:1f:f8:9b:09:8d:d2:d0:c9:77:70:e7:97:c3:d9:
+         93:32:5b:79:98:04:57:0a:08:00:c9:b9:40:4a:9f:21:1f:7a:
+         69:3f:19:42:a8:48:67:e9:c2:e4:d7:ff:2b:9b:2a:52:0d:35:
+         96:54:80:cb:27:f6:35:e3:7d:19:ca:83:82:a3:45:8f:ad:64:
+         32:1b:be:55:62:be:1c:e5:2c:4f:c0:a4:b3:bb:a5:b5:34:8f:
+         3e:f4:5d:7e:be:36:ae:1e:9d:a3:77:cd:37:fc:3c:c6:72:9c:
+         78:b1:55:58:55:8d:01:f9:66:a4:39:ff:6b:ef:51:2d:9f:bb:
+         61:e2:3d:6f:b7:84:ee:f8:3d:8b:4c:3d:e5:60:61:e0:7a:aa:
+         b9:22:37:b8:15:d1:bf:c6:88:dc:e0:66:1b:7b:1c:5e:ac:cc:
+         b5:3e:c3:99:d6:fa:e6:66:af:82:68:6c:21:8b:52:b6:3a:39:
+         b2:2b:64:f3:10:7e:31:7e:f3:f5:17:20:3e:40:23:95:4d:99:
+         fa:ef:24:70
+-----BEGIN CERTIFICATE-----
+MIID+TCCAuGgAwIBAgIDEAAwMA0GCSqGSIb3DQEBDAUAMHgxMjAwBgNVBAoMKUJl
+aWppbmcgVlJWIFNvZnR3YXJlIENvcnBvcmF0aW9uIExpbWl0ZWQuMSYwJAYDVQQL
+DB1Nb2JpbGUgSW50ZXJjb25uZWN0aW9uIENlbnRlcjEaMBgGA1UEAwwRVlJWIFRy
+dXN0IE5ldFdvcmswHhcNMTYwMzE3MTEwOTIyWhcNMTcwMzE4MTEwOTIyWjCBlTEL
+MAkGA1UEBhMCQ04xEDAOBgNVBAgMB0JlaWppbmcxEjAQBgNVBAoMCeWMl+S/oea6
+kDFAMD4GA1UECww3L2l0P2M9bGlua2Rvb2QmYW49Y29tLnZydi5saW5rZG9vZCZp
+b3M9Y29tLnZydi5saW5rZG9vZDEeMBwGA1UEAwwV5L+h5rqQ6LGG6LGG6L276IGK
+54mIMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1bNXHUkPlucUliJF
+RVOTB1ahnh8L7h71xP1Whl3xqgBDPbM6z5/TxNdFlSmzzjohuBU9UoZHWPFAPikT
+W5nBPGfsDgosvL7AhqXVJF1bLsFrO8BA3Tbvjl/2nyX6jaR/HM15cCaYifHJ/5Ie
+R8C5CJtRfo1POttTq9AmbKjb+MwKbMtH6Ek1F5RjKjHYPH7ZIoiNPoEsbQOUnpba
+2cWbirMj/6DgE56iIoozNFMhG9/3wtZZb7fPhKuxVPCqQjV2Tzx1+F/pG7v5wAZP
+ffBxDCHuFpK6iZAcUnF9MwEJWaD02aZZfnv3okFARZwgAr0fQ9Qgz19In5qdAavU
+T6fwuQIDAQABo24wbDAJBgNVHRMEAjAAMB8GCWCGSAGG+EIBDQQSFhB3d3cubGlu
+a2Rvb2QuY29tMB0GA1UdDgQWBBTiMwkHF1Xdli8b0kXxft1nQzbxmDAfBgNVHSME
+GDAWgBRzzvmP7c12ZmBfxB4Xz1KQ05D8MzANBgkqhkiG9w0BAQwFAAOCAQEAMDH4
+ZctPsSkyjyIOkGgdYsmDoiP3ok7UjGg7vsT71H5+I4vOyZr2QUxhfi36VUKhJpCP
+whTAfKE00R/4mwmN0tDJd3Dnl8PZkzJbeZgEVwoIAMm5QEqfIR96aT8ZQqhIZ+nC
+5Nf/K5sqUg01llSAyyf2NeN9GcqDgqNFj61kMhu+VWK+HOUsT8Cks7ultTSPPvRd
+fr42rh6do3fNN/w8xnKceLFVWFWNAflmpDn/a+9RLZ+7YeI9b7eE7vg9i0w95WBh
+4HqquSI3uBXRv8aI3OBmG3scXqzMtT7Dmdb65mavgmhsIYtStjo5sitk8xB+MX7z
+9RcgPkAjlU2Z+u8kcA==
+-----END CERTIFICATE-----
