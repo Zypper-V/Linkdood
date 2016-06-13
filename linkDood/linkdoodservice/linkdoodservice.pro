@@ -14,10 +14,12 @@ TEMPLATE = app
 CONFIG += link_pkgconfig
 PKGCONFIG += syberos-application syberos-application-cache
 
-HEADERS += linkdoodservice_workspace.h
+HEADERS += linkdoodservice_workspace.h \
+    linkdoodservice.h
 
 SOURCES += main.cpp \
-	   linkdoodservice_workspace.cpp
+	   linkdoodservice_workspace.cpp \
+    linkdoodservice.cpp
 
 target.path = $$INSTALL_DIR/bin
 

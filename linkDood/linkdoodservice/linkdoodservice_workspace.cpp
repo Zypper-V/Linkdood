@@ -1,18 +1,22 @@
 #include "linkdoodservice_workspace.h"
+#include "linkdoodservice.h"
+
 #include <QDebug>
 #include <QThread>
 
 linkdoodservice_Workspace::linkdoodservice_Workspace()
     : CWorkspace()
 {
-    int i;
+    qDebug() << Q_FUNC_INFO;
+    LinkDoodService::createService();
+//    int i;
 
     // Repalce the following loop code with your service function.
-    for(i = 0; i < 1000000; i++)
-    {
-        qDebug() << "This is a service process. Print count = " << i;
-        QThread::sleep(1);
-    }
+//    for(i = 0; i < 1000000; i++)
+//    {
+//        qDebug() << "This is a service process. Print count = " << i;
+//        QThread::sleep(1);
+//    }
 }
 
 void linkdoodservice_Workspace::onLaunchComplete(Option option, const QStringList& params)

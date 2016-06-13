@@ -13,6 +13,8 @@ linkdoodui_Workspace::linkdoodui_Workspace()
 void linkdoodui_Workspace::onLaunchComplete(Option option, const QStringList& params)
 {
     Q_UNUSED(params)
+    qDebug() << Q_FUNC_INFO;
+    qApp->runService("linkdoodservice", QStringList());
 
     switch (option) {
     case CWorkspace::HOME:
