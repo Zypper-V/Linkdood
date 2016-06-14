@@ -23,8 +23,8 @@ void AuthControler::init(std::string  dataPath,std::string certPath)
 
     qDebug() << Q_FUNC_INFO << "cerPath = " << certPath.c_str() << "dataPAth" << dataPath.c_str();
 
-   m_client->getAuth()->login("008615829282366","chengcy2015","vrv"
-         ,std::bind(&AuthControler::onSerLogin,this,std::placeholders::_1, std::placeholders::_2));
+//   m_client->getAuth()->login("008615829282366","chengcy2015","vrv"
+//         ,std::bind(&AuthControler::onSerLogin,this,std::placeholders::_1, std::placeholders::_2));
 }
 
 void AuthControler::onSerLogin(service::ErrorInfo& err, int64 userid)

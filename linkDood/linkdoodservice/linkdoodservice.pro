@@ -76,6 +76,8 @@ sdklibs.files += $$PWD/linkdood_sdk/libimsdkapi.so
 sdklibs.files += $$PWD/linkdood_sdk/libimswift.so
 sdklibs.files += $$PWD/linkdood_sdk/liblogicMgr.so
 sdklibs.files += $$PWD/linkdood_sdk/libservice.so
+sdklibs.files += $$PWD/linkdood_sdk/libservice.so.1
+
 sdklibs.path = $$INSTALL_DIR/libs/
 
 sdkcrt.files += $$PWD/linkdood_sdk/linkdood.crt
