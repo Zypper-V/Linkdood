@@ -11,8 +11,8 @@
 
 AuthControler::AuthControler()
 {
-
 }
+
 void AuthControler::init(std::string  dataPath,std::string certPath)
 {
     qDebug() << Q_FUNC_INFO;
@@ -36,6 +36,7 @@ void AuthControler::onSerLogin(service::ErrorInfo& err, int64 userid)
         m_client->getAuth()->getAccountInfo();
     }
 }
+
 void AuthControler::onConnectChanged(int flag)
 {
         qDebug() << Q_FUNC_INFO;

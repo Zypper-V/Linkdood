@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>res/linkdoodui.png</file>
+        <file>res/logo.png</file>
+        <file>res/more.png</file>
     </qresource>
 </RCC>

@@ -6,7 +6,7 @@
     <uses-permission syberos:name="syberos.permission.ACCESS_WIFI"/>
     <uses-sdk syberos:minSdkVersion="" syberos:targetSdkVersion=""/>
     <application syberos:icon="res/linkdoodui.png" syberos:description="linkDood for syberos." syberos:debuggable="true" syberos:name="linkDood">
-        <uiapp syberos:icon="res/linkdoodui.png" syberos:id="linkdoodui" syberos:launcher="false" syberos:splash="" syberos:background="" syberos:exec="bin/linkdoodui" syberos:name="linkdoodui">
+        <uiapp syberos:icon="res/linkdoodui.png" syberos:id="linkdoodui" syberos:launcher="true" syberos:splash="" syberos:background="" syberos:exec="bin/linkdoodui" syberos:name="Linkdood">
             <doctype syberos:id=""/>
         </uiapp>
         <service syberos:icon="" syberos:id="linkdoodservice" syberos:launcher="false" syberos:splash="" syberos:background="" syberos:exec="bin/linkdoodservice" syberos:name="">

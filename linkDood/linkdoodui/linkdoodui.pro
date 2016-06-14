@@ -29,3 +29,6 @@ res.files = res
 res.path = $$INSTALL_DIR/
 
 INSTALLS += target res
+
+DISTFILES += \
+    qml/CDoodLoginPage.qml
