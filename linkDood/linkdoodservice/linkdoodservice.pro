@@ -15,9 +15,12 @@ CONFIG += link_pkgconfig
 CONFIG += c++11
 
 PKGCONFIG += syberos-application syberos-application-cache
+PKGCONFIG += syberos-qt
 INCLUDEPATH +=linkdood_sdk/include/data
 INCLUDEPATH +=linkdood_sdk/include/interface
 INCLUDEPATH +=linkdood_sdk/include/utils
+
+unix:!macx: LIBS += -lservice
 
 HEADERS += linkdoodservice_workspace.h \
     linkdoodservice.h \
@@ -64,6 +67,3 @@ SOURCES += main.cpp \
 target.path = $$INSTALL_DIR/bin
 
 INSTALLS += target
-
-
-unix:!macx: LIBS += -lservice

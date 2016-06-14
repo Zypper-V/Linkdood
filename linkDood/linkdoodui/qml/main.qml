@@ -6,7 +6,7 @@ CPageStackWindow {
         width:parent.width
         height:parent.height
         Text {
-            text: qsTr("GUI Application")
+            text: qsTr("LinkDood for Syberos!")
             anchors.centerIn: parent
         }
     }

@@ -8,8 +8,9 @@ include(syberos.pri)
 
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = linkdoodui \
-        linkdoodservice
+SUBDIRS = linkdoodservice \
+          linkdoodui
+
 
 meta.files = META-INF
 meta.path = $$INSTALL_DIR/

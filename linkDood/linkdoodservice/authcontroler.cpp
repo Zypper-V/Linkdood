@@ -8,6 +8,7 @@
 #include "INotifyService.h"
 #include "LoginInfo.hpp"
 #include "Account.h"
+#include "linkdoodservice.h"
 
 AuthControler::AuthControler()
 {
