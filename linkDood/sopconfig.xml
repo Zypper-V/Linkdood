@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sopconfig syberos:versionCode="1" syberos:shareUserId="" syberos:versionName="1.0.0" xmlns:syberos="http://schemas.syberos.com/rpm/res/syberos" syberos:sopid="com.vrv.linkDood">
+<sopconfig syberos:versionName="1.0.0" xmlns:syberos="http://schemas.syberos.com/rpm/res/syberos" syberos:sopid="com.vrv.linkDood" syberos:versionCode="1" syberos:shareUserId="">
     <uses-permission syberos:name="syberos.permission.ACCESS_ALARM"/>
     <uses-permission syberos:name="syberos.permission.ACCESS_DATA_NETWORK"/>
     <uses-permission syberos:name="syberos.permission.ACCESS_NOTIFICATION"/>
     <uses-permission syberos:name="syberos.permission.ACCESS_WIFI"/>
-    <uses-sdk syberos:targetSdkVersion="" syberos:minSdkVersion=""/>
-    <application syberos:name="linkDood" syberos:description="linkDood for syberos." syberos:icon="res/linkdoodui.png" syberos:debuggable="true">
-        <uiapp syberos:name="linkdoodui" syberos:id="linkdoodui" syberos:splash="" syberos:icon="res/linkdoodui.png" syberos:background="" syberos:exec="bin/linkdoodui" syberos:launcher="false">
+    <uses-sdk syberos:minSdkVersion="" syberos:targetSdkVersion=""/>
+    <application syberos:icon="res/linkdoodui.png" syberos:description="linkDood for syberos." syberos:debuggable="true" syberos:name="linkDood">
+        <uiapp syberos:icon="res/linkdoodui.png" syberos:id="linkdoodui" syberos:launcher="false" syberos:splash="" syberos:background="" syberos:exec="bin/linkdoodui" syberos:name="linkdoodui">
             <doctype syberos:id=""/>
         </uiapp>
-        <service syberos:name="" syberos:id="linkdoodservice" syberos:splash="" syberos:icon="" syberos:background="" syberos:exec="bin/linkdoodservice" syberos:launcher="false">
+        <service syberos:icon="" syberos:id="linkdoodservice" syberos:launcher="false" syberos:splash="" syberos:background="" syberos:exec="bin/linkdoodservice" syberos:name="">
             <receiver syberos:id="">
                 <event>BOOT_COMPLETE</event>
             </receiver>

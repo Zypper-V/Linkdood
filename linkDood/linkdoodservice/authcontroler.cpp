@@ -26,6 +26,7 @@ void AuthControler::init(std::string  dataPath,std::string certPath)
    m_client->getAuth()->login("008615829282366","chengcy2015","vrv"
          ,std::bind(&AuthControler::onSerLogin,this,std::placeholders::_1, std::placeholders::_2));
 }
+
 void AuthControler::onSerLogin(service::ErrorInfo& err, int64 userid)
 {
     qDebug() << Q_FUNC_INFO;

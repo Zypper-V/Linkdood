@@ -20,7 +20,12 @@ INCLUDEPATH +=linkdood_sdk/include/data
 INCLUDEPATH +=linkdood_sdk/include/interface
 INCLUDEPATH +=linkdood_sdk/include/utils
 
-unix:!macx: LIBS += -lservice
+LIBS += -L$$PWD/linkdood_sdk
+
+LIBS += -lcurl -limsdkapi -limswift -llogicMgr -lservice
+
+QMAKE_LFLAGS += -Wl,-rpath=$$LIB_DIR -Wl,-Bsymbolic
+
 
 HEADERS += linkdoodservice_workspace.h \
     linkdoodservice.h \
@@ -66,4 +71,14 @@ SOURCES += main.cpp \
 
 target.path = $$INSTALL_DIR/bin
 
-INSTALLS += target
+sdklibs.files += $$PWD/linkdood_sdk/libcurl.so
+sdklibs.files += $$PWD/linkdood_sdk/libimsdkapi.so
+sdklibs.files += $$PWD/linkdood_sdk/libimswift.so
+sdklibs.files += $$PWD/linkdood_sdk/liblogicMgr.so
+sdklibs.files += $$PWD/linkdood_sdk/libservice.so
+sdklibs.path = $$INSTALL_DIR/libs/
+
+sdkcrt.files += $$PWD/linkdood_sdk/linkdood.crt
+sdkcrt.path = $$INSTALL_DIR/crt/
+
+INSTALLS += target sdklibs sdkcrt

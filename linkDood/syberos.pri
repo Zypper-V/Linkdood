@@ -4,6 +4,7 @@ APP_DIR = /data/apps
 APP_DATA = /data/data
 INSTALL_DIR = $$APP_DIR/com.vrv.linkDood
 DATA_DIR = $$APP_DATA/com.vrv.linkDood
+LIB_DIR = /data/app-libs/com.vrv.linkDood
 
 DEFINES += SOP_ID=\\\"com.vrv.linkDood\\\"
 DEFINES += APP_DIR_ENVVAR=\\\"APPDIR_REGULAR\\\"
