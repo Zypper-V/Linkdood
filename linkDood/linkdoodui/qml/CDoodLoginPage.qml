@@ -62,6 +62,8 @@ CPage {
                 }
             }
 
+
+
             Item {
                 id: logoInlogonImage
 
@@ -70,19 +72,19 @@ CPage {
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 width: parent.width
-                height: 140
+                height: 128
 
                 Image {
                     id: logoImage
                     anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    width: 140
-                    height: 140
+                    width: 128
+                    height: 128
                     z: 10
 
                     smooth: true
                     asynchronous: true
-                    sourceSize: Qt.size(140, 140)
+                    sourceSize: Qt.size(128, 128)
                     source: "qrc:/res/logo.png"
 
                     onStatusChanged: {
@@ -264,49 +266,30 @@ CPage {
                 }
 
                 onClicked: {
-                    if(nameLineEdit.text ==="" || passWordEdit.text ==="")
-                        return;
-                    if(loginManager.checkFirstWordIsSpace(nameLineEdit.text)) {
-                        nameLineEdit.text = ""
-                        nameLineEdit.focus = true
-                        if(immanager.windowFocus)
-                            gToast.requestToast("账号格式不正确","","");
-                        return
-                    }
-                    if(nameLineEdit.text === "") {
-                        nameLineEdit.focus = true
-                        gToast.requestToast("帐号不能为空","","");
-                    } else if(passWordEdit.text === "") {
-                        passWordEdit.focus = true
-                        gToast.requestToast("密码不能为空","","");
-                    } else {
-                        loadingDialog.show();
-                        loginManager.login(nameLineEdit.text, passWordEdit.text);
-                    }
+                    console.log("login onClicked !!!")
+//                    if(nameLineEdit.text ==="" || passWordEdit.text ==="")
+//                        return;
+//                    if(loginManager.checkFirstWordIsSpace(nameLineEdit.text)) {
+//                        nameLineEdit.text = ""
+//                        nameLineEdit.focus = true
+//                        if(immanager.windowFocus)
+//                            gToast.requestToast("账号格式不正确","","");
+//                        return
+//                    }
+//                    if(nameLineEdit.text === "") {
+//                        nameLineEdit.focus = true
+//                        gToast.requestToast("帐号不能为空","","");
+//                    } else if(passWordEdit.text === "") {
+//                        passWordEdit.focus = true
+//                        gToast.requestToast("密码不能为空","","");
+//                    } else {
+//                        loadingDialog.show();
+//                        loginManager.login(nameLineEdit.text, passWordEdit.text);
+//                    }
                 }
 
                 Behavior on opacity {
                     PropertyAnimation { duration: 200 }
-                }
-            }
-
-            Text {
-                id: setNetWorkText
-    //            anchors.left: parent.left
-    //            anchors.leftMargin: 190
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: loginButton.bottom
-                anchors.topMargin: 400
-                color:"#000000"
-                font.pixelSize: 30
-                text: os.i18n.ctr(qsTr("网络设置")) // qsTr("网络设置")
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        console.log("click setNetWorkText !!!!")
-                        pageStack.push(Qt.resolvedUrl("CPortalSetNetWorkPage.qml"));
-                    }
                 }
             }
 

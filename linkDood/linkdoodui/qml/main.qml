@@ -38,4 +38,13 @@ CPageStackWindow {
             }
         }
     }
+
+    Component.onCompleted: {
+        console.log("main.qml onCompleted!!!")
+        var tmp =  Qt.createComponent(Qt.resolvedUrl("CPortalLoginPage.qml", Component.Asynchronous));
+        tmp.destroy();
+
+        pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+
+    }
 }
