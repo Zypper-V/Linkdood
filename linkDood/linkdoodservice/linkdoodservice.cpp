@@ -40,12 +40,14 @@ LinkDoodService::LinkDoodService(QObject *parent) :
     QObject(parent)
 {
     qDebug() << Q_FUNC_INFO;
-    m_pAuth= new AuthControler();
-    m_pAuth->init();
-
     m_pPackageManager = new CSystemPackageManager();
     m_sInstallPath = m_pPackageManager->packageInfo(LINKDOOD_SOPID)->installPath();
     qDebug() << Q_FUNC_INFO << "installPath = " << m_sInstallPath;
+
+    m_pAuth= new AuthControler();
+    QString crtPath = installPath();
+    crtPath += "/crt/linkdood.crt";
+    m_pAuth->init(dataPath().toStdString(),crtPath.toStdString());
 }
 
 LinkDoodService::~LinkDoodService()

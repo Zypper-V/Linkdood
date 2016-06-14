@@ -1,5 +1,4 @@
 #include "authcontroler.h"
-#include<QCoreApplication>
 #include<iostream>
 #include<QDebug>
 
@@ -14,21 +13,22 @@ AuthControler::AuthControler()
 {
 
 }
-void AuthControler::init(void)
+void AuthControler::init(std::string  dataPath,std::string certPath)
 {
-   m_client =  service::IMClient::getClient();
-   QString appPath = QCoreApplication::applicationDirPath();
-   std::string cerPath(appPath.toStdString());
-   cerPath +="linkdood.crt";
+    qDebug() << Q_FUNC_INFO;
 
-   m_client->init(appPath.toStdString(),cerPath);
+   m_client =  service::IMClient::getClient();
+   m_client->init(dataPath,certPath);
    m_client->getNotify()->setAuthObserver(this);
-   //logining
+
+    qDebug() << Q_FUNC_INFO << "cerPath = " << certPath.c_str() << "dataPAth" << dataPath.c_str();
+
    m_client->getAuth()->login("008615829282366","chengcy2015","vrv"
          ,std::bind(&AuthControler::onSerLogin,this,std::placeholders::_1, std::placeholders::_2));
 }
 void AuthControler::onSerLogin(service::ErrorInfo& err, int64 userid)
 {
+    qDebug() << Q_FUNC_INFO;
     if(err.code()==0)
     {
         qDebug()<<"linkdood login success.";
@@ -37,33 +37,33 @@ void AuthControler::onSerLogin(service::ErrorInfo& err, int64 userid)
 }
 void AuthControler::onConnectChanged(int flag)
 {
-        qDebug()<<"AuthControler::onConnectChanged";
+        qDebug() << Q_FUNC_INFO;
 }
 
 void AuthControler::onLoginResultObserver(service::ErrorInfo& info, int64 userid)
 {
-     //qDebug()<<"AuthControler::onLoginResultObserver";
      qDebug() << Q_FUNC_INFO;
 }
 
 void AuthControler::onDBUpdateFinished(int val)
 {
-    qDebug()<<"AuthControler::onDBUpdateFinished";
+    qDebug() << Q_FUNC_INFO;
 }
 
 void AuthControler::onLogoutChanged(service::ErrorInfo& info)
 {
-    qDebug()<<"AuthControler::onLogoutChanged";
+    qDebug() << Q_FUNC_INFO;
 }
 
 void AuthControler::onAccountInfoChanged(service::User& info)
 {
+    qDebug() << Q_FUNC_INFO;
      qDebug()<<"name:"<<info.name.c_str()<<"sex:"<<info.gender;
 }
 
 void AuthControler::onClientKeyChanged(service::ErrorInfo& info, std::string& clientKey)
 {
-    qDebug()<<"AuthControler::onClientKeyChanged";
+    qDebug() << Q_FUNC_INFO;
 }
 
 void AuthControler::onPasswordRuleChanged(service::ErrorInfo& info, int16 rule)

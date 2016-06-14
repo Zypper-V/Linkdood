@@ -9,7 +9,7 @@ class AuthControler : public IAuthObserver
 {
 public:
     AuthControler();
-    void init(void);
+    void init(std::string  dataPath,std::string certPath);
 
     void onConnectChanged(int flag);
     void onLoginResultObserver(service::ErrorInfo& info, int64 userid);
