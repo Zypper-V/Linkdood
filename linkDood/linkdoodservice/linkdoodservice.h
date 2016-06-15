@@ -12,15 +12,15 @@ class LinkDoodService : public QObject
 
 public:
     void static createService();
-
     static LinkDoodService* instance();
-
     QString installPath();
-
     QString dataPath();
-
+    //
     void login(const QString& server,const QString& user,const QString& userPwd);
 
+signals:
+    void signalLoginSucceeded();
+    void signalLoginFailed(int64 errCode);
 public:
     static LinkDoodService* m_pInstance;
 

@@ -10,7 +10,7 @@ CPage {
             loginPage.statusBarHoldEnabled = true
             gScreenInfo.setStatusBar(loginPage.statusBarHoldEnabled)
             loginPage.statusBarHoldItemColor = "#edf0f0"
-            gScreenInfo.setStatusBarStyle("transblack")
+            gScreenInfo.setStatusBarStyle("black")
         }
     }
 
@@ -40,7 +40,7 @@ CPage {
         Rectangle {
             id: loginBackground
             anchors.fill: parent
-            color: "#edf0f0"
+            color: "#f2f2f2"
         }
 
         Flickable{
@@ -62,20 +62,39 @@ CPage {
                 }
             }
 
+            Rectangle{
+                id:titleBackground
+
+                anchors.top: parent.top
+                anchors.left: parent.left
+
+                width:parent.width
+                height: 110
+                color:"#1c1b21"
+                Text{
+                    id:titleText
+
+                    anchors.centerIn: parent
+
+                    text:qsTr("登录-信源豆豆")
+                    color:"white"
+                    font.pixelSize: 36
+                }
+            }
+
             Item {
                 id: logoInlogonImage
 
-                anchors.top: parent.top
-                anchors.topMargin: 25
+                anchors.top: titleBackground.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 width: parent.width
-                height: 128
+                height: 310
 
                 Image {
                     id: logoImage
-                    anchors.top: parent.top
-                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    anchors.centerIn: parent
                     width: 128
                     height: 128
                     z: 10
@@ -95,16 +114,11 @@ CPage {
 
             Rectangle {
                 id: inputBackGround
-                anchors.top: nameLineEdit.top
+
+                anchors.top: logoInlogonImage.bottom
                 anchors.bottom: passWordEdit.bottom
                 width: parent.width
                 color: "#ffffff"
-            }
-
-            CLine {
-                width: parent.width
-                anchors.bottom: nameLineEdit.top
-                z: parent.z+2
             }
 
             Item {
@@ -152,29 +166,90 @@ CPage {
                 }
             }
 
+            CLine {
+                width: parent.width
+                z: parent.z+2
+
+                anchors.bottom: srvLineEdit.bottom
+            }
+
             Rectangle{
                 anchors.top: logoInlogonImage.bottom
-                anchors.topMargin: 28
                 anchors.left: parent.left
-                height: 120
+
+                height: 85
                 z: moreBtnRoot.z - 5
                 width: parent.width
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        nameLineEdit.focus = true;
+                        srvLineEdit.focus = true;
                     }
                 }
             }
 
+            Text{
+               id:srvTip
+
+                anchors{
+                    left:parent.left
+                    leftMargin: 30
+                    verticalCenter: srvLineEdit.verticalCenter
+                }
+                text:qsTr("服务器")
+                font.pixelSize: 30
+            }
+
+            CLineEdit {
+                id: srvLineEdit
+
+                anchors.top: logoInlogonImage.bottom
+                anchors.left: parent.left
+                anchors.leftMargin: srvLineEdit.text ==="" ? 165 : 0
+                anchors.right: moreBtnRoot.left
+
+                height: 85
+                passwordLabelEnabled: false
+                textLeftMargin: 90
+                clip: true
+
+                horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+                textColor:"#787777"
+                font.pixelSize: 30
+                placeholderText:os.i18n.ctr(qsTr("请输入服务器")) // "请输入帐号"
+
+                inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
+//                text: cimloginmanager.getCurrentUserId()
+
+                onTextChanged: {
+                    passWordEdit.text = ""
+
+                    if(loginPage.state !== "hidden") {
+                        loginPage.state = "hidden"
+                    }
+                }
+            }
+
+            Text{
+               id:srvUsr
+
+                anchors{
+                    left:parent.left
+                    leftMargin: 30
+                    verticalCenter: nameLineEdit.verticalCenter
+                }
+
+                text:qsTr("+86")
+                font.pixelSize: 30
+            }
             CLineEdit {
                 id: nameLineEdit
-                anchors.top: logoInlogonImage.bottom
-                anchors.topMargin: 28
+
+                anchors.top: srvLineEdit.bottom
                 anchors.left: parent.left
                 anchors.leftMargin: nameLineEdit.text ==="" ? 165 : 0
                 anchors.right: moreBtnRoot.left
-                height: 120
+                height: srvLineEdit.height
 
                 passwordLabelEnabled: false
                 textLeftMargin: 90
@@ -183,7 +258,7 @@ CPage {
                 horizontalAlignment: nameLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
-                placeholderText:os.i18n.ctr(qsTr("请输入帐号")) // "请输入帐号"
+                placeholderText:os.i18n.ctr(qsTr("请输入手机号")) // "请输入帐号"
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
 //                text: cimloginmanager.getCurrentUserId()
@@ -206,7 +281,7 @@ CPage {
             Rectangle{
                 anchors.top: nameLineEdit.bottom
                 anchors.left: parent.left
-                height: 120
+                height: passWordEdit.height
                 width: parent.width
                 MouseArea {
                     anchors.fill: parent
@@ -216,11 +291,23 @@ CPage {
                 }
             }
 
+            Text{
+               id:srvPwd
+
+                anchors{
+                    left:parent.left
+                    leftMargin: 30
+                    verticalCenter: passWordEdit.verticalCenter
+                }
+
+                text:qsTr("密码")
+                font.pixelSize: 30
+            }
             CLineEdit {
                 id: passWordEdit
                 anchors.top: nameLineEdit.bottom
                 anchors.left: parent.left
-                anchors.leftMargin: passWordEdit.text ==="" ? 225 : 0
+                anchors.leftMargin: passWordEdit.text ==="" ? 165 : 0
                 anchors.right: moreBtnRoot.left
                 height: nameLineEdit.height
 
@@ -231,7 +318,7 @@ CPage {
                 horizontalAlignment: passWordEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
-                placeholderText:os.i18n.ctr(qsTr("密码")) // "密码"
+                placeholderText:os.i18n.ctr(qsTr("请输入密码号")) // "密码"
 
                 inputMethodHints:Qt.ImhHiddenText|Qt.ImhPreferLatin
 //                text: cimloginmanager.getCurrentUserPassword()
@@ -245,13 +332,12 @@ CPage {
 
             CButton {
                 id: loginButton
-                anchors.left: parent.left
-                anchors.leftMargin: 40
-                anchors.right: parent.right
-                anchors.rightMargin: 40
+
                 anchors.top: passWordEdit.bottom
-                anchors.topMargin: 80
-                height: 100
+                anchors.topMargin: 105
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: 77
+                width:655
 
                 opacity : pressed ? 1: (nameLineEdit.text .trim()==="" || passWordEdit.text.trim() ==="" ? 0.5 : 1)
                 text:os.i18n.ctr(qsTr("登 录")) // "登 录"
@@ -259,7 +345,7 @@ CPage {
 
                 backgroundComponent: Rectangle {
                     anchors.fill: parent
-                    color:"#00B1EE"
+                    color:"#32c2fe"
                     radius: 10
                 }
 
@@ -282,7 +368,7 @@ CPage {
                         gToast.requestToast("密码不能为空","","");
                     } else {
                         loadingDialog.show();
-                        loginManager.login("vrv", nameLineEdit.text, passWordEdit.text);
+                        loginManager.login(srvLineEdit.text, nameLineEdit.text, passWordEdit.text);
                     }
                 }
 

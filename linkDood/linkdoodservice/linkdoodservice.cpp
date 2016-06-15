@@ -71,7 +71,7 @@ void LinkDoodService::initSdk()
     crtPath += "/crt/linkdood.crt";
     m_pIMClient =  service::IMClient::getClient();
     bool ret = m_pIMClient->init(dataPath().toStdString(),crtPath.toStdString());
-    qDebug() << Q_FUNC_INFO << "m_client->init ret:" << ret;
+    qDebug() << Q_FUNC_INFO << "m_client->initret:" << ret;
     if(ret)
     {
         m_pAuth = std::make_shared<AuthControler>();
@@ -86,10 +86,11 @@ void LinkDoodService::onLoginResult(service::ErrorInfo &info, int64 userId)
     qDebug() << Q_FUNC_INFO;
     if(info.code() == 0)
     {
-        qDebug() << Q_FUNC_INFO << "login ok";
+        qDebug() << Q_FUNC_INFO << "loginok";
+        emit signalLoginSucceeded();
     }
     else
     {
-
+        emit signalLoginFailed(info.code());
     }
 }
