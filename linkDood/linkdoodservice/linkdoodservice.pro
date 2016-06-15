@@ -62,12 +62,18 @@ HEADERS += linkdoodservice_workspace.h \
     linkdood_sdk/include/interface/ISysMsgService.h \
     linkdood_sdk/include/interface/ISysSetService.h \
     linkdood_sdk/include/utils/FileUtils.h \
-    linkdood_sdk/include/utils/MsgUtils.h
+    linkdood_sdk/include/utils/MsgUtils.h \
+    contactcontroler.h \
+    chatcontroler.h \
+    sysmsgcontroler.h
 
 SOURCES += main.cpp \
 	   linkdoodservice_workspace.cpp \
     linkdoodservice.cpp \
-    authcontroler.cpp
+    authcontroler.cpp \
+    contactcontroler.cpp \
+    chatcontroler.cpp \
+    sysmsgcontroler.cpp
 
 target.path = $$INSTALL_DIR/bin
 
