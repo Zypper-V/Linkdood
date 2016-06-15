@@ -14,6 +14,11 @@ TEMPLATE = app
 CONFIG += link_pkgconfig qml_debug
 PKGCONFIG += syberos-application syberos-application-cache
 
+INCLUDEPATH += ../linkdoodclient
+LIBS += -L../linkdoodclient
+LIBS += -llinkdoodclient
+QMAKE_LFLAGS += -Wl,-rpath=$$LIB_DIR -Wl,-Bsymbolic
+
 RESOURCES += qml.qrc images.qrc
 
 HEADERS += src/linkdoodui_workspace.h \

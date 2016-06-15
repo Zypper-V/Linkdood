@@ -1,6 +1,7 @@
 #include "linkdoodui_workspace.h"
 #include "cdoodlistmodel.h"
 #include "cdoodloginmanager.h"
+#include "linkdoodclient.h"
 
 #include <QQmlContext>
 #include <QDebug>
@@ -9,7 +10,13 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     : CWorkspace()
 {
     qmlRegisterType<CDoodListModel>("CDoodListModel", 1, 0, "CDoodListModel");
-    m_pLoginManager = QSharedPointer<CDoodLoginManager>(new CDoodLoginManager());
+
+    m_pClient = QSharedPointer<LinkDoodClient>(new LinkDoodClient());
+    if (!m_pClient.data()) {
+        qDebug() << Q_FUNC_INFO << "m_pClient init error !!!";
+    }
+
+    m_pLoginManager = QSharedPointer<CDoodLoginManager>(new CDoodLoginManager(m_pClient.data()));
     if (!m_pLoginManager.data()) {
         qDebug() << Q_FUNC_INFO << "m_pLoginManager init error !!!";
     }

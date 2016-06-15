@@ -14,6 +14,7 @@
 using namespace SYBEROS;
 
 class CDoodLoginManager;
+class LinkDoodClient;
 
 class linkdoodui_Workspace : public CWorkspace
 {
@@ -30,6 +31,7 @@ public:
 
 private:
     QSharedPointer<CDoodLoginManager> m_pLoginManager;
+    QSharedPointer<LinkDoodClient> m_pClient;
 };
 
 

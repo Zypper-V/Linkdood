@@ -20,29 +20,25 @@
 #include <QObject>
 
 #include "cdoodlistmodel.h"
+#include "linkdoodclient.h"
 
 class CDoodLoginManager : public CDoodListModel
 {
     Q_OBJECT
 
 public:
-    explicit CDoodLoginManager(QObject *parent = 0);
+    explicit CDoodLoginManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
     ~CDoodLoginManager();
 
-    // 功能		:	登录
-    // 返回		:	NULL
-    // 返回值    :	void
-    // 参数		:
-    // 		1.  server	服务器地址
-    // 		1.  userId	登录ID
-    // 		2.  password	登录密码
     Q_INVOKABLE void login(const QString &server,
                            const QString &userId,
                            const QString &password);
 
     Q_INVOKABLE bool checkFirstWordIsSpace(const QString &text);
 
+private:
+    LinkDoodClient *m_pClient;
 };
 
 #endif // CDOODLOGINMANAGER_H

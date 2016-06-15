@@ -1,4 +1,5 @@
 #include "linkdoodservice.h"
+#include "linkdoodconst.h"
 #include "csystempackagemanager.h"
 #include "IMClient.h"
 #include "IAuthService.h"
@@ -8,7 +9,9 @@
 
 #include <QDebug>
 #include <iostream>
-#define LINKDOOD_SOPID "com.vrv.linkDood"
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusArgument>
 
 LinkDoodService* LinkDoodService::m_pInstance = 0;
 
@@ -46,13 +49,19 @@ LinkDoodService::LinkDoodService(QObject *parent) :
 {
     qDebug() << Q_FUNC_INFO;
     initSdk();
+
+    initDBusConnection();
 }
 
-void LinkDoodService::login(const QString& server,const QString& user,const QString& userPwd)
+void LinkDoodService::login(const QString &server,
+                            const QString &userId,
+                            const QString &password)
 {
-    qDebug() << Q_FUNC_INFO;
-    m_pIMClient->getAuth()->login(user.toStdString(),userPwd.toStdString(),
-                 server.toStdString(),std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
+    qDebug() << Q_FUNC_INFO << server << userId << password;
+    m_pIMClient->getAuth()->login(userId.toStdString(),
+                                  password.toStdString(),
+                                  server.toStdString(),
+                                  std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
 }
 
 LinkDoodService::~LinkDoodService()
@@ -78,7 +87,20 @@ void LinkDoodService::initSdk()
         m_pAuth->init();
     }
 
-    login("vrv","008615829282366","chengcy2015");
+//    login("vrv","008615829282366","chengcy2015");
+}
+
+void LinkDoodService::initDBusConnection()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusConnection bus = QDBusConnection::sessionBus();
+    bool bSuccess = false;
+    bSuccess = QDBusConnection::sessionBus().registerService(DBUS_DOOD_SERVICE);
+    qDebug() << "--- registerService = " << bSuccess;
+
+    bSuccess = bus.registerObject(DBUS_DOOD_PATH, this,
+                                  QDBusConnection::ExportAllContents);
+    qDebug() << "--- registerObject = " << bSuccess;
 }
 
 void LinkDoodService::onLoginResult(service::ErrorInfo &info, int64 userId)

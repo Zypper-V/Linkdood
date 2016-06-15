@@ -3,8 +3,8 @@
 #include <QMetaType>
 #include <QDebug>
 
-CDoodLoginManager::CDoodLoginManager(QObject *parent) :
-    CDoodListModel(parent)
+CDoodLoginManager::CDoodLoginManager(LinkDoodClient *client, QObject *parent) :
+    CDoodListModel(parent), m_pClient(client)
 {
     qDebug() << Q_FUNC_INFO;
     qRegisterMetaType<CDoodLoginManager*>();
@@ -20,6 +20,7 @@ void CDoodLoginManager::login(const QString &server,
                               const QString &password)
 {
     qDebug() << Q_FUNC_INFO << server << userId << password;
+    m_pClient->login(server, userId, password);
 }
 
 bool CDoodLoginManager::checkFirstWordIsSpace(const QString &text)

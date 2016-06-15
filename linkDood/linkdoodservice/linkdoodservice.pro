@@ -8,6 +8,9 @@
 include(../syberos.pri)
 
 QT += core
+
+QT += dbus
+
 TARGET = linkdoodservice
 TEMPLATE = app
 
@@ -16,13 +19,15 @@ CONFIG += c++11
 
 PKGCONFIG += syberos-application syberos-application-cache
 PKGCONFIG += syberos-qt
-INCLUDEPATH +=linkdood_sdk/include/data
-INCLUDEPATH +=linkdood_sdk/include/interface
-INCLUDEPATH +=linkdood_sdk/include/utils
+INCLUDEPATH += linkdood_sdk/include/data
+INCLUDEPATH += linkdood_sdk/include/interface
+INCLUDEPATH += linkdood_sdk/include/utils
+INCLUDEPATH += ../linkdoodclient
 
 LIBS += -L$$PWD/linkdood_sdk
+LIBS += -L../linkdoodclient
 
-LIBS += -lcurl -limsdkapi -limswift -llogicMgr -lservice
+LIBS += -lcurl -limsdkapi -limswift -llogicMgr -lservice -llinkdoodclient
 
 QMAKE_LFLAGS += -Wl,-rpath=$$LIB_DIR -Wl,-Bsymbolic
 

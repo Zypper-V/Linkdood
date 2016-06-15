@@ -8,7 +8,8 @@ include(syberos.pri)
 
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = linkdoodservice \
+SUBDIRS = linkdoodclient \
+          linkdoodservice \
           linkdoodui
 
 
