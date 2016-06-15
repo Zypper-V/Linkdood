@@ -62,8 +62,6 @@ CPage {
                 }
             }
 
-
-
             Item {
                 id: logoInlogonImage
 
@@ -267,25 +265,25 @@ CPage {
 
                 onClicked: {
                     console.log("login onClicked !!!")
-//                    if(nameLineEdit.text ==="" || passWordEdit.text ==="")
-//                        return;
-//                    if(loginManager.checkFirstWordIsSpace(nameLineEdit.text)) {
-//                        nameLineEdit.text = ""
-//                        nameLineEdit.focus = true
-//                        if(immanager.windowFocus)
-//                            gToast.requestToast("账号格式不正确","","");
-//                        return
-//                    }
-//                    if(nameLineEdit.text === "") {
-//                        nameLineEdit.focus = true
-//                        gToast.requestToast("帐号不能为空","","");
-//                    } else if(passWordEdit.text === "") {
-//                        passWordEdit.focus = true
-//                        gToast.requestToast("密码不能为空","","");
-//                    } else {
-//                        loadingDialog.show();
-//                        loginManager.login(nameLineEdit.text, passWordEdit.text);
-//                    }
+                    if(nameLineEdit.text ==="" || passWordEdit.text ==="")
+                        return;
+                    if(loginManager.checkFirstWordIsSpace(nameLineEdit.text)) {
+                        nameLineEdit.text = ""
+                        nameLineEdit.focus = true
+                        if(immanager.windowFocus)
+                            gToast.requestToast("账号格式不正确","","");
+                        return
+                    }
+                    if(nameLineEdit.text === "") {
+                        nameLineEdit.focus = true
+                        gToast.requestToast("帐号不能为空","","");
+                    } else if(passWordEdit.text === "") {
+                        passWordEdit.focus = true
+                        gToast.requestToast("密码不能为空","","");
+                    } else {
+                        loadingDialog.show();
+                        loginManager.login("vrv", nameLineEdit.text, passWordEdit.text);
+                    }
                 }
 
                 Behavior on opacity {

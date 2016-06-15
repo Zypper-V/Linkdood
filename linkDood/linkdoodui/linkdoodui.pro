@@ -16,10 +16,14 @@ PKGCONFIG += syberos-application syberos-application-cache
 
 RESOURCES += qml.qrc images.qrc
 
-HEADERS += src/linkdoodui_workspace.h
+HEADERS += src/linkdoodui_workspace.h \
+    src/cdoodlistmodel.h \
+    src/cdoodloginmanager.h
 
 SOURCES += src/main.cpp \
-		   src/linkdoodui_workspace.cpp
+		   src/linkdoodui_workspace.cpp \
+    src/cdoodlistmodel.cpp \
+    src/cdoodloginmanager.cpp
 
 OTHER_FILES += qml/*.qml
 

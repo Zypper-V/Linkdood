@@ -1,11 +1,22 @@
 #include "linkdoodui_workspace.h"
+#include "cdoodlistmodel.h"
+#include "cdoodloginmanager.h"
+
+#include <QQmlContext>
 #include <QDebug>
 
 linkdoodui_Workspace::linkdoodui_Workspace()
     : CWorkspace()
 {
+    qmlRegisterType<CDoodListModel>("CDoodListModel", 1, 0, "CDoodListModel");
+    m_pLoginManager = QSharedPointer<CDoodLoginManager>(new CDoodLoginManager());
+    if (!m_pLoginManager.data()) {
+        qDebug() << Q_FUNC_INFO << "m_pLoginManager init error !!!";
+    }
+
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), qApp, SLOT(quit()));
+    m_view->engine()->rootContext()->setContextProperty("loginManager", m_pLoginManager.data());
     m_view->setSource(QUrl("qrc:/qml/main.qml"));
     m_view->showFullScreen();
 }
