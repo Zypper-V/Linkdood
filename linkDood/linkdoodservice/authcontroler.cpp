@@ -11,30 +11,12 @@
 
 AuthControler::AuthControler()
 {
+    init();
 }
 
-void AuthControler::init(std::string  dataPath,std::string certPath)
+void AuthControler::init()
 {
-    qDebug() << Q_FUNC_INFO;
-
-   m_client =  service::IMClient::getClient();
-   m_client->init(dataPath,certPath);
-   m_client->getNotify()->setAuthObserver(this);
-
-    qDebug() << Q_FUNC_INFO << "cerPath = " << certPath.c_str() << "dataPAth" << dataPath.c_str();
-
-//   m_client->getAuth()->login("008615829282366","chengcy2015","vrv"
-//         ,std::bind(&AuthControler::onSerLogin,this,std::placeholders::_1, std::placeholders::_2));
-}
-
-void AuthControler::onSerLogin(service::ErrorInfo& err, int64 userid)
-{
-    qDebug() << Q_FUNC_INFO;
-    if(err.code()==0)
-    {
-        qDebug()<<"linkdood login success.";
-        m_client->getAuth()->getAccountInfo();
-    }
+    service::IMClient::getClient()->getNotify()->setAuthObserver(this);
 }
 
 void AuthControler::onConnectChanged(int flag)
@@ -44,7 +26,7 @@ void AuthControler::onConnectChanged(int flag)
 
 void AuthControler::onLoginResultObserver(service::ErrorInfo& info, int64 userid)
 {
-     qDebug() << Q_FUNC_INFO;
+     qDebug() << Q_FUNC_INFO << info << userid;
 }
 
 void AuthControler::onDBUpdateFinished(int val)

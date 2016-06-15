@@ -9,8 +9,8 @@ class AuthControler : public IAuthObserver
 {
 public:
     AuthControler();
-    void init(std::string  dataPath,std::string certPath);
 
+    void init(void);
     void onConnectChanged(int flag);
     void onLoginResultObserver(service::ErrorInfo& info, int64 userid);
     void onDBUpdateFinished(int val);
@@ -19,10 +19,6 @@ public:
     void onClientKeyChanged(service::ErrorInfo& info, std::string& clientKey);
     void onPasswordRuleChanged(service::ErrorInfo& info, int16 rule);
     void onAvatarChanged(std::string avatar);
-private:
-    void onSerLogin(service::ErrorInfo& err, int64 userid);
-private:
-    std::shared_ptr<service::IMClient> m_client;
 };
 
 #endif // AUTHCONTROLER_H

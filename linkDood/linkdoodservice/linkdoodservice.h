@@ -16,20 +16,27 @@ public:
     static LinkDoodService* instance();
 
     QString installPath();
+
     QString dataPath();
+
+    void login(const QString& server,const QString& user,const QString& userPwd);
 
 public:
     static LinkDoodService* m_pInstance;
 
 private:
+    void initSdk();
+    void onLoginResult(service::ErrorInfo& info,int64 userId);
     LinkDoodService(QObject *parent = 0);
 
     ~LinkDoodService();
 
 private:
     CSystemPackageManager *m_pPackageManager;
-    AuthControler* m_pAuth;
     QString m_sInstallPath;
+
+    std::shared_ptr<AuthControler>  m_pAuth;
+    std::shared_ptr<service::IMClient> m_pIMClient;
 };
 
 #endif // LINKDOODSERVICE_H
