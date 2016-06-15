@@ -1,6 +1,11 @@
 #include<contactcontroler.h>
 #include<iostream>
 #include<QDebug>
+
+#include "IMClient.h"
+#include "IContactService.h"
+#include "INotifyService.h"
+
 ContactControler::ContactControler()
 {
 
@@ -9,6 +14,12 @@ ContactControler::ContactControler()
 ContactControler::~ContactControler()
 {
 
+}
+
+void ContactControler::init()
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getNotify()->setContactObserver(this);
 }
 
 void ContactControler::onListChanged(int operType, std::vector<service::Contact> &users)

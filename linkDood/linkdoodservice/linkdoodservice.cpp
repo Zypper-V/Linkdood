@@ -4,11 +4,15 @@
 #include "IMClient.h"
 #include "IAuthService.h"
 #include "INotifyService.h"
+#include "IChatService.h"
 #include "LoginInfo.hpp"
 #include "Account.h"
+#include "chatcontroler.h"
+#include "contactcontroler.h"
 
 #include <QDebug>
 #include <iostream>
+#include <QRegExp>
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusArgument>
@@ -64,6 +68,20 @@ void LinkDoodService::login(const QString &server,
                                   std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
 }
 
+void LinkDoodService::getChatList()
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pIMClient != NULL)
+    {
+        m_pIMClient->getChat()->getChatList();
+    }
+}
+
+void LinkDoodService::getUnReadMessages()
+{
+
+}
+
 LinkDoodService::~LinkDoodService()
 {
 
@@ -83,11 +101,22 @@ void LinkDoodService::initSdk()
     qDebug() << Q_FUNC_INFO << "m_client->initret:" << ret;
     if(ret)
     {
-        m_pAuth = std::make_shared<AuthControler>();
-        m_pAuth->init();
+       initObserver();
     }
 
 //    login("vrv","008615829282366","chengcy2015");
+}
+
+void LinkDoodService::initObserver()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    m_pAuth            = std::make_shared<AuthControler>();
+    m_pContactObserver = std::make_shared<ContactControler>();
+    m_pChatObserver    = std::make_shared<ChatControler>();
+    m_pAuth->init();
+    m_pChatObserver->init();
+    m_pContactObserver->init();
 }
 
 void LinkDoodService::initDBusConnection()
@@ -106,10 +135,12 @@ void LinkDoodService::initDBusConnection()
 void LinkDoodService::onLoginResult(service::ErrorInfo &info, int64 userId)
 {
     qDebug() << Q_FUNC_INFO;
+
+    qDebug() << Q_FUNC_INFO << "loginResultCode:" << info.code();
     if(info.code() == 0)
     {
-        qDebug() << Q_FUNC_INFO << "loginok";
         emit signalLoginSucceeded();
+       // getChatList();
     }
     else
     {

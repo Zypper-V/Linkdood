@@ -6,6 +6,8 @@
 class ChatControler:public IChatObserver
 {
 public:
+    void init();//初始监听接口
+
     ChatControler();
     ~ChatControler();
     void onMessageNotice(std::shared_ptr<service::Msg> msg);

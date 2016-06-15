@@ -9,6 +9,7 @@ public:
 
     ContactControler();
     ~ContactControler();
+    void init();
     void onListChanged(int operType, std::vector<service::Contact>& users);
     void onAvatarChanged(int64 userid, std::string avatar);
     void onContactInfoChanged(int operType, service::User& users);
