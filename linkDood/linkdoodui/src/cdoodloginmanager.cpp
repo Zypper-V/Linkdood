@@ -13,10 +13,7 @@ CDoodLoginManager::CDoodLoginManager(LinkDoodClient *client, QObject *parent) :
 
 CDoodLoginManager::~CDoodLoginManager()
 {
-    if (m_pClient) {
-        delete m_pClient;
-        m_pClient = 0;
-    }
+
 }
 
 void CDoodLoginManager::login(const QString &server,

@@ -23,12 +23,14 @@ RESOURCES += qml.qrc images.qrc
 
 HEADERS += src/linkdoodui_workspace.h \
     src/cdoodlistmodel.h \
-    src/cdoodloginmanager.h
+    src/cdoodloginmanager.h \
+    src/cdoodsessionlistmanager.h
 
 SOURCES += src/main.cpp \
 		   src/linkdoodui_workspace.cpp \
     src/cdoodlistmodel.cpp \
-    src/cdoodloginmanager.cpp
+    src/cdoodloginmanager.cpp \
+    src/cdoodsessionlistmanager.cpp
 
 OTHER_FILES += qml/*.qml
 

@@ -11,7 +11,7 @@
 */
 
 /*!
- * \file cportalloginmanager.h
+ * \file cdoodloginmanager.h
  * \brief 登陆管理
  */
 #ifndef CDOODLOGINMANAGER_H
