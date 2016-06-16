@@ -27,7 +27,7 @@ CPage {
             anchors.top: parent.top
             anchors.bottom: tabView.top
             width:parent.width
-            color: "#f2f2f2"
+            color: "#1c1b21"
             z:parent.z-1
         }
 

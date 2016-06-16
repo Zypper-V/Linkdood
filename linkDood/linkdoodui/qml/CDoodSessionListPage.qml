@@ -5,12 +5,6 @@ Item {
     id: sessionListPage
     anchors.fill: parent
 
-    Rectangle {
-        anchors.fill: parent
-        color: "#ffffff"
-        z:parent.z-1
-    }
-
     Rectangle{
         id:sessionListTitleBar
 
@@ -29,6 +23,17 @@ Item {
             color:"white"
             font.pixelSize: 36
         }
+    }
+
+    Rectangle {
+        anchors.top: sessionListTitleBar.bottom
+        anchors.left: parent.left
+
+        width:parent.width
+        height: parent.height
+
+        color: "#f2f2f2"
+        z:parent.z-1
     }
 
     CEditListView {
@@ -51,7 +56,7 @@ Item {
             height: 125
 
             onClicked: {
-                console.log("model.modelData.link = ", model.modelData.last_msg)
+                console.log("model.modelData.link = ", model.modelData.lastMsg)
             }
 
             onPressedChanged:{
@@ -94,7 +99,7 @@ Item {
                         width: 80
                         height: headPortraitImage.width
                         radius: headPortraitImage.width/2
-                        color: sessionListManager.getHeaderColor(model.modelData.NID)
+                        color: sessionListManager.getHeaderColor(model.modelData.id)
                         Text {
                             anchors.centerIn: parent
                             font.pixelSize: headPortraitImage.height/3
@@ -102,7 +107,7 @@ Item {
                             verticalAlignment: Text.AlignVCenter
                             elide: Text.ElideRight
                             font.bold: true
-                            text: sessionListManager.getSubName(model.modelData.MgsFromName)
+                            text: sessionListManager.getSubName(model.modelData.name)
                         }
                     }
 
@@ -120,7 +125,7 @@ Item {
                         color: "#333333"
                         verticalAlignment: Text.AlignVCenter
                         elide: Text.ElideRight
-                        text: model.modelData.MgsFromDept
+                        text: model.modelData.name
                     }
 
                     Item {
@@ -154,7 +159,7 @@ Item {
                         clip: true
                         color: "#777777"
                         elide: Text.ElideRight
-                        text: model.modelData.Title
+                        text: model.modelData.lastMsg
                     }
 
                     Text {
@@ -168,7 +173,7 @@ Item {
                         font.pixelSize: 22
                         color: "#999999"
 
-                        text: model.modelData.SentTime
+                        text: model.modelData.msgTime
                     }
 
                     Image {

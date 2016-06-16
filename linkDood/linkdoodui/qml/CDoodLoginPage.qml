@@ -24,6 +24,7 @@ CPage {
         onLoginSucceeded: {
             console.log("onLoginSuccess !!!!")
             loadingDialog.hide();
+            sessionListManager.getChatList();
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
         }
 

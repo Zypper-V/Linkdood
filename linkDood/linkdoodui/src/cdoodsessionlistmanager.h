@@ -32,6 +32,13 @@ public:
 
     ~CDoodSessionListManager();
 
+    //获取会话列表
+    Q_INVOKABLE void getChatList();
+
+    Q_INVOKABLE QString getHeaderColor(const QString &id);
+
+    Q_INVOKABLE QString getSubName(const QString &name);
+
 signals:
 
 private slots:

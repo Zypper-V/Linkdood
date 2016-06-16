@@ -5,12 +5,6 @@ Item {
     id: contactRootPage
     anchors.fill: parent
 
-    Rectangle {
-        anchors.fill: parent
-        color: "#ffffff"
-        z:parent.z-1
-    }
-
     Rectangle{
         id:contactRootTitleBar
 
@@ -29,5 +23,16 @@ Item {
             color:"white"
             font.pixelSize: 36
         }
+    }
+
+    Rectangle {
+        anchors.top: contactRootTitleBar.bottom
+        anchors.left: parent.left
+
+        width:parent.width
+        height: parent.height
+
+        color: "#f2f2f2"
+        z:parent.z-1
     }
 }
