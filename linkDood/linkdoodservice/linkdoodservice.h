@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "authcontroler.h"
+#include "linkdoodtypes.h"
 
 class CSystemPackageManager;
 class ChatControler;
@@ -22,6 +23,11 @@ signals:
     void loginSucceeded();
     void loginFailed(int64 errCode);
 
+    void loginOnSucceeded();
+    void loginOnFailed(int64 errCode);
+
+    void chatListChanged(const Chat_UIList& chats);
+    void testSignal(const QString &str);
 public slots:
 
     QString installPath();
@@ -44,6 +50,9 @@ public slots:
     void getUnReadMessages(void);//获取未读消息列表
     /*****************end chat****************************/
 
+    void onChatListChanged(const Chat_UIList& chats);
+    void onLoginSucceeded();
+    void onLoginOnFailed(int64 errCode);    
 public:
     static LinkDoodService* m_pInstance;
 
@@ -55,7 +64,7 @@ private:
     // 初始化SDK
     void initSdk();
     void initObserver();//初始监听接口
-
+    void initConnects();
     // 初始化Dbus连接
     void initDBusConnection();
 

@@ -9,6 +9,7 @@
 #include "Account.h"
 #include "chatcontroler.h"
 #include "contactcontroler.h"
+#include "linkdoodtypes.h"
 
 #include <QDebug>
 #include <iostream>
@@ -52,6 +53,9 @@ LinkDoodService::LinkDoodService(QObject *parent) :
     QObject(parent)
 {
     qDebug() << Q_FUNC_INFO;
+
+    registerImServiceDataTypes();
+
     initSdk();
 
     initDBusConnection();
@@ -66,7 +70,7 @@ void LinkDoodService::login(const QString &server,
                                   password.toStdString(),
                                   server.toStdString(),
                                   std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
-    emit loginSucceeded();
+   // emit loginSucceeded();
 }
 
 void LinkDoodService::getChatList()
@@ -81,6 +85,28 @@ void LinkDoodService::getChatList()
 void LinkDoodService::getUnReadMessages()
 {
 
+}
+
+void LinkDoodService::onChatListChanged(const Chat_UIList &chats)
+{
+    qDebug() << Q_FUNC_INFO << "chats size3:" << chats.size();
+    emit chatListChanged(chats);
+    emit testSignal("test zhangp!!!");
+}
+
+void LinkDoodService::onLoginSucceeded()
+{
+    qDebug() << Q_FUNC_INFO;
+    emit loginSucceeded();
+
+//     const Chat_UIList chats;
+//     emit chatListChanged(chats);
+}
+
+void LinkDoodService::onLoginOnFailed(int64 errCode)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit loginFailed(errCode);
 }
 
 LinkDoodService::~LinkDoodService()
@@ -118,6 +144,15 @@ void LinkDoodService::initObserver()
     m_pAuth->init();
     m_pChatObserver->init();
     m_pContactObserver->init();
+    initConnects();
+}
+
+void LinkDoodService::initConnects()
+{
+    QObject::connect(this,SIGNAL(loginOnSucceeded()),this,SLOT(onLoginSucceeded()));
+    QObject::connect(this,SIGNAL(loginFailed()),this,SLOT(onLoginOnFailed(int64)));
+
+    QObject::connect(m_pChatObserver.get(),SIGNAL(chatListChanged(const Chat_UIList&)),this,SLOT(onChatListChanged(const Chat_UIList&)));
 }
 
 void LinkDoodService::initDBusConnection()
@@ -139,11 +174,11 @@ void LinkDoodService::onLoginResult(service::ErrorInfo &info, int64 userId)
     if(info.code() == 0)
     {
         qDebug() << Q_FUNC_INFO << "loginSucceeded";
-//        emit loginSucceeded();
+       emit loginOnSucceeded();
     }
     else
     {
         qDebug() << Q_FUNC_INFO << "loginFailed = " << info.code();
-        emit loginFailed(info.code());
+        emit loginOnFailed(info.code());
     }
 }

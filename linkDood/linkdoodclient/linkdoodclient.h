@@ -15,6 +15,7 @@
 #define LINKDOODCLIENT_H
 
 #include <QObject>
+#include  "linkdoodtypes.h"
 
 class LinkDoodClient : public QObject
 {
@@ -26,7 +27,7 @@ public:
 
 signals:
     void loginSucceeded();
-
+    void chatListChanged(const Chat_UIList& chats);
 public slots:
     QString installPath();
 
@@ -36,7 +37,9 @@ public slots:
 
 private slots:
     void onLoginSucceeded();
+    void onChatListChanged(const Chat_UIList& chats);
 
+    void onTestSignal(const QString &str);
 private:
     void initDBusConnect();
 };

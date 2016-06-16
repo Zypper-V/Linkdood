@@ -40,9 +40,9 @@ public:
     Q_INVOKABLE QString getSubName(const QString &name);
 
 signals:
-
+    void chatListChanged(const Chat_UIList& chats);
 private slots:
-
+    void onChatListChanged(const Chat_UIList& chats);
 private:
     void initConnect();
 

@@ -1,14 +1,16 @@
 #include<contactcontroler.h>
 #include<iostream>
 #include<QDebug>
+#include <QMetaType>
 
 #include "IMClient.h"
 #include "IContactService.h"
 #include "INotifyService.h"
+#include "Contact.h"
 
-ContactControler::ContactControler()
+ContactControler::ContactControler(QObject *parent):QObject(parent)
 {
-
+   qRegisterMetaType<std::vector<service::Contact> >("std::vector<service::Contact>");
 }
 
 ContactControler::~ContactControler()
@@ -25,6 +27,7 @@ void ContactControler::init()
 void ContactControler::onListChanged(int operType, std::vector<service::Contact> &users)
 {
     qDebug() << Q_FUNC_INFO;
+  //  emit contactListChanged(operType,users);
 }
 
 void ContactControler::onAvatarChanged(int64 userid, std::string avatar)

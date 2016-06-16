@@ -58,10 +58,29 @@ void LinkDoodClient::onLoginSucceeded()
     emit loginSucceeded();
 }
 
+void LinkDoodClient::onChatListChanged(const Chat_UIList &chats)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit chatListChanged(chats);
+}
+
+void LinkDoodClient::onTestSignal(const QString &str)
+{
+    qDebug() << Q_FUNC_INFO << str;
+}
+
 void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "loginSucceeded",
                                           this, SLOT(onLoginSucceeded()));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "chatListChanged",
+                                          this, SLOT(onChatListChanged(Chat_UIList)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "testSignal",
+                                          this, SLOT(onTestSignal(QString)));
 }

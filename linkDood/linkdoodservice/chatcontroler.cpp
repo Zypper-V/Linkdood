@@ -5,6 +5,9 @@
 #include "IMClient.h"
 #include "IChatService.h"
 #include "INotifyService.h"
+#include "linkdoodtypes.h"
+#include "Chat.h"
+#include "User.h"
 
 void ChatControler::init()
 {
@@ -12,9 +15,12 @@ void ChatControler::init()
     service::IMClient::getClient()->getNotify()->setChatObserver(this);
 }
 
-ChatControler::ChatControler()
+ChatControler::ChatControler(QObject* parent):
+    QObject(parent)
 {
+    //qRegisterMetaType<Chat_UIList>("Chat_UIList");
 
+    QObject::connect(this,SIGNAL(chatOnListChanged(Chat_UIList)),this,SLOT(onChatListChanged(Chat_UIList)));
 }
 
 ChatControler::~ChatControler()
@@ -40,12 +46,28 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
 void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service::User> > chats)
 {
     qDebug() << Q_FUNC_INFO;
-    if(flag == 0x04)
+     qDebug() <<Q_FUNC_INFO<< "chats szie:" << chats.size();
+    //if(flag == 0x04)
     {
-        auto iter = chats.begin();
-        for(;iter != chats.end();++iter)
-        {
-            qDebug() <<"chat list:" <<  (*iter)->name.c_str();
+         Chat_UIList  chatList;
+
+        for(auto i: chats){
+            std::shared_ptr<service::Chat> ch = std::dynamic_pointer_cast<service::Chat>(i);
+            Chat_UI chatData;
+            chatData.name = QString::fromStdString(ch->name);
+            chatData.last_msg =  QString::fromStdString(ch->last_msg);
+            chatData.avatar =  QString::fromStdString(ch->avatar);
+            chatData.msg_time =  ch->msg_time;
+
+            chatList.push_back(chatData);
         }
+        emit chatOnListChanged(chatList);
     }
+}
+
+void ChatControler::onChatListChanged( Chat_UIList chats)
+{
+    qDebug() <<Q_FUNC_INFO<< "chats2 szie:" << chats.size();
+
+    emit chatListChanged(chats);
 }

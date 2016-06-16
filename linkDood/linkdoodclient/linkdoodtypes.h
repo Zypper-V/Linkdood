@@ -26,7 +26,6 @@ public:
 
     void toImMassage(QVariantMap map);
 
-private:
     void init();
 
 public:
@@ -58,5 +57,72 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Msg &msg);
 typedef QList<Msg> MsgList;
 Q_DECLARE_METATYPE (MsgList);
 
+//MsgText
+class MsgText:public Msg{
+public:
+    explicit MsgText();
 
+    void toImMassage(QVariantMap map);
+
+    void init();
+
+public:
+    QString msg_properties;
+};
+Q_DECLARE_METATYPE(MsgText)
+QDBusArgument &operator << (QDBusArgument &argument, const MsgText &msg);
+const QDBusArgument &operator >> (const QDBusArgument &argument, MsgText &msg);
+// ImMassageList
+typedef QList<MsgText> MsgTextList;
+
+//Chat_UI
+class Chat_UI
+{
+public:
+    explicit Chat_UI();
+
+    void toImChat(QVariantMap map);
+
+    void init();
+
+public:
+
+    int gender; //性别:1男2女0保密
+    int time_zone;//时区
+    int64 id;//id
+    QString name; //名称
+    QString avatar;//原图图像
+    QString extends;//扩展字段
+    QString thumb_avatar;//缩略图
+
+    int     msg_type;		 //	消息类型;1：HTML, 2:TEXT, 3：AUDIO, 4：POSITION, 5：IMG, 6：FILE, 7：CARD,  8：TIP
+    int     chat_type;	     //  聊天类型
+    int     oper_type;       //  活动类型
+    int     sub_type;        //  子操作类型标示,置顶等其他操作
+    int     unread_count;    //未读消息数量
+    int64   last_msgid;    //最后一条消息ID
+    int64   msg_time;      //消息时间
+    QString last_msg;//最后一条消息
+};
+
+// Chat_UI
+Q_DECLARE_METATYPE(Chat_UI)
+QDBusArgument &operator << (QDBusArgument &argument, const Chat_UI &chat);
+const QDBusArgument &operator >> (const QDBusArgument &argument, Chat_UI &chat);
+// ImMassageList
+typedef QList<Chat_UI> Chat_UIList;
+Q_DECLARE_METATYPE (Chat_UIList);
+
+inline void registerImServiceDataTypes() {
+    qDebug() << Q_FUNC_INFO;
+    qDBusRegisterMetaType<Msg>();
+    qDBusRegisterMetaType<MsgList>();
+    qRegisterMetaType<MsgList>("MsgList");
+
+    qDBusRegisterMetaType<Chat_UI>();
+    qDBusRegisterMetaType<Chat_UIList>();
+    qRegisterMetaType<Chat_UIList>("Chat_UIList");
+}
 #endif // LINKDOODTYPES_H
+
+

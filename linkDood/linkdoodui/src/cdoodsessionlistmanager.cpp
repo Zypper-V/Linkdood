@@ -1,6 +1,7 @@
 #include "cdoodsessionlistmanager.h"
 #include "cdoodsessionlistitem.h"
 
+
 #include <QMetaType>
 #include <QDebug>
 
@@ -96,7 +97,13 @@ QString CDoodSessionListManager::getSubName(const QString &name)
     return name.right(2);
 }
 
+void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
+{
+     qDebug() << Q_FUNC_INFO << "chat size4:" << chats.size();
+}
+
 void CDoodSessionListManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
+     connect(m_pClient, SIGNAL(chatListChanged(const Chat_UIList &)), this, SLOT(onChatListChanged(const Chat_UIList &)));
 }
