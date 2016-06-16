@@ -10,12 +10,14 @@ DEFINES += EIMCLIENT_LIBRARY
 #DEFINES += QT_NO_WARNING_OUTPUT  QT_NO_DEBUG_OUTPUT
 
 SOURCES += \
-    linkdoodclient.cpp
+    linkdoodclient.cpp \
+    linkdoodtypes.cpp
 
 HEADERS +=\
     linkdoodclient.h \
     linkdoodclient_global.h \
-    linkdoodconst.h
+    linkdoodconst.h \
+    linkdoodtypes.h
 
 target.path = $$INSTALL_DIR/libs/
 
