@@ -18,6 +18,7 @@
 #define CDOODLOGINMANAGER_H
 
 #include <QObject>
+#include <QtQuick/QQuickView>
 
 #include "cdoodlistmodel.h"
 #include "linkdoodclient.h"
@@ -37,7 +38,15 @@ public:
 
     Q_INVOKABLE bool checkFirstWordIsSpace(const QString &text);
 
+signals:
+    void loginSucceeded();
+
+private slots:
+    void onLoginSucceeded();
+
 private:
+    void initConnect();
+
     LinkDoodClient *m_pClient;
 };
 

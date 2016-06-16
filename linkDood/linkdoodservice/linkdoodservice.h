@@ -18,21 +18,32 @@ public:
 
     static LinkDoodService* instance();
 
+signals:
+    void loginSucceeded();
+    void loginFailed(int64 errCode);
+
 public slots:
 
     QString installPath();
 
     QString dataPath();
-    //
-    void login(const QString& server,const QString& user,const QString& userPwd);
+
+    // 功能		:	登录
+    // 返回		:	NULL
+    // 返回值    :	void
+    // 参数		:
+    // 		1.  server	服务器地址
+    // 		2.  userId	登录ID
+    // 		3.  password	登录密码
+    void login(const QString &server,
+               const QString &userId,
+               const QString &password);
 
     /*****************start chat**************************/
     void getChatList(void);//获取会话列表
     void getUnReadMessages(void);//获取未读消息列表
     /*****************end chat****************************/
-signals:
-    void signalLoginSucceeded();
-    void signalLoginFailed(int64 errCode);
+
 public:
     static LinkDoodService* m_pInstance;
 

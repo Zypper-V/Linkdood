@@ -20,6 +20,26 @@ LinkDoodClient::~LinkDoodClient()
 
 }
 
+QString LinkDoodClient::installPath()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    QDBusPendingReply<QString> reply = manager.call("installPath");
+    reply.waitForFinished();
+
+    QString sTmp;
+    if (!reply.isError()) {
+        sTmp = reply;
+    } else {
+        qDebug() << reply.error();
+    }
+
+    return sTmp;
+}
+
 void LinkDoodClient::login(const QString &server,
                            const QString &userId,
                            const QString &password)
@@ -32,7 +52,16 @@ void LinkDoodClient::login(const QString &server,
     manager.call("login", server, userId, password);
 }
 
+void LinkDoodClient::onLoginSucceeded()
+{
+    qDebug() << Q_FUNC_INFO;
+    emit loginSucceeded();
+}
+
 void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "loginSucceeded",
+                                          this, SLOT(onLoginSucceeded()));
 }

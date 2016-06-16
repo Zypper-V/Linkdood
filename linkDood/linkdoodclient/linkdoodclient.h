@@ -24,10 +24,18 @@ public:
 
     ~LinkDoodClient();
 
+signals:
+    void loginSucceeded();
+
 public slots:
+    QString installPath();
+
     void login(const QString &server,
                const QString &userId,
                const QString &password);
+
+private slots:
+    void onLoginSucceeded();
 
 private:
     void initDBusConnect();

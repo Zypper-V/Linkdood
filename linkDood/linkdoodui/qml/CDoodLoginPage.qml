@@ -14,26 +14,26 @@ CPage {
         }
     }
 
-//    Connections {
-//        target: loginManager
+    Connections {
+        target: loginManager
 
 //        onInputRootTabView: {
 //            console.log("onInputRootTabView !!!!")
 //            pageStack.replace(Qt.resolvedUrl("CPortalRootTabView.qml"), "", true);
 //        }
 
-//        onLoginSuccess: {
-//            console.log("onLoginSuccess !!!!")
-//            loadingDialog.hide();
+        onLoginSucceeded: {
+            console.log("onLoginSuccess !!!!")
+            loadingDialog.hide();
 //            pageStack.replace(Qt.resolvedUrl("CPortalRootTabView.qml"), "", true);
-//        }
+        }
 
 //        onLoginFailed: {
 //            console.log("onLoginFailed !!!!")
 //            loadingDialog.hide();
 //            gToast.requestToast("登陆失败","","");
 //        }
-//    }
+    }
 
     contentAreaItem: Item {
         anchors.fill :parent
@@ -219,7 +219,7 @@ CPage {
                 placeholderText:os.i18n.ctr(qsTr("请输入服务器")) // "请输入帐号"
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-//                text: cimloginmanager.getCurrentUserId()
+                text: "vrv"
 
                 onTextChanged: {
                     passWordEdit.text = ""
@@ -261,7 +261,7 @@ CPage {
                 placeholderText:os.i18n.ctr(qsTr("请输入手机号")) // "请输入帐号"
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-//                text: cimloginmanager.getCurrentUserId()
+                text: "008615829282366"
 
                 onTextChanged: {
                     passWordEdit.text = ""
@@ -321,7 +321,7 @@ CPage {
                 placeholderText:os.i18n.ctr(qsTr("请输入密码号")) // "密码"
 
                 inputMethodHints:Qt.ImhHiddenText|Qt.ImhPreferLatin
-//                text: cimloginmanager.getCurrentUserPassword()
+                text: "chengcy2015"
             }
 
             CLine {

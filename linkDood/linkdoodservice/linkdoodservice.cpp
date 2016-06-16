@@ -23,7 +23,7 @@ void LinkDoodService::createService()
 {
     qDebug() << Q_FUNC_INFO;
     if (!m_pInstance) {
-        qDebug() << " create LinkDoodService !!!";
+        qDebug() << " create LinkDoodService parent !!!  ";
         m_pInstance = new LinkDoodService();
     } else {
         qDebug() << "alreadly create LinkDoodService !!!";
@@ -66,6 +66,7 @@ void LinkDoodService::login(const QString &server,
                                   password.toStdString(),
                                   server.toStdString(),
                                   std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
+//    emit loginSucceeded();
 }
 
 void LinkDoodService::getChatList()
@@ -134,16 +135,15 @@ void LinkDoodService::initDBusConnection()
 
 void LinkDoodService::onLoginResult(service::ErrorInfo &info, int64 userId)
 {
-    qDebug() << Q_FUNC_INFO;
-
-    qDebug() << Q_FUNC_INFO << "loginResultCode:" << info.code();
+    qDebug() << Q_FUNC_INFO << info.code() << userId;
     if(info.code() == 0)
     {
-        emit signalLoginSucceeded();
-       // getChatList();
+        qDebug() << Q_FUNC_INFO << "loginSucceeded";
+//        emit loginSucceeded();
     }
     else
     {
-        emit signalLoginFailed(info.code());
+        qDebug() << Q_FUNC_INFO << "loginFailed = " << info.code();
+        emit loginFailed(info.code());
     }
 }
