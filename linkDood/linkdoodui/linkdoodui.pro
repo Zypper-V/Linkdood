@@ -40,4 +40,8 @@ res.path = $$INSTALL_DIR/
 INSTALLS += target res
 
 DISTFILES += \
-    qml/CDoodLoginPage.qml
+    qml/CDoodLoginPage.qml \
+    qml/CDoodTabViewStyle.qml \
+    qml/CDoodSessionListPage.qml \
+    qml/CDoodContactRootPage.qml \
+    qml/CDoodRootTabView.qml

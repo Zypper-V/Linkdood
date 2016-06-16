@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>qml/main.qml</file>
         <file>qml/CDoodLoginPage.qml</file>
+        <file>qml/CDoodTabViewStyle.qml</file>
+        <file>qml/CDoodSessionListPage.qml</file>
+        <file>qml/CDoodContactRootPage.qml</file>
+        <file>qml/CDoodRootTabView.qml</file>
     </qresource>
 </RCC>

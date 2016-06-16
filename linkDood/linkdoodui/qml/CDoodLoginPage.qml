@@ -3,7 +3,6 @@ import com.syberos.basewidgets 2.0
 
 CPage {
     id: loginPage
-    anchors.fill: parent
 
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
@@ -25,7 +24,7 @@ CPage {
         onLoginSucceeded: {
             console.log("onLoginSuccess !!!!")
             loadingDialog.hide();
-//            pageStack.replace(Qt.resolvedUrl("CPortalRootTabView.qml"), "", true);
+            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
         }
 
 //        onLoginFailed: {

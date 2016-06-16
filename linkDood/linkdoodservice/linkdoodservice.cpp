@@ -66,7 +66,7 @@ void LinkDoodService::login(const QString &server,
                                   password.toStdString(),
                                   server.toStdString(),
                                   std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
-//    emit loginSucceeded();
+    emit loginSucceeded();
 }
 
 void LinkDoodService::getChatList()

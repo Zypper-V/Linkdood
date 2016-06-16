@@ -3,5 +3,9 @@
         <file>res/linkdoodui.png</file>
         <file>res/logo.png</file>
         <file>res/more.png</file>
+        <file>res/icon-contact-h.png</file>
+        <file>res/icon-contact.png</file>
+        <file>res/icon-message-h.png</file>
+        <file>res/icon-message.png</file>
     </qresource>
 </RCC>
