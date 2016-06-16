@@ -61,8 +61,7 @@ QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
     argument.beginStructure();
     argument << msg.fromid << msg.toid << msg.msgid
              << msg.msgtype << msg.body << msg.localid
-             << msg.related_msgid << msg.time << msg.related_users
-             << msg.limit_range;
+             << msg.related_msgid << msg.time ;
     argument.endStructure();
     return argument;
 }
@@ -72,8 +71,7 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Msg &msg)
     argument.beginStructure();
     argument >> msg.fromid >> msg.toid >> msg.msgid
             >> msg.msgtype >> msg.body >> msg.localid
-            >> msg.related_msgid >> msg.time >> msg.related_users
-            >> msg.limit_range;
+            >> msg.related_msgid >> msg.time ;
     argument.endStructure();
     return argument;
 }
