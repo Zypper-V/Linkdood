@@ -12,6 +12,8 @@ LinkDoodClient::LinkDoodClient(QObject *parent) :
     QObject(parent)
 {
     qDebug() << Q_FUNC_INFO;
+    registerDoodDataTypes();
+
     initDBusConnect();
 }
 

@@ -113,7 +113,7 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Chat_UI &chat);
 typedef QList<Chat_UI> Chat_UIList;
 Q_DECLARE_METATYPE (Chat_UIList);
 
-inline void registerImServiceDataTypes() {
+inline void registerDoodDataTypes() {
     qDebug() << Q_FUNC_INFO;
     qDBusRegisterMetaType<Msg>();
     qDBusRegisterMetaType<MsgList>();

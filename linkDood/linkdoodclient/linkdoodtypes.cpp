@@ -41,12 +41,12 @@ void Msg::toImMassage(QVariantMap map)
             body = iter.value().toString();
         }
         if (iter.key() == "related_users") {
-           // related_users.clear();
-           // related_users.append(iter.value());
+            // related_users.clear();
+            // related_users.append(iter.value());
         }
         if (iter.key() == "limit_range") {
-           // limit_range.clear();
-           // limit_range.append(iter.value());
+            // limit_range.clear();
+            // limit_range.append(iter.value());
         }
     }
 }
@@ -201,10 +201,10 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Chat_UI &chat)
 {
     argument.beginStructure();
     argument >> chat.msg_type >> chat.last_msg >> chat.last_msgid
-             >> chat.msg_time >> chat.oper_type >> chat.sub_type
-             >> chat.unread_count >> chat.chat_type>> chat.avatar
-             >> chat.extends >>chat.gender >> chat.id >> chat.name >> chat.thumb_avatar
-             >> chat.time_zone;
+            >> chat.msg_time >> chat.oper_type >> chat.sub_type
+            >> chat.unread_count >> chat.chat_type>> chat.avatar
+            >> chat.extends >>chat.gender >> chat.id >> chat.name >> chat.thumb_avatar
+            >> chat.time_zone;
     argument.endStructure();
     return argument;
 }

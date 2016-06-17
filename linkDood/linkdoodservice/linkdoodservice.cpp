@@ -54,7 +54,7 @@ LinkDoodService::LinkDoodService(QObject *parent) :
 {
     qDebug() << Q_FUNC_INFO;
 
-    registerImServiceDataTypes();
+    registerDoodDataTypes();
 
     initSdk();
 
