@@ -210,12 +210,95 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Chat_UI &chat)
 }
 
 ////////////////////////Contact////////////////////////////////////////
+Contact::Contact()
+{
+    init();
+}
+
+void Contact::toImContact(QVariantMap map)
+{
+    QVariantMap::const_iterator iter;
+    for (iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+
+        if(iter.key() == "timeZone"){
+            this->timeZone = iter.value().toInt();
+        }
+        if(iter.key() == "gender"){
+            this->gender = iter.value().toInt();
+        }
+        if(iter.key() == "isStar"){
+            this->isStar = iter.value().toInt();
+        }
+        if(iter.key() == "isVip"){
+            this->isVip = iter.value().toInt();
+        }
+        if(iter.key() == "id"){
+            this->id = iter.value().toString();
+        }
+        if(iter.key() == "name"){
+            this->name = iter.value().toString();
+        }
+        if(iter.key() == "avatar"){
+            this->avatar = iter.value().toString();
+        }
+        if(iter.key() == "extends"){
+            this->extends = iter.value().toString();
+        }
+        if(iter.key() == "thumbAvatar"){
+            this->thumbAvatar = iter.value().toString();
+        }
+
+        if(iter.key() == "pinyin"){
+            this->pinyin = iter.value().toString();
+        }
+
+        if(iter.key() == "remark"){
+            this->remark = iter.value().toString();
+        }
+
+        if(iter.key() == "server"){
+            this->server = iter.value().toString();
+        }
+    }
+}
+
+void Contact::init()
+{
+    this->isStar = 2;
+    this->isVip  = 2;
+    this->pinyin = "";
+    this->remark = "";
+    this->server = "";
+
+    this->avatar = "";
+    this->extends = "";
+    this->gender = 0;
+    this->id = "";
+    this->name = "";
+    this->thumbAvatar = "";
+    this->timeZone = 0;
+}
+
 QDBusArgument &operator << (QDBusArgument &argument, const Contact &contact)
 {
-
+    argument.beginStructure();
+    argument << contact.avatar << contact.extends
+             << contact.gender << contact.id << contact.isStar
+             << contact.isVip <<  contact.name << contact.name
+             << contact.pinyin << contact.remark << contact.server
+             << contact.thumbAvatar << contact.timeZone;
+    argument.endStructure();
+    return argument;
 }
 
 const QDBusArgument &operator >> (const QDBusArgument &argument, Contact &contact)
 {
-
+    argument.beginStructure();
+    argument >> contact.avatar >> contact.extends
+             >> contact.gender >> contact.id >> contact.isStar
+             >> contact.isVip >>  contact.name >> contact.name
+             >> contact.pinyin >> contact.remark >> contact.server
+             >> contact.thumbAvatar >> contact.timeZone;
+    argument.endStructure();
+    return argument;
 }

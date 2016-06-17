@@ -115,7 +115,26 @@ Q_DECLARE_METATYPE (Chat_UIList);
 
 //Contact
 class Contact{
+public:
+    explicit Contact();
+    void toImContact(QVariantMap map);
+    void init();
 
+public:
+
+    int gender; //性别:1男2女0保密
+    int timeZone;//时区
+    QString id;//id
+    QString name; //名称
+    QString avatar;//原图图像
+    QString extends;//扩展字段
+    QString thumbAvatar;//缩略图
+
+    int isStar;	       //星标好友：1.星标好友，2.不是星标
+    int isVip;            //V标好友： 1.V标好友,  2.不是V标
+    QString pinyin;	   //名称拼音
+    QString remark;    //备注
+    QString server;    //服务器
 };
 Q_DECLARE_METATYPE(Contact)
 QDBusArgument &operator << (QDBusArgument &argument, const Contact &contact);
