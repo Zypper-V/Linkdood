@@ -12,51 +12,51 @@ CDoodSessionListManager::CDoodSessionListManager(LinkDoodClient *client, QObject
     qRegisterMetaType<CDoodSessionListManager*>();
     initConnect();
 
-    QList <QObject* > itemlist;
+//    QList <QObject* > itemlist;
 
-        CDoodSessionListItem *tmpItem = new CDoodSessionListItem(this);
-        tmpItem->setId("10380360");
-        tmpItem->setName("武汉研发中心");
-        tmpItem->setMsgTime("2016-05-06 17:33:42");
-        tmpItem->setLastMsg("撤回了一条消息");
-        itemlist.append(tmpItem);
+//        CDoodSessionListItem *tmpItem = new CDoodSessionListItem(this);
+//        tmpItem->setId("10380360");
+//        tmpItem->setName("武汉研发中心");
+//        tmpItem->setMsgTime("2016-05-06 17:33:42");
+//        tmpItem->setLastMsg("撤回了一条消息");
+//        itemlist.append(tmpItem);
 
-        CDoodSessionListItem *tmpItem1 = new CDoodSessionListItem(this);
-        tmpItem1->setId("10380361");
-        tmpItem1->setName("内部测试");
-        tmpItem1->setMsgTime("2016-05-06 17:33:42");
-        tmpItem1->setLastMsg("安卓");
-        itemlist.append(tmpItem1);
+//        CDoodSessionListItem *tmpItem1 = new CDoodSessionListItem(this);
+//        tmpItem1->setId("10380361");
+//        tmpItem1->setName("内部测试");
+//        tmpItem1->setMsgTime("2016-05-06 17:33:42");
+//        tmpItem1->setLastMsg("安卓");
+//        itemlist.append(tmpItem1);
 
-        CDoodSessionListItem *tmpItem2 = new CDoodSessionListItem(this);
-        tmpItem2->setId("10380362");
-        tmpItem2->setName("张总");
-        tmpItem2->setMsgTime("2016-05-06 17:33:42");
-        tmpItem2->setLastMsg("很多人不会");
-        itemlist.append(tmpItem2);
+//        CDoodSessionListItem *tmpItem2 = new CDoodSessionListItem(this);
+//        tmpItem2->setId("10380362");
+//        tmpItem2->setName("张总");
+//        tmpItem2->setMsgTime("2016-05-06 17:33:42");
+//        tmpItem2->setLastMsg("很多人不会");
+//        itemlist.append(tmpItem2);
 
-        CDoodSessionListItem *tmpItem3 = new CDoodSessionListItem(this);
-        tmpItem3->setId("10380363");
-        tmpItem3->setName("刑警大队");
-        tmpItem3->setMsgTime("2016-05-06 17:33:42");
-        tmpItem3->setLastMsg("开始工作");
-        itemlist.append(tmpItem3);
+//        CDoodSessionListItem *tmpItem3 = new CDoodSessionListItem(this);
+//        tmpItem3->setId("10380363");
+//        tmpItem3->setName("刑警大队");
+//        tmpItem3->setMsgTime("2016-05-06 17:33:42");
+//        tmpItem3->setLastMsg("开始工作");
+//        itemlist.append(tmpItem3);
 
-        CDoodSessionListItem *tmpItem4 = new CDoodSessionListItem(this);
-        tmpItem4->setId("10392913");
-        tmpItem4->setName("科信部");
-        tmpItem4->setMsgTime("2016-05-06 17:33:42");
-        tmpItem4->setLastMsg("集团公司党组成员、副总经理刘石泉一行到深圳公司江西科创中心指导工作");
-        itemlist.append(tmpItem4);
+//        CDoodSessionListItem *tmpItem4 = new CDoodSessionListItem(this);
+//        tmpItem4->setId("10392913");
+//        tmpItem4->setName("科信部");
+//        tmpItem4->setMsgTime("2016-05-06 17:33:42");
+//        tmpItem4->setLastMsg("集团公司党组成员、副总经理刘石泉一行到深圳公司江西科创中心指导工作");
+//        itemlist.append(tmpItem4);
 
-    beginInsertRows(QModelIndex(), _list->count(), itemlist.size() - 1);
-    for(int i = 0; i < itemlist.size(); ++i) {
-        qDebug() << " ----CDoodSessionListItem list " << i;
-        _list->append(itemlist.at(i));
-        connect(itemlist.at(i), SIGNAL(destroyed()), this, SLOT(removeDestroyedItem()));
-    }
-    endInsertRows();
-    emit itemCountChanged();
+//    beginInsertRows(QModelIndex(), _list->count(), itemlist.size() - 1);
+//    for(int i = 0; i < itemlist.size(); ++i) {
+//        qDebug() << " ----CDoodSessionListItem list " << i;
+//        _list->append(itemlist.at(i));
+//        connect(itemlist.at(i), SIGNAL(destroyed()), this, SLOT(removeDestroyedItem()));
+//    }
+//    endInsertRows();
+//    emit itemCountChanged();
 }
 
 CDoodSessionListManager::~CDoodSessionListManager()
@@ -67,6 +67,7 @@ CDoodSessionListManager::~CDoodSessionListManager()
 void CDoodSessionListManager::getChatList()
 {
     qDebug() << Q_FUNC_INFO;
+//    m_pClient->
 }
 
 QString CDoodSessionListManager::getHeaderColor(const QString &id)
@@ -100,6 +101,27 @@ QString CDoodSessionListManager::getSubName(const QString &name)
 void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
 {
      qDebug() << Q_FUNC_INFO << "chat size4:" << chats.size();
+      QList <QObject* > itemlist;
+      for(size_t i=0;i<chats.size();i++)
+      {
+          CDoodSessionListItem *tmpItem = new CDoodSessionListItem(this);
+          tmpItem->setId(chats[i].id);
+          tmpItem->setLastMsg(chats[i].last_msg);
+          tmpItem->setName(chats[i].name);
+          tmpItem->setMsgTime(chats[i].msg_time);
+          tmpItem->setThumbAvatar(chats[i].thumb_avatar);
+          qDebug() << Q_FUNC_INFO << "chat avatar111:" << chats[i].thumb_avatar;
+          itemlist.append(tmpItem);
+      }
+      beginInsertRows(QModelIndex(), _list->count(), itemlist.size() - 1);
+      for(int i = 0; i < itemlist.size(); ++i) {
+          qDebug() << " ----CDoodSessionListItem list " << i;
+          _list->append(itemlist.at(i));
+          connect(itemlist.at(i), SIGNAL(destroyed()), this, SLOT(removeDestroyedItem()));
+      }
+      endInsertRows();
+      emit itemCountChanged();
+
 }
 
 void CDoodSessionListManager::initConnect()

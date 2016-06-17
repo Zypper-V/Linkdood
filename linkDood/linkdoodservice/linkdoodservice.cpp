@@ -141,6 +141,21 @@ void LinkDoodService::onLoginOnFailed(int errCode)
      case -1:
         err = "网络连接超时";
         break;
+    case -11:
+       err = "have Login";
+       break;
+    case 101:
+       err = "yonghubucunzai";
+       break;
+    case 112:
+       err = "zhanghaomimabupipei";
+       break;
+    case 113:
+       err = "zhanghaoyijingdenglu";
+       break;
+    default:
+       err = "weizhicuowu";
+       break;
     }
 
     emit loginFailed(err);
