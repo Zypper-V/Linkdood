@@ -31,6 +31,9 @@ signals:
     void testSignal(const QString &str);
 
     void contactListChanged(int oper,ContactList contacts);
+
+    void srvGetContactInfo(service::User&user);
+    void getContactInfo();
 public slots:
 
     QString installPath();
@@ -49,6 +52,8 @@ public slots:
                const QString &password);
 
     void logout();
+    void getContactInfo(int64 userId);
+
     /*****************start chat**************************/
     void getChatList(void);//获取会话列表
     void getUnReadMessages(void);//获取未读消息列表
@@ -59,6 +64,7 @@ public slots:
     void onLoginSucceeded();
     void onLoginOnFailed(int code);
     void onLoginoutRelust(bool loginout);
+    void onGetContactInfoResult(service::User&user);
 public:
     static LinkDoodService* m_pInstance;
 
@@ -75,7 +81,7 @@ private:
     void initDBusConnection();
 
     void onLoginResult(service::ErrorInfo& info,int64 userId);
-
+    void onSrvGetContactInfoResult(service::ErrorInfo& info,service::User&user);
 private:
     CSystemPackageManager *m_pPackageManager;
     QString m_sInstallPath;

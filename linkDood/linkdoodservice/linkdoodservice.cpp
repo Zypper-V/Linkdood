@@ -10,6 +10,7 @@
 #include "chatcontroler.h"
 #include "contactcontroler.h"
 #include "linkdoodtypes.h"
+#include "IContactService.h"
 
 #include <QDebug>
 #include <iostream>
@@ -96,6 +97,15 @@ void LinkDoodService::logout()
     }
 }
 
+void LinkDoodService::getContactInfo(int64 userId)
+{
+    qDebug() << Q_FUNC_INFO;
+    long long id = userId;
+    if(m_pIMClient != NULL){
+       m_pIMClient->getContact()->getContactInfo(id,
+                            std::bind(&LinkDoodService::onSrvGetContactInfoResult,this,std::placeholders::_1,std::placeholders::_2));
+    }
+}
 void LinkDoodService::getChatList()
 {
     qDebug() << Q_FUNC_INFO;
@@ -165,6 +175,11 @@ void LinkDoodService::onLoginoutRelust(bool loginout)
 {
     qDebug() << Q_FUNC_INFO << loginout;
     emit loginoutRelust(loginout);
+}
+
+void LinkDoodService::onGetContactInfoResult(service::User &user)
+{
+    qDebug() << Q_FUNC_INFO ;
 }
 
 LinkDoodService::~LinkDoodService()
@@ -242,4 +257,9 @@ void LinkDoodService::onLoginResult(service::ErrorInfo &info, int64 userId)
         qDebug() << Q_FUNC_INFO << "loginFailed = " << info.code();
         emit loginOnFailed(info.code());
     }
+}
+
+void LinkDoodService::onSrvGetContactInfoResult(service::ErrorInfo &info, service::User &user)
+{
+     qDebug() << Q_FUNC_INFO << info.code() << user.name.c_str();
 }
