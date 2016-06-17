@@ -30,6 +30,7 @@ signals:
     void chatListChanged(const Chat_UIList& chats);
     void loginFailed(QString err);
     void contactListChanged(int oper,ContactList contacts);
+    void loginoutRelust(bool loginout);
 public slots:
     QString installPath();
 
@@ -38,6 +39,7 @@ public slots:
                const QString &password);
     void logout();
 private slots:
+    void onLoginoutRelust(bool loginout);
     void onLoginSucceeded();
     void onChatListChanged(const Chat_UIList& chats);
     void onContactListChanged(int oper,ContactList contacts);

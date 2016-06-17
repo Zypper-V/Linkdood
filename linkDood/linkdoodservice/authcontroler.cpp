@@ -13,6 +13,8 @@ AuthControler::AuthControler(QObject *parent)
     :QObject(parent)
 {
     init();
+    QObject::connect(this,SIGNAL(loginoutSrvRelust(bool))
+                     ,this,SLOT(onLoginoutResult(bool)));
 }
 
 void AuthControler::init()
@@ -46,7 +48,14 @@ void AuthControler::onDBUpdateFinished(int val)
 
 void AuthControler::onLogoutChanged(service::ErrorInfo& info)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << "code:" << info.code();
+    if(info.code() == 0)
+    {
+        emit loginoutSrvRelust(true);
+    }else
+    {
+        emit loginoutSrvRelust(false);
+    }
 }
 
 void AuthControler::onAccountInfoChanged(service::User& info)
@@ -70,13 +79,9 @@ void AuthControler::onAvatarChanged(std::string avatar)
 
 }
 
-void AuthControler::onLoginResult(service::ErrorInfo &info, int64 userId)
+void AuthControler::onLoginoutResult(bool result)
 {
-    qDebug() << Q_FUNC_INFO << "code:" << info.code() << userId;
-    if(info.code() == 0)
-    {
-      //emit this->loginSucceeded();
-    }else{
-        //emit loginFailed(info.code());
-    }
+    qDebug() << Q_FUNC_INFO;
+    emit loginoutRelust(result);
 }
+

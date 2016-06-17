@@ -25,6 +25,7 @@ signals:
 
     void loginOnSucceeded();
     void loginOnFailed(int code);
+    void loginoutRelust(bool loginout);
 
     void chatListChanged(const Chat_UIList& chats);
     void testSignal(const QString &str);
@@ -57,6 +58,7 @@ public slots:
     void onChatListChanged(const Chat_UIList& chats);
     void onLoginSucceeded();
     void onLoginOnFailed(int code);
+    void onLoginoutRelust(bool loginout);
 public:
     static LinkDoodService* m_pInstance;
 

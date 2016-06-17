@@ -6,9 +6,9 @@
 namespace service {
     class IMClient;
 }
-class AuthControler : public IAuthObserver
-        ,public QObject
+class AuthControler :public QObject, public IAuthObserver
 {
+    Q_OBJECT
 public:
     AuthControler(QObject *parent = 0);
 
@@ -26,7 +26,10 @@ public:
     void loginSucceeded(void);
     void loginFailed(int64 errCode);
 
-    void onLoginResult(service::ErrorInfo& info,int64 userId);
+    void loginoutRelust(bool succeeded);
+    void loginoutSrvRelust(bool succeeded);
+public slots:
+    void onLoginoutResult(bool result);
 };
 
 #endif // AUTHCONTROLER_H

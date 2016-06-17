@@ -64,6 +64,12 @@ void LinkDoodClient::logout()
     manager.call("logout");
 }
 
+void LinkDoodClient::onLoginoutRelust(bool loginout)
+{
+    qDebug() << Q_FUNC_INFO << loginout;
+    emit loginoutRelust(loginout);
+}
+
 void LinkDoodClient::onLoginSucceeded()
 {
     qDebug() << Q_FUNC_INFO;
@@ -96,6 +102,10 @@ void LinkDoodClient::onTestSignal(const QString &str)
 void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "loginoutRelust",
+                                          this, SLOT(onLoginoutRelust(bool)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "loginFailed",

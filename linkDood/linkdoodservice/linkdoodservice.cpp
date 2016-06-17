@@ -65,8 +65,22 @@ void LinkDoodService::login(const QString &server,
                             const QString &userId,
                             const QString &password)
 {
+    QString user("0086");
+
+    QByteArray ba = userId.toLatin1();
+    const char *s = ba.data();
+    while(*s && *s>='0' && *s<='9') s++;
+    bool isNum = *s ? false:true;
+
+    if(isNum && !userId.startsWith("0086"))
+    {
+        user = user+userId;
+    }else
+    {
+       user = userId;
+    }
     qDebug() << Q_FUNC_INFO << server << userId << password;
-    m_pIMClient->getAuth()->login(userId.toStdString(),
+    m_pIMClient->getAuth()->login(user.toStdString(),
                                   password.toStdString(),
                                   server.toStdString(),
                                   std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
@@ -132,6 +146,12 @@ void LinkDoodService::onLoginOnFailed(int errCode)
     emit loginFailed(err);
 }
 
+void LinkDoodService::onLoginoutRelust(bool loginout)
+{
+    qDebug() << Q_FUNC_INFO << loginout;
+    emit loginoutRelust(loginout);
+}
+
 LinkDoodService::~LinkDoodService()
 {
 
@@ -176,6 +196,7 @@ void LinkDoodService::initConnects()
     QObject::connect(this,SIGNAL(loginOnSucceeded()),this,SLOT(onLoginSucceeded()));
     QObject::connect(this,SIGNAL(loginOnFailed(int)),this,SLOT(onLoginOnFailed(int)));
 
+    QObject::connect(m_pAuth.get(),SIGNAL(loginoutRelust(bool)),this,SLOT(onLoginoutRelust(bool)));
     QObject::connect(m_pChatObserver.get(),SIGNAL(chatListChanged(const Chat_UIList&)),this,SLOT(onChatListChanged(const Chat_UIList&)));
     QObject::connect(m_pContactObserver.get(),SIGNAL(contactListChanged(int,ContactList)),this,SLOT(onContactListChanged(int,ContactList)));
 }

@@ -41,9 +41,11 @@ public:
 signals:
     void loginSucceeded();
     void loginFailed(QString err);
+    void loginoutRelust(bool loginout);
 private slots:
     void onLoginSucceeded();
     void onLoginFailed(QString err);
+    void onLoginoutRelust(bool loginout);
 private:
     void initConnect();
 

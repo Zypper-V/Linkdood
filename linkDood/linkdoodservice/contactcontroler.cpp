@@ -27,7 +27,7 @@ void ContactControler::init()
 
 void ContactControler::onListChanged(int operType, std::vector<service::Contact> &users)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << "contactSize:" << users.size();
     ContactList contacts;
 
     emit svrListChanged(operType,contacts);
