@@ -39,6 +39,8 @@ public:
 
     Q_INVOKABLE QString getSubName(const QString &name);
 
+    Q_INVOKABLE bool checkFileExists(const QString &path);
+
 signals:
     void chatListChanged(const Chat_UIList& chats);
 private slots:

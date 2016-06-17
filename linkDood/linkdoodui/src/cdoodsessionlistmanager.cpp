@@ -3,6 +3,7 @@
 
 
 #include <QMetaType>
+#include <QFile>
 #include <QDebug>
 
 CDoodSessionListManager::CDoodSessionListManager(LinkDoodClient *client, QObject *parent) :
@@ -96,6 +97,20 @@ QString CDoodSessionListManager::getSubName(const QString &name)
 {
     qDebug() << Q_FUNC_INFO << name;
     return name.right(2);
+}
+
+bool CDoodSessionListManager::checkFileExists(const QString &path)
+{
+    qDebug() << Q_FUNC_INFO << path;
+    QString tmp = path;
+    if (tmp.contains("file://")) {
+        tmp.remove("file://");
+    } else if (tmp.contains("qrc:")) {
+        return true;
+    }
+    bool bExists = QFile(tmp).exists();
+    qDebug() << Q_FUNC_INFO << bExists;
+    return bExists;
 }
 
 void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
