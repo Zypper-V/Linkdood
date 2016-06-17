@@ -224,7 +224,7 @@ void Contact::toImContact(QVariantMap map)
             this->timeZone = iter.value().toInt();
         }
         if(iter.key() == "gender"){
-            this->gender = iter.value().toInt();
+            this->gender = iter.value().toString();
         }
         if(iter.key() == "isStar"){
             this->isStar = iter.value().toInt();
@@ -272,7 +272,7 @@ void Contact::init()
 
     this->avatar = "";
     this->extends = "";
-    this->gender = 0;
+    this->gender = "";
     this->id = "";
     this->name = "";
     this->thumbAvatar = "";

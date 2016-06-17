@@ -34,7 +34,6 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
        user.avatar = QString::fromStdString(i.avatar);
        user .name  = QString::fromStdString(i.name);
        user .extends  = QString::fromStdString(i.extends);
-       user .gender   = i.gender;
        user .id  = QString::number(i.id);
        user .isStar  = i.isStar;
        user .isVip  = i.isVip;
@@ -43,6 +42,14 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
        user .server  = QString::fromStdString(i.server);
        user .thumbAvatar  = QString::fromStdString(i.thumb_avatar);
        user .timeZone  = i.time_zone;
+
+      if(i.gender == 0){
+        user.gender = QObject::tr("保密");
+      }else if(i.gender == 1){
+        user.gender = QObject::tr("男");
+      }else if(i.gender == 2){
+        user.gender = QObject::tr("女");
+      }
 
        contacts.push_back(user);
     }

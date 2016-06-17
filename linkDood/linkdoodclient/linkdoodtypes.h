@@ -122,7 +122,7 @@ public:
 
 public:
 
-    int gender; //性别:1男2女0保密
+    QString gender; //性别:1男2女0保密
     int timeZone;//时区
     QString id;//id
     QString name; //名称
