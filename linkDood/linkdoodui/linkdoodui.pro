@@ -52,4 +52,5 @@ DISTFILES += \
     qml/CDoodTabViewStyle.qml \
     qml/CDoodSessionListPage.qml \
     qml/CDoodContactRootPage.qml \
-    qml/CDoodRootTabView.qml
+    qml/CDoodRootTabView.qml \
+    qml/CDoodHeaderImage.qml

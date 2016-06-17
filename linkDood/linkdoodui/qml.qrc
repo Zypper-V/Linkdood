@@ -6,5 +6,6 @@
         <file>qml/CDoodSessionListPage.qml</file>
         <file>qml/CDoodContactRootPage.qml</file>
         <file>qml/CDoodRootTabView.qml</file>
+        <file>qml/CDoodHeaderImage.qml</file>
     </qresource>
 </RCC>

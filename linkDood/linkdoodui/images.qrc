@@ -7,5 +7,6 @@
         <file>res/icon-contact.png</file>
         <file>res/icon-message-h.png</file>
         <file>res/icon-message.png</file>
+        <file>res/headerDefault.png</file>
     </qresource>
 </RCC>

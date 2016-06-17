@@ -111,16 +111,30 @@ Item {
 //                            text: sessionListManager.getSubName(model.modelData.name)
 //                        }
 //                    }
-                    Image {
+//                    Image {
+//                        id: headPortraitImage
+//                        anchors.left: parent.left
+//                        anchors.leftMargin: 20
+//                        anchors.topMargin: 16
+//                        anchors.verticalCenter: parent.verticalCenter
+//                        width: 80
+//                        height: headPortraitImage.width
+//                        source: model.modelData.thumbAvatar
+                        
+//                    }
+
+                    CDoodHeaderImage {
                         id: headPortraitImage
                         anchors.left: parent.left
                         anchors.leftMargin: 20
-                        anchors.topMargin: 16
                         anchors.verticalCenter: parent.verticalCenter
                         width: 80
-                        height: headPortraitImage.width
-                        source: model.modelData.thumbAvatar
-                        
+                        height: 80
+
+                        name: sessionListManager.getSubName(model.modelData.name)
+                        headerColor: sessionListManager.getHeaderColor(model.modelData.id)
+                        iconSource: "file://"+ model.modelData.thumbAvatar
+
                     }
 
                     Text {
