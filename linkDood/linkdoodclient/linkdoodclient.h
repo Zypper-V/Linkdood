@@ -44,7 +44,6 @@ private slots:
     void onChatListChanged(const Chat_UIList& chats);
     void onContactListChanged(int oper,ContactList contacts);
     void onLoginFailed(QString err);
-    void onTestSignal(const QString &str);
 private:
     void initDBusConnect();
 };

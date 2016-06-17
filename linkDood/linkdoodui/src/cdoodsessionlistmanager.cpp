@@ -115,28 +115,21 @@ bool CDoodSessionListManager::checkFileExists(const QString &path)
 
 void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
 {
-     qDebug() << Q_FUNC_INFO << "chat size4:" << chats.size();
-      QList <QObject* > itemlist;
-      for(size_t i=0;i<chats.size();i++)
-      {
-          CDoodSessionListItem *tmpItem = new CDoodSessionListItem(this);
-          tmpItem->setId(chats[i].id);
-          tmpItem->setLastMsg(chats[i].last_msg);
-          tmpItem->setName(chats[i].name);
-          tmpItem->setMsgTime(chats[i].msg_time);
-          tmpItem->setThumbAvatar(chats[i].thumb_avatar);
-          qDebug() << Q_FUNC_INFO << "chat avatar111:" << chats[i].thumb_avatar;
-          itemlist.append(tmpItem);
+     qDebug() << Q_FUNC_INFO << "zhangp **** chat size4 = " << chats.size();
+      Chat_UI historysession;
+      foreach (historysession, chats) {
+          if(!sessionListMap.contains(historysession.id)) {
+              CDoodSessionListItem *tmpItem = new CDoodSessionListItem(this);
+              tmpItem->setId(historysession.id);
+              tmpItem->setLastMsg(historysession.last_msg);
+              tmpItem->setName(historysession.name);
+              tmpItem->setMsgTime(historysession.msg_time);
+              tmpItem->setThumbAvatar(historysession.thumb_avatar);
+              qDebug() << Q_FUNC_INFO << "chat avatar111:" << historysession.thumb_avatar;
+              addItem(tmpItem);
+              sessionListMap[historysession.id] = tmpItem;
+          }
       }
-      beginInsertRows(QModelIndex(), _list->count(), itemlist.size() - 1);
-      for(int i = 0; i < itemlist.size(); ++i) {
-          qDebug() << " ----CDoodSessionListItem list " << i;
-          _list->append(itemlist.at(i));
-          connect(itemlist.at(i), SIGNAL(destroyed()), this, SLOT(removeDestroyedItem()));
-      }
-      endInsertRows();
-      emit itemCountChanged();
-
 }
 
 void CDoodSessionListManager::initConnect()

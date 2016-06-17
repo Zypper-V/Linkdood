@@ -130,7 +130,6 @@ void LinkDoodService::onChatListChanged(const Chat_UIList &chats)
 {
     qDebug() << Q_FUNC_INFO << "chats size3:" << chats.size();
     emit chatListChanged(chats);
-    emit testSignal("test zhangp!!!");
 }
 
 void LinkDoodService::onLoginSucceeded()

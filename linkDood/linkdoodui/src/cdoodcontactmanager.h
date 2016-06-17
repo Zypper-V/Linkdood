@@ -15,7 +15,6 @@ public:
     explicit CDoodContactManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
     ~CDoodContactManager();
-   // Q_INVOKABLE QString getHeaderColor(const QString &id);
 
 signals:
     void contactListChanged(int oper,ContactList contacts);

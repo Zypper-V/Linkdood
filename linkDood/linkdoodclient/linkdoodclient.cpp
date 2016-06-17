@@ -94,11 +94,6 @@ void LinkDoodClient::onLoginFailed(QString err)
     emit loginFailed(err);
 }
 
-void LinkDoodClient::onTestSignal(const QString &str)
-{
-    qDebug() << Q_FUNC_INFO << str;
-}
-
 void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
@@ -122,8 +117,4 @@ void LinkDoodClient::initDBusConnect()
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "chatListChanged",
                                           this, SLOT(onChatListChanged(Chat_UIList)));
-
-    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
-                                          DBUS_DOOD_INTERFACE, "testSignal",
-                                          this, SLOT(onTestSignal(QString)));
 }

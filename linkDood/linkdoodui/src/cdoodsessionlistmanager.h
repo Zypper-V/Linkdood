@@ -23,6 +23,8 @@
 #include "cdoodlistmodel.h"
 #include "linkdoodclient.h"
 
+class CDoodSessionListItem;
+
 class CDoodSessionListManager : public CDoodListModel
 {
     Q_OBJECT
@@ -48,6 +50,10 @@ private slots:
 private:
     void initConnect();
 
+private:
     LinkDoodClient *m_pClient;
+
+    QMap<QString, CDoodSessionListItem*> sessionListMap;
+
 };
 #endif // CDOODSESSIONLISTMANAGER_H

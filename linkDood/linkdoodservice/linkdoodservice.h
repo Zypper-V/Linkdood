@@ -28,7 +28,6 @@ signals:
     void loginoutRelust(bool loginout);
 
     void chatListChanged(const Chat_UIList& chats);
-    void testSignal(const QString &str);
 
     void contactListChanged(int oper,ContactList contacts);
 
