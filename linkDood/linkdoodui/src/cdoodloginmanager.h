@@ -31,7 +31,7 @@ public:
     explicit CDoodLoginManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
     ~CDoodLoginManager();
-
+    Q_INVOKABLE void logout();
     Q_INVOKABLE void login(const QString &server,
                            const QString &userId,
                            const QString &password);

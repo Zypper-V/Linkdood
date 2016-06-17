@@ -47,6 +47,7 @@ public slots:
                const QString &userId,
                const QString &password);
 
+    void logout();
     /*****************start chat**************************/
     void getChatList(void);//获取会话列表
     void getUnReadMessages(void);//获取未读消息列表

@@ -70,7 +70,16 @@ void LinkDoodService::login(const QString &server,
                                   password.toStdString(),
                                   server.toStdString(),
                                   std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
-   // emit loginSucceeded();
+    // emit loginSucceeded();
+}
+
+void LinkDoodService::logout()
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pIMClient != NULL)
+    {
+        m_pIMClient->getAuth()->logout();
+    }
 }
 
 void LinkDoodService::getChatList()

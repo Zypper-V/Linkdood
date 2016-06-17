@@ -54,6 +54,16 @@ void LinkDoodClient::login(const QString &server,
     manager.call("login", server, userId, password);
 }
 
+void LinkDoodClient::logout()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("logout");
+}
+
 void LinkDoodClient::onLoginSucceeded()
 {
     qDebug() << Q_FUNC_INFO;

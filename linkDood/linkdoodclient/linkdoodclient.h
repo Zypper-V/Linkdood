@@ -36,7 +36,7 @@ public slots:
     void login(const QString &server,
                const QString &userId,
                const QString &password);
-
+    void logout();
 private slots:
     void onLoginSucceeded();
     void onChatListChanged(const Chat_UIList& chats);

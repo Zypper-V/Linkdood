@@ -16,6 +16,12 @@ CDoodLoginManager::~CDoodLoginManager()
 
 }
 
+void CDoodLoginManager::logout()
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->logout();
+}
+
 void CDoodLoginManager::login(const QString &server,
                               const QString &userId,
                               const QString &password)
