@@ -148,7 +148,7 @@ void Chat_UI::toImChat(QVariantMap map)
             last_msgid = iter.value().toInt();
         }
         if(iter.key() == "msg_time"){
-            msg_time = iter.value().toInt();
+            msg_time = iter.value().toString();
         }
         if(iter.key() == "last_msg"){
             last_msg = iter.value().toString();

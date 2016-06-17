@@ -1,6 +1,7 @@
 #include<chatcontroler.h>
 #include<iostream>
 #include<QDebug>
+#include<QDateTime>
 
 #include "IMClient.h"
 #include "IChatService.h"
@@ -8,6 +9,7 @@
 #include "linkdoodtypes.h"
 #include "Chat.h"
 #include "User.h"
+#include "MsgUtils.h"
 
 void ChatControler::init()
 {
@@ -55,10 +57,12 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
             std::shared_ptr<service::Chat> ch = std::dynamic_pointer_cast<service::Chat>(i);
             Chat_UI chatData;
             chatData.name = QString::fromStdString(ch->name);
-            chatData.last_msg =  QString::fromStdString(ch->last_msg);
+            chatData.last_msg =  QString::fromStdString(utils::MsgUtils::getText(ch->last_msg));
             chatData.avatar =  QString::fromStdString(ch->avatar);
-            chatData.msg_time =  ch->msg_time;
-
+            chatData.msg_time = QDateTime::fromMSecsSinceEpoch(ch->msg_time).toString("yyyy-MM-dd hh:mm:ss");
+            chatData.id = ch->id;
+            chatData.chat_type = ch->chat_type;
+            chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
             chatList.push_back(chatData);
         }
         emit chatOnListChanged(chatList);

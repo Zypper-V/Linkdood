@@ -101,7 +101,7 @@ public:
     int     sub_type;        //  子操作类型标示,置顶等其他操作
     int     unread_count;    //未读消息数量
     int64   last_msgid;    //最后一条消息ID
-    int64   msg_time;      //消息时间
+    QString msg_time;      //消息时间
     QString last_msg;//最后一条消息
 };
 
