@@ -108,7 +108,7 @@ void LinkDoodClient::initDBusConnect()
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "contactListChanged",
-                                          this, SLOT(onContactListChanged(ContactList)));
+                                          this, SLOT(onContactListChanged(int,ContactList)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "loginSucceeded",
@@ -117,4 +117,8 @@ void LinkDoodClient::initDBusConnect()
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "chatListChanged",
                                           this, SLOT(onChatListChanged(Chat_UIList)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "testSignal",
+                                          this, SLOT(onTestSignal(QString)));
 }

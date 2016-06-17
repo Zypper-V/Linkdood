@@ -261,4 +261,5 @@ void LinkDoodService::onLoginResult(service::ErrorInfo &info, int64 userId)
 void LinkDoodService::onSrvGetContactInfoResult(service::ErrorInfo &info, service::User &user)
 {
      qDebug() << Q_FUNC_INFO << info.code() << user.name.c_str();
+     emit srvGetContactInfo(user);
 }
