@@ -27,9 +27,25 @@ void ContactControler::init()
 
 void ContactControler::onListChanged(int operType, std::vector<service::Contact> &users)
 {
-    qDebug() << Q_FUNC_INFO << "contactSize:" << users.size();
+    qDebug() << Q_FUNC_INFO << "oper:" << operType << "contactSize:" << users.size();
     ContactList contacts;
+    for(auto i: users){
+       Contact user;
+       user.avatar = QString::fromStdString(i.avatar);
+       user .name  = QString::fromStdString(i.name);
+       user .extends  = QString::fromStdString(i.extends);
+       user .gender   = i.gender;
+       user .id  = QString::number(i.id);
+       user .isStar  = i.isStar;
+       user .isVip  = i.isVip;
+       user .pinyin  = QString::fromStdString(i.pinyin);
+       user .remark  = QString::fromStdString(i.remark);
+       user .server  = QString::fromStdString(i.server);
+       user .thumbAvatar  = QString::fromStdString(i.thumb_avatar);
+       user .timeZone  = i.time_zone;
 
+       contacts.push_back(user);
+    }
     emit svrListChanged(operType,contacts);
 }
 

@@ -2,6 +2,7 @@
 #include "cdoodlistmodel.h"
 #include "cdoodloginmanager.h"
 #include "cdoodsessionlistmanager.h"
+#include "cdoodcontactmanager.h"
 #include "linkdoodclient.h"
 
 #include <QQmlContext>
@@ -27,10 +28,16 @@ linkdoodui_Workspace::linkdoodui_Workspace()
         qDebug() << Q_FUNC_INFO << "m_pSessionListManager init error !!!";
     }
 
+    m_pContactManager = QSharedPointer<CDoodContactManager>(new CDoodContactManager(m_pClient.data()));
+    if (!m_pContactManager.data()) {
+        qDebug() << Q_FUNC_INFO << "m_pContactManager init error !!!";
+    }
+
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), qApp, SLOT(quit()));
     m_view->engine()->rootContext()->setContextProperty("loginManager", m_pLoginManager.data());
     m_view->engine()->rootContext()->setContextProperty("sessionListManager", m_pSessionListManager.data());
+    m_view->engine()->rootContext()->setContextProperty("contactManager", m_pContactManager.data());
 
     m_view->setSource(QUrl("qrc:/qml/main.qml"));
     m_view->showFullScreen();

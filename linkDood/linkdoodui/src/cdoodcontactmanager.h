@@ -18,10 +18,12 @@ public:
    // Q_INVOKABLE QString getHeaderColor(const QString &id);
 
 signals:
-
+    void contactListChanged(int oper,ContactList contacts);
 private slots:
-
+    void onContactListChanged(int oper,ContactList contacts);
 private:
+    void initConnect();
+
     LinkDoodClient *m_pClient;
 
 };

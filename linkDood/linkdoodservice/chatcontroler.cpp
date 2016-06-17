@@ -65,7 +65,7 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
             chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
             chatList.push_back(chatData);
             qDebug() << Q_FUNC_INFO << "avatar" << chatData.avatar;
-            qDebug() << Q_FUNC_INFO << "thumb_avatar" << chatData.thumb_avatar;
+            qDebug() << Q_FUNC_INFO << "thumb_avatar" << ch->thumb_avatar.c_str();
         }
         emit chatOnListChanged(chatList);
     }
