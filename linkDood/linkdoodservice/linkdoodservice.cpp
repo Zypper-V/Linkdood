@@ -151,20 +151,20 @@ void LinkDoodService::onLoginOnFailed(int errCode)
         err = "网络连接超时";
         break;
     case -11:
-       err = "have Login";
-       break;
+        err = "帐号已经登录，不能重复登录";
+        break;
     case 101:
-       err = "yonghubucunzai";
-       break;
+        err = "用户不存在";
+        break;
     case 112:
-       err = "zhanghaomimabupipei";
-       break;
+        err = "帐号密码不匹配";
+        break;
     case 113:
-       err = "zhanghaoyijingdenglu";
-       break;
+        err = "帐号已经登录";
+        break;
     default:
-       err = "weizhicuowu";
-       break;
+        err = "登录失败";
+        break;
     }
 
     emit loginFailed(err);
