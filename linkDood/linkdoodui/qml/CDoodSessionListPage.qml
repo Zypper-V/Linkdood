@@ -90,38 +90,6 @@ Item {
                     anchors.bottomMargin: 3
                     anchors.leftMargin: 2
                     anchors.rightMargin:  2
-                    //                    radius: 10
-
-//                    Rectangle {
-//                        id: headPortraitImage
-//                        anchors.left: parent.left
-//                        anchors.leftMargin: 40
-//                        anchors.verticalCenter: parent.verticalCenter
-//                        width: 80
-//                        height: headPortraitImage.width
-//                        radius: headPortraitImage.width/2
-//                        color: sessionListManager.getHeaderColor(model.modelData.id)
-//                        Text {
-//                            anchors.centerIn: parent
-//                            font.pixelSize: headPortraitImage.height/3
-//                            color: "#ffffff"
-//                            verticalAlignment: Text.AlignVCenter
-//                            elide: Text.ElideRight
-//                            font.bold: true
-//                            text: sessionListManager.getSubName(model.modelData.name)
-//                        }
-//                    }
-//                    Image {
-//                        id: headPortraitImage
-//                        anchors.left: parent.left
-//                        anchors.leftMargin: 20
-//                        anchors.topMargin: 16
-//                        anchors.verticalCenter: parent.verticalCenter
-//                        width: 80
-//                        height: headPortraitImage.width
-//                        source: model.modelData.thumbAvatar
-                        
-//                    }
 
                     CDoodHeaderImage {
                         id: headPortraitImage
