@@ -5,9 +5,11 @@
 #include<IContactObserver.h>
 #include<QObject>
 #include "Contact.h"
+#include "linkdoodtypes.h"
 
-class ContactControler:public IContactObserver,public QObject
+class ContactControler:public QObject,public IContactObserver
 {
+    Q_OBJECT
 public:
 
     ContactControler(QObject *parent = 0);
@@ -18,5 +20,11 @@ public:
     void onContactInfoChanged(int operType, service::User& users);
     void onOnlineChanged(OnlineState& status);
 signals:
+    //transparent onListChanged signal
+    void svrListChanged(int oper,ContactList contactList);
+    void contactListChanged(int oper,ContactList contactList);
+
     void contactListChanged(int operType, std::vector<service::Contact>& users);
+public slots:
+    void onContactListChanged(int oper,ContactList contactList);
 };

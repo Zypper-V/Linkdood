@@ -28,6 +28,8 @@ public:
 signals:
     void loginSucceeded();
     void chatListChanged(const Chat_UIList& chats);
+    void loginFailed(QString err);
+    void contactListChanged(int oper,ContactList contacts);
 public slots:
     QString installPath();
 
@@ -38,7 +40,8 @@ public slots:
 private slots:
     void onLoginSucceeded();
     void onChatListChanged(const Chat_UIList& chats);
-
+    void onContactListChanged(int oper,ContactList contacts);
+    void onLoginFailed(QString err);
     void onTestSignal(const QString &str);
 private:
     void initDBusConnect();

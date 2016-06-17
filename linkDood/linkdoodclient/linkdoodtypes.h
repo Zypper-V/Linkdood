@@ -89,7 +89,7 @@ public:
 
     int gender; //性别:1男2女0保密
     int time_zone;//时区
-    int64 id;//id
+    QString id;//id
     QString name; //名称
     QString avatar;//原图图像
     QString extends;//扩展字段
@@ -113,6 +113,17 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Chat_UI &chat);
 typedef QList<Chat_UI> Chat_UIList;
 Q_DECLARE_METATYPE (Chat_UIList);
 
+//Contact
+class Contact{
+
+};
+Q_DECLARE_METATYPE(Contact)
+QDBusArgument &operator << (QDBusArgument &argument, const Contact &contact);
+const QDBusArgument &operator >> (const QDBusArgument &argument, Contact &contact);
+
+typedef QList<Contact> ContactList;
+Q_DECLARE_METATYPE (ContactList);
+
 inline void registerDoodDataTypes() {
     qDebug() << Q_FUNC_INFO;
     qDBusRegisterMetaType<Msg>();
@@ -122,6 +133,10 @@ inline void registerDoodDataTypes() {
     qDBusRegisterMetaType<Chat_UI>();
     qDBusRegisterMetaType<Chat_UIList>();
     qRegisterMetaType<Chat_UIList>("Chat_UIList");
+
+    qDBusRegisterMetaType<Contact>();
+    qDBusRegisterMetaType<ContactList>();
+    qRegisterMetaType<ContactList>("ContactList");
 }
 #endif // LINKDOODTYPES_H
 

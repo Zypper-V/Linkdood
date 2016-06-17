@@ -10,7 +10,8 @@
 
 ContactControler::ContactControler(QObject *parent):QObject(parent)
 {
-   qRegisterMetaType<std::vector<service::Contact> >("std::vector<service::Contact>");
+   QObject::connect(this,SIGNAL(svrListChanged(int,ContactList )),
+                    this,SLOT(onContactListChanged(int,ContactList)));
 }
 
 ContactControler::~ContactControler()
@@ -27,7 +28,9 @@ void ContactControler::init()
 void ContactControler::onListChanged(int operType, std::vector<service::Contact> &users)
 {
     qDebug() << Q_FUNC_INFO;
-  //  emit contactListChanged(operType,users);
+    ContactList contacts;
+
+    emit svrListChanged(operType,contacts);
 }
 
 void ContactControler::onAvatarChanged(int64 userid, std::string avatar)
@@ -43,6 +46,12 @@ void ContactControler::onContactInfoChanged(int operType, service::User &users)
 void ContactControler::onOnlineChanged(OnlineState &status)
 {
     qDebug() << Q_FUNC_INFO;
+}
+
+void ContactControler::onContactListChanged(int oper, ContactList contactList)
+{
+    qDebug() << Q_FUNC_INFO << "contact size:"<< contactList.size();
+    emit contactListChanged(oper,contactList);
 }
 
 

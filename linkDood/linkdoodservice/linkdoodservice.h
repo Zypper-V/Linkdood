@@ -21,13 +21,15 @@ public:
 
 signals:
     void loginSucceeded();
-    void loginFailed(int64 errCode);
+    void loginFailed(QString);
 
     void loginOnSucceeded();
-    void loginOnFailed(int64 errCode);
+    void loginOnFailed(int code);
 
     void chatListChanged(const Chat_UIList& chats);
     void testSignal(const QString &str);
+
+    void contactListChanged(int oper,ContactList contacts);
 public slots:
 
     QString installPath();
@@ -50,9 +52,10 @@ public slots:
     void getUnReadMessages(void);//获取未读消息列表
     /*****************end chat****************************/
 
+    void onContactListChanged(int oper,ContactList contacts);
     void onChatListChanged(const Chat_UIList& chats);
     void onLoginSucceeded();
-    void onLoginOnFailed(int64 errCode);    
+    void onLoginOnFailed(int code);
 public:
     static LinkDoodService* m_pInstance;
 

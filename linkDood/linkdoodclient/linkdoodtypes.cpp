@@ -179,7 +179,7 @@ void Chat_UI::toImChat(QVariantMap map)
         }
 
         if(iter.key() == "id"){
-            id = iter.value().toInt();
+            id = iter.value().toString();
         }
 
     }
@@ -201,11 +201,21 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Chat_UI &chat)
 {
     argument.beginStructure();
     argument >> chat.msg_type >> chat.last_msg >> chat.last_msgid
-            >> chat.msg_time >> chat.oper_type >> chat.sub_type
-            >> chat.unread_count >> chat.chat_type>> chat.avatar
-            >> chat.extends >>chat.gender >> chat.id >> chat.name >> chat.thumb_avatar
-            >> chat.time_zone;
+             >> chat.msg_time >> chat.oper_type >> chat.sub_type
+             >> chat.unread_count >> chat.chat_type>> chat.avatar
+             >> chat.extends >>chat.gender >> chat.id >> chat.name >> chat.thumb_avatar
+             >> chat.time_zone;
     argument.endStructure();
     return argument;
 }
 
+////////////////////////Contact////////////////////////////////////////
+QDBusArgument &operator << (QDBusArgument &argument, const Contact &contact)
+{
+
+}
+
+const QDBusArgument &operator >> (const QDBusArgument &argument, Contact &contact)
+{
+
+}

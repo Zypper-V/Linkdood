@@ -60,7 +60,7 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
             chatData.last_msg =  QString::fromStdString(utils::MsgUtils::getText(ch->last_msg));
             chatData.avatar =  QString::fromStdString(ch->avatar);
             chatData.msg_time = QDateTime::fromMSecsSinceEpoch(ch->msg_time).toString("yyyy-MM-dd hh:mm:ss");
-            chatData.id = ch->id;
+            chatData.id = QString::number(ch->id);
             chatData.chat_type = ch->chat_type;
             chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
             chatList.push_back(chatData);

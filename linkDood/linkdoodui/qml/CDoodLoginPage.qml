@@ -28,11 +28,11 @@ CPage {
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
         }
 
-//        onLoginFailed: {
-//            console.log("onLoginFailed !!!!")
-//            loadingDialog.hide();
-//            gToast.requestToast("登陆失败","","");
-//        }
+        onLoginFailed: {
+            console.log("onLoginFailed !!!!")
+            loadingDialog.hide();
+            gToast.requestToast("登陆失败","","");
+        }
     }
 
     contentAreaItem: Item {

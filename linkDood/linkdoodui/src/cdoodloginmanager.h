@@ -40,10 +40,10 @@ public:
 
 signals:
     void loginSucceeded();
-
+    void loginFailed(QString err);
 private slots:
     void onLoginSucceeded();
-
+    void onLoginFailed(QString err);
 private:
     void initConnect();
 

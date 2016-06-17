@@ -87,6 +87,12 @@ void LinkDoodService::getUnReadMessages()
 
 }
 
+void LinkDoodService::onContactListChanged(int oper,ContactList contacts)
+{
+    qDebug() << Q_FUNC_INFO <<"contact size:" << contacts.size();
+    emit contactListChanged(oper,contacts);
+}
+
 void LinkDoodService::onChatListChanged(const Chat_UIList &chats)
 {
     qDebug() << Q_FUNC_INFO << "chats size3:" << chats.size();
@@ -103,10 +109,18 @@ void LinkDoodService::onLoginSucceeded()
 //     emit chatListChanged(chats);
 }
 
-void LinkDoodService::onLoginOnFailed(int64 errCode)
+void LinkDoodService::onLoginOnFailed(int errCode)
 {
     qDebug() << Q_FUNC_INFO;
-    emit loginFailed(errCode);
+    QString err;
+    switch(errCode)
+    {
+     case -1:
+        err = "网络连接超时";
+        break;
+    }
+
+    emit loginFailed(err);
 }
 
 LinkDoodService::~LinkDoodService()
@@ -149,10 +163,12 @@ void LinkDoodService::initObserver()
 
 void LinkDoodService::initConnects()
 {
+    qDebug() << Q_FUNC_INFO ;
     QObject::connect(this,SIGNAL(loginOnSucceeded()),this,SLOT(onLoginSucceeded()));
-    QObject::connect(this,SIGNAL(loginFailed()),this,SLOT(onLoginOnFailed(int64)));
+    QObject::connect(this,SIGNAL(loginOnFailed(int)),this,SLOT(onLoginOnFailed(int)));
 
     QObject::connect(m_pChatObserver.get(),SIGNAL(chatListChanged(const Chat_UIList&)),this,SLOT(onChatListChanged(const Chat_UIList&)));
+    QObject::connect(m_pContactObserver.get(),SIGNAL(contactListChanged(int,ContactList)),this,SLOT(onContactListChanged(int,ContactList)));
 }
 
 void LinkDoodService::initDBusConnection()

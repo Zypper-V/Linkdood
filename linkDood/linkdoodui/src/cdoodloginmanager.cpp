@@ -36,7 +36,14 @@ void CDoodLoginManager::onLoginSucceeded()
     emit loginSucceeded();
 }
 
+void CDoodLoginManager::onLoginFailed(QString err)
+{
+    qDebug() << Q_FUNC_INFO << "login err:" << err;
+    emit loginFailed(err);
+}
+
 void CDoodLoginManager::initConnect()
 {
     connect(m_pClient, SIGNAL(loginSucceeded()), this, SLOT(onLoginSucceeded()));
+    connect(m_pClient, SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
 }
