@@ -5,6 +5,7 @@
 #include <QtCore/QString>
 #include <QtCore/QMetaType>
 #include <QtDBus/QtDBus>
+
 #define int64 long long
 
 enum MSG_TYPE{
@@ -30,19 +31,19 @@ public:
 
 public:
 
-    int msgtype;
+    QString msgtype;
     // 消息类型
-    int active_type;// 消息事件属性 1. 阅后即焚 2 有问必答 3 活动
-    int64 msgid;
+    QString activeType;// 消息事件属性 1. 阅后即焚 2 有问必答 3 活动
+    QString msgid;
     // 消息 ID
-    int64 targetid; // 会话者 ID (群或用户等)
-    int64 fromid;
+    QString targetid; // 会话者 ID (群或用户等)
+    QString fromid;
     // 发送者 ID
-    int64 toid;
+    QString toid;
     // 接收者 ID
-    int64 localid; // 本地 ID
-    int64 related_msgid; // 关联消息 ID
-    int64 time;
+    QString localid; // 本地 ID
+    QString relatedMsgid; // 关联消息 ID
+    QString time;
     // 发送时间
     QString body;// 消息内容
    // QList<int64> related_users;// 秘聊时相关的用户 ID
@@ -67,7 +68,7 @@ public:
     void init();
 
 public:
-    QString msg_properties;
+    QString msgProperties;
 };
 Q_DECLARE_METATYPE(MsgText)
 QDBusArgument &operator << (QDBusArgument &argument, const MsgText &msg);
@@ -143,6 +144,26 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Contact &contac
 typedef QList<Contact> ContactList;
 Q_DECLARE_METATYPE (ContactList);
 
+//IMOfflineMsg text
+class IMOfflineMsg{
+public:
+    explicit IMOfflineMsg(/*Msg& m*/);
+    void init();
+
+public:
+    int     offlineType;  /*1未读消息 2设备已读消息*/
+    int     count;      //数量
+    MsgText msg;
+    //Msg* msg;
+    //QSharedPointer<Msg> msg;
+};
+Q_DECLARE_METATYPE(IMOfflineMsg)
+QDBusArgument &operator << (QDBusArgument &argument, const IMOfflineMsg &offlineMsg);
+const QDBusArgument &operator >> (const QDBusArgument &argument, IMOfflineMsg &offlineMsg);
+
+typedef QList<IMOfflineMsg> IMOfflineMsgList;
+Q_DECLARE_METATYPE (IMOfflineMsgList);
+
 inline void registerDoodDataTypes() {
     qDebug() << Q_FUNC_INFO;
     qDBusRegisterMetaType<Msg>();
@@ -156,6 +177,10 @@ inline void registerDoodDataTypes() {
     qDBusRegisterMetaType<Contact>();
     qDBusRegisterMetaType<ContactList>();
     qRegisterMetaType<ContactList>("ContactList");
+
+    qDBusRegisterMetaType<IMOfflineMsg>();
+    qDBusRegisterMetaType<IMOfflineMsgList>();
+    qRegisterMetaType<IMOfflineMsgList>("IMOfflineMsgList");
 }
 #endif // LINKDOODTYPES_H
 

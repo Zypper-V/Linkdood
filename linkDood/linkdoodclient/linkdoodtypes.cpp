@@ -11,31 +11,31 @@ void Msg::toImMassage(QVariantMap map)
     QVariantMap::const_iterator iter;
     for (iter = map.constBegin(); iter != map.constEnd(); ++iter) {
         if (iter.key() == "msgtype") {
-            msgtype = iter.value().toInt();
+            msgtype = iter.value().toString();
         }
-        if (iter.key() == "active_type") {
-            active_type = iter.value().toInt();
+        if (iter.key() == "activeType") {
+            activeType = iter.value().toString();
         }
         if (iter.key() == "msgid") {
-            msgid = iter.value().toLongLong();
+            msgid = iter.value().toString();
         }
         if (iter.key() == "targetid") {
-            targetid = iter.value().toLongLong();
+            targetid = iter.value().toString();
         }
         if (iter.key() == "fromid") {
-            fromid = iter.value().toLongLong();
+            fromid = iter.value().toString();
         }
         if (iter.key() == "toid") {
-            toid = iter.value().toLongLong();
+            toid = iter.value().toString();
         }
         if (iter.key() == "localid") {
-            localid = iter.value().toLongLong();
+            localid = iter.value().toString();
         }
-        if (iter.key() == "related_msgid") {
-            related_msgid = iter.value().toLongLong();
+        if (iter.key() == "relatedMsgid") {
+            relatedMsgid = iter.value().toString();
         }
         if (iter.key() == "time") {
-            time = iter.value().toLongLong();
+            time = iter.value().toString();
         }
         if (iter.key() == "body") {
             body = iter.value().toString();
@@ -61,7 +61,7 @@ QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
     argument.beginStructure();
     argument << msg.fromid << msg.toid << msg.msgid
              << msg.msgtype << msg.body << msg.localid
-             << msg.related_msgid << msg.time ;
+             << msg.relatedMsgid << msg.time ;
     argument.endStructure();
     return argument;
 }
@@ -71,7 +71,7 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Msg &msg)
     argument.beginStructure();
     argument >> msg.fromid >> msg.toid >> msg.msgid
             >> msg.msgtype >> msg.body >> msg.localid
-            >> msg.related_msgid >> msg.time ;
+            >> msg.relatedMsgid >> msg.time ;
     argument.endStructure();
     return argument;
 }
@@ -80,7 +80,7 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Msg &msg)
 void MsgText::init()
 {
     Msg::init();
-    msg_properties = QString();// 消息内容
+    msgProperties = QString();// 消息内容
 }
 
 MsgText::MsgText()
@@ -94,7 +94,7 @@ void MsgText::toImMassage(QVariantMap map)
     QVariantMap::const_iterator iter;
     for (iter = map.constBegin(); iter != map.constEnd(); ++iter) {
         if("msg_properties" == iter.key()){
-            msg_properties = iter.value().toString();
+            msgProperties = iter.value().toString();
         }
     }
 }
@@ -104,8 +104,8 @@ QDBusArgument &operator <<(QDBusArgument &argument, const MsgText &msg)
     argument.beginStructure();
     argument << msg.fromid << msg.toid << msg.msgid
              << msg.msgtype << msg.body << msg.localid
-             << msg.related_msgid << msg.time
-             << msg.msg_properties;
+             << msg.relatedMsgid << msg.time
+             << msg.msgProperties;
     argument.endStructure();
     return argument;
 }
@@ -115,7 +115,7 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, MsgText &msg)
     argument.beginStructure();
     argument >> msg.fromid >> msg.toid >> msg.msgid
             >> msg.msgtype >> msg.body >> msg.localid
-            >> msg.related_msgid >> msg.time >> msg.msg_properties ;
+            >> msg.relatedMsgid >> msg.time >> msg.msgProperties ;
     argument.endStructure();
     return argument;
 }
@@ -299,6 +299,35 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Contact &contac
              >> contact.isVip >>  contact.name >> contact.name
              >> contact.pinyin >> contact.remark >> contact.server
              >> contact.thumbAvatar >> contact.timeZone;
+    argument.endStructure();
+    return argument;
+}
+
+///////////////////////IMOfflineMsg/////////////////////////////////////////
+IMOfflineMsg::IMOfflineMsg()
+{
+    init();
+}
+
+void IMOfflineMsg::init()
+{
+    this->offlineType = 0;
+    this->count = 0;
+//    this->msg = 0;
+}
+
+QDBusArgument &operator <<(QDBusArgument &argument, const IMOfflineMsg &offlineMsg)
+{
+    argument.beginStructure();
+    argument << offlineMsg.count << offlineMsg.offlineType << offlineMsg.msg;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator >>(const QDBusArgument &argument, IMOfflineMsg &offlineMsg)
+{
+    argument.beginStructure();
+    argument >> offlineMsg.count >> offlineMsg.offlineType >> offlineMsg.msg;
     argument.endStructure();
     return argument;
 }

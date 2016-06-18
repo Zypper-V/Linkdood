@@ -53,7 +53,7 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
 
        contacts.push_back(user);
     }
-    emit svrListChanged(operType,contacts);
+    emit contactListChanged(operType,contacts);
 }
 
 void ContactControler::onAvatarChanged(int64 userid, std::string avatar)
