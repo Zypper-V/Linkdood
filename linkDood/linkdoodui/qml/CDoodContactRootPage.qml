@@ -9,7 +9,6 @@ Item {
 
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.topMargin:30
         width:parent.width
         height: 110
         color:"#1c1b21"

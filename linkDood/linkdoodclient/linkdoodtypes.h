@@ -6,6 +6,7 @@
 #include <QtCore/QMetaType>
 #include <QtDBus/QtDBus>
 
+
 #define int64 long long
 
 enum MSG_TYPE{

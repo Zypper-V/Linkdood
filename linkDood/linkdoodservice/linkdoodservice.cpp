@@ -11,6 +11,8 @@
 #include "contactcontroler.h"
 #include "linkdoodtypes.h"
 #include "IContactService.h"
+#include<sstream>
+#include<string>
 
 #include <QDebug>
 #include <iostream>
@@ -262,4 +264,43 @@ void LinkDoodService::onSrvGetContactInfoResult(service::ErrorInfo &info, servic
 {
      qDebug() << Q_FUNC_INFO << info.code() << user.name.c_str();
      emit srvGetContactInfo(user);
+}
+MsgText LinkDoodService::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
+{
+    MsgText Qmsgtext;
+    Qmsgtext.activeType   =QString::number(msgtext->active_type);
+    Qmsgtext.msgtype      =QString::number(msgtext->msgtype);
+    Qmsgtext.msgid        =QString::number(msgtext->msgid);
+    Qmsgtext.targetid     =QString::number(msgtext->targetid);
+    Qmsgtext.fromid       =QString::number(msgtext->fromid);
+    Qmsgtext.toid         =QString::number(msgtext->toid);
+    Qmsgtext.localid      =QString::number(msgtext->localid);
+    Qmsgtext.time         =QDateTime::fromMSecsSinceEpoch(msgtext->time).toString("yyyy-MM-dd hh:mm:ss");
+    Qmsgtext.msgProperties=QString::fromStdString(msgtext->msg_properties);
+    Qmsgtext.body         =QString::fromStdString(utils::MsgUtils::getText(msgtext->body));
+    return Qmsgtext;
+}
+
+service::MsgText LinkDoodService::QmsgtextTomsgtext(MsgText Qmsgtext)
+{
+    service::MsgText msgtext;
+    std::stringstream str(Qmsgtext.activeType.toStdString());
+    str >> msgtext.active_type;
+    std::stringstream str1(Qmsgtext.msgtype.toStdString());
+    str1 >> msgtext.msgtype;
+    std::stringstream str2(Qmsgtext.msgid.toStdString());
+    str2 >> msgtext.msgid;
+    std::stringstream str3(Qmsgtext.targetid.toStdString());
+    str3 >> msgtext.targetid;
+    std::stringstream str4(Qmsgtext.fromid.toStdString());
+    str4 >> msgtext.fromid;
+    std::stringstream str5(Qmsgtext.toid.toStdString());
+    str5 >> msgtext.toid;
+    std::stringstream str6(Qmsgtext.localid.toStdString());
+    str6 >> msgtext.localid;
+    std::stringstream str7(Qmsgtext.time.toStdString());
+    str7 >> msgtext.time;
+    msgtext.msg_properties =Qmsgtext.msgProperties.toStdString();
+    msgtext.body           =utils::MsgUtils::MsgFormat(Qmsgtext.body.toStdString());
+    return msgtext;
 }

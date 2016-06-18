@@ -4,6 +4,8 @@
 #include <QObject>
 #include "authcontroler.h"
 #include "linkdoodtypes.h"
+#include "MsgUtils.h"
+#include "Msg.h"
 
 class CSystemPackageManager;
 class ChatControler;
@@ -90,6 +92,10 @@ private:
     std::shared_ptr<ContactControler>  m_pContactObserver;
 
     std::shared_ptr<service::IMClient> m_pIMClient;
+public:
+    MsgText msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
+    service::MsgText QmsgtextTomsgtext(MsgText Qmsgtext);
+
 };
 
 #endif // LINKDOODSERVICE_H

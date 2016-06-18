@@ -331,3 +331,4 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, IMOfflineMsg &of
     argument.endStructure();
     return argument;
 }
+
