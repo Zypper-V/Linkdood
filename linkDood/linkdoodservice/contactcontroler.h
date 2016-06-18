@@ -21,10 +21,5 @@ public:
     void onOnlineChanged(OnlineState& status);
 signals:
     //transparent onListChanged signal
-    void svrListChanged(int oper,ContactList contactList);
     void contactListChanged(int oper,ContactList contactList);
-
-    void contactListChanged(int operType, std::vector<service::Contact>& users);
-public slots:
-    void onContactListChanged(int oper,ContactList contactList);
 };

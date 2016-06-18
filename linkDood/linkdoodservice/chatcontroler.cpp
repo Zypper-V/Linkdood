@@ -39,9 +39,11 @@ void ChatControler::getUnReadMessages()
     service::IMClient::getClient()->getChat()->getUnReadMessages();
 }
 
-void ChatControler::sendMessage(service::Msg &msg)
+void ChatControler::sendMessage(const Msg &imMsg)
 {
     qDebug() << Q_FUNC_INFO;
+    service::Msg msg;
+    //TODO
     service::IMClient::getClient()->getChat()->sendMessage(msg,
                  std::bind(&ChatControler::onSendMesage,this,
                            std::placeholders::_1,
@@ -64,21 +66,6 @@ ChatControler::ChatControler(QObject* parent):
     QObject(parent)
 {
 
-    QObject::connect(this,SIGNAL(srvAvatarChangedBack(int64,QString)),this,
-                     SLOT(onAvatarChangedBack(int64,QString)));
-
-    QObject::connect(this,SIGNAL(srvOfflineMsgNoticeBack(IMOfflineMsgList)),this,
-                     SLOT(onOfflineMsgNoticeBack(IMOfflineMsgList)));
-
-    QObject::connect(this,SIGNAL(srvMessageNoticeBack(Msg&)),this,
-                     SLOT(onMessageNoticeBack(Msg&)));
-    QObject::connect(this,SIGNAL(sendSrvMessageBack(bool,int64,int64)),this,
-                     SLOT(onSendMessageBack(bool,int64,int64)));
-
-    QObject::connect(this,SIGNAL(getSrvMessagesBack(bool,int64,MsgList&)),this,
-                     SLOT(onGetMessagesBack(bool,int64,MsgList&)));
-
-    QObject::connect(this,SIGNAL(chatOnListChanged(Chat_UIList)),this,SLOT(onChatListChanged(Chat_UIList)));
 }
 
 ChatControler::~ChatControler()
@@ -145,13 +132,6 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
     }
 }
 
-void ChatControler::onChatListChanged( Chat_UIList chats)
-{
-    qDebug() <<Q_FUNC_INFO<< "chats2 szie:" << chats.size();
-
-    emit chatListChanged(chats);
-}
-
 void ChatControler::onSendMessageBack(bool code, int64 sendTime, int64 msgId)
 {
     qDebug() << Q_FUNC_INFO;
@@ -168,24 +148,6 @@ void ChatControler::onRemoveChatBack(bool code)
 {
     qDebug() << Q_FUNC_INFO;
     emit removeChatBack(code);
-}
-
-void ChatControler::onMessageNoticeBack(Msg &msg)
-{
-    qDebug() << Q_FUNC_INFO;
-    emit messageNoticeBack(msg);
-}
-
-void ChatControler::onOfflineMsgNoticeBack(IMOfflineMsgList msgList)
-{
-    qDebug() << Q_FUNC_INFO;
-    emit offlineMsgNoticeBack(msgList);
-}
-
-void ChatControler::onAvatarChangedBack(int64 id, QString avatar)
-{
-    qDebug() << Q_FUNC_INFO;
-    emit avatarChangedBack(id,avatar);
 }
 
 void ChatControler::onRemoveChat(service::ErrorInfo &info)

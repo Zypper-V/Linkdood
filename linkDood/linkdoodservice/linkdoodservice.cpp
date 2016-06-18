@@ -119,7 +119,42 @@ void LinkDoodService::getChatList()
 
 void LinkDoodService::getUnReadMessages()
 {
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->getUnReadMessages();
+    }
+}
 
+void LinkDoodService::removeChat(int64 targetid)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->removeChat(targetid);
+    }
+}
+
+void LinkDoodService::setMessageRead(int64 targetid, int64 msgid)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->setMessageRead(targetid,msgid);
+    }
+}
+
+void LinkDoodService::sendMessage(const Msg& msg)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->sendMessage(msg);
+    }
+}
+
+void LinkDoodService::getMessages(int64 targetid, int64 msgid, int count, int flag)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->getMessages(targetid,msgid,count,flag);
+    }
 }
 
 void LinkDoodService::onContactListChanged(int oper,ContactList contacts)
@@ -183,6 +218,42 @@ void LinkDoodService::onGetContactInfoResult(service::User &user)
     qDebug() << Q_FUNC_INFO ;
 }
 
+void LinkDoodService::onChatAvatarChanged(int64 id, QString avatar)
+{
+    qDebug() << Q_FUNC_INFO ;
+    emit chatAvatarChanged(id,avatar);
+}
+
+void LinkDoodService::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
+{
+    qDebug() << Q_FUNC_INFO ;
+    emit offlineMsgNotice(msgList);
+}
+
+void LinkDoodService::onChatMessageNotice(Msg &msg)
+{
+    qDebug() << Q_FUNC_INFO ;
+    emit newMessageNotice(msg);
+}
+
+void LinkDoodService::onChatSendMessageResult(bool code, int64 sendTime, int64 msgId)
+{
+    qDebug() << Q_FUNC_INFO ;
+    emit sendMessageResult(code,sendTime,msgId);
+}
+
+void LinkDoodService::onChatGetMessagesResult(bool code, int64 sessionId, MsgList &msgList)
+{
+    qDebug() << Q_FUNC_INFO ;
+    emit getMessagesResult(code,sessionId,msgList);
+}
+
+void LinkDoodService::onChatRemoveChatResult(bool code)
+{
+     qDebug() << Q_FUNC_INFO ;
+     emit removeChatResult(code);
+}
+
 LinkDoodService::~LinkDoodService()
 {
 
@@ -224,12 +295,32 @@ void LinkDoodService::initObserver()
 void LinkDoodService::initConnects()
 {
     qDebug() << Q_FUNC_INFO ;
-    QObject::connect(this,SIGNAL(loginOnSucceeded()),this,SLOT(onLoginSucceeded()));
-    QObject::connect(this,SIGNAL(loginOnFailed(int)),this,SLOT(onLoginOnFailed(int)));
 
-    QObject::connect(m_pAuth.get(),SIGNAL(loginoutRelust(bool)),this,SLOT(onLoginoutRelust(bool)));
-    QObject::connect(m_pChatObserver.get(),SIGNAL(chatListChanged(const Chat_UIList&)),this,SLOT(onChatListChanged(const Chat_UIList&)));
-    QObject::connect(m_pContactObserver.get(),SIGNAL(contactListChanged(int,ContactList)),this,SLOT(onContactListChanged(int,ContactList)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(avatarChangedBack(int64,QString)),this,
+                     SLOT(onChatAvatarChanged(int64,QString)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(offlineMsgNoticeBack(IMOfflineMsgList)),this,
+                     SLOT(onChatOfflineMsgNotice(IMOfflineMsgList)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(sendMessageBack(bool,int64,int64)),this,
+                     SLOT(onChatSendMessageResult(bool,int64,int64)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(getMessagesBack(bool,int64,MsgList&)),this,
+                     SLOT(onChatGetMessagesResult(bool,int64,MsgList&)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(removeChatBack(bool)),this,
+                     SLOT(onChatRemoveChatResult(bool)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(messageNoticeBack(Msg&)),this,
+                     SLOT(onChatMessageNotice(Msg&)));
+
+
+    QObject::connect(this,SIGNAL(loginOnSucceeded()),this,
+                     SLOT(onLoginSucceeded()));
+    QObject::connect(this,SIGNAL(loginOnFailed(int)),this,
+                     SLOT(onLoginOnFailed(int)));
+
+    QObject::connect(m_pAuth.get(),SIGNAL(loginoutRelust(bool)),this,
+                     SLOT(onLoginoutRelust(bool)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(chatListChanged(const Chat_UIList&)),this,
+                     SLOT(onChatListChanged(const Chat_UIList&)));
+    QObject::connect(m_pContactObserver.get(),SIGNAL(contactListChanged(int,ContactList)),this,
+                     SLOT(onContactListChanged(int,ContactList)));
 }
 
 void LinkDoodService::initDBusConnection()
@@ -304,3 +395,4 @@ service::MsgText LinkDoodService::QmsgtextTomsgtext(MsgText Qmsgtext)
     msgtext.body           =utils::MsgUtils::MsgFormat(Qmsgtext.body.toStdString());
     return msgtext;
 }
+

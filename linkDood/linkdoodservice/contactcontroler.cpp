@@ -10,8 +10,6 @@
 
 ContactControler::ContactControler(QObject *parent):QObject(parent)
 {
-   QObject::connect(this,SIGNAL(svrListChanged(int,ContactList )),
-                    this,SLOT(onContactListChanged(int,ContactList)));
 }
 
 ContactControler::~ContactControler()
@@ -71,10 +69,5 @@ void ContactControler::onOnlineChanged(OnlineState &status)
     qDebug() << Q_FUNC_INFO;
 }
 
-void ContactControler::onContactListChanged(int oper, ContactList contactList)
-{
-    qDebug() << Q_FUNC_INFO << "contact size:"<< contactList.size();
-    emit contactListChanged(oper,contactList);
-}
 
 

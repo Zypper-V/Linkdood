@@ -64,6 +64,50 @@ void LinkDoodClient::logout()
     manager.call("logout");
 }
 
+void LinkDoodClient::removeChat(int64 targetid)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("removeChat",targetid);
+}
+
+void LinkDoodClient::setMessageRead(int64 targetid, int64 msgid)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("setMessageRead",targetid,msgid);
+}
+
+void LinkDoodClient::sendMessage(const Msg& msg)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+
+    QVariant v;
+    v.setValue(msg);
+
+    manager.call("sendMessage",v);
+}
+
+void LinkDoodClient::getMessages(int64 targetid, int64 msgid, int count, int flag)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getMessages",targetid,msgid,count,flag);
+}
+
 void LinkDoodClient::onLoginoutRelust(bool loginout)
 {
     qDebug() << Q_FUNC_INFO << loginout;
@@ -94,9 +138,64 @@ void LinkDoodClient::onLoginFailed(QString err)
     emit loginFailed(err);
 }
 
+void LinkDoodClient::onChatAvatarChanged(int64 id, QString avatar)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit chatAvatarChanged(id,avatar);
+}
+
+void LinkDoodClient::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit offlineMsgNotice(msgList);
+}
+
+void LinkDoodClient::onChatMessageNotice(Msg &msg)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit newMessageNotice(msg);
+}
+
+void LinkDoodClient::onChatSendMessageResult(bool code, int64 sendTime, int64 msgId)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit sendMessageResult(code,sendTime,msgId);
+}
+
+void LinkDoodClient::onChatGetMessagesResult(bool code, int64 sessionId, MsgList &msgList)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit getMessagesResult(code,sessionId,msgList);
+}
+
+void LinkDoodClient::onChatRemoveChatResult(bool code)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit removeChatResult(code);
+}
+
 void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "chatAvatarChanged",
+                                          this, SLOT(onChatAvatarChanged(int64,QString)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "offlineMsgNotice",
+                                          this, SLOT(onChatOfflineMsgNotice(IMOfflineMsgList)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "newMessageNotice",
+                                          this, SLOT(onChatMessageNotice(Msg&)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "sendMessageResult",
+                                          this, SLOT(onChatSendMessageResult(bool,int64,int64)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "getMessagesResult",
+                                          this, SLOT(onChatGetMessagesResult(bool,int64,MsgList&)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "removeChatResult",
+                                          this, SLOT(onChatRemoveChatResult(bool)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "loginoutRelust",

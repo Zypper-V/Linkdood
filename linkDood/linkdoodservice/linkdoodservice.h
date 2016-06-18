@@ -22,6 +22,20 @@ public:
     static LinkDoodService* instance();
 
 signals:
+
+    //会话列表头像更新
+    void chatAvatarChanged(int64 id,QString avatar);
+    //监听离线消息通知
+    void offlineMsgNotice(IMOfflineMsgList msgList);
+    //监听新消息通知
+    void newMessageNotice(Msg& msg);
+    //发送消息返回
+    void sendMessageResult(bool code,int64 sendTime,int64 msgId);
+    //获取消息结果返回
+    void getMessagesResult(bool code,int64 sessionId,MsgList& msgList);
+    //移除会话结果返回
+    void removeChatResult(bool);
+
     void loginSucceeded();
     void loginFailed(QString);
 
@@ -56,16 +70,71 @@ public slots:
     void getContactInfo(int64 userId);
 
     /*****************start chat**************************/
-    void getChatList(void);//获取会话列表
-    void getUnReadMessages(void);//获取未读消息列表
+    //获取会话列表
+    void getChatList(void);
+    //获取未读消息列表
+    void getUnReadMessages(void);
+
+    /**************************************************
+    * @brief removeChat
+    * @description: 移除会话
+    * @param[in] targetid 传入会话对应的ID，群或者人
+    ****************************************************/
+    void removeChat(int64 targetid);
+
+    /*****************************************
+    * @brief setMessageRead
+    * @description: 设置消息已读
+    * @param[in] targetid 传入会话对应的ID，群或者人
+    * @param[in] msgid 传入要删除的消息ID集合
+    *****************************************/
+    void setMessageRead(int64 targetid, int64 msgid);
+
+    /************************************
+    * @brief sendMessage
+    * @description: 发送消息
+    * @param[in] msg 传入消息
+    ************************************/
+    void sendMessage(const Msg& msg);
+
+    /********************************************************************
+    * @brief getMessages
+    * @description: 获取消息
+    * @param[in] targetid 传入会话对应的ID，群或者人
+    * @param[in] msgid 传入查询消息的起始ID，将从该消息的下一条消息开始查询
+    * @param[in] count 传入查询消息总数
+    * @param[in] flag  传入上一页还是下一页 向上偏移 0；向下偏移 1
+    ********************************************************************/
+    void getMessages(int64 targetid, int64 msgid, int count, int flag);
+
     /*****************end chat****************************/
 
+protected slots:
+    //联系人列表更新
     void onContactListChanged(int oper,ContactList contacts);
+    //会话列表更新
     void onChatListChanged(const Chat_UIList& chats);
+    //登录成功返回
     void onLoginSucceeded();
+    //登录失败返回
     void onLoginOnFailed(int code);
+    //退出登录结果返回
     void onLoginoutRelust(bool loginout);
+    //获取联系人资料返回
     void onGetContactInfoResult(service::User&user);
+
+    //会话列表头像更新
+    void onChatAvatarChanged(int64 id,QString avatar);
+    //监听离线消息通知
+    void onChatOfflineMsgNotice(IMOfflineMsgList msgList);
+    //监听新消息通知
+    void onChatMessageNotice(Msg& msg);
+    //发送消息返回
+    void onChatSendMessageResult(bool code,int64 sendTime,int64 msgId);
+    //获取消息结果返回
+    void onChatGetMessagesResult(bool code,int64 sessionId,MsgList& msgList);
+    //移除会话结果返回
+    void onChatRemoveChatResult(bool);
 public:
     static LinkDoodService* m_pInstance;
 

@@ -17,7 +17,6 @@ public:
     * @brief removeChat
     * @description: 移除会话
     * @param[in] targetid 传入会话对应的ID，群或者人
-    * @param[in] await  传入接收结果回调
     ****************************************************/
     void removeChat(int64 targetid);
 
@@ -40,7 +39,7 @@ public:
     * @description: 发送消息
     * @param[in] msg 传入消息
     ************************************/
-    void sendMessage(service::Msg& msg);
+    void sendMessage(const Msg& msg);
 
     /********************************************************************
     * @brief getMessages
@@ -89,18 +88,12 @@ public:
 signals:
     //监听头像更新
     void avatarChangedBack(int64 id,QString avatar);
-    void srvAvatarChangedBack(int64 id,QString avatar);
-
     //监听离线消息通知
    void offlineMsgNoticeBack(IMOfflineMsgList msgList);
-   void srvOfflineMsgNoticeBack(IMOfflineMsgList msgList);
     //监听新消息通知
    void messageNoticeBack(Msg& msg);
-   void srvMessageNoticeBack(Msg& msg);
-
     //会话消息
    void  chatListChanged(const Chat_UIList& chats);
-   void  chatOnListChanged(Chat_UIList chats);
 
    //发送消息返回
    void sendMessageBack(bool code,int64 sendTime,int64 msgId);
@@ -113,13 +106,9 @@ signals:
    void removeSrvChatBack(bool);
 
 public slots:
-    void onChatListChanged(Chat_UIList chats);
     void onSendMessageBack(bool code,int64 sendTime,int64 msgId);
     void onGetMessagesBack(bool code,int64 sessionId,MsgList& msgList);
     void onRemoveChatBack(bool code);
-    void onMessageNoticeBack(Msg& msg);
-    void onOfflineMsgNoticeBack(IMOfflineMsgList msgList);
-    void onAvatarChangedBack(int64 id,QString avatar);
 private:
 
     /************************************
