@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import com.syberos.basewidgets 2.0
-
 Item {
     id: contactRootPage
     anchors.fill: parent
@@ -10,7 +9,7 @@ Item {
 
         anchors.top: parent.top
         anchors.left: parent.left
-
+        anchors.topMargin:30
         width:parent.width
         height: 110
         color:"#1c1b21"
@@ -32,7 +31,7 @@ Item {
         width:parent.width
         height: parent.height
 
-        color: "#f2f2f2"
+        color: "white"
         z:parent.z-1
     }
     CEditListView {
@@ -55,7 +54,8 @@ Item {
             height: 113
 
             onClicked: {
-                console.log("model.modelData.link = ", model.modelData.name)
+                //                console.log("model.modelData.link = ", model.modelData.name)
+                pageStack.replace(Qt.resolvedUrl("CDoodUserDataPage.qml"), "", true);
             }
 
             onPressedChanged:{
@@ -106,7 +106,6 @@ Item {
                         id: nameText
                         anchors.left: headPortraitImage.right
                         anchors.leftMargin: 30
-                        anchors.right: timeText.left
                         anchors.rightMargin: 20
                         anchors.top: parent.top
                         anchors.topMargin: 25
@@ -135,3 +134,4 @@ Item {
         }
     }
 }
+
