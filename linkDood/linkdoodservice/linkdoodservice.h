@@ -6,6 +6,7 @@
 #include "linkdoodtypes.h"
 #include "MsgUtils.h"
 #include "Msg.h"
+#include "Org.h"
 
 class CSystemPackageManager;
 class ChatControler;
@@ -164,7 +165,8 @@ private:
 public:
     MsgText msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
     service::MsgText QmsgtextTomsgtext(MsgText Qmsgtext);
-
+    Org orgToQorg(service::Org org);
+    OrgUser orguserToQorguser(service::OrgUser orguser);
 };
 
 #endif // LINKDOODSERVICE_H

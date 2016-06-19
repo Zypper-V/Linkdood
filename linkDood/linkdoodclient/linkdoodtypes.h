@@ -144,6 +144,70 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Contact &contac
 
 typedef QList<Contact> ContactList;
 Q_DECLARE_METATYPE (ContactList);
+//Org
+class Org{
+public:
+    explicit Org();
+    void toImOrg(QVariantMap map);
+    void init();
+
+public:
+    QString id;//id
+    QString name; //名称
+    QString avatar;//原图图像
+    QString extends;//扩展字段
+    QString thumbAvatar;//缩略图
+
+    QString level;
+    QString sonorg_count;
+    QString leaf;
+    QString ishidden;
+    QString sonuser_count;
+    QString parent_id;
+    QString ent_id;
+    QString order_num;
+    QString branch_id;
+    QString org_code;
+};
+Q_DECLARE_METATYPE(Org)
+QDBusArgument &operator << (QDBusArgument &argument, const Org &org);
+const QDBusArgument &operator >> (const QDBusArgument &argument, Org &org);
+
+typedef QList<Org> OrgList;
+Q_DECLARE_METATYPE (OrgList);
+//OrgUser
+class OrgUser{
+public:
+    explicit OrgUser();
+    void toImOrgUser(QVariantMap map);
+    void init();
+
+public:
+    QString id;//id
+    QString name; //名称
+    QString gender;//性别:1男2女0保密
+    QString timeZone;//时区
+    QString avatar;//原图图像
+    QString extends;//扩展字段
+    QString thumbAvatar;//缩略图
+
+    QString order_num;
+    QString ent_id;
+    QString org_id;
+    QString role_id;
+    QString neworg_id;
+    QString duty;
+    QString email;
+    QString phone;
+    QString orgname;
+    QString pinyin;
+};
+Q_DECLARE_METATYPE(OrgUser)
+QDBusArgument &operator << (QDBusArgument &argument, const OrgUser &orguser);
+const QDBusArgument &operator >> (const QDBusArgument &argument, OrgUser &orguser);
+
+typedef QList<OrgUser> OrgUserList;
+Q_DECLARE_METATYPE (OrgUserList);
 
 //IMOfflineMsg text
 class IMOfflineMsg{

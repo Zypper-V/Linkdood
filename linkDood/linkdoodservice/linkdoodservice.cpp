@@ -356,6 +356,34 @@ void LinkDoodService::onSrvGetContactInfoResult(service::ErrorInfo &info, servic
      qDebug() << Q_FUNC_INFO << info.code() << user.name.c_str();
      emit srvGetContactInfo(user);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 MsgText LinkDoodService::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
 {
     MsgText Qmsgtext;
@@ -396,3 +424,46 @@ service::MsgText LinkDoodService::QmsgtextTomsgtext(MsgText Qmsgtext)
     return msgtext;
 }
 
+Org LinkDoodService::orgToQorg(service::Org org)
+{
+    Org Qorg;
+    Qorg.avatar       =QString::fromStdString(org.avatar);
+    Qorg.thumbAvatar  =QString::fromStdString(org.thumb_avatar);
+    Qorg.extends      =QString::fromStdString(org.extends);
+    Qorg.org_code     =QString::fromStdString(org.org_code);
+    Qorg.name         =QString::fromStdString(org.name);
+    Qorg.branch_id    =QString::number(org.id);
+    Qorg.ent_id       =QString::number(org.ent_id);
+    Qorg.ishidden     =QString::number(org.ishidden);
+    Qorg.leaf         =QString::number(org.leaf);
+    Qorg.level        =QString::number(org.level);
+    Qorg.order_num    =QString::number(org.order_num);
+    Qorg.id           =QString::number(org.id);
+    Qorg.parent_id    =QString::number(org.parent_id);
+    Qorg.sonorg_count =QString::number(org.sonorg_count);
+    Qorg.sonuser_count=QString::number(org.sonuser_count);
+    return Qorg;
+}
+
+OrgUser LinkDoodService::orguserToQorguser(service::OrgUser orguser)
+{
+    OrgUser Qorguser;
+    Qorguser.ent_id       =QString::number(orguser.ent_id);
+    Qorguser.order_num    =QString::number(orguser.order_num);
+    Qorguser.org_id       =QString::number(orguser.org_id);
+    Qorguser.role_id      =QString::number(orguser.role_id);
+    Qorguser.neworg_id    =QString::number(orguser.org_id);
+    Qorguser.id           =QString::number(orguser.id);
+    Qorguser.gender       =QString::number(orguser.gender);
+    Qorguser.timeZone     =QString::number(orguser.time_zone);
+    Qorguser.avatar       =QString::fromStdString(orguser.avatar);
+    Qorguser.thumbAvatar  =QString::fromStdString(orguser.thumb_avatar);
+    Qorguser.name         =QString::fromStdString(orguser.name);
+    Qorguser.extends      =QString::fromStdString(orguser.extends);
+    Qorguser.duty         =QString::fromStdString(orguser.duty);
+    Qorguser.email        =QString::fromStdString(orguser.email);
+    Qorguser.phone        =QString::fromStdString(orguser.phone);
+    Qorguser.orgname      =QString::fromStdString(orguser.orgname);
+    Qorguser.pinyin       =QString::fromStdString(orguser.pinyin);
+    return Qorguser;
+}

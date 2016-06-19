@@ -331,4 +331,221 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, IMOfflineMsg &of
     argument.endStructure();
     return argument;
 }
+////////////////////////Org////////////////////////////////////////
+Org::Org()
+{
+    init();
+}
 
+void Org::toImOrg(QVariantMap map)
+{
+    QVariantMap::const_iterator iter;
+    for (iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+
+        if(iter.key() == "id"){
+            this->id = iter.value().toString();
+        }
+        if(iter.key() == "name"){
+            this->name = iter.value().toString();
+        }
+        if(iter.key() == "avatar"){
+            this->avatar = iter.value().toString();
+        }
+        if(iter.key() == "extends"){
+            this->extends = iter.value().toString();
+        }
+        if(iter.key() == "thumbAvatar"){
+            this->thumbAvatar = iter.value().toString();
+        }
+        if(iter.key() == "level"){
+            this->level = iter.value().toString();
+        }
+        if(iter.key() == "sonorg_count"){
+            this->sonorg_count = iter.value().toString();
+        }
+        if(iter.key() == "leaf"){
+            this->leaf = iter.value().toString();
+        }
+        if(iter.key() == "ishidden"){
+            this->ishidden = iter.value().toString();
+        }
+        if(iter.key() == "sonuser_count"){
+            this->sonuser_count = iter.value().toString();
+        }
+        if(iter.key() == "parent_id"){
+            this->parent_id = iter.value().toString();
+        }
+        if(iter.key() == "ent_id"){
+            this->ent_id = iter.value().toString();
+        }
+        if(iter.key() == "order_num"){
+            this->order_num = iter.value().toString();
+        }
+        if(iter.key() == "branch_id"){
+            this->branch_id = iter.value().toString();
+        }
+        if(iter.key() == "org_code"){
+            this->org_code = iter.value().toString();
+        }
+    }
+}
+
+void Org::init()
+{
+    this->id = "";
+    this->avatar  = "";
+    this->extends = "";
+    this->branch_id= "";
+    this->ent_id= "";
+
+    this->ishidden = "";
+    this->leaf = "";
+    this->level= "";
+    this->name= "";
+    this->order_num= "";
+    this->org_code = "";
+    this->parent_id= "";
+    this->sonorg_count= "";
+    this->sonuser_count = "";
+    this->thumbAvatar= "";
+}
+
+QDBusArgument &operator << (QDBusArgument &argument, const Org &org)
+{
+    argument.beginStructure();
+    argument << org.avatar << org.branch_id
+             << org.ent_id << org.extends<< org.id
+             << org.ishidden <<  org.leaf<< org.level
+             << org.name << org.order_num << org.org_code
+             << org.parent_id << org.sonorg_count
+             << org.sonuser_count<<org.thumbAvatar;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator >> (const QDBusArgument &argument, Org &org)
+{
+    argument.beginStructure();
+    argument >> org.avatar >> org.branch_id
+             >> org.ent_id >> org.extends>> org.id
+             >> org.ishidden >>  org.leaf>> org.level
+             >> org.name >> org.order_num >> org.org_code
+             >> org.parent_id >> org.sonorg_count
+             >> org.sonuser_count>>org.thumbAvatar;
+    argument.endStructure();
+    return argument;
+}
+////////////////////////OrgUser////////////////////////////////////////
+OrgUser::OrgUser()
+{
+    init();
+}
+
+void OrgUser::toImOrgUser(QVariantMap map)
+{
+    QVariantMap::const_iterator iter;
+    for (iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+
+        if(iter.key() == "id"){
+            this->id = iter.value().toString();
+        }
+        if(iter.key() == "name"){
+            this->name = iter.value().toString();
+        }
+        if(iter.key() == "avatar"){
+            this->avatar = iter.value().toString();
+        }
+        if(iter.key() == "extends"){
+            this->extends = iter.value().toString();
+        }
+        if(iter.key() == "thumbAvatar"){
+            this->thumbAvatar = iter.value().toString();
+        }
+        if(iter.key() == "gender"){
+            this->gender = iter.value().toString();
+        }
+        if(iter.key() == "timeZone"){
+            this->timeZone = iter.value().toString();
+        }
+
+
+        if(iter.key() == "order_num"){
+            this->order_num = iter.value().toString();
+        }
+        if(iter.key() == "ent_id"){
+            this->ent_id = iter.value().toString();
+        }
+        if(iter.key() == "org_id"){
+            this->org_id = iter.value().toString();
+        }
+        if(iter.key() == "role_id"){
+            this->role_id = iter.value().toString();
+        }
+        if(iter.key() == "neworg_id"){
+            this->neworg_id = iter.value().toString();
+        }
+        if(iter.key() == "duty"){
+            this->duty = iter.value().toString();
+        }
+        if(iter.key() == "email"){
+            this->email = iter.value().toString();
+        }
+        if(iter.key() == "phone"){
+            this->phone = iter.value().toString();
+        }
+        if(iter.key() == "orgname"){
+            this->orgname = iter.value().toString();
+        }
+        if(iter.key() == "pinyin"){
+            this->pinyin = iter.value().toString();
+        }
+    }
+}
+
+void OrgUser::init()
+{
+    this->avatar = "";
+    this->duty  = "";
+    this->email = "";
+    this->ent_id= "";
+    this->extends= "";
+
+    this->gender = "";
+    this->id = "";
+    this->name= "";
+    this->neworg_id= "";
+    this->order_num= "";
+    this->orgname = "";
+    this->org_id= "";
+    this->phone= "";
+    this->pinyin = "";
+    this->role_id= "";
+    this->thumbAvatar= "";
+    this->timeZone="";
+}
+
+QDBusArgument &operator << (QDBusArgument &argument, const OrgUser &orguser)
+{
+    argument.beginStructure();
+    argument << orguser.avatar << orguser.duty
+             << orguser.email << orguser.ent_id<< orguser.extends
+             << orguser.gender <<  orguser.id<< orguser.name
+             << orguser.neworg_id << orguser.order_num << orguser.orgname
+             << orguser.org_id << orguser.phone<<orguser.thumbAvatar
+             << orguser.pinyin<<orguser.role_id<<orguser.timeZone;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator >> (const QDBusArgument &argument, OrgUser &orguser)
+{
+    argument.beginStructure();
+    argument >> orguser.avatar >> orguser.duty
+             >> orguser.email >> orguser.ent_id>> orguser.extends
+             >> orguser.gender >>  orguser.id>> orguser.name
+             >> orguser.neworg_id >> orguser.order_num >> orguser.orgname
+             >> orguser.org_id >> orguser.phone>>orguser.thumbAvatar
+             >> orguser.pinyin>>orguser.role_id>>orguser.timeZone;
+    argument.endStructure();
+    return argument;
+}
