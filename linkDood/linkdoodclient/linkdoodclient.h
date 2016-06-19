@@ -48,6 +48,10 @@ signals:
     //移除会话结果返回
     void removeChatResult(bool);
 
+    //获取登录历史记录
+    void getLoginHistoryResult(LoginInfoList list);
+    //登录成功自动推送
+    void loginResultObserver(int code,QString userID);
 public slots:
     QString installPath();
     //登录
@@ -66,6 +70,11 @@ public slots:
     void getMessages(int64 targetid, int64 msgid, int count, int flag);
     //获取子组织
     void getEnterpriseSonOrgs(int64 orgid);
+    //获取登录历史记录
+    void getLoginHistory(void);
+    //设置登录信息
+    void setLoginInfo(int flag, QString userid, QString username, QString avatar);
+
 private slots:
     void onLoginoutRelust(bool loginout);
     void onLoginSucceeded();
@@ -88,7 +97,10 @@ private slots:
     void onChatGetMessagesResult(bool code,int64 sessionId,MsgList& msgList);
     //移除会话结果返回
     void onChatRemoveChatResult(bool code);
-
+    //获取登录历史记录
+    void onGetLoginHistoryResult(LoginInfoList list);
+    //登录成功自动推送
+    void onLoginResultObserver(int code,QString userID);
 private:
     void initDBusConnect();
 };

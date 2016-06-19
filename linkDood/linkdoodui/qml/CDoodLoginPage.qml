@@ -27,6 +27,10 @@ CPage {
             sessionListManager.getChatList();
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
         }
+        onLoginResultObserver:{
+            console.log("onLoginResultObserver !!!!");
+            loginManager.setLoginInfo(2,userID,srvUsr.text,"");
+        }
 
         onLoginFailed: {
             console.log("onLoginFailed !!!!")

@@ -41,6 +41,12 @@ signals:
     void getEnterpriseSonOrgsResult(int, OrgList orgList,OrgUserList orguserList);
     void getEnterpriseSonOrgsCallBack(service::ErrorInfo& info, std::vector<service::Org>,std::vector<service::OrgUser> orgusers);
 
+    //获取登录历史记录
+    void getLoginHistoryResult(LoginInfoList list);
+
+    //登录成功自动推送
+    void loginResultObserver(int code,QString userID);
+
     void loginSucceeded();
     void loginFailed(QString);
 
@@ -121,6 +127,22 @@ public slots:
     ******************************************/
     void getEnterpriseSonOrgs(int64 orgid);
 
+    /***************************************
+    * @brief getLoginHistory
+    * @description: 获取登录历史记录
+    ******************************************/
+    void getLoginHistory(void);
+
+    /******************************************
+    * @brief setLoginInfo
+    * @description: 设置登录信息
+    * @param[in] flag 传入登录属性 记住密码 flag=2;自动登录 flag=6
+    * @param[in] userid 传入用户ID
+    * @param[in] username 传入用户名
+    * @param[in] avatar	  传入用户头像
+    *************************************************/
+    void setLoginInfo(int flag, QString userid, QString username, QString avatar);
+
 protected slots:
     //获取子组织返回
     void onGetEnterpriseSonOrgs(service::ErrorInfo& info, std::vector<service::Org> orgs,std::vector<service::OrgUser> orgusers);
@@ -149,6 +171,12 @@ protected slots:
     void onChatGetMessagesResult(bool code,int64 sessionId,MsgList& msgList);
     //移除会话结果返回
     void onChatRemoveChatResult(bool);
+
+    //获取登录历史记录
+    void onGetLoginHistoryResult(LoginInfoList list);
+    //登录成功自动推送
+    void onLoginResultObserver(int code,QString userID);
+
 public:
     static LinkDoodService* m_pInstance;
 

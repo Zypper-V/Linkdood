@@ -118,6 +118,26 @@ void LinkDoodClient::getEnterpriseSonOrgs(int64 orgid)
     manager.call("getEnterpriseSonOrgs",orgid);
 }
 
+void LinkDoodClient::getLoginHistory()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getLoginHistory");
+}
+
+void LinkDoodClient::setLoginInfo(int flag, QString userid, QString username, QString avatar)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("setLoginInfo",flag,userid,username,avatar);
+}
+
 void LinkDoodClient::onLoginoutRelust(bool loginout)
 {
     qDebug() << Q_FUNC_INFO << loginout;
@@ -190,6 +210,18 @@ void LinkDoodClient::onChatRemoveChatResult(bool code)
     emit removeChatResult(code);
 }
 
+void LinkDoodClient::onGetLoginHistoryResult(LoginInfoList list)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit getLoginHistoryResult(list);
+}
+
+void LinkDoodClient::onLoginResultObserver(int code, QString userID)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit loginResultObserver(code,userID);
+}
+
 void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
@@ -234,6 +266,10 @@ void LinkDoodClient::initDBusConnect()
                                           this, SLOT(onChatListChanged(Chat_UIList)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
-                                          DBUS_DOOD_INTERFACE, "testSignal",
-                                          this, SLOT(onTestSignal(QString)));
+                                          DBUS_DOOD_INTERFACE, "loginResultObserver",
+                                          this, SLOT(onLoginResultObserver(int,QString)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "getLoginHistoryResult",
+                                          this, SLOT(onGetLoginHistoryResult(LoginInfoList)));
 }

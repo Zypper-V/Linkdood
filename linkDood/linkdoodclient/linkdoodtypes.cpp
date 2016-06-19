@@ -549,3 +549,75 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, OrgUser &orguse
     argument.endStructure();
     return argument;
 }
+////////////////////////////LoginInfo/////////////////////////////////////
+LoginInfo::LoginInfo()
+{
+    this->account ="";
+    this->areaNum = "";
+    this->isAutoLogin = 0;
+    this->isRemberPass = 0;
+    this->lastLoginTime = 0;
+    this->name = "";
+    this->server = "";
+    this->status = 0;
+    this->userIcon = "";
+    this->userId = 0;
+}
+
+void LoginInfo::toImLoginInfo(QVariantMap map)
+{
+    QVariantMap::const_iterator iter;
+    for (iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+        if(iter.key() == "account"){
+            this->account = iter.value().toString();
+        }
+        if(iter.key() == "areaNum"){
+            this->areaNum = iter.value().toString();
+        }
+        if(iter.key() == "isAutoLogin"){
+            this->isAutoLogin = iter.value().toLongLong();
+        }
+        if(iter.key() == "isRemberPass"){
+            this->isRemberPass = iter.value().toLongLong();
+        }
+        if(iter.key() == "lastLoginTime"){
+            this->lastLoginTime = iter.value().toLongLong();
+        }
+        if(iter.key() == "name"){
+            this->name = iter.value().toString();
+        }
+        if(iter.key() == "server"){
+            this->server = iter.value().toString();
+        }
+        if(iter.key() == "status"){
+            this->status = iter.value().toLongLong();
+        }
+        if(iter.key() == "userIcon"){
+            this->userIcon = iter.value().toString();
+        }
+        if(iter.key() == "userId"){
+            this->userId = iter.value().toLongLong();
+        }
+
+    }
+}
+QDBusArgument &operator << (QDBusArgument &argument, const LoginInfo &info)
+{
+    argument.beginStructure();
+
+    argument << info.account << info.areaNum << info.isAutoLogin
+            << info.isRemberPass << info.lastLoginTime << info.name
+            << info.server << info.status << info.userIcon;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator >> (const QDBusArgument &argument, LoginInfo &info)
+{
+    argument.beginStructure();
+    argument >> info.account >> info.areaNum >> info.isAutoLogin
+            >> info.isRemberPass >> info.lastLoginTime >> info.name
+            >> info.server >> info.status >> info.userIcon;
+    argument.endStructure();
+    return argument;
+}

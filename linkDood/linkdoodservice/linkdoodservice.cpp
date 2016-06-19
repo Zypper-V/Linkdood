@@ -95,9 +95,9 @@ void LinkDoodService::login(const QString &server,
 void LinkDoodService::logout()
 {
     qDebug() << Q_FUNC_INFO;
-    if(m_pIMClient != NULL)
+    if(m_pAuth != NULL)
     {
-        m_pIMClient->getAuth()->logout();
+        m_pAuth->logout();
     }
 }
 
@@ -168,6 +168,22 @@ void LinkDoodService::getEnterpriseSonOrgs(int64 orgid)
                               std::placeholders::_1,
                               std::placeholders::_2,
                               std::placeholders::_3));
+    }
+}
+
+void LinkDoodService::getLoginHistory()
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pAuth != NULL){
+        m_pAuth->getLoginHistory();
+    }
+}
+
+void LinkDoodService::setLoginInfo(int flag, QString userid, QString username, QString avatar)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pAuth != NULL){
+        m_pAuth->setLoginInfo(flag,userid,username,avatar);
     }
 }
 
@@ -283,6 +299,18 @@ void LinkDoodService::onChatRemoveChatResult(bool code)
      emit removeChatResult(code);
 }
 
+void LinkDoodService::onGetLoginHistoryResult(LoginInfoList list)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit getLoginHistoryResult(list);
+}
+
+void LinkDoodService::onLoginResultObserver(int code, QString userID)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit loginResultObserver(code,userID);
+}
+
 LinkDoodService::~LinkDoodService()
 {
 
@@ -342,6 +370,8 @@ void LinkDoodService::initConnects()
                      SLOT(onGetEnterpriseSonOrgs(service::ErrorInfo&,std::vector<service::Org>,std::vector<service::OrgUser>)));
 
 
+    QObject::connect(m_pAuth.get(),SIGNAL(getLoginHistoryResult(LoginInfoList)),this,
+                     SLOT(onGetLoginHistoryResult(LoginInfoList)));
     QObject::connect(this,SIGNAL(loginOnSucceeded()),this,
                      SLOT(onLoginSucceeded()));
     QObject::connect(this,SIGNAL(loginOnFailed(int)),this,
@@ -349,6 +379,9 @@ void LinkDoodService::initConnects()
 
     QObject::connect(m_pAuth.get(),SIGNAL(loginoutRelust(bool)),this,
                      SLOT(onLoginoutRelust(bool)));
+    QObject::connect(m_pAuth.get(),SIGNAL(loginResultObserver(int,QString)),this,
+                     SLOT(onLoginResultObserver(int,QString)));
+
     QObject::connect(m_pChatObserver.get(),SIGNAL(chatListChanged(const Chat_UIList&)),this,
                      SLOT(onChatListChanged(const Chat_UIList&)));
     QObject::connect(m_pContactObserver.get(),SIGNAL(contactListChanged(int,ContactList)),this,

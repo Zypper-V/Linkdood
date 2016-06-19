@@ -20,7 +20,33 @@ MSG_TYPE_CARD,//名片类型
 MSG_TYPE_TIP//提示类型
 };
 
+//LoginInfo
+class LoginInfo{
+public:
 
+    explicit LoginInfo();
+    virtual ~LoginInfo(){}
+    void toImLoginInfo(QVariantMap map);
+
+        int64 status;
+        int64 isRemberPass;        //是否记住密码
+        int64 isAutoLogin;         //自动登录
+        int64 userId;              //用户id
+        int64 lastLoginTime;     //上次登陆时间
+        QString server;            //服务器
+        QString name;               //用户名
+        QString account;			//账号
+        QString userIcon;          //头像
+        QString areaNum;           //国家码
+};
+Q_DECLARE_METATYPE(LoginInfo)
+QDBusArgument &operator << (QDBusArgument &argument, const LoginInfo &info);
+const QDBusArgument &operator >> (const QDBusArgument &argument, LoginInfo &info);
+//
+typedef QList<LoginInfo> LoginInfoList;
+Q_DECLARE_METATYPE (LoginInfoList);
+
+//Msg
 class Msg
 {
 public:
@@ -249,6 +275,12 @@ inline void registerDoodDataTypes() {
     qDBusRegisterMetaType<IMOfflineMsg>();
     qDBusRegisterMetaType<IMOfflineMsgList>();
     qRegisterMetaType<IMOfflineMsgList>("IMOfflineMsgList");
+
+    qDBusRegisterMetaType<LoginInfo>();
+    qDBusRegisterMetaType<LoginInfoList>();
+    qRegisterMetaType<LoginInfoList>("LoginInfoList");
+
+
 }
 #endif // LINKDOODTYPES_H
 
