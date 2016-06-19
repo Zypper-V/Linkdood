@@ -27,7 +27,8 @@ HEADERS += src/linkdoodui_workspace.h \
     src/cdoodsessionlistmanager.h \
     src/cdoodsessionlistitem.h \
     src/cdoodcontactitem.h \
-    src/cdoodcontactmanager.h
+    src/cdoodcontactmanager.h \
+    src/cdoodenterprisemanager.h
 
 SOURCES += src/main.cpp \
 		   src/linkdoodui_workspace.cpp \
@@ -36,7 +37,8 @@ SOURCES += src/main.cpp \
     src/cdoodsessionlistmanager.cpp \
     src/cdoodsessionlistitem.cpp \
     src/cdoodcontactitem.cpp \
-    src/cdoodcontactmanager.cpp
+    src/cdoodcontactmanager.cpp \
+    src/cdoodenterprisemanager.cpp
 
 OTHER_FILES += qml/*.qml
 

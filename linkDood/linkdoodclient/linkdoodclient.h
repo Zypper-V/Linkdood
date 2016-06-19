@@ -32,9 +32,10 @@ signals:
     void contactListChanged(int oper,ContactList contacts);
     void loginoutRelust(bool loginout);
 
-    //获取子组织返回
-    void getEnterpriseSonOrgsResult(int, OrgList orgList,OrgUserList orguserList);
-
+    //获取组织返回
+    void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
+    void getOnlineStatesResult(QOnlineStateList onlinestatelist);
+    void getOrgUserInfoResult(int code,OrgUser& orguser);
     //会话列表头像更新
     void chatAvatarChanged(int64 id,QString avatar);
     //监听离线消息通知
@@ -75,6 +76,11 @@ public slots:
     //设置登录信息
     void setLoginInfo(int flag, QString userid, QString username, QString avatar);
 
+    /*****************start Enterprise**************************/
+   void getSonOrgs(QString orgid);
+   void getOnlineStates(QStringList& userid);
+   void getOrgUserInfo(QString userid);
+   /*****************end Enterprise**************************/
 private slots:
     void onLoginoutRelust(bool loginout);
     void onLoginSucceeded();
@@ -82,9 +88,10 @@ private slots:
     void onContactListChanged(int oper,ContactList contacts);
     void onLoginFailed(QString err);
 
-    //获取子组织返回
-    void onGetEnterpriseSonOrgsResult(int, OrgList orgList,OrgUserList orguserList);
-
+    //获取组织返回
+    void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
+    void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
+    void onGetorgUserInfoResult(int code,OrgUser& orguser);
     //会话列表头像更新
     void onChatAvatarChanged(int64 id,QString avatar);
     //监听离线消息通知

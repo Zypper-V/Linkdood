@@ -108,16 +108,35 @@ void LinkDoodClient::getMessages(int64 targetid, int64 msgid, int count, int fla
     manager.call("getMessages",targetid,msgid,count,flag);
 }
 
-void LinkDoodClient::getEnterpriseSonOrgs(int64 orgid)
+
+void LinkDoodClient::getSonOrgs(QString orgid)
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
                            DBUS_DOOD_PATH,
                            DBUS_DOOD_INTERFACE,
                            QDBusConnection::sessionBus());
-    manager.call("getEnterpriseSonOrgs",orgid);
+    manager.call("getSonOrgs",orgid);
+}
+void LinkDoodClient::getOnlineStates(QStringList &userid)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getOnlineStates",userid);
 }
 
+void LinkDoodClient::getOrgUserInfo(QString userid)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getOrgUserInfo",userid);
+}
 void LinkDoodClient::getLoginHistory()
 {
     qDebug() << Q_FUNC_INFO;
@@ -168,10 +187,24 @@ void LinkDoodClient::onLoginFailed(QString err)
     emit loginFailed(err);
 }
 
-void LinkDoodClient::onGetEnterpriseSonOrgsResult(int code, OrgList orgList, OrgUserList orguserList)
+
+
+void LinkDoodClient::onGetSonOrgsResult(int code, OrgList orglist, OrgUserList orguserlist)
 {
     qDebug() << Q_FUNC_INFO;
-    emit getEnterpriseSonOrgsResult(code,orgList,orguserList);
+    emit getSonOrgsResult(code,orglist,orguserlist);
+}
+
+void LinkDoodClient::onGetOnlineStatesResult(QOnlineStateList onlinestatelist)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit getOnlineStatesResult(onlinestatelist);
+}
+
+void LinkDoodClient::onGetorgUserInfoResult(int code, OrgUser &orguser)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit getOrgUserInfoResult(code,orguser);
 }
 
 void LinkDoodClient::onChatAvatarChanged(int64 id, QString avatar)
@@ -272,4 +305,17 @@ void LinkDoodClient::initDBusConnect()
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "getLoginHistoryResult",
                                           this, SLOT(onGetLoginHistoryResult(LoginInfoList)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "getSonOrgsResult",
+                                          this, SLOT(onGetSonOrgsResult(int, OrgList,OrgUser)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "getOnlineStatesResult",
+                                          this, SLOT(onGetOnlineStatesResult(QOnlineStateList)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "getorgUserInfoResult",
+                                          this, SLOT(onGetorgUserInfoResult(int,OrgUse)));
+
+
+
+
 }

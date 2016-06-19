@@ -280,6 +280,14 @@ inline void registerDoodDataTypes() {
     qDBusRegisterMetaType<LoginInfoList>();
     qRegisterMetaType<LoginInfoList>("LoginInfoList");
 
+    qDBusRegisterMetaType<Org>();
+    qDBusRegisterMetaType<OrgList>();
+    qRegisterMetaType<OrgList>("OrgList");
+
+    qDBusRegisterMetaType<OrgUser>();
+    qDBusRegisterMetaType<OrgUserList>();
+    qRegisterMetaType<OrgUserList>("OrgUserList");
+
 
 }
 #endif // LINKDOODTYPES_H

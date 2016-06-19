@@ -549,6 +549,59 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, OrgUser &orguse
     argument.endStructure();
     return argument;
 }
+
+////////////////////////QOnlineState////////////////////////////////////////
+QOnlineState::QOnlineState()
+{
+    init();
+}
+
+void QOnlineState::toImQOnlineState(QVariantMap map)
+{
+    QVariantMap::const_iterator iter;
+    for (iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+
+        if(iter.key() == "userid"){
+            this->userid = iter.value().toString();
+        }
+        if(iter.key() == "connectId"){
+            this->connectId = iter.value().toString();
+        }
+        if(iter.key() == "deviceType"){
+            this->deviceType = iter.value().toString();
+        }
+        if(iter.key() == "flag"){
+            this->flag = iter.value().toString();
+        }
+    }
+}
+
+void QOnlineState::init()
+{
+    this->userid = "";
+    this->connectId  = "";
+    this->deviceType = "";
+    this->flag= "";
+}
+
+QDBusArgument &operator << (QDBusArgument &argument, const QOnlineState &onlinestate)
+{
+    argument.beginStructure();
+    argument << onlinestate.connectId << onlinestate.deviceType
+             << onlinestate.flag << onlinestate.userid;
+
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator >> (const QDBusArgument &argument, QOnlineState &onlinestate)
+{
+    argument.beginStructure();
+    argument >> onlinestate.connectId >> onlinestate.deviceType
+             >> onlinestate.flag >> onlinestate.userid;
+    argument.endStructure();
+    return argument;
+}
 ////////////////////////////LoginInfo/////////////////////////////////////
 LoginInfo::LoginInfo()
 {

@@ -159,18 +159,28 @@ void LinkDoodService::getMessages(int64 targetid, int64 msgid, int count, int fl
     }
 }
 
-void LinkDoodService::getEnterpriseSonOrgs(int64 orgid)
+void LinkDoodService::getSonOrgs(QString orgid)
 {
     qDebug() << Q_FUNC_INFO;
-    if(m_pIMClient != NULL){
-        m_pIMClient->getEnterprise()->getSonOrgs(orgid,
-                    std::bind(&LinkDoodService::onGetEnterpriseSonOrgsResult,this,
-                              std::placeholders::_1,
-                              std::placeholders::_2,
-                              std::placeholders::_3));
+    if(m_pEnterpriseControler!=NULL){
+        m_pEnterpriseControler->getSonOrgs(orgid);
+    }
+}
+void LinkDoodService::getOnlineStates(QStringList& userid)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pEnterpriseControler!=NULL){
+        m_pEnterpriseControler->getOnlineStates(userid);
     }
 }
 
+void LinkDoodService::getOrgUserInfo(QString userid)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pEnterpriseControler!=NULL){
+        m_pEnterpriseControler->getOrgUserInfo(userid);
+    }
+}
 void LinkDoodService::getLoginHistory()
 {
     qDebug() << Q_FUNC_INFO;
@@ -187,23 +197,24 @@ void LinkDoodService::setLoginInfo(int flag, QString userid, QString username, Q
     }
 }
 
-void LinkDoodService::onGetEnterpriseSonOrgs(service::ErrorInfo &info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers)
+void LinkDoodService::onGetSonOrgsResult(int code, OrgList orglist, OrgUserList orguserlist)
 {
     qDebug() << Q_FUNC_INFO;
-
-    OrgList orgList;
-    OrgUserList orgUserList;
-    for(auto org:orgs){
-        orgList.insert(orgList.size(),orgToQorg(org));
-    }
-
-    for(auto orgUser:orgusers){
-        orgUserList.insert(orgUserList.size(),orguserToQorguser(orgUser));
-    }
-
-    emit getEnterpriseSonOrgsResult(info.code(),orgList,orgUserList);
-
+    emit getSonOrgsResult(code,orglist,orguserlist);
 }
+
+void LinkDoodService::onGetOnlineStatesResult(QOnlineStateList onlinestatelist)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit getOnlineStatesResult(onlinestatelist);
+}
+
+void LinkDoodService::onGetorgUserInfoResult(int code, OrgUser &orguser)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit getOrgUserInfoResult(code,orguser);
+}
+
 
 void LinkDoodService::onContactListChanged(int oper,ContactList contacts)
 {
@@ -366,8 +377,12 @@ void LinkDoodService::initConnects()
     QObject::connect(m_pChatObserver.get(),SIGNAL(messageNoticeBack(Msg&)),this,
                      SLOT(onChatMessageNotice(Msg&)));
 
-    QObject::connect(this,SIGNAL(getEnterpriseSonOrgsCallBack(service::ErrorInfo&,std::vector<service::Org>,std::vector<service::OrgUser>)),this,
-                     SLOT(onGetEnterpriseSonOrgs(service::ErrorInfo&,std::vector<service::Org>,std::vector<service::OrgUser>)));
+    QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist)),this,
+                     SLOT(onGetSonOrgsResult(int code, OrgList orglist,OrgUser orguserlist)));
+    QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getOnlineStatesResult(QOnlineStateList onlinestatelist)),this,
+                     SLOT(onGetOnlineStatesResult(QOnlineStateList onlinestatelist)));
+    QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getOrgUserInfoResult(int code,OrgUser& orguser)),this,
+                     SLOT(onGetorgUserInfoResult(int code,OrgUser& orguser)));
 
 
     QObject::connect(m_pAuth.get(),SIGNAL(getLoginHistoryResult(LoginInfoList)),this,
@@ -428,46 +443,6 @@ void LinkDoodService::onSrvGetContactInfoResult(service::ErrorInfo &info, servic
      emit srvGetContactInfo(user);
 }
 
-Org LinkDoodService::orgToQorg(service::Org org)
-{
-    Org Qorg;
-    Qorg.avatar       =QString::fromStdString(org.avatar);
-    Qorg.thumbAvatar  =QString::fromStdString(org.thumb_avatar);
-    Qorg.extends      =QString::fromStdString(org.extends);
-    Qorg.org_code     =QString::fromStdString(org.org_code);
-    Qorg.name         =QString::fromStdString(org.name);
-    Qorg.branch_id    =QString::number(org.id);
-    Qorg.ent_id       =QString::number(org.ent_id);
-    Qorg.ishidden     =QString::number(org.ishidden);
-    Qorg.leaf         =QString::number(org.leaf);
-    Qorg.level        =QString::number(org.level);
-    Qorg.order_num    =QString::number(org.order_num);
-    Qorg.id           =QString::number(org.id);
-    Qorg.parent_id    =QString::number(org.parent_id);
-    Qorg.sonorg_count =QString::number(org.sonorg_count);
-    Qorg.sonuser_count=QString::number(org.sonuser_count);
-    return Qorg;
-}
 
-OrgUser LinkDoodService::orguserToQorguser(service::OrgUser orguser)
-{
-    OrgUser Qorguser;
-    Qorguser.ent_id       =QString::number(orguser.ent_id);
-    Qorguser.order_num    =QString::number(orguser.order_num);
-    Qorguser.org_id       =QString::number(orguser.org_id);
-    Qorguser.role_id      =QString::number(orguser.role_id);
-    Qorguser.neworg_id    =QString::number(orguser.org_id);
-    Qorguser.id           =QString::number(orguser.id);
-    Qorguser.gender       =QString::number(orguser.gender);
-    Qorguser.timeZone     =QString::number(orguser.time_zone);
-    Qorguser.avatar       =QString::fromStdString(orguser.avatar);
-    Qorguser.thumbAvatar  =QString::fromStdString(orguser.thumb_avatar);
-    Qorguser.name         =QString::fromStdString(orguser.name);
-    Qorguser.extends      =QString::fromStdString(orguser.extends);
-    Qorguser.duty         =QString::fromStdString(orguser.duty);
-    Qorguser.email        =QString::fromStdString(orguser.email);
-    Qorguser.phone        =QString::fromStdString(orguser.phone);
-    Qorguser.orgname      =QString::fromStdString(orguser.orgname);
-    Qorguser.pinyin       =QString::fromStdString(orguser.pinyin);
-    return Qorguser;
-}
+
+

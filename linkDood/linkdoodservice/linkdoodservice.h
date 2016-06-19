@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "authcontroler.h"
+#include "enterprisecontroler.h"
 #include "linkdoodtypes.h"
 #include "MsgUtils.h"
 #include "Msg.h"
@@ -38,8 +39,9 @@ signals:
     void removeChatResult(bool);
 
     //获取子组织返回
-    void getEnterpriseSonOrgsResult(int, OrgList orgList,OrgUserList orguserList);
-    void getEnterpriseSonOrgsCallBack(service::ErrorInfo& info, std::vector<service::Org>,std::vector<service::OrgUser> orgusers);
+    void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
+    void getOnlineStatesResult(QOnlineStateList onlinestatelist);
+    void getOrgUserInfoResult(int code,OrgUser& orguser);
 
     //获取登录历史记录
     void getLoginHistoryResult(LoginInfoList list);
@@ -120,12 +122,11 @@ public slots:
 
     /*****************end chat****************************/
 
-    /*******************************************
-    * @brief getSonOrgs
-    * @description: 获取子组织
-    * @param[in] orgid 传入组织id
-    ******************************************/
-    void getEnterpriseSonOrgs(int64 orgid);
+     /*****************start Enterprise**************************/
+    void getSonOrgs(QString orgid);
+    void getOnlineStates(QStringList& userid);
+    void getOrgUserInfo(QString userid);
+    /*****************end Enterprise**************************/
 
     /***************************************
     * @brief getLoginHistory
@@ -145,7 +146,10 @@ public slots:
 
 protected slots:
     //获取子组织返回
-    void onGetEnterpriseSonOrgs(service::ErrorInfo& info, std::vector<service::Org> orgs,std::vector<service::OrgUser> orgusers);
+    void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
+    void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
+    void onGetorgUserInfoResult(int code,OrgUser& orguser);
+
     //联系人列表更新
     void onContactListChanged(int oper,ContactList contacts);
     //会话列表更新
@@ -203,11 +207,9 @@ private:
     std::shared_ptr<AuthControler>  m_pAuth;
     std::shared_ptr<ChatControler>  m_pChatObserver;
     std::shared_ptr<ContactControler>  m_pContactObserver;
+    std::shared_ptr<EnterpriseControler> m_pEnterpriseControler;
 
     std::shared_ptr<service::IMClient> m_pIMClient;
-public: 
-    Org orgToQorg(service::Org org);
-    OrgUser orguserToQorguser(service::OrgUser orguser);
 };
 
 #endif // LINKDOODSERVICE_H

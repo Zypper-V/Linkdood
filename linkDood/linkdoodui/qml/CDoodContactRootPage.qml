@@ -55,6 +55,7 @@ Item {
             onClicked: {
                 //                console.log("model.modelData.link = ", model.modelData.name)
                 pageStack.replace(Qt.resolvedUrl("CDoodUserDataPage.qml"), "", true);
+
             }
 
             onPressedChanged:{
