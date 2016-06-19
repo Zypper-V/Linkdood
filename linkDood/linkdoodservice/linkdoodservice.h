@@ -100,7 +100,7 @@ public slots:
     * @description: 发送消息
     * @param[in] msg 传入消息
     ************************************/
-    void sendMessage(const Msg& msg);
+    void sendMessage(Msg& msg);
 
     /********************************************************************
     * @brief getMessages

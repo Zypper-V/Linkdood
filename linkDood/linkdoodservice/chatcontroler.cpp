@@ -41,12 +41,12 @@ void ChatControler::getUnReadMessages()
     service::IMClient::getClient()->getChat()->getUnReadMessages();
 }
 
-void ChatControler::sendMessage(const Msg &imMsg)
+void ChatControler::sendMessage(Msg &imMsg)
 {
     qDebug() << Q_FUNC_INFO;
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
-        MsgText msgText; //= dynamic_cast<MsgText&>(imMsg);
+        MsgText& msgText = imMsgCast<MsgText>(imMsg);
         service::Msg msg = QmsgtextTomsgtext(msgText);
 
         service::IMClient::getClient()->getChat()->sendMessage(msg,
@@ -108,7 +108,8 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
         imMsg.offlineType = msg.offline_type;
         imMsg.count = msg.count;
         if(msg.msg->msgtype == MSG_TYPE_TEXT){
-           //TODO
+           std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg.msg);
+           imMsg.msg = msgtextToQmsgtext(msgText);
            msgList.insert(msgList.size(),imMsg);
         }
     }

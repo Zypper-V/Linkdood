@@ -34,7 +34,4 @@ public slots:
     void onLoginoutResult(bool result);
 };
 
-template<typename T>
-T& imMsgCast(Msg& val){ return dynamic_cast<T&>(val); }
-
 #endif // AUTHCONTROLER_H

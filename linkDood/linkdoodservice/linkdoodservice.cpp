@@ -143,7 +143,7 @@ void LinkDoodService::setMessageRead(int64 targetid, int64 msgid)
     }
 }
 
-void LinkDoodService::sendMessage(const Msg& msg)
+void LinkDoodService::sendMessage(Msg& msg)
 {
     qDebug() << Q_FUNC_INFO;
     if(m_pChatObserver != NULL){

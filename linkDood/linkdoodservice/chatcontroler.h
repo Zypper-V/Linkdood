@@ -1,7 +1,6 @@
 #ifndef CHATCONTROLER_H
 #define CHATCONTROLER_H
 
-#endif // CHATCONTROLER_H
 #include<IChatObserver.h>
 #include <QObject>
 #include "linkdoodtypes.h"
@@ -39,7 +38,7 @@ public:
     * @description: 发送消息
     * @param[in] msg 传入消息
     ************************************/
-    void sendMessage(const Msg& msg);
+    void sendMessage(Msg& msg);
 
     /********************************************************************
     * @brief getMessages
@@ -131,3 +130,9 @@ private:
     MsgText msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
     service::MsgText QmsgtextTomsgtext(MsgText Qmsgtext);
 };
+
+template<typename T>
+T& imMsgCast(Msg& val){ return dynamic_cast<T&>(val); }
+
+#endif // CHATCONTROLER_H
+
