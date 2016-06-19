@@ -69,8 +69,6 @@ public slots:
     void sendMessage(const Msg& msg);
     //获取消息
     void getMessages(int64 targetid, int64 msgid, int count, int flag);
-    //获取子组织
-    void getEnterpriseSonOrgs(int64 orgid);
     //获取登录历史记录
     void getLoginHistory(void);
     //设置登录信息

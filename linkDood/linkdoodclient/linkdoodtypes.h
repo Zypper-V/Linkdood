@@ -234,6 +234,25 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, OrgUser &orguse
 
 typedef QList<OrgUser> OrgUserList;
 Q_DECLARE_METATYPE (OrgUserList);
+// QOnlineState
+class QOnlineState{
+public:
+    explicit QOnlineState();
+    void toImQOnlineState(QVariantMap map);
+    void init();
+
+public:
+    QString userid;//用户id
+    QString connectId; //关联id
+    QString deviceType;//在线设备类型
+    QString flag;//在线状态
+};
+Q_DECLARE_METATYPE(QOnlineState)
+QDBusArgument &operator << (QDBusArgument &argument, const QOnlineState &onlinestate);
+const QDBusArgument &operator >> (const QDBusArgument &argument, QOnlineState &onlinestate);
+
+typedef QList<QOnlineState> QOnlineStateList;
+Q_DECLARE_METATYPE (QOnlineStateList);
 
 //IMOfflineMsg text
 class IMOfflineMsg{

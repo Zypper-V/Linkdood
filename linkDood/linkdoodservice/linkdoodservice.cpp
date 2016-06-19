@@ -416,11 +416,7 @@ void LinkDoodService::initDBusConnection()
     qDebug() << "--- registerObject = " << bSuccess;
 }
 
-void LinkDoodService::onGetEnterpriseSonOrgsResult(service::ErrorInfo &info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers)
-{
-    qDebug() << Q_FUNC_INFO;
-    emit getEnterpriseSonOrgsCallBack(info,orgs,orgusers);
-}
+
 
 void LinkDoodService::onLoginResult(service::ErrorInfo &info, int64 userId)
 {
