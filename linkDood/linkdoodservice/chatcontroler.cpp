@@ -2,6 +2,8 @@
 #include<iostream>
 #include<QDebug>
 #include<QDateTime>
+#include<sstream>
+#include<string>
 
 #include "IMClient.h"
 #include "IChatService.h"
@@ -42,13 +44,17 @@ void ChatControler::getUnReadMessages()
 void ChatControler::sendMessage(const Msg &imMsg)
 {
     qDebug() << Q_FUNC_INFO;
-    service::Msg msg;
-    //TODO
-    service::IMClient::getClient()->getChat()->sendMessage(msg,
-                 std::bind(&ChatControler::onSendMesage,this,
-                           std::placeholders::_1,
-                           std::placeholders::_2,
-                           std::placeholders::_3));
+    if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
+    {
+        MsgText msgText; //= dynamic_cast<MsgText&>(imMsg);
+        service::Msg msg = QmsgtextTomsgtext(msgText);
+
+        service::IMClient::getClient()->getChat()->sendMessage(msg,
+                     std::bind(&ChatControler::onSendMesage,this,
+                               std::placeholders::_1,
+                               std::placeholders::_2,
+                               std::placeholders::_3));
+    }
 }
 
 void ChatControler::getMessages(int64 targetid, int64 msgid, int count, int flag)
@@ -76,10 +82,13 @@ ChatControler::~ChatControler()
 void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
 {
     qDebug() << Q_FUNC_INFO;
+    if(msg->msgtype == MSG_TYPE_TEXT)
+    {
+       std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
+       Msg imMsg = msgtextToQmsgtext(msgText);
+       emit messageNoticeBack(imMsg);
+    }
 
-    Msg imMsg;
-    //TODO
-    emit messageNoticeBack(imMsg);
 }
 
 void ChatControler::onAvatarChanged(int64 targetid, std::string avatar)
@@ -199,4 +208,44 @@ void ChatControler::onGetMesage(service::ErrorInfo &info, int64 targetId, std::v
     }else{
         emit getSrvMessagesBack(true,targetId,msgList);
     }
+}
+
+MsgText ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
+{
+    MsgText Qmsgtext;
+    Qmsgtext.activeType   =QString::number(msgtext->active_type);
+    Qmsgtext.msgtype      =QString::number(msgtext->msgtype);
+    Qmsgtext.msgid        =QString::number(msgtext->msgid);
+    Qmsgtext.targetid     =QString::number(msgtext->targetid);
+    Qmsgtext.fromid       =QString::number(msgtext->fromid);
+    Qmsgtext.toid         =QString::number(msgtext->toid);
+    Qmsgtext.localid      =QString::number(msgtext->localid);
+    Qmsgtext.time         =QDateTime::fromMSecsSinceEpoch(msgtext->time).toString("yyyy-MM-dd hh:mm:ss");
+    Qmsgtext.msgProperties=QString::fromStdString(msgtext->msg_properties);
+    Qmsgtext.body         =QString::fromStdString(utils::MsgUtils::getText(msgtext->body));
+    return Qmsgtext;
+}
+
+service::MsgText ChatControler::QmsgtextTomsgtext(MsgText Qmsgtext)
+{
+    service::MsgText msgtext;
+    std::stringstream str(Qmsgtext.activeType.toStdString());
+    str >> msgtext.active_type;
+    std::stringstream str1(Qmsgtext.msgtype.toStdString());
+    str1 >> msgtext.msgtype;
+    std::stringstream str2(Qmsgtext.msgid.toStdString());
+    str2 >> msgtext.msgid;
+    std::stringstream str3(Qmsgtext.targetid.toStdString());
+    str3 >> msgtext.targetid;
+    std::stringstream str4(Qmsgtext.fromid.toStdString());
+    str4 >> msgtext.fromid;
+    std::stringstream str5(Qmsgtext.toid.toStdString());
+    str5 >> msgtext.toid;
+    std::stringstream str6(Qmsgtext.localid.toStdString());
+    str6 >> msgtext.localid;
+    std::stringstream str7(Qmsgtext.time.toStdString());
+    str7 >> msgtext.time;
+    msgtext.msg_properties =Qmsgtext.msgProperties.toStdString();
+    msgtext.body           =utils::MsgUtils::MsgFormat(Qmsgtext.body.toStdString());
+    return msgtext;
 }

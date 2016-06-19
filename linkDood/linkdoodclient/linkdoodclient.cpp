@@ -108,6 +108,16 @@ void LinkDoodClient::getMessages(int64 targetid, int64 msgid, int count, int fla
     manager.call("getMessages",targetid,msgid,count,flag);
 }
 
+void LinkDoodClient::getEnterpriseSonOrgs(int64 orgid)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getEnterpriseSonOrgs",orgid);
+}
+
 void LinkDoodClient::onLoginoutRelust(bool loginout)
 {
     qDebug() << Q_FUNC_INFO << loginout;
@@ -136,6 +146,12 @@ void LinkDoodClient::onLoginFailed(QString err)
 {
     qDebug() << Q_FUNC_INFO;
     emit loginFailed(err);
+}
+
+void LinkDoodClient::onGetEnterpriseSonOrgsResult(int code, OrgList orgList, OrgUserList orguserList)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit getEnterpriseSonOrgsResult(code,orgList,orguserList);
 }
 
 void LinkDoodClient::onChatAvatarChanged(int64 id, QString avatar)

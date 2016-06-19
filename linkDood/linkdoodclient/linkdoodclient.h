@@ -32,6 +32,9 @@ signals:
     void contactListChanged(int oper,ContactList contacts);
     void loginoutRelust(bool loginout);
 
+    //获取子组织返回
+    void getEnterpriseSonOrgsResult(int, OrgList orgList,OrgUserList orguserList);
+
     //会话列表头像更新
     void chatAvatarChanged(int64 id,QString avatar);
     //监听离线消息通知
@@ -44,6 +47,7 @@ signals:
     void getMessagesResult(bool code,int64 sessionId,MsgList& msgList);
     //移除会话结果返回
     void removeChatResult(bool);
+
 public slots:
     QString installPath();
     //登录
@@ -60,13 +64,17 @@ public slots:
     void sendMessage(const Msg& msg);
     //获取消息
     void getMessages(int64 targetid, int64 msgid, int count, int flag);
-
+    //获取子组织
+    void getEnterpriseSonOrgs(int64 orgid);
 private slots:
     void onLoginoutRelust(bool loginout);
     void onLoginSucceeded();
     void onChatListChanged(const Chat_UIList& chats);
     void onContactListChanged(int oper,ContactList contacts);
     void onLoginFailed(QString err);
+
+    //获取子组织返回
+    void onGetEnterpriseSonOrgsResult(int, OrgList orgList,OrgUserList orguserList);
 
     //会话列表头像更新
     void onChatAvatarChanged(int64 id,QString avatar);

@@ -25,7 +25,7 @@ class Msg
 {
 public:
     explicit Msg();
-
+    virtual ~Msg(){}
     void toImMassage(QVariantMap map);
 
     void init();
@@ -63,7 +63,7 @@ Q_DECLARE_METATYPE (MsgList);
 class MsgText:public Msg{
 public:
     explicit MsgText();
-
+    virtual ~MsgText(){}
     void toImMassage(QVariantMap map);
 
     void init();
@@ -238,6 +238,9 @@ inline void registerDoodDataTypes() {
     qDBusRegisterMetaType<Chat_UI>();
     qDBusRegisterMetaType<Chat_UIList>();
     qRegisterMetaType<Chat_UIList>("Chat_UIList");
+
+    qDBusRegisterMetaType<int64>();
+    qRegisterMetaType<int64>("int64");
 
     qDBusRegisterMetaType<Contact>();
     qDBusRegisterMetaType<ContactList>();

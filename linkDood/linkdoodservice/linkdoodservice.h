@@ -37,6 +37,10 @@ signals:
     //移除会话结果返回
     void removeChatResult(bool);
 
+    //获取子组织返回
+    void getEnterpriseSonOrgsResult(int, OrgList orgList,OrgUserList orguserList);
+    void getEnterpriseSonOrgsCallBack(service::ErrorInfo& info, std::vector<service::Org>,std::vector<service::OrgUser> orgusers);
+
     void loginSucceeded();
     void loginFailed(QString);
 
@@ -110,7 +114,16 @@ public slots:
 
     /*****************end chat****************************/
 
+    /*******************************************
+    * @brief getSonOrgs
+    * @description: 获取子组织
+    * @param[in] orgid 传入组织id
+    ******************************************/
+    void getEnterpriseSonOrgs(int64 orgid);
+
 protected slots:
+    //获取子组织返回
+    void onGetEnterpriseSonOrgs(service::ErrorInfo& info, std::vector<service::Org> orgs,std::vector<service::OrgUser> orgusers);
     //联系人列表更新
     void onContactListChanged(int oper,ContactList contacts);
     //会话列表更新
@@ -151,6 +164,8 @@ private:
     // 初始化Dbus连接
     void initDBusConnection();
 
+    //获取子组织返回
+    void onGetEnterpriseSonOrgsResult(service::ErrorInfo& info, std::vector<service::Org> orgs,std::vector<service::OrgUser> orgusers);
     void onLoginResult(service::ErrorInfo& info,int64 userId);
     void onSrvGetContactInfoResult(service::ErrorInfo& info,service::User&user);
 private:
@@ -162,9 +177,7 @@ private:
     std::shared_ptr<ContactControler>  m_pContactObserver;
 
     std::shared_ptr<service::IMClient> m_pIMClient;
-public:
-    MsgText msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
-    service::MsgText QmsgtextTomsgtext(MsgText Qmsgtext);
+public: 
     Org orgToQorg(service::Org org);
     OrgUser orguserToQorguser(service::OrgUser orguser);
 };

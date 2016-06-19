@@ -127,4 +127,7 @@ private:
     * @description: 获取消息结果回调
     ************************************/
     void onGetMesage(service::ErrorInfo&, int64/*会话方ID*/, std::vector<service::MsgPtr>);
+
+    MsgText msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
+    service::MsgText QmsgtextTomsgtext(MsgText Qmsgtext);
 };
