@@ -68,6 +68,14 @@ void ChatControler::getMessages(int64 targetid, int64 msgid, int count, int flag
 
 }
 
+void ChatControler::deleteMessage(int64 targetid, std::vector<int64> msgs)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getChat()->deleteMessage(targetid,msgs,
+                             std::bind(&ChatControler::_deleteMessage,this,
+                                       std::placeholders::_1));
+}
+
 ChatControler::ChatControler(QObject* parent):
     QObject(parent)
 {
@@ -193,6 +201,12 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
     }else{
         emit getMessagesBack(true,targetId,msgList);
     }
+}
+
+void ChatControler::_deleteMessage(service::ErrorInfo &info)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit deleteMessagesBack(info.code());
 }
 
 MsgText ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)

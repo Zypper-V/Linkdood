@@ -16,6 +16,9 @@ void CDoodChatManager::initConnect()
             SLOT(onChatGetMessagesResult(bool,int64,MsgList&)));
     connect(m_pClient,SIGNAL(removeChatResult(bool)),this,
             SLOT(onChatRemoveChatResult(bool)));
+        connect(m_pClient,SIGNAL(deleteMessagesResult(int)),this,
+                SLOT(onChatDeleteMessagesResult(int)));
+
 /*    connect(m_pClient,SIGNAL(),this,
             SLOT())*/;
 }
@@ -70,6 +73,18 @@ void CDoodChatManager::setMessageRead(int64 targetid, int64 msgid)
     m_pClient->setMessageRead(targetid,msgid);
 }
 
+void CDoodChatManager::getUnReadMessages()
+{
+     qDebug() << Q_FUNC_INFO;
+     m_pClient->getUnReadMessages();
+}
+
+void CDoodChatManager::deleteMessage(int64 targetid, INT64List msgs)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->deleteMessage(targetid,msgs);
+}
+
 QString CDoodChatManager::id() const
 {
     qDebug() << Q_FUNC_INFO;
@@ -104,7 +119,7 @@ void CDoodChatManager::onChatAvatarChanged(int64 id, QString avatar)
 
 void CDoodChatManager::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << msgList.size();
     emit offlineMsgNotice(msgList);
 }
 
@@ -130,4 +145,9 @@ void CDoodChatManager::onChatRemoveChatResult(bool code)
 {
     qDebug() << Q_FUNC_INFO;
     emit removeChatResult(code);
+}
+
+void CDoodChatManager::onChatDeleteMessagesResult(int code)
+{
+
 }

@@ -50,6 +50,14 @@ public:
     ********************************************************************/
     void getMessages(int64 targetid, int64 msgid, int count, int flag);
 
+    /*************************************************
+    * @brief deleteMessage
+    * @description: 删除消息
+    * @param[in] targetid 传入会话对应的ID，群或者人
+    * @param[in] msgs 传入要删除的消息ID集合
+    ***************************************************/
+    void deleteMessage(int64 targetid, std::vector<int64> msgs);
+
     ChatControler(QObject* parent=0);
     ~ChatControler();
     /*************************************************************
@@ -102,8 +110,8 @@ signals:
    //void getSrvMessagesBack(bool code,int64 sessionId,MsgList& msgList);
    //移除会话结果返回
    void removeChatBack(bool);
-  // void removeSrvChatBack(bool);
-
+    //删除消息
+    void deleteMessagesBack(int code);
 private:
 
     /************************************
@@ -122,6 +130,12 @@ private:
     * @description: 获取消息结果回调
     ************************************/
     void _getMesage(service::ErrorInfo&, int64/*会话方ID*/, std::vector<service::MsgPtr>);
+
+    /*************************************************
+    * @brief _deleteMessage
+    * @description: 删除消息结果回调
+    ***************************************************/
+    void _deleteMessage(service::ErrorInfo& info);
 
     MsgText msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
     service::MsgText QmsgtextTomsgtext(MsgText Qmsgtext);

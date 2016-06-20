@@ -104,6 +104,26 @@ void LinkDoodClient::setMessageRead(int64 targetid, int64 msgid)
     manager.call("setMessageRead",targetid,msgid);
 }
 
+void LinkDoodClient::getUnReadMessages()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getUnReadMessages");
+}
+
+void LinkDoodClient::deleteMessage(int64 targetid, INT64List msgs)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("deleteMessage",targetid,QVariant::fromValue<INT64List>(msgs));
+}
+
 void LinkDoodClient::sendMessage(Msg& msg)
 {
     qDebug() << Q_FUNC_INFO;
@@ -251,6 +271,12 @@ void LinkDoodClient::onChatSendMessageResult(bool code, int64 sendTime, int64 ms
     emit sendMessageResult(code,sendTime,msgId);
 }
 
+void LinkDoodClient::onChatDeleteMessagesResult(int code)
+{
+     qDebug() << Q_FUNC_INFO;
+     emit deleteMessagesResult(code);
+}
+
 void LinkDoodClient::onChatGetMessagesResult(bool code, int64 sessionId, MsgList &msgList)
 {
     qDebug() << Q_FUNC_INFO;
@@ -279,6 +305,9 @@ void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
 
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "deleteMessagesResult",
+                                          this, SLOT(onChatDeleteMessagesResult(int)));
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "chatAvatarChanged",
                                           this, SLOT(onChatAvatarChanged(int64,QString)));

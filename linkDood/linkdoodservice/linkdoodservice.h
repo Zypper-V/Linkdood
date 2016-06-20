@@ -38,6 +38,9 @@ signals:
     //移除会话结果返回
     void removeChatResult(bool);
 
+    //删除消息
+    void deleteMessagesResult(int code);
+
     //获取子组织返回
     void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
     void getOnlineStatesResult(QOnlineStateList onlinestatelist);
@@ -131,6 +134,14 @@ public slots:
     ********************************************************************/
     void getMessages(int64 targetid, int64 msgid, int count, int flag);
 
+    /*************************************************
+    * @brief deleteMessage
+    * @description: 删除消息
+    * @param[in] targetid 传入会话对应的ID，群或者人
+    * @param[in] msgs 传入要删除的消息ID集合
+    ***************************************************/
+    void deleteMessage(int64 targetid, INT64List msgs);
+
     /*****************end chat****************************/
 
      /*****************start Enterprise**************************/
@@ -186,6 +197,8 @@ protected slots:
     void onChatGetMessagesResult(bool code,int64 sessionId,MsgList& msgList);
     //移除会话结果返回
     void onChatRemoveChatResult(bool);
+    //删除消息
+    void onChatDeleteMessagesResult(int code);
 
     //获取登录历史记录
     void onGetLoginHistoryResult(LoginInfoList list);

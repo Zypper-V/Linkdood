@@ -48,7 +48,8 @@ signals:
     void getMessagesResult(bool code,int64 sessionId,MsgList& msgList);
     //移除会话结果返回
     void removeChatResult(bool);
-
+    //移除消息结果返回
+    void deleteMessagesResult(int code);
     //获取登录历史记录
     void getLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
@@ -70,6 +71,10 @@ public slots:
     void removeChat(int64 targetid);
     //设置消息已读
     void setMessageRead(int64 targetid, int64 msgid);
+    //获取未读消息列表
+    void getUnReadMessages(void);
+    //删除消息
+    void deleteMessage(int64 targetid, INT64List msgs);
     //发送消息
     void sendMessage(Msg& msg);
     //获取消息
@@ -103,6 +108,8 @@ private slots:
     void onChatMessageNotice(Msg& msg);
     //发送消息返回
     void onChatSendMessageResult(bool code,int64 sendTime,int64 msgId);
+    //移除消息结果返回
+    void onChatDeleteMessagesResult(int code);
     //获取消息结果返回
     void onChatGetMessagesResult(bool code,int64 sessionId,MsgList& msgList);
     //移除会话结果返回

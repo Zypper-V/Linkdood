@@ -274,8 +274,15 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, IMOfflineMsg &o
 typedef QList<IMOfflineMsg> IMOfflineMsgList;
 Q_DECLARE_METATYPE (IMOfflineMsgList);
 
+typedef QList<int64> INT64List;
+Q_DECLARE_METATYPE (INT64List);
+
 inline void registerDoodDataTypes() {
     qDebug() << Q_FUNC_INFO;
+
+    qDBusRegisterMetaType<INT64List>();
+    qRegisterMetaType<INT64List>("INT64List");
+
     qDBusRegisterMetaType<Msg>();
     qDBusRegisterMetaType<MsgList>();
     qRegisterMetaType<MsgList>("MsgList");

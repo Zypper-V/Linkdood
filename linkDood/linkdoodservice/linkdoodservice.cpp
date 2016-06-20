@@ -179,6 +179,18 @@ void LinkDoodService::getMessages(int64 targetid, int64 msgid, int count, int fl
     }
 }
 
+void LinkDoodService::deleteMessage(int64 targetid,INT64List msgs)
+{
+    qDebug() << Q_FUNC_INFO;
+    std::vector<int64> list;
+    for(auto msg:msgs){
+        list.push_back(msg);
+    }
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->deleteMessage(targetid,list);
+    }
+}
+
 void LinkDoodService::getSonOrgs(QString orgid)
 {
     qDebug() << Q_FUNC_INFO;
@@ -330,6 +342,12 @@ void LinkDoodService::onChatRemoveChatResult(bool code)
      emit removeChatResult(code);
 }
 
+void LinkDoodService::onChatDeleteMessagesResult(int code)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit deleteMessagesResult(code);
+}
+
 void LinkDoodService::onGetLoginHistoryResult(LoginInfoList list)
 {
     qDebug() << Q_FUNC_INFO;
@@ -396,6 +414,8 @@ void LinkDoodService::initConnects()
                      SLOT(onChatRemoveChatResult(bool)));
     QObject::connect(m_pChatObserver.get(),SIGNAL(messageNoticeBack(Msg&)),this,
                      SLOT(onChatMessageNotice(Msg&)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(deleteMessagesBack(int)),this,
+                     SLOT(onChatDeleteMessagesResult(int)));
 
     QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist)),this,
                      SLOT(onGetSonOrgsResult(int code, OrgList orglist,OrgUser orguserlist)));

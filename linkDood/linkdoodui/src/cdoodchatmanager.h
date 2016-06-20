@@ -27,6 +27,10 @@ public:
     Q_INVOKABLE void removeChat(int64 targetid);
     //设置消息已读
     Q_INVOKABLE void setMessageRead(int64 targetid, int64 msgid);
+    //获取未读消息列表
+    void getUnReadMessages(void);
+    //删除消息
+    void deleteMessage(int64 targetid, INT64List msgs);
 
     QString id()const;
     QString name()const;
@@ -62,7 +66,8 @@ private slots:
     void onChatGetMessagesResult(bool code,int64 sessionId,MsgList& msgList);
     //移除会话结果返回
     void onChatRemoveChatResult(bool code);
-
+    //移除消息结果返回
+    void onChatDeleteMessagesResult(int code);
 private:
     LinkDoodClient *m_pClient;
     void initConnect();
