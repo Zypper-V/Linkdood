@@ -3,13 +3,6 @@
 #include <QMetaType>
 #include <QDebug>
 
-//CDoodEnterpriseManager::CDoodEnterPriseManager(LinkDoodClient *client, QObject *parent) :
-//   CDoodListModel(parent), m_pClient(client)
-//{
-//    qDebug() << Q_FUNC_INFO;
-//    qRegisterMetaType<CDoodEnterpriseManager*>();
-//    initConnect();
-//}
 CDoodEnterpriseManager::CDoodEnterpriseManager(LinkDoodClient *client, QObject *parent) :
     CDoodListModel(parent), m_pClient(client)
 {

@@ -75,7 +75,7 @@ CPage {
                         leftMargin: 210
                         bottomMargin: 24
                     }
-                    text:qsTr("高圆圆")
+                    text:userdataManager.name
                     color:"white"
                     font.pixelSize: 36
                 }
@@ -91,7 +91,7 @@ CPage {
                     leftMargin:36
                 }
                 z:10
-                source: "qrc:/res/logo.png"
+                    source:"qrc:/res/logo.png"
             }
             CLine {
                 width: parent.width
@@ -128,7 +128,7 @@ CPage {
                         verticalCenter: parent.verticalCenter
                     }
 
-                    text:qsTr("高圆圆")
+                    text:userdataManager.name
                     font.pixelSize: 30
                 }
                 CLine {
@@ -163,8 +163,11 @@ CPage {
                         verticalCenter: parent.verticalCenter
                     }
 
-                    text:qsTr("女")
+                    text:userdataManager.gender
                     font.pixelSize: 30
+                    onTextChanged: {
+                        console.log("XXXXXXXXXXXXXXX:"+userdataManager.gender)
+                    }
                 }
                 CLine {
                     width: parent.width
@@ -198,7 +201,7 @@ CPage {
                         verticalCenter: parent.verticalCenter
                     }
 
-                    text:qsTr("18888888888")
+                    text:qsTr("")
                     font.pixelSize: 30
                 }
                 CLine {

@@ -5,7 +5,7 @@
 #include "cdoodcontactmanager.h"
 #include "linkdoodclient.h"
 #include "cdoodchatmanager.h"
-
+#include "cdooduserdatamanage.h"
 #include <QQmlContext>
 #include <QDebug>
 
@@ -38,6 +38,10 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     if (!m_pChatManager.data()) {
         qDebug() << Q_FUNC_INFO << "m_pChatManager init error !!!";
     }
+    m_pUserDataManager = QSharedPointer<CDoodUserDataManage>(new CDoodUserDataManage());
+    if (!m_pUserDataManager.data()) {
+        qDebug() << Q_FUNC_INFO << "m_pUserDataManager init error !!!";
+    }
 
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), qApp, SLOT(quit()));
@@ -45,7 +49,7 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     m_view->engine()->rootContext()->setContextProperty("sessionListManager", m_pSessionListManager.data());
     m_view->engine()->rootContext()->setContextProperty("contactManager", m_pContactManager.data());
     m_view->engine()->rootContext()->setContextProperty("chatManager", m_pChatManager.data());
-
+    m_view->engine()->rootContext()->setContextProperty("userdataManager", m_pUserDataManager.data());
     m_view->setSource(QUrl("qrc:/qml/main.qml"));
     m_view->showFullScreen();
 }

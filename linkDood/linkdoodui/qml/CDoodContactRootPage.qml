@@ -54,10 +54,11 @@ Item {
 
             onClicked: {
                 //                console.log("model.modelData.link = ", model.modelData.name)
-                pageStack.replace(Qt.resolvedUrl("CDoodChatPage.qml"), "", true);
+                userdataManager.setName(model.modelData.name);
+                userdataManager.setGender(model.modelData.gender);
+                userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
+                pageStack.replace(Qt.resolvedUrl("CDoodUserDataPage.qml"), "", true);
 
-                chatManager.setId(model.modelData.id);
-                chatManager.setName(model.modelData.name);
             }
 
             onPressedChanged:{

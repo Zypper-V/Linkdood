@@ -1,4 +1,5 @@
 #include "cdoodcontactitem.h"
+#include<QDebug>
 
 CDoodContactItem::CDoodContactItem(QObject *parent) : QObject(parent)
 {
@@ -57,6 +58,7 @@ QString CDoodContactItem::gender() const
 
 QString CDoodContactItem::setGender(const QString &data)
 {
+
     if(mGender == data) {
         return data;
     }
