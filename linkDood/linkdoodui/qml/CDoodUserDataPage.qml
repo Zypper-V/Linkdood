@@ -2,13 +2,13 @@ import QtQuick 2.0
 import com.syberos.basewidgets 2.0
 
 CPage {
-    id: userdataPage
+    id: userdataPage    
 
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
-            loginPage.statusBarHoldEnabled = true
-            gScreenInfo.setStatusBar(loginPage.statusBarHoldEnabled)
-            loginPage.statusBarHoldItemColor = "#edf0f0"
+            userdataPage.statusBarHoldEnabled = true
+            gScreenInfo.setStatusBar(userdataPage.statusBarHoldEnabled)
+            userdataPage.statusBarHoldItemColor = "#edf0f0"
             gScreenInfo.setStatusBarStyle("black")
         }
     }
@@ -47,13 +47,14 @@ CPage {
                     anchors.fill: parent
                     color:"#1c1b21"
                 }
-                text:os.i18n.ctr(qsTr("<返回"))
+                text:os.i18n.ctr(qsTr("< 返回"))
                 textColor:"white"
                 onClicked: {
-                    pageStack.replace(Qt.resolvedUrl("CDoodContactRootPage.qml"), "", true);
+                    pageStack.pop();
                 }
             }
         }
+
         Rectangle{
             id:userdatapic
             anchors.top:titleBackground.bottom
@@ -232,9 +233,8 @@ CPage {
                 text:qsTr("发消息")
             }
             onClicked: {
-                chatManager.setId(userdataManager.id);
-                chatManager.setName(userdataManager.name);
-                pageStack.replace(Qt.resolvedUrl("CDoodChatPage.qml"), "", true);
+                chatManager.showChatPage(userdataManager.name, userdataManager.id,
+                                         "1", userdataManager.thumbAvatar)
             }
         }
 

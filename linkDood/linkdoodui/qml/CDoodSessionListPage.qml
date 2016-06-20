@@ -4,6 +4,7 @@ import com.syberos.basewidgets 2.0
 Item {
     id: sessionListPage
     anchors.fill: parent
+    property var chatPage
 
     Rectangle{
         id:sessionListTitleBar
@@ -56,8 +57,25 @@ Item {
             width: sessionListView.width
             height: 125
 
+            Connections {
+                target: chatPage
+
+                onPrepareFinished:{
+                    console.log("=======zhangpeng onPrepareFinished=======")
+                    pageStack.push(chatPage);
+                }
+            }
+
             onClicked: {
                 console.log("model.modelData.link = ", model.modelData.lastMsg)
+                chatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
+                chatPage.chatName = model.modelData.name
+                chatPage.targetid = model.modelData.id
+                chatPage.chatType = model.modelData.chatType
+                chatPage.icon = model.modelData.thumbAvatar
+
+                chatPage.initMessage();
+                pageStack.push(chatPage);
             }
 
             onPressedChanged:{

@@ -57,8 +57,7 @@ Item {
                 userdataManager.setName(model.modelData.name);
                 userdataManager.setGender(model.modelData.gender);
                 userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
-                pageStack.replace(Qt.resolvedUrl("CDoodUserDataPage.qml"), "", true);
-
+                pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
             }
 
             onPressedChanged:{

@@ -3,7 +3,6 @@ import com.syberos.basewidgets 2.0
 
 CPage {
     id: rootTabViewPage
-    anchors.fill: parent
 
     property Component contactRootPageCompoent: CDoodContactRootPage {
         anchors.fill: parent
@@ -19,6 +18,32 @@ CPage {
             gScreenInfo.setStatusBarStyle("black")
         } else if (status === CPageStatus.Show) {
         }
+    }
+
+    Connections {
+        target: chatManager
+
+        onSendShowChatPage: {
+            console.log("CDoodRootTabbView  onSendShowChatPage !!!")
+            showChatPage(chatName, targetid, chatType, icon)
+            tabView.currentIndex = 0;
+        }
+    }
+
+    function showChatPage(chatName, targetid, chatType, icon) {
+        console.log("CDoodRootTabbView  showChatPage !!!")
+
+        pageStack.pop(rootTabViewPage, true)
+
+        var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
+
+        pageStack.push(component,
+                       {  chatName : chatName,
+                           targetid: targetid,
+                           chatType: chatType,
+                           icon: icon
+                       });
+        component.initMessage();
     }
 
     contentAreaItem: Item {

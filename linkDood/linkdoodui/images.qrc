@@ -9,5 +9,6 @@
         <file>res/icon-message.png</file>
         <file>res/headerDefault.png</file>
         <file>res/descbgtop.jpg</file>
+        <file>res/editBg.png</file>
     </qresource>
 </RCC>

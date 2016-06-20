@@ -9,5 +9,8 @@
         <file>qml/CDoodHeaderImage.qml</file>
         <file>qml/CDoodUserDataPage.qml</file>
         <file>qml/CDoodChatPage.qml</file>
+        <file>qml/CDoodChatDelegate.qml</file>
+        <file>qml/CDoodReceiveTextMessageCompoent.qml</file>
+        <file>qml/CDoodSendTextMessageCompoent.qml</file>
     </qresource>
 </RCC>

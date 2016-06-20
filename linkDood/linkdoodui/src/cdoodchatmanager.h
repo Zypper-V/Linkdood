@@ -26,7 +26,7 @@ public:
     //移除会话
     Q_INVOKABLE void removeChat(int64 targetid);
     //设置消息已读
-    Q_INVOKABLE void setMessageRead(int64 targetid, int64 msgid);
+    Q_INVOKABLE void setMessageRead(const QString &targetid);
     //获取未读消息列表
     void getUnReadMessages(void);
     //删除消息
@@ -37,6 +37,16 @@ public:
 
     Q_INVOKABLE void   setId(const QString&id);
     Q_INVOKABLE void   setName(const QString&name);
+
+    Q_INVOKABLE void entryChat(const QString &targetid);
+    Q_INVOKABLE void exitChat(const QString &targetid);
+    Q_INVOKABLE void deleteMessageListItem();
+
+    Q_INVOKABLE void showChatPage(QString chatName,
+                                  QString targetid,
+                                  QString chatType,
+                                  QString icon = QString());
+
 signals:
     //会话列表头像更新
     void chatAvatarChanged(int64 id,QString avatar);
@@ -53,6 +63,12 @@ signals:
 
     void idChanged();
     void nameChanged();
+
+    void sendShowChatPage(QString chatName,
+                          QString targetid,
+                          QString chatType,
+                          QString icon);
+
 private slots:
     //会话列表头像更新
     void onChatAvatarChanged(int64 id,QString avatar);

@@ -16,10 +16,10 @@ void CDoodChatManager::initConnect()
             SLOT(onChatGetMessagesResult(bool,int64,MsgList&)));
     connect(m_pClient,SIGNAL(removeChatResult(bool)),this,
             SLOT(onChatRemoveChatResult(bool)));
-        connect(m_pClient,SIGNAL(deleteMessagesResult(int)),this,
-                SLOT(onChatDeleteMessagesResult(int)));
+    connect(m_pClient,SIGNAL(deleteMessagesResult(int)),this,
+            SLOT(onChatDeleteMessagesResult(int)));
 
-/*    connect(m_pClient,SIGNAL(),this,
+    /*    connect(m_pClient,SIGNAL(),this,
             SLOT())*/;
 }
 
@@ -57,20 +57,20 @@ void CDoodChatManager::sendMessage(Msg &msg)
 
 void CDoodChatManager::getMessages(int64 targetid, int64 msgid, int count, int flag)
 {
-     qDebug() << Q_FUNC_INFO;
-     m_pClient->getMessages(targetid,msgid,count,flag);
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->getMessages(targetid,msgid,count,flag);
 }
 
 void CDoodChatManager::removeChat(int64 targetid)
 {
-     qDebug() << Q_FUNC_INFO;
-     m_pClient->removeChat(targetid);
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->removeChat(targetid);
 }
 
-void CDoodChatManager::setMessageRead(int64 targetid, int64 msgid)
+void CDoodChatManager::setMessageRead(const QString &targetid)
 {
-    qDebug() << Q_FUNC_INFO;
-    m_pClient->setMessageRead(targetid,msgid);
+    qDebug() << Q_FUNC_INFO << targetid;
+    //    m_pClient->setMessageRead(targetid,msgid);
 }
 
 void CDoodChatManager::getUnReadMessages()
@@ -109,6 +109,30 @@ void CDoodChatManager::setName(const QString &name)
     qDebug() << Q_FUNC_INFO;
     mName = name;
     emit nameChanged();
+}
+
+void CDoodChatManager::entryChat(const QString &targetid)
+{
+    qDebug() << Q_FUNC_INFO << targetid;
+}
+
+void CDoodChatManager::exitChat(const QString &targetid)
+{
+    qDebug() << Q_FUNC_INFO << targetid;
+}
+
+void CDoodChatManager::deleteMessageListItem()
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
+void CDoodChatManager::showChatPage(QString chatName,
+                                    QString targetid,
+                                    QString chatType,
+                                    QString icon)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit sendShowChatPage(chatName, targetid, chatType, icon);
 }
 
 void CDoodChatManager::onChatAvatarChanged(int64 id, QString avatar)

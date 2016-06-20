@@ -7,7 +7,9 @@
 # This is needed for using syberos-application module
 include(../syberos.pri)
 
-QT += gui qml quick
+QT += qml quick dbus multimedia gui-private
+QT       += sensors
+
 TARGET = linkdoodui
 TEMPLATE = app
 
@@ -61,4 +63,7 @@ DISTFILES += \
     qml/CDoodContactRootPage.qml \
     qml/CDoodRootTabView.qml \
     qml/CDoodHeaderImage.qml \
-    qml/CDoodUserDataPage.qml
+    qml/CDoodUserDataPage.qml \
+    qml/CDoodChatDelegate.qml \
+    qml/CDoodSendTextMessageCompoent.qml \
+    qml/CDoodReceiveTextMessageCompoent.qml

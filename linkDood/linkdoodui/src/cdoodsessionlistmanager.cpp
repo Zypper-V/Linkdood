@@ -22,7 +22,7 @@ CDoodSessionListManager::~CDoodSessionListManager()
 void CDoodSessionListManager::getChatList()
 {
     qDebug() << Q_FUNC_INFO;
-//    m_pClient->
+    //    m_pClient->
 }
 
 QString CDoodSessionListManager::getHeaderColor(const QString &id)
@@ -69,25 +69,25 @@ bool CDoodSessionListManager::checkFileExists(const QString &path)
 
 void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
 {
-     qDebug() << Q_FUNC_INFO << "zhangp **** chat size4 = " << chats.size();
-      Chat_UI historysession;
-      foreach (historysession, chats) {
-          if(!sessionListMap.contains(historysession.id)) {
-              CDoodSessionListItem *tmpItem = new CDoodSessionListItem(this);
-              tmpItem->setId(historysession.id);
-              tmpItem->setLastMsg(historysession.last_msg);
-              tmpItem->setName(historysession.name);
-              tmpItem->setMsgTime(historysession.msg_time);
-              tmpItem->setThumbAvatar(historysession.thumb_avatar);
-              qDebug() << Q_FUNC_INFO << "chat avatar111:" << historysession.thumb_avatar;
-              addItem(tmpItem);
-              sessionListMap[historysession.id] = tmpItem;
-          }
-      }
+    qDebug() << Q_FUNC_INFO << "zhangp **** chat size4 = " << chats.size();
+    Chat_UI historysession;
+    foreach (historysession, chats) {
+        if(!sessionListMap.contains(historysession.id)) {
+            CDoodSessionListItem *tmpItem = new CDoodSessionListItem(this);
+            tmpItem->setId(historysession.id);
+            tmpItem->setLastMsg(historysession.last_msg);
+            tmpItem->setName(historysession.name);
+            tmpItem->setMsgTime(historysession.msg_time);
+            tmpItem->setThumbAvatar(historysession.thumb_avatar);
+            qDebug() << Q_FUNC_INFO << "chat avatar111:" << historysession.thumb_avatar;
+            addItem(tmpItem);
+            sessionListMap[historysession.id] = tmpItem;
+        }
+    }
 }
 
 void CDoodSessionListManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
-     connect(m_pClient, SIGNAL(chatListChanged(const Chat_UIList &)), this, SLOT(onChatListChanged(const Chat_UIList &)));
+    connect(m_pClient, SIGNAL(chatListChanged(const Chat_UIList &)), this, SLOT(onChatListChanged(const Chat_UIList &)));
 }
