@@ -137,8 +137,8 @@ private:
     ***************************************************/
     void _deleteMessage(service::ErrorInfo& info);
 
-    MsgText msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
-    service::MsgText QmsgtextTomsgtext(MsgText Qmsgtext);
+    Msg msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
+    service::MsgText QmsgtextTomsgtext(Msg Qmsgtext);
 };
 
 template<typename T>

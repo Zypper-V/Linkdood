@@ -73,6 +73,7 @@ public:
     QString time;
     // 发送时间
     QString body;// 消息内容
+    QString msgProperties;
    // QList<int64> related_users;// 秘聊时相关的用户 ID
    // QList<int64> limit_range; //@ 人员列表
 };
@@ -84,24 +85,6 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Msg &msg);
 // ImMassageList
 typedef QList<Msg> MsgList;
 Q_DECLARE_METATYPE (MsgList);
-
-//MsgText
-class MsgText:public Msg{
-public:
-    explicit MsgText();
-    virtual ~MsgText(){}
-    void toImMassage(QVariantMap map);
-
-    void init();
-
-public:
-    QString msgProperties;
-};
-Q_DECLARE_METATYPE(MsgText)
-QDBusArgument &operator << (QDBusArgument &argument, const MsgText &msg);
-const QDBusArgument &operator >> (const QDBusArgument &argument, MsgText &msg);
-// ImMassageList
-typedef QList<MsgText> MsgTextList;
 
 //Chat_UI
 class Chat_UI
@@ -263,7 +246,7 @@ public:
 public:
     int     offlineType;  /*1未读消息 2设备已读消息*/
     int     count;      //数量
-    MsgText msg;
+    Msg   msg;
     //Msg* msg;
     //QSharedPointer<Msg> msg;
 };
@@ -274,15 +257,8 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, IMOfflineMsg &o
 typedef QList<IMOfflineMsg> IMOfflineMsgList;
 Q_DECLARE_METATYPE (IMOfflineMsgList);
 
-typedef QList<int64> INT64List;
-Q_DECLARE_METATYPE (INT64List);
-
 inline void registerDoodDataTypes() {
     qDebug() << Q_FUNC_INFO;
-
-    qDBusRegisterMetaType<INT64List>();
-    qRegisterMetaType<INT64List>("INT64List");
-
     qDBusRegisterMetaType<Msg>();
     qDBusRegisterMetaType<MsgList>();
     qRegisterMetaType<MsgList>("MsgList");

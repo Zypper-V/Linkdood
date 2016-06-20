@@ -39,7 +39,7 @@ CDoodChatManager::~CDoodChatManager()
 void CDoodChatManager::sendText(QString fromId,QString text)
 {
     qDebug() << Q_FUNC_INFO << "send Text:" << text;
-    MsgText msgText;
+    Msg msgText;
     msgText.body = text;
     msgText.msgtype = MSG_TYPE_TEXT;
     msgText.targetid = id();
@@ -79,7 +79,7 @@ void CDoodChatManager::getUnReadMessages()
      m_pClient->getUnReadMessages();
 }
 
-void CDoodChatManager::deleteMessage(int64 targetid, INT64List msgs)
+void CDoodChatManager::deleteMessage(int64 targetid, QStringList msgs)
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->deleteMessage(targetid,msgs);

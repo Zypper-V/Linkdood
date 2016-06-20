@@ -30,7 +30,7 @@ public:
     //获取未读消息列表
     void getUnReadMessages(void);
     //删除消息
-    void deleteMessage(int64 targetid, INT64List msgs);
+    void deleteMessage(int64 targetid, QStringList msgs);
 
     QString id()const;
     QString name()const;

@@ -40,6 +40,9 @@ void Msg::toImMassage(QVariantMap map)
         if (iter.key() == "body") {
             body = iter.value().toString();
         }
+        if (iter.key() == "msgProperties") {
+            msgProperties = iter.value().toString();
+        }
         if (iter.key() == "related_users") {
             // related_users.clear();
             // related_users.append(iter.value());
@@ -61,7 +64,7 @@ QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
     argument.beginStructure();
     argument << msg.fromid << msg.toid << msg.msgid
              << msg.msgtype << msg.body << msg.localid
-             << msg.relatedMsgid << msg.time ;
+             << msg.relatedMsgid << msg.time << msg.msgProperties ;
     argument.endStructure();
     return argument;
 }
@@ -71,51 +74,7 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Msg &msg)
     argument.beginStructure();
     argument >> msg.fromid >> msg.toid >> msg.msgid
             >> msg.msgtype >> msg.body >> msg.localid
-            >> msg.relatedMsgid >> msg.time ;
-    argument.endStructure();
-    return argument;
-}
-
-///////////////////////////////MsgText///////////////////////////////
-void MsgText::init()
-{
-    Msg::init();
-    msgProperties = QString();// 消息内容
-}
-
-MsgText::MsgText()
-{
-    init();
-}
-
-void MsgText::toImMassage(QVariantMap map)
-{
-    Msg::toImMassage(map);
-    QVariantMap::const_iterator iter;
-    for (iter = map.constBegin(); iter != map.constEnd(); ++iter) {
-        if("msg_properties" == iter.key()){
-            msgProperties = iter.value().toString();
-        }
-    }
-}
-
-QDBusArgument &operator <<(QDBusArgument &argument, const MsgText &msg)
-{
-    argument.beginStructure();
-    argument << msg.fromid << msg.toid << msg.msgid
-             << msg.msgtype << msg.body << msg.localid
-             << msg.relatedMsgid << msg.time
-             << msg.msgProperties;
-    argument.endStructure();
-    return argument;
-}
-
-const QDBusArgument &operator >>(const QDBusArgument &argument, MsgText &msg)
-{
-    argument.beginStructure();
-    argument >> msg.fromid >> msg.toid >> msg.msgid
-            >> msg.msgtype >> msg.body >> msg.localid
-            >> msg.relatedMsgid >> msg.time >> msg.msgProperties ;
+            >> msg.relatedMsgid >> msg.time >> msg.msgProperties  ;
     argument.endStructure();
     return argument;
 }
