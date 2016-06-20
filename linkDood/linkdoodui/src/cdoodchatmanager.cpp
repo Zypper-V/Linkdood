@@ -125,7 +125,7 @@ void CDoodChatManager::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
 
 void CDoodChatManager::onChatMessageNotice(Msg &msg)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << "newMessage:" << msg.body;
     emit newMessageNotice(msg);
 }
 
