@@ -51,9 +51,6 @@ signals:
 
     void loginSucceeded();
     void loginFailed(QString);
-
-    void loginOnSucceeded();
-    void loginOnFailed(int code);
     void loginoutRelust(bool loginout);
 
     void chatListChanged(const Chat_UIList& chats);
@@ -63,6 +60,20 @@ signals:
     void srvGetContactInfo(service::User&user);
     void getContactInfo();
 public slots:
+
+    /**************************************
+    * @brief getAppLoginStatus
+    * @description: 从配置文件读取登录状态
+    * @param[out]  status 1:己经登录 0:未登录
+    ***************************************/
+    void getAppLoginStatus(int& status);
+
+    /**************************************
+    * @brief setAppLoginStatus
+    * @description: 向配置文件写入登录状态
+    * @param[out]  status 1:己经登录 0:未登录
+    ***************************************/
+    void setAppLoginStatus(const int status);
 
     QString installPath();
 
@@ -157,7 +168,7 @@ protected slots:
     //登录成功返回
     void onLoginSucceeded();
     //登录失败返回
-    void onLoginOnFailed(int code);
+    void onLoginFailed(int code);
     //退出登录结果返回
     void onLoginoutRelust(bool loginout);
     //获取联系人资料返回
@@ -198,7 +209,6 @@ private:
 
     //获取子组织返回
     void onGetEnterpriseSonOrgsResult(service::ErrorInfo& info, std::vector<service::Org> orgs,std::vector<service::OrgUser> orgusers);
-    void onLoginResult(service::ErrorInfo& info,int64 userId);
     void onSrvGetContactInfoResult(service::ErrorInfo& info,service::User&user);
 private:
     CSystemPackageManager *m_pPackageManager;

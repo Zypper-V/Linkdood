@@ -22,6 +22,7 @@
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusArgument>
+#include <QSettings>
 
 LinkDoodService* LinkDoodService::m_pInstance = 0;
 
@@ -40,6 +41,22 @@ LinkDoodService *LinkDoodService::instance()
 {
     qDebug() << Q_FUNC_INFO;
     return m_pInstance;
+}
+
+void LinkDoodService::getAppLoginStatus(int &status)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = dataPath()+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    status = settings.value("Status",0).toInt();
+}
+
+void LinkDoodService::setAppLoginStatus(const int status)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = dataPath()+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("Status",status);
 }
 
 QString LinkDoodService::installPath()
@@ -70,25 +87,28 @@ void LinkDoodService::login(const QString &server,
                             const QString &userId,
                             const QString &password)
 {
-    QString user("0086");
-
-    QByteArray ba = userId.toLatin1();
-    const char *s = ba.data();
-    while(*s && *s>='0' && *s<='9') s++;
-    bool isNum = *s ? false:true;
-
-    if(isNum && !userId.startsWith("0086"))
-    {
-        user = user+userId;
-    }else
-    {
-       user = userId;
+    if(m_pAuth != NULL){
+        m_pAuth->login(server,userId,password);
     }
-    qDebug() << Q_FUNC_INFO << server << userId << password;
-    m_pIMClient->getAuth()->login(user.toStdString(),
-                                  password.toStdString(),
-                                  server.toStdString(),
-                                  std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
+//    QString user("0086");
+
+//    QByteArray ba = userId.toLatin1();
+//    const char *s = ba.data();
+//    while(*s && *s>='0' && *s<='9') s++;
+//    bool isNum = *s ? false:true;
+
+//    if(isNum && !userId.startsWith("0086"))
+//    {
+//        user = user+userId;
+//    }else
+//    {
+//       user = userId;
+//    }
+//    qDebug() << Q_FUNC_INFO << server << userId << password;
+//    m_pIMClient->getAuth()->login(user.toStdString(),
+//                                  password.toStdString(),
+//                                  server.toStdString(),
+//                                  std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
     // emit loginSucceeded();
 }
 
@@ -145,7 +165,7 @@ void LinkDoodService::setMessageRead(int64 targetid, int64 msgid)
 
 void LinkDoodService::sendMessage(Msg& msg)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<"msg:" << msg.body;
     if(m_pChatObserver != NULL){
         m_pChatObserver->sendMessage(msg);
     }
@@ -234,7 +254,7 @@ void LinkDoodService::onLoginSucceeded()
     emit loginSucceeded();
 }
 
-void LinkDoodService::onLoginOnFailed(int errCode)
+void LinkDoodService::onLoginFailed(int errCode)
 {
     qDebug() << Q_FUNC_INFO;
     QString err;
@@ -387,10 +407,10 @@ void LinkDoodService::initConnects()
 
     QObject::connect(m_pAuth.get(),SIGNAL(getLoginHistoryResult(LoginInfoList)),this,
                      SLOT(onGetLoginHistoryResult(LoginInfoList)));
-    QObject::connect(this,SIGNAL(loginOnSucceeded()),this,
+    QObject::connect(m_pAuth.get(),SIGNAL(loginSucceeded()),this,
                      SLOT(onLoginSucceeded()));
-    QObject::connect(this,SIGNAL(loginOnFailed(int)),this,
-                     SLOT(onLoginOnFailed(int)));
+    QObject::connect(m_pAuth.get(),SIGNAL(loginFailed(int)),this,
+                     SLOT(onLoginFailed(int)));
 
     QObject::connect(m_pAuth.get(),SIGNAL(loginoutRelust(bool)),this,
                      SLOT(onLoginoutRelust(bool)));
@@ -414,23 +434,6 @@ void LinkDoodService::initDBusConnection()
     bSuccess = bus.registerObject(DBUS_DOOD_PATH, this,
                                   QDBusConnection::ExportAllContents);
     qDebug() << "--- registerObject = " << bSuccess;
-}
-
-
-
-void LinkDoodService::onLoginResult(service::ErrorInfo &info, int64 userId)
-{
-    qDebug() << Q_FUNC_INFO << info.code() << userId;
-    if(info.code() == 0)
-    {
-        qDebug() << Q_FUNC_INFO << "loginSucceeded";
-       emit loginOnSucceeded();
-    }
-    else
-    {
-        qDebug() << Q_FUNC_INFO << "loginFailed = " << info.code();
-        emit loginOnFailed(info.code());
-    }
 }
 
 void LinkDoodService::onSrvGetContactInfoResult(service::ErrorInfo &info, service::User &user)

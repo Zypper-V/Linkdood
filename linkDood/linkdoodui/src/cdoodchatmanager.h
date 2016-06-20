@@ -19,7 +19,7 @@ public:
 
     //发送消息
     Q_INVOKABLE void sendText(QString fromId,QString text);
-    Q_INVOKABLE void sendMessage(QVariantMap& msg);
+    Q_INVOKABLE void sendMessage(Msg& msg);
     //获取消息
     Q_INVOKABLE void getMessages(int64 targetid, int64 msgid, int count, int flag);
 

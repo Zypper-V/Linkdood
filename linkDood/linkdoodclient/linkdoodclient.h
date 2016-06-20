@@ -55,6 +55,11 @@ signals:
     void loginResultObserver(int code,QString userID);
 public slots:
     QString installPath();
+
+    // 从配置文件读取登录状态
+    void getAppLoginStatus(int& status);
+    //向配置文件写入登录状态
+    void setAppLoginStatus(const int status);
     //登录
     void login(const QString &server,
                const QString &userId,
@@ -66,7 +71,7 @@ public slots:
     //设置消息已读
     void setMessageRead(int64 targetid, int64 msgid);
     //发送消息
-    void sendMessage(const Msg& msg);
+    void sendMessage(Msg& msg);
     //获取消息
     void getMessages(int64 targetid, int64 msgid, int count, int flag);
     //获取登录历史记录

@@ -43,16 +43,10 @@ void CDoodChatManager::sendText(QString fromId,QString text)
     msgText.toid = id();
     msgText.fromid = fromId;
 
-    QVariantMap item;
-    item.insert("msg_type",msgText.msgtype);
-    //item.insert("msg_type",msgText.msgtype);
-    //item.insert("msg_type",msgText.msgtype);
-    //item.setValue(msgText);
-
-    sendMessage(item);
+    sendMessage(msgText);
 }
 
-void CDoodChatManager::sendMessage(QVariantMap &msg)
+void CDoodChatManager::sendMessage(Msg &msg)
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->sendMessage(msg);

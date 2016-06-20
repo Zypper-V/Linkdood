@@ -25,7 +25,7 @@ void ChatControler::removeChat(int64 targetid)
 {
     qDebug() << Q_FUNC_INFO;
     service::IMClient::getClient()->getChat()->removeChat(targetid,
-                 std::bind(&ChatControler::onRemoveChat,this,
+                 std::bind(&ChatControler::_removeChat,this,
                            std::placeholders::_1));
 }
 
@@ -43,14 +43,14 @@ void ChatControler::getUnReadMessages()
 
 void ChatControler::sendMessage(Msg &imMsg)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body;
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
         MsgText& msgText = imMsgCast<MsgText>(imMsg);
         service::Msg msg = QmsgtextTomsgtext(msgText);
 
         service::IMClient::getClient()->getChat()->sendMessage(msg,
-                     std::bind(&ChatControler::onSendMesage,this,
+                     std::bind(&ChatControler::_sendMesage,this,
                                std::placeholders::_1,
                                std::placeholders::_2,
                                std::placeholders::_3));
@@ -61,7 +61,7 @@ void ChatControler::getMessages(int64 targetid, int64 msgid, int count, int flag
 {
     qDebug() << Q_FUNC_INFO;
     service::IMClient::getClient()->getChat()->getMessages(targetid,msgid,count,flag,
-                       std::bind(&ChatControler::onGetMesage,this,
+                       std::bind(&ChatControler::_getMesage,this,
                                  std::placeholders::_1,
                                  std::placeholders::_2,
                                  std::placeholders::_3));
@@ -81,11 +81,12 @@ ChatControler::~ChatControler()
 
 void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO ;
     if(msg->msgtype == MSG_TYPE_TEXT)
     {
        std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
        Msg imMsg = msgtextToQmsgtext(msgText);
+        qDebug() << Q_FUNC_INFO << "messageNotice:"<< imMsg.body;
        emit messageNoticeBack(imMsg);
     }
 
@@ -100,7 +101,7 @@ void ChatControler::onAvatarChanged(int64 targetid, std::string avatar)
 
 void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO <<"offlineMsg:" << msgs.size();
     IMOfflineMsgList msgList;
 
     for(auto msg:msgs){
@@ -111,6 +112,7 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
            std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg.msg);
            imMsg.msg = msgtextToQmsgtext(msgText);
            msgList.insert(msgList.size(),imMsg);
+            qDebug() << Q_FUNC_INFO << "onOfflineMsgChanged:"<< imMsg.msg.body;
         }
     }
     emit offlineMsgNoticeBack(msgList);
@@ -142,42 +144,24 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
     }
 }
 
-void ChatControler::onSendMessageBack(bool code, int64 sendTime, int64 msgId)
+void ChatControler::_removeChat(service::ErrorInfo &info)
 {
     qDebug() << Q_FUNC_INFO;
-    emit sendMessageBack(code,sendTime,msgId);
-}
-
-void ChatControler::onGetMessagesBack(bool code, int64 sessionId, MsgList& msgList)
-{
-    qDebug() << Q_FUNC_INFO;
-    emit getMessagesBack(code,sessionId,msgList);
-}
-
-void ChatControler::onRemoveChatBack(bool code)
-{
-    qDebug() << Q_FUNC_INFO;
-    emit removeChatBack(code);
-}
-
-void ChatControler::onRemoveChat(service::ErrorInfo &info)
-{
-    qDebug() << Q_FUNC_INFO;
-    emit removeSrvChatBack(info.code() == 0);
+    emit removeChatBack(info.code() == 0);
 
 }
 
-void ChatControler::onSendMesage(service::ErrorInfo &info, int64 sendTime, int64 msgId)
+void ChatControler::_sendMesage(service::ErrorInfo &info, int64 sendTime, int64 msgId)
 {
     qDebug() << Q_FUNC_INFO;
     if(!info.code()){
-        emit sendSrvMessageBack(true,sendTime,msgId);
+        emit sendMessageBack(true,sendTime,msgId);
     }else{
-        emit sendSrvMessageBack(false,sendTime,msgId);
+        emit sendMessageBack(false,sendTime,msgId);
     }
 }
 
-void ChatControler::onGetMesage(service::ErrorInfo &info, int64 targetId, std::vector<service::MsgPtr>msgPtr)
+void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::vector<service::MsgPtr>msgPtr)
 {
     qDebug() << Q_FUNC_INFO;
     MsgList msgList;
@@ -205,9 +189,9 @@ void ChatControler::onGetMesage(service::ErrorInfo &info, int64 targetId, std::v
         }
     }
     if(!info.code()){
-        emit getSrvMessagesBack(true,targetId,msgList);
+        emit getMessagesBack(true,targetId,msgList);
     }else{
-        emit getSrvMessagesBack(true,targetId,msgList);
+        emit getMessagesBack(true,targetId,msgList);
     }
 }
 

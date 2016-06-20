@@ -15,6 +15,10 @@ class AuthControler :public QObject, public IAuthObserver
 public:
     AuthControler(QObject *parent = 0);
 
+    void login(const QString &server,
+               const QString &userId,
+               const QString &password);
+
     void logout();
 
     /***************************************
@@ -56,6 +60,7 @@ protected slots:
     void getLoginHistoryResult(LoginInfoList list);
 private:
     void _getLoginHistory(std::vector<service::LoginInfo> list);
+    void _loginResult(service::ErrorInfo& info,int64 userId);
 };
 
 #endif // AUTHCONTROLER_H

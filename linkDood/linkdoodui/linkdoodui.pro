@@ -28,7 +28,8 @@ HEADERS += src/linkdoodui_workspace.h \
     src/cdoodsessionlistitem.h \
     src/cdoodcontactitem.h \
     src/cdoodcontactmanager.h \
-    src/cdoodenterprisemanager.h
+    src/cdoodenterprisemanager.h\
+    src/cdoodchatmanager.h
 
 SOURCES += src/main.cpp \
 		   src/linkdoodui_workspace.cpp \
@@ -38,8 +39,8 @@ SOURCES += src/main.cpp \
     src/cdoodsessionlistitem.cpp \
     src/cdoodcontactitem.cpp \
     src/cdoodcontactmanager.cpp \
-    src/cdoodenterprisemanager.cpp
-
+    src/cdoodenterprisemanager.cpp\
+    src/cdoodchatmanager.cpp
 OTHER_FILES += qml/*.qml
 
 target.path = $$INSTALL_DIR/bin

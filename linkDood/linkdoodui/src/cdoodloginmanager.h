@@ -26,7 +26,6 @@
 class CDoodLoginManager : public CDoodListModel
 {
     Q_OBJECT
-
 public:
     explicit CDoodLoginManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
@@ -42,6 +41,7 @@ public:
     //设置登录信息
     Q_INVOKABLE void setLoginInfo(int flag, QString userid, QString username, QString avatar);
 
+    Q_INVOKABLE QString userId();
 signals:
     void loginSucceeded();
     void loginFailed(QString err);
@@ -61,6 +61,8 @@ private slots:
     void onLoginResultObserver(int code,QString userID);
 private:
     void initConnect();
+
+    QString mUserId;
 
     LinkDoodClient *m_pClient;
 };

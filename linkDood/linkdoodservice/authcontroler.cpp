@@ -15,6 +15,29 @@ AuthControler::AuthControler(QObject *parent)
     init();
 }
 
+void AuthControler::login(const QString &server, const QString &userId, const QString &password)
+{
+    QString user("0086");
+
+    QByteArray ba = userId.toLatin1();
+    const char *s = ba.data();
+    while(*s && *s>='0' && *s<='9') s++;
+    bool isNum = *s ? false:true;
+
+    if(isNum && !userId.startsWith("0086"))
+    {
+        user = user+userId;
+    }else
+    {
+       user = userId;
+    }
+    qDebug() << Q_FUNC_INFO << server << userId << password;
+    service::IMClient::getClient()->getAuth()->login(user.toStdString(),
+                                  password.toStdString(),
+                                  server.toStdString(),
+                                  std::bind(&AuthControler::_loginResult,this,std::placeholders::_1,std::placeholders::_2));
+}
+
 void AuthControler::logout()
 {
     qDebug() << Q_FUNC_INFO;
@@ -124,6 +147,21 @@ void AuthControler::_getLoginHistory(std::vector<service::LoginInfo> list)
         historyList.insert(historyList.size(),loginItem);
     }
     emit getLoginHistoryResult(historyList);
+}
+
+void AuthControler::_loginResult(service::ErrorInfo &info, long long userId)
+{
+    qDebug() << Q_FUNC_INFO << info.code() << userId;
+    if(info.code() == 0)
+    {
+        qDebug() << Q_FUNC_INFO << "loginSucceeded";
+       emit loginSucceeded();
+    }
+    else
+    {
+        qDebug() << Q_FUNC_INFO << "loginFailed = " << info.code();
+        emit loginFailed(info.code());
+    }
 }
 
 

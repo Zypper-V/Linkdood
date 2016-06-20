@@ -8,5 +8,6 @@
         <file>qml/CDoodRootTabView.qml</file>
         <file>qml/CDoodHeaderImage.qml</file>
         <file>qml/CDoodUserDataPage.qml</file>
+        <file>qml/CDoodChatPage.qml</file>
     </qresource>
 </RCC>

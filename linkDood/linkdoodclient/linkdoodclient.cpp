@@ -42,6 +42,26 @@ QString LinkDoodClient::installPath()
     return sTmp;
 }
 
+void LinkDoodClient::getAppLoginStatus(int &status)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getAppLoginStatus",status);
+}
+
+void LinkDoodClient::setAppLoginStatus(const int status)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("setAppLoginStatus",status);
+}
+
 void LinkDoodClient::login(const QString &server,
                            const QString &userId,
                            const QString &password)
@@ -84,7 +104,7 @@ void LinkDoodClient::setMessageRead(int64 targetid, int64 msgid)
     manager.call("setMessageRead",targetid,msgid);
 }
 
-void LinkDoodClient::sendMessage(const Msg& msg)
+void LinkDoodClient::sendMessage(Msg& msg)
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
@@ -92,10 +112,10 @@ void LinkDoodClient::sendMessage(const Msg& msg)
                            DBUS_DOOD_INTERFACE,
                            QDBusConnection::sessionBus());
 
-    QVariant v;
-    v.setValue(msg);
+    //QVariant v;
+   // v.setValue(msg);
 
-    manager.call("sendMessage",v);
+    manager.call("sendMessage",QVariant::fromValue<Msg>(msg));
 }
 
 void LinkDoodClient::getMessages(int64 targetid, int64 msgid, int count, int flag)

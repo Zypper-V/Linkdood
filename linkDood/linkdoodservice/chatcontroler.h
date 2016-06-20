@@ -96,36 +96,32 @@ signals:
 
    //发送消息返回
    void sendMessageBack(bool code,int64 sendTime,int64 msgId);
-   void sendSrvMessageBack(bool code,int64 sendTime,int64 msgId);
+   //void sendSrvMessageBack(bool code,int64 sendTime,int64 msgId);
    //获取消息结果返回
    void getMessagesBack(bool code,int64 sessionId,MsgList& msgList);
-   void getSrvMessagesBack(bool code,int64 sessionId,MsgList& msgList);
+   //void getSrvMessagesBack(bool code,int64 sessionId,MsgList& msgList);
    //移除会话结果返回
    void removeChatBack(bool);
-   void removeSrvChatBack(bool);
+  // void removeSrvChatBack(bool);
 
-public slots:
-    void onSendMessageBack(bool code,int64 sendTime,int64 msgId);
-    void onGetMessagesBack(bool code,int64 sessionId,MsgList& msgList);
-    void onRemoveChatBack(bool code);
 private:
 
     /************************************
     * @brief onRemoveChat
     * @description: 移除会话结果回调
     ************************************/
-    void onRemoveChat(service::ErrorInfo&info);
+    void _removeChat(service::ErrorInfo&info);
 
     /************************************
     * @brief onSendMesage
     * @description: 发送消息结果回调
     ************************************/
-    void onSendMesage(service::ErrorInfo&, int64/*发送时间*/,int64/*消息ID*/);
+    void _sendMesage(service::ErrorInfo&, int64/*发送时间*/,int64/*消息ID*/);
     /************************************
     * @brief onGetMesage
     * @description: 获取消息结果回调
     ************************************/
-    void onGetMesage(service::ErrorInfo&, int64/*会话方ID*/, std::vector<service::MsgPtr>);
+    void _getMesage(service::ErrorInfo&, int64/*会话方ID*/, std::vector<service::MsgPtr>);
 
     MsgText msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
     service::MsgText QmsgtextTomsgtext(MsgText Qmsgtext);

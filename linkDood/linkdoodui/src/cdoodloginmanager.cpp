@@ -49,6 +49,12 @@ void CDoodLoginManager::setLoginInfo(int flag, QString userid, QString username,
      m_pClient->setLoginInfo(flag,userid,username,avatar);
 }
 
+QString CDoodLoginManager::userId()
+{
+    qDebug() << Q_FUNC_INFO;
+    return mUserId;
+}
+
 void CDoodLoginManager::onLoginSucceeded()
 {
     qDebug() << Q_FUNC_INFO;
@@ -76,6 +82,7 @@ void CDoodLoginManager::onGetLoginHistoryResult(LoginInfoList list)
 void CDoodLoginManager::onLoginResultObserver(int code, QString userID)
 {
       qDebug() << Q_FUNC_INFO << "user:" << userID;
+      mUserId = userID;
       emit loginResultObserver(code,userID);
 }
 
