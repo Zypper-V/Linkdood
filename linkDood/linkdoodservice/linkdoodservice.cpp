@@ -179,12 +179,12 @@ void LinkDoodService::getMessages(int64 targetid, int64 msgid, int count, int fl
     }
 }
 
-void LinkDoodService::deleteMessage(int64 targetid,INT64List msgs)
+void LinkDoodService::deleteMessage(int64 targetid,QStringList msgs)
 {
     qDebug() << Q_FUNC_INFO;
     std::vector<int64> list;
     for(auto msg:msgs){
-        list.push_back(msg);
+        list.push_back(msg.toLongLong());
     }
     if(m_pChatObserver != NULL){
         m_pChatObserver->deleteMessage(targetid,list);

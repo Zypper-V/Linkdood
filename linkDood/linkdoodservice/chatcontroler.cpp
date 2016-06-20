@@ -44,17 +44,17 @@ void ChatControler::getUnReadMessages()
 void ChatControler::sendMessage(Msg &imMsg)
 {
     qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body;
-    if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
-    {
-        MsgText& msgText = imMsgCast<MsgText>(imMsg);
-        service::Msg msg = QmsgtextTomsgtext(msgText);
+//    if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
+//    {
+//        //MsgText& msgText = imMsgCast<MsgText>(imMsg);
+//        service::Msg msg = QmsgtextTomsgtext(msgText);
 
-        service::IMClient::getClient()->getChat()->sendMessage(msg,
-                     std::bind(&ChatControler::_sendMesage,this,
-                               std::placeholders::_1,
-                               std::placeholders::_2,
-                               std::placeholders::_3));
-    }
+//        service::IMClient::getClient()->getChat()->sendMessage(msg,
+//                     std::bind(&ChatControler::_sendMesage,this,
+//                               std::placeholders::_1,
+//                               std::placeholders::_2,
+//                               std::placeholders::_3));
+//    }
 }
 
 void ChatControler::getMessages(int64 targetid, int64 msgid, int count, int flag)
@@ -176,26 +176,26 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
     //std::shared_ptr<service::Msg> msg;
 
     for(auto msg:msgPtr){
-        if(msg->msgtype == MSG_TYPE_TEXT){
-            std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
-            MsgText item;
+//        if(msg->msgtype == MSG_TYPE_TEXT){
+//            std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
+//            MsgText item;
 
-            item.activeType = QString::number(msgText->active_type);
-            item.body = QString::fromStdString(msgText->body);
-            item.fromid = QString::number(msgText->fromid);
-            item.localid = QString::number(msgText->localid);
-            item.msgid = QString::number(msgText->msgid);
-            item.msgProperties = QString::fromStdString(msgText->msg_properties);
-            item.msgtype = QString::number(msgText->msgtype);
-            item.relatedMsgid = QString::number(msgText->related_msgid);
-            item.targetid = QString::number(msgText->targetid);
+//            item.activeType = QString::number(msgText->active_type);
+//            item.body = QString::fromStdString(msgText->body);
+//            item.fromid = QString::number(msgText->fromid);
+//            item.localid = QString::number(msgText->localid);
+//            item.msgid = QString::number(msgText->msgid);
+//            item.msgProperties = QString::fromStdString(msgText->msg_properties);
+//            item.msgtype = QString::number(msgText->msgtype);
+//            item.relatedMsgid = QString::number(msgText->related_msgid);
+//            item.targetid = QString::number(msgText->targetid);
 
-            item.time = QString::number(msgText->time);
-            item.toid = QString::number(msgText->toid);
+//            item.time = QString::number(msgText->time);
+//            item.toid = QString::number(msgText->toid);
 
-            msgList.insert(msgList.size(),item);
-        }
-    }
+//            msgList.insert(msgList.size(),item);
+//        }
+   }
     if(!info.code()){
         emit getMessagesBack(true,targetId,msgList);
     }else{
@@ -209,9 +209,9 @@ void ChatControler::_deleteMessage(service::ErrorInfo &info)
     emit deleteMessagesBack(info.code());
 }
 
-MsgText ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
+Msg ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
 {
-    MsgText Qmsgtext;
+    Msg Qmsgtext;
     Qmsgtext.activeType   =QString::number(msgtext->active_type);
     Qmsgtext.msgtype      =QString::number(msgtext->msgtype);
     Qmsgtext.msgid        =QString::number(msgtext->msgid);
@@ -225,7 +225,7 @@ MsgText ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgte
     return Qmsgtext;
 }
 
-service::MsgText ChatControler::QmsgtextTomsgtext(MsgText Qmsgtext)
+service::MsgText ChatControler::QmsgtextTomsgtext(Msg Qmsgtext)
 {
     service::MsgText msgtext;
     std::stringstream str(Qmsgtext.activeType.toStdString());

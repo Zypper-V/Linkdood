@@ -140,7 +140,7 @@ public slots:
     * @param[in] targetid 传入会话对应的ID，群或者人
     * @param[in] msgs 传入要删除的消息ID集合
     ***************************************************/
-    void deleteMessage(int64 targetid, INT64List msgs);
+    void deleteMessage(int64 targetid, QStringList msgs);
 
     /*****************end chat****************************/
 

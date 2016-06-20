@@ -114,14 +114,14 @@ void LinkDoodClient::getUnReadMessages()
     manager.call("getUnReadMessages");
 }
 
-void LinkDoodClient::deleteMessage(int64 targetid, INT64List msgs)
+void LinkDoodClient::deleteMessage(int64 targetid, QStringList msgs)
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
                            DBUS_DOOD_PATH,
                            DBUS_DOOD_INTERFACE,
                            QDBusConnection::sessionBus());
-    manager.call("deleteMessage",targetid,QVariant::fromValue<INT64List>(msgs));
+    manager.call("deleteMessage",targetid,QVariant::fromValue<QStringList>(msgs));
 }
 
 void LinkDoodClient::sendMessage(Msg& msg)
