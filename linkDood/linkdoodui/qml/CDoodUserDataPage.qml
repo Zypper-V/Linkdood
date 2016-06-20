@@ -231,6 +231,11 @@ CPage {
                 font.pixelSize: 32
                 text:qsTr("发消息")
             }
+            onClicked: {
+                chatManager.setId(userdataManager.id);
+                chatManager.setName(userdataManager.name);
+                pageStack.replace(Qt.resolvedUrl("CDoodChatPage.qml"), "", true);
+            }
         }
 
     }
