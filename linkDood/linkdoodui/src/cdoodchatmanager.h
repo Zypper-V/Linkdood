@@ -6,6 +6,8 @@
 #include "cdoodlistmodel.h"
 #include "linkdoodclient.h"
 
+class CDoodChatItem;
+
 class CDoodChatManager : public CDoodListModel
 {
     Q_OBJECT
@@ -21,12 +23,12 @@ public:
     Q_INVOKABLE void sendText(QString fromId,QString text);
     Q_INVOKABLE void sendMessage(Msg& msg);
     //获取消息
-    Q_INVOKABLE void getMessages(QString targetid, QString msgid, int count, int flag);
+    Q_INVOKABLE void getMessages(QString targetid, int count);
 
     //移除会话
     Q_INVOKABLE void removeChat(QString targetid);
     //设置消息已读
-    Q_INVOKABLE void setMessageRead(QString targetid, QString msgid);
+    Q_INVOKABLE void setMessageRead(QString targetid);
     //获取未读消息列表
     void getUnReadMessages(void);
     //删除消息
@@ -39,13 +41,15 @@ public:
     Q_INVOKABLE void   setName(const QString&name);
 
     Q_INVOKABLE void entryChat(const QString &targetid);
-    Q_INVOKABLE void exitChat(const QString &targetid);
+    Q_INVOKABLE void exitChat();
     Q_INVOKABLE void deleteMessageListItem();
 
     Q_INVOKABLE void showChatPage(QString chatName,
                                   QString targetid,
                                   QString chatType,
                                   QString icon = QString());
+
+    Q_INVOKABLE void initChatState();
 
 signals:
     //会话列表头像更新
@@ -56,8 +60,6 @@ signals:
     void newMessageNotice(Msg& msg);
     //发送消息返回
     void sendMessageResult(bool code,int64 sendTime,int64 msgId);
-    //获取消息结果返回
-    void getMessagesResult(bool code,int64 sessionId,MsgList& msgList);
     //移除会话结果返回
     void removeChatResult(bool);
 
@@ -85,11 +87,17 @@ private slots:
     //移除消息结果返回
     void onChatDeleteMessagesResult(int code);
 private:
-    LinkDoodClient *m_pClient;
     void initConnect();
 
+    void analyticalMessage(MsgList list);
+
+private:
     QString mId;
     QString mName;
+    QString m_sBeginMsgId;
+    QDateTime m_oLastMessageTime;
+    LinkDoodClient *m_pClient;
+    QMap<QString, CDoodChatItem*> m_oChatMap;
 };
 
 #endif // CDOODCHATMANAGER_H

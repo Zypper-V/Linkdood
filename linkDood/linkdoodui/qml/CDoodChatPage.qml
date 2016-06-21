@@ -87,12 +87,14 @@ CPage {
     }
 
     function initMessage() {
+        console.log("zhangp dood initMessage !!!!")
         chatPage.loadDataFlag = true;
 
         inputTextArea.text = ""
         chatManager.deleteMessageListItem()
         chatManager.entryChat(chatPage.targetid)
-        //        chatManager.getMessages()
+        chatManager.initChatState()
+        chatManager.getMessages(chatPage.targetid, 20)
     }
 
     WallClock {

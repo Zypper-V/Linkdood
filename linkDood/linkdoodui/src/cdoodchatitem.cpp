@@ -125,12 +125,12 @@ QString CDoodChatItem::setToId(const QString &data)
     return mToId;
 }
 
-QString CDoodChatItem::time() const
+QDateTime CDoodChatItem::time() const
 {
     return mTime;
 }
 
-QString CDoodChatItem::setTime(const QString &data)
+QDateTime CDoodChatItem::setTime(const QDateTime &data)
 {
     if(mTime == data) {
         return data;
