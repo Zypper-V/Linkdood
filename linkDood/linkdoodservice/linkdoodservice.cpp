@@ -196,7 +196,7 @@ void LinkDoodService::setMessageRead(QString targetid, QString msgid)
     }
 }
 
-void LinkDoodService::sendMessage(Msg& msg)
+void LinkDoodService::sendMessage(Msg msg)
 {
     qDebug() << Q_FUNC_INFO<<"msg:" << msg.body;
     if(m_pChatObserver != NULL){
@@ -360,7 +360,7 @@ void LinkDoodService::onChatMessageNotice(Msg &msg)
 void LinkDoodService::onChatSendMessageResult(bool code, int64 sendTime, int64 msgId)
 {
     qDebug() << Q_FUNC_INFO ;
-    emit sendMessageResult(code,sendTime,msgId);
+    emit sendMessageResult(code,QString::number(sendTime),QString::number(msgId));
 }
 
 void LinkDoodService::onChatGetMessagesResult(bool code, int64 sessionId, MsgList msgList)

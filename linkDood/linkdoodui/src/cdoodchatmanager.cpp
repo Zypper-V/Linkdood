@@ -113,7 +113,7 @@ void CDoodChatManager::sendText(QString fromId,QString text)
     sendMessage(msgText);
 }
 
-void CDoodChatManager::sendMessage(Msg &msg)
+void CDoodChatManager::sendMessage(Msg msg)
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->sendMessage(msg);
@@ -223,7 +223,7 @@ void CDoodChatManager::onChatMessageNotice(Msg &msg)
     emit newMessageNotice(msg);
 }
 
-void CDoodChatManager::onChatSendMessageResult(bool code, int64 sendTime, int64 msgId)
+void CDoodChatManager::onChatSendMessageResult(bool code, QString sendTime, QString msgId)
 {
     qDebug() << Q_FUNC_INFO;
     emit sendMessageResult(code,sendTime,msgId);

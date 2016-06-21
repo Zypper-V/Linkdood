@@ -43,7 +43,7 @@ signals:
     //监听新消息通知
     void newMessageNotice(Msg& msg);
     //发送消息返回
-    void sendMessageResult(bool code,int64 sendTime,int64 msgId);
+    void sendMessageResult(bool code,QString sendTime,QString msgId);
     //获取消息结果返回
     void getMessagesResult(bool code,QString sessionId,MsgList msgList);
     //移除会话结果返回
@@ -90,7 +90,7 @@ public slots:
     //删除消息
     void deleteMessage(QString targetid, QStringList msgs);
     //发送消息
-    void sendMessage(Msg& msg);
+    void sendMessage(Msg msg);
     //获取消息
     void getMessages(const QString &targetid, const QString & msgid, const int& count, const int& flag);
     //获取登录历史记录
@@ -121,7 +121,7 @@ private slots:
     //监听新消息通知
     void onChatMessageNotice(Msg& msg);
     //发送消息返回
-    void onChatSendMessageResult(bool code,int64 sendTime,int64 msgId);
+    void onChatSendMessageResult(bool code,QString sendTime,QString msgId);
     //移除消息结果返回
     void onChatDeleteMessagesResult(int code);
     //获取消息结果返回

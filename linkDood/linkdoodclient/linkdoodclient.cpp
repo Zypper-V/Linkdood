@@ -154,7 +154,7 @@ void LinkDoodClient::deleteMessage(QString targetid, QStringList msgs)
     manager.call("deleteMessage",targetid,QVariant::fromValue<QStringList>(msgs));
 }
 
-void LinkDoodClient::sendMessage(Msg& msg)
+void LinkDoodClient::sendMessage(Msg msg)
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
@@ -295,7 +295,7 @@ void LinkDoodClient::onChatMessageNotice(Msg &msg)
     emit newMessageNotice(msg);
 }
 
-void LinkDoodClient::onChatSendMessageResult(bool code, int64 sendTime, int64 msgId)
+void LinkDoodClient::onChatSendMessageResult(bool code, QString sendTime, QString msgId)
 {
     qDebug() << Q_FUNC_INFO;
     emit sendMessageResult(code,sendTime,msgId);

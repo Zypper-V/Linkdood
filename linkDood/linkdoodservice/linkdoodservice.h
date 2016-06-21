@@ -32,7 +32,7 @@ signals:
     //监听新消息通知
     void newMessageNotice(Msg& msg);
     //发送消息返回
-    void sendMessageResult(bool code,int64 sendTime,int64 msgId);
+    void sendMessageResult(bool code,QString sendTime,QString msgId);
     //获取消息结果返回
     void getMessagesResult(bool code,QString sessionId,MsgList msgList);
     //移除会话结果返回
@@ -139,7 +139,7 @@ public slots:
     * @description: 发送消息
     * @param[in] msg 传入消息
     ************************************/
-    void sendMessage(Msg& msg);
+    void sendMessage(Msg msg);
 
     /********************************************************************
     * @brief getMessages
