@@ -109,6 +109,7 @@ void CDoodChatManager::sendText(QString fromId,QString text)
     msgText.targetid = id();
     msgText.toid = id();
     msgText.fromid = fromId;
+    qDebug() << Q_FUNC_INFO << msgText.toid << msgText.fromid;
 
     sendMessage(msgText);
 }

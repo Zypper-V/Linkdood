@@ -40,7 +40,7 @@ public:
                            const QString &password);
 
     //用户信息UserId
-    Q_INVOKABLE QString UserId();
+    Q_INVOKABLE QString userId();
     //用户信息
     void getUserInfo(QString& userId,
                      QString& name,
@@ -52,7 +52,7 @@ public:
     //设置登录信息
     Q_INVOKABLE void setLoginInfo(int flag, QString userid, QString username, QString avatar);
 
-    Q_INVOKABLE QString userId();
+  //  Q_INVOKABLE QString userId();
 
 //    QString user()const;
 //    QString server()const;

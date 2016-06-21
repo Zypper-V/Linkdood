@@ -32,12 +32,6 @@ void CDoodLoginManager::login(const QString &server,
     //getLoginHistory();
 }
 
-QString CDoodLoginManager::UserId()
-{
-    qDebug() << Q_FUNC_INFO;
-    m_pClient->UserId();
-}
-
 void CDoodLoginManager::getUserInfo(QString &userId, QString &name, QString &avater)
 {
     m_pClient->getUserInfo(userId, name, avater);
@@ -64,6 +58,8 @@ void CDoodLoginManager::setLoginInfo(int flag, QString userid, QString username,
 QString CDoodLoginManager::userId()
 {
     qDebug() << Q_FUNC_INFO;
+    mUserId = m_pClient->UserId();
+
     return mUserId;
 }
 
