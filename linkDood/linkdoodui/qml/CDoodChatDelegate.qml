@@ -22,7 +22,12 @@ CEditListViewDelegate {
 
     function loaderComponent () {
         if(model.modelData.msgType === "2") {
-            if(model.modelData.targetId === chatPage.myID) {
+            console.log("model.modelData.targetId", model.modelData.targetId)
+            console.log("model.modelData.fromId", model.modelData.fromId)
+
+            console.log("chatPage.myID", chatPage.myID)
+
+            if(model.modelData.fromId === chatPage.myID) {
                 return chatDelegateRoot.sendTextMsgObj
             } else {
                 return chatDelegateRoot.receiveTextMsgObj

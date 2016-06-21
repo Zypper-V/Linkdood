@@ -95,8 +95,21 @@ void CDoodChatManager::addItemToListViewModel(Msg msg)
     if(!m_oChatMap.contains(msg.msgid)) {
 
         CDoodChatItem *pChatItem = new CDoodChatItem(this);
+        pChatItem->setMsgType(msg.msgtype);
+        pChatItem->setActiveType(msg.activeType);
+        pChatItem->setMsgId(msg.msgid);
+        pChatItem->setTargetId(msg.targetid);
+        pChatItem->setFromId(msg.fromid);
+        pChatItem->setToId(msg.toid);
+        pChatItem->setTime(QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss"));
+        pChatItem->setBody(msg.body);
+
+        m_oLastMessageTime = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
         addItem(pChatItem);
         m_oChatMap[msg.msgid] = pChatItem;
+
+        qDebug() << Q_FUNC_INFO << "pChatItem->body() = " << pChatItem->body();
+        qDebug() << Q_FUNC_INFO << "pChatItem->time() = " << pChatItem->time();
     }
 }
 
@@ -125,6 +138,13 @@ void CDoodChatManager::sendText(QString text)
     msgText.time = time.currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     // todo
     msgText.msgid = m_pClient->createMsgId();
+
+    qDebug() << Q_FUNC_INFO << "msg.msgid = " << msgText.msgid;
+    qDebug() << Q_FUNC_INFO << "msg.body = " << msgText.body;
+    qDebug() << Q_FUNC_INFO << "msg.msgtype = " << msgText.msgtype;
+    qDebug() << Q_FUNC_INFO << "msg.targetid = " << msgText.targetid;
+    qDebug() << Q_FUNC_INFO << "msg.fromid = " << msgText.fromid;
+    qDebug() << Q_FUNC_INFO << "msg.time = " << msgText.time;
 
     sendMessage(msgText);
 }

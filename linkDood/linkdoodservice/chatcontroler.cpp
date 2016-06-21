@@ -78,7 +78,7 @@ void ChatControler::sendMessage(Msg &imMsg)
     qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body;
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
-        service::Msg msg = QmsgtextTomsgtext(imMsg);
+        service::MsgText msg = QmsgtextTomsgtext(imMsg);
         service::IMClient::getClient()->getChat()->sendMessage(msg,
                      std::bind(&ChatControler::_sendMesage,this,
                                std::placeholders::_1,
@@ -131,7 +131,7 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
        Msg imMsg = msgtextToQmsgtext(msgText);
         qDebug() << Q_FUNC_INFO << "messageNotice:"<< imMsg.body;
        QString sessionId("");
-       if(getCurrentSessionId(sessionId)){
+       if(!getCurrentSessionId(sessionId)){
            emit chatMessageNotice(imMsg);
            emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,imMsg.time,imMsg.fromid,"");
        }

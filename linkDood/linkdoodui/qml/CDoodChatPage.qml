@@ -44,6 +44,7 @@ CPage {
     property bool inputShow: false
     property bool bNeedViewToEnd: true
     property int getMessageHeight: 50
+    property string myID :  loginManager.userId()
 
     property bool pageActive
     property bool pageWindowFocus: loginManager.windowFocus
@@ -119,8 +120,8 @@ CPage {
 
         inputTextArea.text = ""
         chatManager.deleteMessageListItem()
-        chatManager.entryChat(chatPage.targetid)
         chatManager.initChatState()
+        chatManager.entryChat(chatPage.targetid)
         chatManager.getMessages(chatPage.targetid, 20)
     }
 
