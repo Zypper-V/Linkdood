@@ -120,7 +120,7 @@ public slots:
     //进入会话UI
     void entryChat(const QString targetId);
     //离开会话UI
-    void deleteChat(const QString targetId);
+    void exitChat(const QString targetId);
 
     /**************************************************
     * @brief removeChat

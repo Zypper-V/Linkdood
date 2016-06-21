@@ -33,7 +33,7 @@ void ChatControler::entryChat(const QString targetId)
     settings.setValue("SessionTargetID",targetId);
 }
 
-void ChatControler::deleteChat(const QString targetId)
+void ChatControler::exitChat(const QString targetId)
 {
     qDebug() << Q_FUNC_INFO;
     QString path = LinkDoodService::instance()->dataPath();

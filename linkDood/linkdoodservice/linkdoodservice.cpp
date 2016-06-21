@@ -181,11 +181,11 @@ void LinkDoodService::entryChat(const QString targetId)
     }
 }
 
-void LinkDoodService::deleteChat(const QString targetId)
+void LinkDoodService::exitChat(const QString targetId)
 {
     qDebug() << Q_FUNC_INFO;
     if(m_pChatObserver != NULL){
-        m_pChatObserver->deleteChat(targetId);
+        m_pChatObserver->exitChat(targetId);
     }
 }
 
