@@ -45,12 +45,12 @@ LinkDoodService *LinkDoodService::instance()
     return m_pInstance;
 }
 
-void LinkDoodService::getAppLoginStatus(int &status)
+int LinkDoodService::getAppLoginStatus()
 {
     qDebug() << Q_FUNC_INFO;
     QString fileName = dataPath()+ "config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
-    status = settings.value("Status",0).toInt();
+    return settings.value("Status",0).toInt();
 }
 
 void LinkDoodService::setAppLoginStatus(const int status)

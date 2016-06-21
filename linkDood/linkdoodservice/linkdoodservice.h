@@ -69,9 +69,9 @@ public slots:
     /**************************************
     * @brief getAppLoginStatus
     * @description: 从配置文件读取登录状态
-    * @param[out]  status 1:己经登录 0:未登录
+    * @return  status 1:己经登录 0:未登录
     ***************************************/
-    void getAppLoginStatus(int& status);
+    int getAppLoginStatus();
 
     /**************************************
     * @brief setAppLoginStatus

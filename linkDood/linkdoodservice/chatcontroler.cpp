@@ -75,7 +75,7 @@ void ChatControler::getUnReadMessages()
 
 void ChatControler::sendMessage(Msg &imMsg)
 {
-    qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body;
+    qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body << "TargetId:" << imMsg.targetid;
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
         service::MsgText msg = QmsgtextTomsgtext(imMsg);
