@@ -19,6 +19,14 @@ CPageStackWindow {
         }
     }
 
+    Connections {
+        target: gScreenInfo
+
+        onMinimizedChanged: {
+            loginManager.setWindowFocus(!gScreenInfo.minimized)
+        }
+    }
+
     Keys.onReleased:{
         if (event.key === Qt.Key_Home) {
             winHide();

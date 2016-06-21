@@ -99,7 +99,7 @@ public slots:
     void getContactInfo(int64 userId);
 
     //唯一标识Id
-    QString msgId();
+    QString createMsgId();
 
     //用户信息
     void getUserInfo(QString& userId,QString& name,QString& avater);

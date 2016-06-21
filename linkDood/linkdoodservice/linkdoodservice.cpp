@@ -133,7 +133,7 @@ void LinkDoodService::getContactInfo(int64 userId)
     }
 }
 
-QString LinkDoodService::msgId()
+QString LinkDoodService::createMsgId()
 {
     QUuid id = QUuid::createUuid();
     QString strId = id.toString();

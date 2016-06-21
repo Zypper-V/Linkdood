@@ -57,14 +57,14 @@ Item {
             width: sessionListView.width
             height: 125
 
-            Connections {
-                target: chatPage
+//            Connections {
+//                target: chatPage
 
-                onPrepareFinished:{
-                    console.log("=======zhangpeng onPrepareFinished=======")
-                    pageStack.push(chatPage);
-                }
-            }
+//                onPrepareFinished:{
+//                    console.log("=======zhangpeng onPrepareFinished=======")
+//                    pageStack.push(chatPage);
+//                }
+//            }
 
             onClicked: {
                 console.log("model.modelData.link = ", model.modelData.lastMsg)

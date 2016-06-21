@@ -9,6 +9,7 @@ CDoodLoginManager::CDoodLoginManager(LinkDoodClient *client, QObject *parent) :
     qDebug() << Q_FUNC_INFO;
     qRegisterMetaType<CDoodLoginManager*>();
     initConnect();
+    m_bWindowFocus = true;
 }
 
 CDoodLoginManager::~CDoodLoginManager()
@@ -61,6 +62,23 @@ QString CDoodLoginManager::userId()
     mUserId = m_pClient->UserId();
 
     return mUserId;
+}
+
+bool CDoodLoginManager::windowFocus() const
+{
+    return m_bWindowFocus;
+}
+
+bool CDoodLoginManager::setWindowFocus(const bool &windowFocus)
+{
+    if(windowFocus) {
+//        clearNotifications();
+//        clearBadge();
+    }
+
+    m_bWindowFocus = windowFocus;
+    emit windowFocusChanged();
+    return windowFocus;
 }
 
 //QString CDoodLoginManager::user() const

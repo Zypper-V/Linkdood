@@ -30,6 +30,8 @@ class CDoodLoginManager : public CDoodListModel
 //    Q_PROPERTY(QString server READ server WRITE setServer NOTIFY serverChanged)
 //    Q_PROPERTY(QString password READ password WRITE setPassword NOTIFY passwordChanged)
 
+    Q_PROPERTY(bool windowFocus READ windowFocus WRITE setWindowFocus NOTIFY windowFocusChanged)
+
 public:
     explicit CDoodLoginManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
@@ -53,6 +55,8 @@ public:
     Q_INVOKABLE void setLoginInfo(int flag, QString userid, QString username, QString avatar);
 
   //  Q_INVOKABLE QString userId();
+    bool windowFocus() const;
+    Q_INVOKABLE bool setWindowFocus(const bool &windowFocus);
 
 //    QString user()const;
 //    QString server()const;
@@ -68,6 +72,7 @@ signals:
     void getLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
     void loginResultObserver(int code,QString userID);
+    void windowFocusChanged();
 
 //    void userChanged();
 //    void serverChanged();
@@ -87,6 +92,8 @@ private:
 //    QString mUser;
 //    QString mServer;
 //    QString mPassword;
+
+    bool m_bWindowFocus;
 
     LinkDoodClient *m_pClient;
 };

@@ -60,7 +60,7 @@ public slots:
     QString installPath();
 
     //唯一标识Id
-    QString msgId();
+    QString createMsgId();
 
     //进入会话UI
     void entryChat(const QString targetId);

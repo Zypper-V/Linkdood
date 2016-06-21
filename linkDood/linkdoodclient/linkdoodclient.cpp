@@ -42,14 +42,14 @@ QString LinkDoodClient::installPath()
     return sTmp;
 }
 
-QString LinkDoodClient::msgId()
+QString LinkDoodClient::createMsgId()
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
                            DBUS_DOOD_PATH,
                            DBUS_DOOD_INTERFACE,
                            QDBusConnection::sessionBus());
-    QDBusPendingReply<QString> reply = manager.call("msgId");
+    QDBusPendingReply<QString> reply = manager.call("createMsgId");
     reply.waitForFinished();
 
     QString sTmp;

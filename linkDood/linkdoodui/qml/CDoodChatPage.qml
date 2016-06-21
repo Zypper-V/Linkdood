@@ -8,32 +8,32 @@ CPage {
     anchors.fill: parent
     orientationPolicy: CPageOrientation.LockPortrait
 
-    property bool loadDataFlag:false
-    signal prepareFinished()
+//    property bool loadDataFlag:false
+//    signal prepareFinished()
 
-    Timer{
-        id:loadDataCheckTimer
-        running: false
-        repeat: false
-        interval: 100
-        onTriggered: {
-            if(loadDataFlag) {
-                loadDataFlag = false
-                chatListView.positionViewAtEnd()
-                viewToEndanimation.start()
-            }
-        }
-    }
+//    Timer{
+//        id:loadDataCheckTimer
+//        running: false
+//        repeat: false
+//        interval: 100
+//        onTriggered: {
+//            if(loadDataFlag) {
+//                loadDataFlag = false
+//                chatListView.positionViewAtEnd()
+//                viewToEndanimation.start()
+//            }
+//        }
+//    }
 
-    Timer{
-        id:viewToEndanimation
-        running: false
-        repeat: false
-        interval: 50
-        onTriggered: {
-            prepareFinished()
-        }
-    }
+//    Timer{
+//        id:viewToEndanimation
+//        running: false
+//        repeat: false
+//        interval: 50
+//        onTriggered: {
+//            prepareFinished()
+//        }
+//    }
 
     property alias wallClockCurrentTime: clock.time
 
@@ -44,6 +44,9 @@ CPage {
     property bool inputShow: false
     property bool bNeedViewToEnd: true
     property int getMessageHeight: 50
+
+    property bool pageActive
+    property bool pageWindowFocus: loginManager.windowFocus
 
 
     Connections{
@@ -79,16 +82,40 @@ CPage {
 
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
+            chatPage.pageActive = true
             chatPage.statusBarHoldEnabled = true
             gScreenInfo.setStatusBar(chatPage.statusBarHoldEnabled)
             chatPage.statusBarHoldItemColor = "#edf0f0"
             gScreenInfo.setStatusBarStyle("black")
+        } else if (status === CPageStatus.WillHide) {
+            chatListView.cancelFlick()
+            chatPage.pageActive = false
+            inputTextArea.focus = false
+            chatManager.exitChat()
         }
+    }
+
+    onPageWindowFocusChanged: {
+        if(chatPage.pageWindowFocus && chatPage.pageActive) {
+            chatManager.entryChat(chatPage.targetid)
+        } else {
+            chatManager.exitChat()
+        }
+    }
+
+    function sendTextMsg() {
+        console.log("dood sendMsg inputTextArea.plainText() = ", inputTextArea.plainText())
+
+        if(inputTextArea.plainText().replace(/(\s)|(\r\n)|(\r)|(\n)/g, "") !== "") {
+            console.log("dood === sendMsg !!!!")
+            chatManager.sendText(inputTextArea.plainText())
+        }
+        inputTextArea.text = ""
     }
 
     function initMessage() {
         console.log("zhangp dood initMessage !!!!")
-        chatPage.loadDataFlag = true;
+//        chatPage.loadDataFlag = true;
 
         inputTextArea.text = ""
         chatManager.deleteMessageListItem()
@@ -163,10 +190,10 @@ CPage {
             cacheBuffer: chatListView.height * 2
             delegate: CDoodChatDelegate {
                 Component.onCompleted: {
-                    if(chatPage.loadDataFlag)
-                    {
-                        loadDataCheckTimer.restart()
-                    }
+//                    if(chatPage.loadDataFlag)
+//                    {
+//                        loadDataCheckTimer.restart()
+//                    }
                 }
             }
 
@@ -237,10 +264,10 @@ CPage {
             }
 
             onCountChanged: {
-                if(chatPage.loadDataFlag)
-                {
-                    loadDataCheckTimer.restart()
-                }
+//                if(chatPage.loadDataFlag)
+//                {
+//                    loadDataCheckTimer.restart()
+//                }
             }
 
             onHeightChanged: {
@@ -340,7 +367,7 @@ CPage {
                         if (key === Qt.Key_Return)
                         {
                             console.log("dood === Key_Return !!!!")
-    //                        sendMsg()
+                            sendTextMsg()
                         }
                     }
 

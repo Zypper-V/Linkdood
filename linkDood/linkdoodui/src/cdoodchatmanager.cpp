@@ -57,6 +57,8 @@ void CDoodChatManager::analyticalMessage(MsgList list)
             msglist.append(pChatItem);
             m_oChatMap[list.at(i).msgid] = pChatItem;
             m_oLastMessageTime = QDateTime::fromString(list.at(i).time, "yyyy-MM-dd hh:mm:ss");
+            qDebug() << Q_FUNC_INFO << "pChatItem->body() = " << pChatItem->body();
+            qDebug() << Q_FUNC_INFO << "pChatItem->time() = " << pChatItem->time();
         }
     }
 
@@ -87,6 +89,17 @@ void CDoodChatManager::analyticalMessage(MsgList list)
     m_sBeginMsgId = list.at(list.size() - 1).msgid;
 }
 
+void CDoodChatManager::addItemToListViewModel(Msg msg)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(!m_oChatMap.contains(msg.msgid)) {
+
+        CDoodChatItem *pChatItem = new CDoodChatItem(this);
+        addItem(pChatItem);
+        m_oChatMap[msg.msgid] = pChatItem;
+    }
+}
+
 CDoodChatManager::CDoodChatManager(LinkDoodClient *client, QObject *parent):
     CDoodListModel(parent), m_pClient(client)
 {
@@ -100,16 +113,18 @@ CDoodChatManager::~CDoodChatManager()
     exitChat();
 }
 
-void CDoodChatManager::sendText(QString fromId,QString text)
+void CDoodChatManager::sendText(QString text)
 {
     qDebug() << Q_FUNC_INFO << "send Text:" << text;
     Msg msgText;
     msgText.body = text;
-    msgText.msgtype = MSG_TYPE_TEXT;
-    msgText.targetid = id();
-    msgText.toid = id();
-    msgText.fromid = fromId;
-    qDebug() << Q_FUNC_INFO <<"sdfsfsfsfsffsfsfsff" << msgText.toid << msgText.fromid;
+    msgText.msgtype = QString::number(MSG_TYPE_TEXT);
+    msgText.targetid = m_sTargetid;
+    msgText.fromid = m_pClient->UserId();
+    QDateTime time;
+    msgText.time = time.currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    // todo
+    msgText.msgid = m_pClient->createMsgId();
 
     sendMessage(msgText);
 }
@@ -118,12 +133,13 @@ void CDoodChatManager::sendMessage(Msg msg)
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->sendMessage(msg);
+    addItemToListViewModel(msg);
 }
 
 void CDoodChatManager::getMessages(QString targetid, int count)
 {
      qDebug() << Q_FUNC_INFO;
-     m_pClient->getMessages(targetid,m_sBeginMsgId,count,1);
+     m_pClient->getMessages(targetid,m_sBeginMsgId,count,0);
 }
 
 void CDoodChatManager::removeChat(QString targetid)
@@ -179,6 +195,8 @@ void CDoodChatManager::setName(const QString &name)
 void CDoodChatManager::entryChat(const QString &targetid)
 {
     qDebug() << Q_FUNC_INFO << targetid;
+    m_sTargetid = targetid;
+    m_pClient->entryChat(targetid);
 }
 
 void CDoodChatManager::exitChat()
@@ -189,6 +207,18 @@ void CDoodChatManager::exitChat()
 void CDoodChatManager::deleteMessageListItem()
 {
     qDebug() << Q_FUNC_INFO;
+    initChatState();
+    if(m_oChatMap.size() <= 0)
+        return;
+
+    QMap<QString, CDoodChatItem*>::const_iterator i = m_oChatMap.constBegin();
+    while (i != m_oChatMap.constEnd()) {
+        removeItem(m_oChatMap[i.key()]);
+        delete m_oChatMap[i.key()];
+        m_oChatMap[i.key()] = 0;
+        ++i;
+    }
+    m_oChatMap.clear();
 }
 
 void CDoodChatManager::showChatPage(QString chatName,
@@ -204,6 +234,7 @@ void CDoodChatManager::initChatState()
 {
     qDebug() << Q_FUNC_INFO;
     m_sBeginMsgId = "";
+    m_sTargetid = "";
 }
 
 void CDoodChatManager::onChatAvatarChanged(int64 id, QString avatar)
@@ -220,8 +251,11 @@ void CDoodChatManager::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
 
 void CDoodChatManager::onChatMessageNotice(Msg msg)
 {
-    qDebug() << Q_FUNC_INFO << "newMessage:" << msg.body;
-    emit newMessageNotice(msg);
+    qDebug() << Q_FUNC_INFO << msg.body;
+    qDebug() << Q_FUNC_INFO << msg.msgid;
+    qDebug() << Q_FUNC_INFO << msg.msgtype;
+
+    addItemToListViewModel(msg);
 }
 
 void CDoodChatManager::onChatSendMessageResult(bool code, QString sendTime, QString msgId)
@@ -233,7 +267,11 @@ void CDoodChatManager::onChatSendMessageResult(bool code, QString sendTime, QStr
 void CDoodChatManager::onChatGetMessagesResult(bool code, QString sessionId, MsgList msgList)
 {
     qDebug() << Q_FUNC_INFO << code << sessionId << msgList.size();
+    if (msgList.size() <= 0) {
+        return;
+    }
 
+    analyticalMessage(msgList);
 }
 
 void CDoodChatManager::onChatRemoveChatResult(bool code)

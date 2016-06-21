@@ -226,11 +226,11 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
     //std::shared_ptr<service::Msg> msg;
 
     for(auto msg:msgPtr){
-        if(msg->msgtype == MSG_TYPE_TEXT){
+        if(msg->msgtype == 2||msg->msgtype == 8){
             std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
             Msg item;
             item.activeType = QString::number(msgText->active_type);
-            //item.body = QString::fromStdString(msgText->body);
+            item.body = QString::fromStdString(utils::MsgUtils::getText(msgText->body));
             item.fromid = QString::number(msgText->fromid);
             item.localid = QString::number(msgText->localid);
             item.msgid = QString::number(msgText->msgid);

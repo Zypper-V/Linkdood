@@ -1,5 +1,195 @@
 import QtQuick 2.0
+import com.syberos.basewidgets 2.0
 
-Item {
+Component {
+    id: receiveTextMessage
 
+    Item {
+        id: receiveTextMessageRoot
+        x: 0
+
+        width: parent.width
+        height: textMessageBg.height
+
+        Loader {
+            id: textNameRootLoader
+            anchors.top: parent.top
+            anchors.left: textMessageBg.left
+            asynchronous: false
+            sourceComponent: null
+        }
+
+        Component {
+            id: textNameRootComponent
+
+            Item {
+                id: textNameRoot
+                height: textNameText.implicitHeight + 6
+                width: chatDelegateRoot.maxMessageLength
+                z: 100
+                clip:  true
+
+                Text {
+                    id: textNameText
+                    anchors.left: parent.left
+                    anchors.leftMargin: 15
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 5
+
+                    color:"#999999"
+                    font.pixelSize: 20
+                    elide: Text.ElideRight;
+                    text: model.modelData.name
+                }
+            }
+        }
+
+        Loader {
+            id: receiveTextMsgHeadImageViewLoader
+            anchors.top: textNameRootLoader.bottom
+
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            asynchronous: false
+            sourceComponent: receiveTextMsgHeadImageViewComponent
+        }
+
+        Component {
+            id: receiveTextMsgHeadImageViewComponent
+
+            CDoodHeaderImage {
+                id: receiveTextMsgHeadImageView
+                width: 75
+                height: 75
+
+                name: sessionListManager.getSubName(model.modelData.name)
+                headerColor: sessionListManager.getHeaderColor(model.modelData.targetId)
+                iconSource: "file://"+ model.modelData.thumbAvatar
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        console.log("todo show Info Page !!!")
+
+                        if (chatListView.editing)
+                            return;
+                    }
+
+                    onPressAndHold: {
+                        console.log("todo @ !!!")
+                    }
+                }
+            }
+        }
+
+        BorderImage {
+            id: textMessageBg
+            anchors.left: receiveTextMsgHeadImageViewLoader.right
+            anchors.leftMargin: 10
+            anchors.top: receiveTextMsgHeadImageViewLoader.top
+
+            property var textMessageWidth: textMessage.width + 55
+            property var textMessageHeight: textMessage.height + 40
+
+            width: textMessageWidth
+            height: textMessageHeight
+            asynchronous : true
+
+            border { left: 15; top: 50; right: 15; bottom: 15 }
+
+            horizontalTileMode: BorderImage.Repeat
+            verticalTileMode: BorderImage.Repeat
+
+            source: "qrc:/res/receive/message.png"
+
+            MouseArea {
+                anchors.fill: parent
+
+                onPressAndHold: {
+
+                }
+
+                onPressed: {
+                    textMessageBg.source = "qrc:/res/receive/messageActive.png"
+                }
+
+                onReleased: {
+                    textMessageBg.source = "qrc:/res/receive/message.png"
+                }
+
+                onCanceled: {
+                    textMessageBg.source = "qrc:/res/receive/message.png"
+                }
+            }
+
+            CEmojiLinkText {
+                id: textMessage
+                anchors.left: parent.left
+                anchors.leftMargin: 30
+                anchors.top: parent.top
+                anchors.topMargin: 25
+                wrapMode: Text.WrapAnywhere
+                lineHeight: 1.15
+
+                color:"#333333"
+                font.pixelSize: 28
+                realText: model.modelData.body
+                visible: true
+
+                Component.onCompleted: {
+                    if(textMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
+                        textMessage.width = chatDelegateRoot.maxMessageLength
+                }
+            }
+        }
+
+        Loader {
+            id: reciveFailedImageLoader
+            anchors.left: textMessageBg.right
+            anchors.leftMargin: 20
+            anchors.verticalCenter: textMessageBg.verticalCenter
+            asynchronous: true
+            sourceComponent: null
+        }
+
+        Component {
+            id: reciveFailedImageComponent
+
+            Image {
+                id: reciveFailedImage
+                sourceSize: Qt.size(50, 50)
+                visible: false
+                source: "qrc:/res/sendfailed.png"
+            }
+        }
+
+        Loader {
+            id:  receiveTextMessageLoadingLoader
+
+            anchors.left: textMessageBg.right
+            anchors.leftMargin: 15
+            anchors.verticalCenter: textMessageBg.verticalCenter
+
+            asynchronous: false
+            sourceComponent: null
+        }
+
+        Component {
+            id: receiveTextMessageLoadingComponent
+
+            CIndicator {
+                direction: Qt.Horizontal
+                textColor:"#ffffff"
+                text:""
+                spacing:28
+                fontSize:26
+            }
+        }
+
+        Behavior on x {
+            NumberAnimation { duration: 100 }
+        }
+    }
 }
+

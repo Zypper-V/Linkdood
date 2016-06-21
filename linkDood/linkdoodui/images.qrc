@@ -11,5 +11,16 @@
         <file>res/descbgtop.jpg</file>
         <file>res/editBg.png</file>
         <file>res/exit.png</file>
+        <file>res/receive/message.png</file>
+        <file>res/receive/messageActive.png</file>
+        <file>res/receive/vidio_1.png</file>
+        <file>res/receive/vidio_2.png</file>
+        <file>res/receive/vidio_3.png</file>
+        <file>res/send/message.png</file>
+        <file>res/send/messageActive.png</file>
+        <file>res/send/vidio_1.png</file>
+        <file>res/send/vidio_2.png</file>
+        <file>res/send/vidio_3.png</file>
+        <file>res/sendfailed.png</file>
     </qresource>
 </RCC>
