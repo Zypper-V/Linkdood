@@ -42,6 +42,26 @@ QString LinkDoodClient::installPath()
     return sTmp;
 }
 
+QString LinkDoodClient::msgId()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    QDBusPendingReply<QString> reply = manager.call("msgId");
+    reply.waitForFinished();
+
+    QString sTmp;
+    if (!reply.isError()) {
+        sTmp = reply;
+    } else {
+        qDebug() << reply.error();
+    }
+
+    return sTmp;
+}
+
 void LinkDoodClient::entryChat(const QString targetId)
 {
     qDebug() << Q_FUNC_INFO;

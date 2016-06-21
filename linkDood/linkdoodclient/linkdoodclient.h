@@ -64,6 +64,9 @@ signals:
 public slots:
     QString installPath();
 
+    //唯一标识Id
+    QString msgId();
+
     //进入会话UI
     void entryChat(const QString targetId);
     //离开会话UI
