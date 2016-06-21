@@ -72,14 +72,14 @@ void LinkDoodClient::entryChat(const QString targetId)
     manager.call("entryChat",targetId);
 }
 
-void LinkDoodClient::deleteChat(const QString targetId)
+void LinkDoodClient::exitChat(const QString targetId)
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
                            DBUS_DOOD_PATH,
                            DBUS_DOOD_INTERFACE,
                            QDBusConnection::sessionBus());
-    manager.call("deleteChat",targetId);
+    manager.call("exitChat",targetId);
 }
 
 void LinkDoodClient::getAppLoginStatus(int &status)

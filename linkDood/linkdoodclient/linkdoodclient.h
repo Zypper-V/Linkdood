@@ -70,7 +70,7 @@ public slots:
     //进入会话UI
     void entryChat(const QString targetId);
     //离开会话UI
-    void deleteChat(const QString targetId);
+    void exitChat(const QString targetId);
 
     // 从配置文件读取登录状态
     void getAppLoginStatus(int& status);
