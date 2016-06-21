@@ -103,6 +103,8 @@ public slots:
 
     //用户信息
     void getUserInfo(QString& userId,QString& name,QString& avater);
+    void getUserById(QString& userId);
+
     //用户信息UserId
     QString UserId();
 
@@ -243,6 +245,7 @@ private:
     void initDBusConnection();
 
     void onSrvGetContactInfoResult(service::ErrorInfo& info,service::User&user);
+    void _getUserInfo(service::ErrorInfo& info, service::User& user);
 private:
     CSystemPackageManager *m_pPackageManager;
     QString m_sInstallPath;

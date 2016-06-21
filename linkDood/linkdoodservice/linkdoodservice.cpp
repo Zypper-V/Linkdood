@@ -12,6 +12,7 @@
 #include "linkdoodtypes.h"
 #include "IContactService.h"
 #include "IEnterpriseService.h"
+#include "ISearchService.h"
 
 #include<sstream>
 #include<string>
@@ -138,6 +139,15 @@ QString LinkDoodService::msgId()
     QString strId = id.toString();
     qDebug() << "Uuid:" << strId;
     return strId;
+}
+
+void LinkDoodService::getUserById(QString &userId)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pIMClient != NULL){
+        m_pIMClient->getSearch()->getUserInfo(userId.toLongLong(),
+                       std::bind(&LinkDoodService::_getUserInfo,this,std::placeholders::_1,std::placeholders::_2));
+    }
 }
 
 void LinkDoodService::getUserInfo(QString &userId, QString &name, QString &avater)
@@ -512,6 +522,11 @@ void LinkDoodService::onSrvGetContactInfoResult(service::ErrorInfo &info, servic
 {
      qDebug() << Q_FUNC_INFO << info.code() << user.name.c_str();
      emit srvGetContactInfo(user);
+}
+
+void LinkDoodService::_getUserInfo(service::ErrorInfo &info, service::User &user)
+{
+    qDebug() << Q_FUNC_INFO;
 }
 
 
