@@ -1,12 +1,10 @@
 #include "linkdoodclient.h"
 #include "linkdoodconst.h"
-
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDebug>
 #include <QDBusPendingReply>
 #include <QDBusInterface>
-
 
 LinkDoodClient::LinkDoodClient(QObject *parent) :
     QObject(parent)
@@ -142,6 +140,26 @@ QString LinkDoodClient::UserId()
                            DBUS_DOOD_INTERFACE,
                            QDBusConnection::sessionBus());
     QDBusPendingReply<QString> reply = manager.call("UserId");
+    reply.waitForFinished();
+
+    QString sTmp;
+    if (!reply.isError()) {
+        sTmp = reply;
+    } else {
+        qDebug() << reply.error();
+    }
+
+    return sTmp;
+}
+
+QString LinkDoodClient::userName()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    QDBusPendingReply<QString> reply = manager.call("userName");
     reply.waitForFinished();
 
     QString sTmp;

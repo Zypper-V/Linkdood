@@ -82,6 +82,7 @@ public slots:
                      QString& avater);
     //用户信息UserId
     QString UserId();
+    QString userName();
     //退出登录
     void logout();
     //移除会话
