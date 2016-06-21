@@ -34,7 +34,7 @@ signals:
     //发送消息返回
     void sendMessageResult(bool code,int64 sendTime,int64 msgId);
     //获取消息结果返回
-    void getMessagesResult(bool code,int64 sessionId,MsgList& msgList);
+    void getMessagesResult(bool code,QString sessionId,MsgList msgList);
     //移除会话结果返回
     void removeChatResult(bool);
 
@@ -149,7 +149,7 @@ public slots:
     * @param[in] count 传入查询消息总数
     * @param[in] flag  传入上一页还是下一页 向上偏移 0；向下偏移 1
     ********************************************************************/
-    void getMessages(QString targetid, QString msgid, int count, int flag);
+    void getMessages(const QString &targetid, const QString & msgid, const int& count, const int& flag);
 
     /*************************************************
     * @brief deleteMessage
@@ -211,7 +211,7 @@ protected slots:
     //发送消息返回
     void onChatSendMessageResult(bool code,int64 sendTime,int64 msgId);
     //获取消息结果返回
-    void onChatGetMessagesResult(bool code,int64 sessionId,MsgList& msgList);
+    void onChatGetMessagesResult(bool code,int64 sessionId,MsgList msgList);
     //移除会话结果返回
     void onChatRemoveChatResult(bool);
     //删除消息

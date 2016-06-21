@@ -45,7 +45,7 @@ signals:
     //发送消息返回
     void sendMessageResult(bool code,int64 sendTime,int64 msgId);
     //获取消息结果返回
-    void getMessagesResult(bool code,int64 sessionId,MsgList& msgList);
+    void getMessagesResult(bool code,QString sessionId,MsgList msgList);
     //移除会话结果返回
     void removeChatResult(bool);
     //移除消息结果返回
@@ -92,7 +92,7 @@ public slots:
     //发送消息
     void sendMessage(Msg& msg);
     //获取消息
-    void getMessages(QString targetid, QString msgid, int count, int flag);
+    void getMessages(const QString &targetid, const QString & msgid, const int& count, const int& flag);
     //获取登录历史记录
     void getLoginHistory(void);
     //设置登录信息
@@ -125,7 +125,7 @@ private slots:
     //移除消息结果返回
     void onChatDeleteMessagesResult(int code);
     //获取消息结果返回
-    void onChatGetMessagesResult(bool code,int64 sessionId,MsgList& msgList);
+    void onChatGetMessagesResult(bool code,QString sessionId,MsgList msgList);
     //移除会话结果返回
     void onChatRemoveChatResult(bool code);
     //获取登录历史记录

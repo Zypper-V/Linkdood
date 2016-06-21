@@ -168,9 +168,9 @@ void LinkDoodClient::sendMessage(Msg& msg)
     manager.call("sendMessage",QVariant::fromValue<Msg>(msg));
 }
 
-void LinkDoodClient::getMessages(QString targetid, QString msgid, int count, int flag)
+void LinkDoodClient::getMessages(const QString &targetid, const QString & msgid, const int& count, const int& flag)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << targetid;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
                            DBUS_DOOD_PATH,
                            DBUS_DOOD_INTERFACE,
@@ -307,7 +307,7 @@ void LinkDoodClient::onChatDeleteMessagesResult(int code)
      emit deleteMessagesResult(code);
 }
 
-void LinkDoodClient::onChatGetMessagesResult(bool code, int64 sessionId, MsgList &msgList)
+void LinkDoodClient::onChatGetMessagesResult(bool code, QString sessionId, MsgList msgList)
 {
     qDebug() << Q_FUNC_INFO;
     emit getMessagesResult(code,sessionId,msgList);
@@ -363,7 +363,7 @@ void LinkDoodClient::initDBusConnect()
                                           this, SLOT(onChatSendMessageResult(bool,int64,int64)));
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "getMessagesResult",
-                                          this, SLOT(onChatGetMessagesResult(bool,int64,MsgList&)));
+                                          this, SLOT(onChatGetMessagesResult(bool,QString,MsgList)));
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "removeChatResult",
                                           this, SLOT(onChatRemoveChatResult(bool)));

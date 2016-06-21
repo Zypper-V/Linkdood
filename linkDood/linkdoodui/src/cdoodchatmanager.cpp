@@ -14,8 +14,8 @@ void CDoodChatManager::initConnect()
             SLOT(onChatMessageNotice(Msg&)));
     connect(m_pClient,SIGNAL(sendMessageResult(bool,int64,int64)),this,
             SLOT(onChatSendMessageResult(bool,int64,int64)));
-    connect(m_pClient,SIGNAL(getMessagesResult(bool,int64,MsgList&)),this,
-            SLOT(onChatGetMessagesResult(bool,int64,MsgList&)));
+    connect(m_pClient,SIGNAL(getMessagesResult(bool,QString,MsgList)),this,
+            SLOT(onChatGetMessagesResult(bool,QString,MsgList)));
     connect(m_pClient,SIGNAL(removeChatResult(bool)),this,
             SLOT(onChatRemoveChatResult(bool)));
     connect(m_pClient,SIGNAL(deleteMessagesResult(int)),this,
@@ -97,7 +97,7 @@ CDoodChatManager::CDoodChatManager(LinkDoodClient *client, QObject *parent):
 
 CDoodChatManager::~CDoodChatManager()
 {
-    exitChat();
+    exitChat("");
 }
 
 void CDoodChatManager::sendText(QString fromId,QString text)
@@ -119,7 +119,7 @@ void CDoodChatManager::sendMessage(Msg &msg)
     m_pClient->sendMessage(msg);
 }
 
-void CDoodChatManager::getMessages(QString targetid, int count)
+void CDoodChatManager::getMessages(QString targetid, QString msgid, int count, int flag)
 {
      qDebug() << Q_FUNC_INFO;
      m_pClient->getMessages(targetid,m_sBeginMsgId,count,1);
@@ -131,7 +131,7 @@ void CDoodChatManager::removeChat(QString targetid)
      m_pClient->removeChat(targetid);
 }
 
-void CDoodChatManager::setMessageRead(QString targetid)
+void CDoodChatManager::setMessageRead(QString targetid, QString msgid)
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->setMessageRead(targetid,"0");
@@ -180,9 +180,9 @@ void CDoodChatManager::entryChat(const QString &targetid)
     qDebug() << Q_FUNC_INFO << targetid;
 }
 
-void CDoodChatManager::exitChat()
+void CDoodChatManager::exitChat(const QString &targetid)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << targetid;
 }
 
 void CDoodChatManager::deleteMessageListItem()
@@ -229,9 +229,9 @@ void CDoodChatManager::onChatSendMessageResult(bool code, int64 sendTime, int64 
     emit sendMessageResult(code,sendTime,msgId);
 }
 
-void CDoodChatManager::onChatGetMessagesResult(bool code, int64 sessionId, MsgList &msgList)
+void CDoodChatManager::onChatGetMessagesResult(bool code, QString sessionId, MsgList msgList)
 {
-    qDebug() << Q_FUNC_INFO << code << sessionId;
+    qDebug() << Q_FUNC_INFO << code << sessionId << msgList.size();
 
 }
 

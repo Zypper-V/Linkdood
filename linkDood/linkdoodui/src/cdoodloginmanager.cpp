@@ -29,7 +29,7 @@ void CDoodLoginManager::login(const QString &server,
     qDebug() << Q_FUNC_INFO << server << userId << password;
     m_pClient->login(server, userId, password);
 //    m_pClient->installPath();
-    getLoginHistory();
+    //getLoginHistory();
 }
 
 QString CDoodLoginManager::UserId()

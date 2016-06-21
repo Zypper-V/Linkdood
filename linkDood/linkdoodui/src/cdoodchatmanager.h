@@ -23,12 +23,12 @@ public:
     Q_INVOKABLE void sendText(QString fromId,QString text);
     Q_INVOKABLE void sendMessage(Msg& msg);
     //获取消息
-    Q_INVOKABLE void getMessages(QString targetid, int count);
+    Q_INVOKABLE void getMessages(QString targetid, QString msgid, int count, int flag);
 
     //移除会话
     Q_INVOKABLE void removeChat(QString targetid);
     //设置消息已读
-    Q_INVOKABLE void setMessageRead(QString targetid);
+    Q_INVOKABLE void setMessageRead(QString targetid, QString msgid);
     //获取未读消息列表
     void getUnReadMessages(void);
     //删除消息
@@ -41,7 +41,7 @@ public:
     Q_INVOKABLE void   setName(const QString&name);
 
     Q_INVOKABLE void entryChat(const QString &targetid);
-    Q_INVOKABLE void exitChat();
+    Q_INVOKABLE void exitChat(const QString &targetid);
     Q_INVOKABLE void deleteMessageListItem();
 
     Q_INVOKABLE void showChatPage(QString chatName,
@@ -60,6 +60,8 @@ signals:
     void newMessageNotice(Msg& msg);
     //发送消息返回
     void sendMessageResult(bool code,int64 sendTime,int64 msgId);
+    //获取消息结果返回
+    void getMessagesResult(bool code,QString sessionId,MsgList msgList);
     //移除会话结果返回
     void removeChatResult(bool);
 
@@ -81,7 +83,7 @@ private slots:
     //发送消息返回
     void onChatSendMessageResult(bool code,int64 sendTime,int64 msgId);
     //获取消息结果返回
-    void onChatGetMessagesResult(bool code,int64 sessionId,MsgList& msgList);
+    void onChatGetMessagesResult(bool code,QString sessionId,MsgList msgList);
     //移除会话结果返回
     void onChatRemoveChatResult(bool code);
     //移除消息结果返回

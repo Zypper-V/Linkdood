@@ -118,7 +118,7 @@ signals:
    //发送消息返回
    void sendMessageBack(bool code,int64 sendTime,int64 msgId);
    //获取消息结果返回
-   void getMessagesBack(bool code,int64 sessionId,MsgList& msgList);
+   void getMessagesBack(bool code,int64 sessionId,MsgList msgList);
    //移除会话结果返回
    void removeChatBack(bool);
     //删除消息
