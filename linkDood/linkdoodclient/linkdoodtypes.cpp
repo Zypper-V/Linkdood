@@ -10,6 +10,12 @@ void Msg::toImMassage(QVariantMap map)
 {
     QVariantMap::const_iterator iter;
     for (iter = map.constBegin(); iter != map.constEnd(); ++iter) {
+        if (iter.key() == "name") {
+            name = iter.value().toString();
+        }
+        if (iter.key() == "thumb_avatar") {
+            thumb_avatar = iter.value().toString();
+        }
         if (iter.key() == "msgtype") {
             msgtype = iter.value().toString();
         }
@@ -62,9 +68,9 @@ void Msg::init()
 QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
 {
     argument.beginStructure();
-    argument << msg.fromid << msg.toid << msg.msgid
-             << msg.msgtype << msg.body << msg.localid
-             << msg.relatedMsgid << msg.time << msg.msgProperties ;
+    argument << msg.name << msg.thumb_avatar << msg.msgtype << msg.activeType
+             << msg.msgid << msg.targetid << msg.fromid << msg.toid
+             << msg.localid << msg.relatedMsgid << msg.time << msg.body << msg.msgProperties;
     argument.endStructure();
     return argument;
 }
@@ -72,9 +78,9 @@ QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
 const QDBusArgument &operator >>(const QDBusArgument &argument, Msg &msg)
 {
     argument.beginStructure();
-    argument >> msg.fromid >> msg.toid >> msg.msgid
-            >> msg.msgtype >> msg.body >> msg.localid
-            >> msg.relatedMsgid >> msg.time >> msg.msgProperties  ;
+    argument >> msg.name >> msg.thumb_avatar >> msg.msgtype >> msg.activeType
+             >> msg.msgid >> msg.targetid >> msg.fromid >> msg.toid
+             >> msg.localid >> msg.relatedMsgid >> msg.time >> msg.body >> msg.msgProperties;
     argument.endStructure();
     return argument;
 }

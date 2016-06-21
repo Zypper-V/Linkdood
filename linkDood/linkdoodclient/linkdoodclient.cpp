@@ -196,7 +196,7 @@ void LinkDoodClient::deleteMessage(QString targetid, QStringList msgs)
 
 void LinkDoodClient::sendMessage(Msg msg)
 {
-    qDebug() << Q_FUNC_INFO << msg.fromid << ":" << msg.toid << ":" << msg.body;
+    qDebug() << Q_FUNC_INFO << msg.fromid << ":" << msg.targetid << ":" << msg.body;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
                            DBUS_DOOD_PATH,
                            DBUS_DOOD_INTERFACE,

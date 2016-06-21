@@ -217,7 +217,14 @@ void LinkDoodService::setMessageRead(QString targetid, QString msgid)
 
 void LinkDoodService::sendMessage(Msg msg)
 {
-    qDebug() << Q_FUNC_INFO<<"msg:" << msg.body;
+
+    qDebug() << Q_FUNC_INFO << "msg.msgid = " << msg.msgid;
+    qDebug() << Q_FUNC_INFO << "msg.body = " << msg.body;
+    qDebug() << Q_FUNC_INFO << "msg.msgtype = " << msg.msgtype;
+    qDebug() << Q_FUNC_INFO << "msg.targetid = " << msg.targetid;
+    qDebug() << Q_FUNC_INFO << "msg.fromid = " << msg.fromid;
+    qDebug() << Q_FUNC_INFO << "msg.time = " << msg.time;
+
     if(m_pChatObserver != NULL){
         m_pChatObserver->sendMessage(msg);
     }
