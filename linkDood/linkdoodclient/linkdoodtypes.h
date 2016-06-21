@@ -58,6 +58,8 @@ public:
 
 public:
 
+    QString name;//名称
+    QString thumb_avatar;//缩略图
     QString msgtype;
     // 消息类型
     QString activeType;// 消息事件属性 1. 阅后即焚 2 有问必答 3 活动

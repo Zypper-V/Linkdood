@@ -9,6 +9,7 @@
 class CDoodChatItem : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString msgType READ msgType WRITE setMsgType NOTIFY msgTypeChanged)
     Q_PROPERTY(QString activeType READ activeType WRITE setActiveType NOTIFY activeTypeChanged)
     Q_PROPERTY(QString msgId READ msgId WRITE setMsgId NOTIFY msgIdChanged)
@@ -23,6 +24,9 @@ class CDoodChatItem : public QObject
 public:
 
     explicit CDoodChatItem(QObject *parent = 0);
+
+    QString name() const;
+    QString setName(const QString &data);
 
     QString thumbAvatar() const;
     QString setThumbAvatar(const QString &data);
@@ -66,9 +70,11 @@ signals:
     void toIdChanged();
     void timeChanged();
     void bodyChanged();
+    void nameChanged();
 
 
 private:
+    QString mName;
     QString mThumbAvatar;
     QString mTar_thumbAvatar;
     QString mMsgType;// 消息类型

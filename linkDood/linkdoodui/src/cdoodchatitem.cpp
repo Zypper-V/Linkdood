@@ -4,6 +4,22 @@ CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
 {
 
 }
+
+QString CDoodChatItem::name() const
+{
+    return mName;
+}
+
+QString CDoodChatItem::setName(const QString &data)
+{
+    if(mName == data) {
+        return data;
+    }
+    mName = data;
+    emit nameChanged();
+    return mName;
+}
+
 QString CDoodChatItem::thumbAvatar() const
 {
     return mThumbAvatar;
