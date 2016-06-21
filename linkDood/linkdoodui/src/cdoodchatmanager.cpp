@@ -10,8 +10,8 @@ void CDoodChatManager::initConnect()
             SLOT(onChatAvatarChanged(int64,QString)));
     connect(m_pClient,SIGNAL(offlineMsgNotice(IMOfflineMsgList)),this,
             SLOT(onChatOfflineMsgNotice(IMOfflineMsgList)));
-    connect(m_pClient,SIGNAL(newMessageNotice(Msg&)),this,
-            SLOT(onChatMessageNotice(Msg&)));
+   connect(m_pClient,SIGNAL(chatMessageNotice(Msg)),this,
+            SLOT(onChatMessageNotice(Msg)));
     connect(m_pClient,SIGNAL(sendMessageResult(bool,QString,QString)),this,
             SLOT(onChatSendMessageResult(bool,QString,QString)));
     connect(m_pClient,SIGNAL(getMessagesResult(bool,QString,MsgList)),this,
@@ -218,7 +218,7 @@ void CDoodChatManager::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
     emit offlineMsgNotice(msgList);
 }
 
-void CDoodChatManager::onChatMessageNotice(Msg &msg)
+void CDoodChatManager::onChatMessageNotice(Msg msg)
 {
     qDebug() << Q_FUNC_INFO << "newMessage:" << msg.body;
     emit newMessageNotice(msg);

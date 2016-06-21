@@ -41,7 +41,7 @@ signals:
     //监听离线消息通知
     void offlineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
-    void newMessageNotice(Msg& msg);
+    void chatMessageNotice(Msg msg);
     //发送消息返回
     void sendMessageResult(bool code,QString sendTime,QString msgId);
     //获取消息结果返回
@@ -55,12 +55,7 @@ signals:
     //登录成功自动推送
     void loginResultObserver(int code,QString userID);
     //会话列表(通知栏)新消息更新通知
-    void sessionMessageNotice(const QString& targetId,
-                              const QString& msgId,
-                              const QString&lastMsg,
-                              const QString&time,
-                              const QString&name,
-                              const QString&avater);
+    void sessionMessageNotice(QString,QString,QString,QString,QString,QString);
 public slots:
     QString installPath();
 
@@ -127,7 +122,7 @@ private slots:
     //监听离线消息通知
     void onChatOfflineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
-    void onChatMessageNotice(Msg& msg);
+    void onChatMessageNotice(Msg msg);
     //发送消息返回
     void onChatSendMessageResult(bool code,QString sendTime,QString msgId);
     //移除消息结果返回
@@ -141,12 +136,7 @@ private slots:
     //登录成功自动推送
     void onLoginResultObserver(int code,QString userID);
     //会话列表(通知栏)新消息更新通知
-    void onSessionMessageNotice(const QString& targetId,
-                              const QString& msgId,
-                              const QString&lastMsg,
-                              const QString&time,
-                                const QString&name,
-                                const QString&avater);
+    void onSessionMessageNotice(QString,QString,QString,QString,QString,QString);
 private:
     void initDBusConnect();
 };

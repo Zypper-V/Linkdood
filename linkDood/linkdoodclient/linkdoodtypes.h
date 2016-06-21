@@ -288,18 +288,10 @@ inline void registerDoodDataTypes() {
 
     qDBusRegisterMetaType<Org>();
     qDBusRegisterMetaType<OrgList>();
-
     qRegisterMetaType<OrgList>("OrgList");
 
     qDBusRegisterMetaType<OrgUser>();
     qDBusRegisterMetaType<OrgUserList>();
-    qDBusRegisterMetaType<Org>();
-    qDBusRegisterMetaType<OrgList>();
-
-
-    qRegisterMetaType<Org>("Org");
-    qRegisterMetaType<OrgList>("OrgList");
-    qRegisterMetaType<OrgUser>("OrgUser");
     qRegisterMetaType<OrgUserList>("OrgUserList");
 
 

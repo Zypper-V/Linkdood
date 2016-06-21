@@ -86,11 +86,10 @@ void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
     }
 }
 
-void CDoodSessionListManager::onSessionMessageNotice(const QString &targetId, const QString &msgId, const QString &lastMsg, const QString &time,
-                                                     const QString&name,
-                                                     const QString&avater)
+void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString msgId, QString lastMsg, QString time,
+       QString name, QString avater)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<"1111111111111111111111111111";
     if(sessionListMap.contains(targetId)){
         CDoodSessionListItem* item = sessionListMap.value(targetId);
         if(item != NULL){

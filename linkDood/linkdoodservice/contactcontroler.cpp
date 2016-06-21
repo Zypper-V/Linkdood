@@ -29,6 +29,7 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
     ContactList contacts;
     for(auto i: users){
        Contact user;
+       qDebug() << Q_FUNC_INFO <<"ssssssssss"<<QString::fromStdString(i.pinyin);
        user.avatar = QString::fromStdString(i.avatar);
        user .name  = QString::fromStdString(i.name);
        user .extends  = QString::fromStdString(i.extends);

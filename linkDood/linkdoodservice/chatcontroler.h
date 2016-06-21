@@ -105,16 +105,11 @@ signals:
     //监听离线消息通知
    void offlineMsgNoticeBack(IMOfflineMsgList msgList);
     //监听新消息通知
-   void messageNoticeBack(Msg& msg);
+   void chatMessageNotice(Msg msg);
     //会话消息
    void chatListChanged(const Chat_UIList& chats);
    //会话列表(通知栏)新消息更新通知
-   void sessionMessageNotice(const QString& targetId,
-                             const QString& msgId,
-                             const QString&lastMsg,
-                             const QString&time,
-                             const QString&name,
-                             const QString&avater);
+   void sessionMessageNotice(QString,QString,QString,QString,QString,QString);
    //发送消息返回
    void sendMessageBack(bool code,int64 sendTime,int64 msgId);
    //获取消息结果返回

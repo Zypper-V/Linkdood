@@ -124,14 +124,15 @@ ChatControler::~ChatControler()
 void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
 {
     qDebug() << Q_FUNC_INFO ;
-    if(msg->msgtype == MSG_TYPE_TEXT)
+
+    if(msg->msgtype == 2)
     {
        std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
        Msg imMsg = msgtextToQmsgtext(msgText);
         qDebug() << Q_FUNC_INFO << "messageNotice:"<< imMsg.body;
        QString sessionId("");
        if(getCurrentSessionId(sessionId)){
-           emit messageNoticeBack(imMsg);
+           emit chatMessageNotice(imMsg);
            emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,imMsg.time,imMsg.fromid,"");
        }
        else{
@@ -182,10 +183,10 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
         Chat_UI chatData;
         chatData.name = QString::fromStdString(ch->name);
         qDebug() <<Q_FUNC_INFO<<QString::fromStdString(ch->last_msg);
-        if(ch->msg_type==2){
+        if(ch->msg_type==2||ch->msg_type==8){
         chatData.last_msg =  QString::fromStdString(utils::MsgUtils::getText(ch->last_msg));
         }
-        if(ch->msg_type!=2){
+        else{
         chatData.last_msg = "不支持的消息类型，请在电脑端查看";
         }
         chatData.avatar =  QString::fromStdString(ch->avatar);

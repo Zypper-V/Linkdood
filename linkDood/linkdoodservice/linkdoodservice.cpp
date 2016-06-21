@@ -360,10 +360,10 @@ void LinkDoodService::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
     emit offlineMsgNotice(msgList);
 }
 
-void LinkDoodService::onChatMessageNotice(Msg &msg)
+void LinkDoodService::onChatMessageNotice(Msg msg)
 {
     qDebug() << Q_FUNC_INFO ;
-    emit newMessageNotice(msg);
+    emit chatMessageNotice(msg);
 }
 
 void LinkDoodService::onChatSendMessageResult(bool code, int64 sendTime, int64 msgId)
@@ -402,8 +402,8 @@ void LinkDoodService::onLoginResultObserver(int code, QString userID)
     emit loginResultObserver(code,userID);
 }
 
-void LinkDoodService::onSessionMessageNotice(const QString &targetId, const QString &msgId, const QString &lastMsg,
-                                             const QString &time ,const QString&name,const QString&avater)
+void LinkDoodService::onSessionMessageNotice(QString targetId,QString msgId,QString lastMsg,
+                                             QString time ,QString name,QString avater)
 {
     qDebug() << Q_FUNC_INFO;
     emit sessionMessageNotice(targetId, msgId, lastMsg,time,name,avater);
@@ -462,8 +462,10 @@ void LinkDoodService::initConnects()
                      SLOT(onChatGetMessagesResult(bool,int64,MsgList)));
     QObject::connect(m_pChatObserver.get(),SIGNAL(removeChatBack(bool)),this,
                      SLOT(onChatRemoveChatResult(bool)));
-    QObject::connect(m_pChatObserver.get(),SIGNAL(messageNoticeBack(Msg&)),this,
-                     SLOT(onChatMessageNotice(Msg&)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(chatMessageNotice(Msg)),this,
+                     SLOT(onChatMessageNotice(Msg)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(sessionMessageNotice(QString,QString,QString,QString,QString,QString)),this,
+                     SLOT(onSessionMessageNotice(QString,QString,QString,QString, QString,QString)));
     QObject::connect(m_pChatObserver.get(),SIGNAL(deleteMessagesBack(int)),this,
                      SLOT(onChatDeleteMessagesResult(int)));
 

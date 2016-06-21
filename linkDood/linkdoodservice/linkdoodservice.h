@@ -30,7 +30,7 @@ signals:
     //监听离线消息通知
     void offlineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
-    void newMessageNotice(Msg& msg);
+    void chatMessageNotice(Msg msg);
     //发送消息返回
     void sendMessageResult(bool code,QString sendTime,QString msgId);
     //获取消息结果返回
@@ -41,12 +41,7 @@ signals:
     //删除消息
     void deleteMessagesResult(int code);
     //会话列表(通知栏)新消息更新通知
-    void sessionMessageNotice(const QString& targetId,
-                              const QString& msgId,
-                              const QString&lastMsg,
-                              const QString&time,
-                              const QString&name,
-                              const QString&avater);
+    void sessionMessageNotice(QString,QString,QString,QString,QString,QString);
 
     //获取子组织返回
     void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
@@ -210,7 +205,7 @@ protected slots:
     //监听离线消息通知
     void onChatOfflineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
-    void onChatMessageNotice(Msg& msg);
+    void onChatMessageNotice(Msg msg);
     //发送消息返回
     void onChatSendMessageResult(bool code,int64 sendTime,int64 msgId);
     //获取消息结果返回
@@ -226,12 +221,12 @@ protected slots:
     void onLoginResultObserver(int code,QString userID);
 
     //会话列表(通知栏)新消息更新通知
-    void onSessionMessageNotice(const QString& targetId,
-                              const QString& msgId,
-                              const QString&lastMsg,
-                              const QString&time,
-                              const QString&name,
-                              const QString&avater);
+    void onSessionMessageNotice(QString targetId,
+                               QString msgId,
+                               QString lastMsg,
+                               QString time,
+                               QString name,
+                               QString avater);
 public:
     static LinkDoodService* m_pInstance;
 

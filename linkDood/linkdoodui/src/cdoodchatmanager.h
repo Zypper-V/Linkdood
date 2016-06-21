@@ -14,6 +14,7 @@ class CDoodChatManager : public CDoodListModel
     Q_PROPERTY(QString id READ id WRITE setId NOTIFY idChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 
+
 public:
     explicit CDoodChatManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
@@ -39,6 +40,9 @@ public:
 
     Q_INVOKABLE void   setId(const QString&id);
     Q_INVOKABLE void   setName(const QString&name);
+
+
+
 
     Q_INVOKABLE void entryChat(const QString &targetid);
     Q_INVOKABLE void exitChat();
@@ -67,7 +71,6 @@ signals:
 
     void idChanged();
     void nameChanged();
-
     void sendShowChatPage(QString chatName,
                           QString targetid,
                           QString chatType,
@@ -79,7 +82,7 @@ private slots:
     //监听离线消息通知
     void onChatOfflineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
-    void onChatMessageNotice(Msg& msg);
+    void onChatMessageNotice(Msg msg);
     //发送消息返回
     void onChatSendMessageResult(bool code,QString sendTime,QString msgId);
     //获取消息结果返回
@@ -97,7 +100,7 @@ private:
     QString mId;
     QString mName;
     QString m_sBeginMsgId;
-    QDateTime m_oLastMessageTime;
+    QDateTime m_oLastMessageTime;  
     LinkDoodClient *m_pClient;
     QMap<QString, CDoodChatItem*> m_oChatMap;
 };

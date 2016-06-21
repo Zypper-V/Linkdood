@@ -48,12 +48,12 @@ signals:
 private slots:
     void onChatListChanged(const Chat_UIList& chats);
     //会话列表(通知栏)新消息更新通知
-    void onSessionMessageNotice(const QString& targetId,
-                              const QString& msgId,
-                              const QString&lastMsg,
-                              const QString&time,
-                              const QString&name,
-                              const QString&avater);
+    void onSessionMessageNotice(QString targetId,
+                                QString msgId,
+                                QString lastMsg,
+                                QString time,
+                                QString name,
+                                QString avater);
 private:
     void initConnect();
 

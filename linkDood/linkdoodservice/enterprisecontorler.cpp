@@ -31,7 +31,7 @@ void EnterpriseControler::getSonOrgs(QString orgid)
 }
 void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<info.code()<<orgs.size();
     OrgList orgList;
     OrgUserList orgUserList;
     for(auto org:orgs){

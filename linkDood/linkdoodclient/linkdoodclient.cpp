@@ -329,10 +329,10 @@ void LinkDoodClient::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
     emit offlineMsgNotice(msgList);
 }
 
-void LinkDoodClient::onChatMessageNotice(Msg &msg)
+void LinkDoodClient::onChatMessageNotice(Msg msg)
 {
-    qDebug() << Q_FUNC_INFO;
-    emit newMessageNotice(msg);
+    qDebug() << Q_FUNC_INFO<<"qqqqqqqqqqqqqqqqqqqqqqqq";
+    emit chatMessageNotice(msg);
 }
 
 void LinkDoodClient::onChatSendMessageResult(bool code, QString sendTime, QString msgId)
@@ -371,8 +371,8 @@ void LinkDoodClient::onLoginResultObserver(int code, QString userID)
     emit loginResultObserver(code,userID);
 }
 
-void LinkDoodClient::onSessionMessageNotice(const QString &targetId, const QString &msgId, const QString &lastMsg,
-                                            const QString &time, const QString&name, const QString&avater)
+void LinkDoodClient::onSessionMessageNotice(QString targetId, QString msgId,QString lastMsg,
+                                            QString time,QString name, QString avater)
 {
       qDebug() << Q_FUNC_INFO;
       emit sessionMessageNotice(targetId,msgId,lastMsg,time,name,avater);
@@ -396,8 +396,8 @@ void LinkDoodClient::initDBusConnect()
                                           DBUS_DOOD_INTERFACE, "offlineMsgNotice",
                                           this, SLOT(onChatOfflineMsgNotice(IMOfflineMsgList)));
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
-                                          DBUS_DOOD_INTERFACE, "newMessageNotice",
-                                          this, SLOT(onChatMessageNotice(Msg&)));
+                                          DBUS_DOOD_INTERFACE, "chatMessageNotice",
+                                          this, SLOT(onChatMessageNotice(Msg)));
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "sendMessageResult",
                                           this, SLOT(onChatSendMessageResult(bool,int64,int64)));
