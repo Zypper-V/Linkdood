@@ -23,6 +23,7 @@
 #include <QDBusMessage>
 #include <QDBusArgument>
 #include <QSettings>
+#include <QUuid>
 
 LinkDoodService* LinkDoodService::m_pInstance = 0;
 
@@ -129,6 +130,14 @@ void LinkDoodService::getContactInfo(int64 userId)
        m_pIMClient->getContact()->getContactInfo(id,
                             std::bind(&LinkDoodService::onSrvGetContactInfoResult,this,std::placeholders::_1,std::placeholders::_2));
     }
+}
+
+QString LinkDoodService::msgId()
+{
+    QUuid id = QUuid::createUuid();
+    QString strId = id.toString();
+    qDebug() << "Uuid:" << strId;
+    return strId;
 }
 
 void LinkDoodService::getUserInfo(QString &userId, QString &name, QString &avater)

@@ -103,6 +103,9 @@ public slots:
     void logout();
     void getContactInfo(int64 userId);
 
+    //唯一标识Id
+    QString msgId();
+
     //用户信息
     void getUserInfo(QString& userId,QString& name,QString& avater);
     //用户信息UserId
