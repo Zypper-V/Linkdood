@@ -54,6 +54,13 @@ signals:
     void getLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
     void loginResultObserver(int code,QString userID);
+    //会话列表(通知栏)新消息更新通知
+    void sessionMessageNotice(const QString& targetId,
+                              const QString& msgId,
+                              const QString&lastMsg,
+                              const QString&time,
+                              const QString&name,
+                              const QString&avater);
 public slots:
     QString installPath();
 
@@ -65,20 +72,27 @@ public slots:
     void login(const QString &server,
                const QString &userId,
                const QString &password);
+
+    //用户信息
+    void getUserInfo(QString& userId,
+                     QString& name,
+                     QString& avater);
+    //用户信息UserId
+    QString UserId();
     //退出登录
     void logout();
     //移除会话
-    void removeChat(int64 targetid);
+    void removeChat(QString targetid);
     //设置消息已读
-    void setMessageRead(int64 targetid, int64 msgid);
+    void setMessageRead(QString targetid, QString msgid);
     //获取未读消息列表
     void getUnReadMessages(void);
     //删除消息
-    void deleteMessage(int64 targetid, QStringList msgs);
+    void deleteMessage(QString targetid, QStringList msgs);
     //发送消息
     void sendMessage(Msg& msg);
     //获取消息
-    void getMessages(int64 targetid, int64 msgid, int count, int flag);
+    void getMessages(QString targetid, QString msgid, int count, int flag);
     //获取登录历史记录
     void getLoginHistory(void);
     //设置登录信息
@@ -118,6 +132,13 @@ private slots:
     void onGetLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
     void onLoginResultObserver(int code,QString userID);
+    //会话列表(通知栏)新消息更新通知
+    void onSessionMessageNotice(const QString& targetId,
+                              const QString& msgId,
+                              const QString&lastMsg,
+                              const QString&time,
+                                const QString&name,
+                                const QString&avater);
 private:
     void initDBusConnect();
 };

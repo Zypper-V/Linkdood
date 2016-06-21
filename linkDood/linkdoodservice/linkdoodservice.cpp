@@ -130,6 +130,23 @@ void LinkDoodService::getContactInfo(int64 userId)
                             std::bind(&LinkDoodService::onSrvGetContactInfoResult,this,std::placeholders::_1,std::placeholders::_2));
     }
 }
+
+void LinkDoodService::getUserInfo(QString &userId, QString &name, QString &avater)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pAuth != NULL){
+        m_pAuth->getUserInfo(userId,name,avater);
+    }
+}
+
+QString LinkDoodService::UserId()
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pAuth != NULL){
+        return m_pAuth->UserId();
+    }
+    return "";
+}
 void LinkDoodService::getChatList()
 {
     qDebug() << Q_FUNC_INFO;
@@ -147,7 +164,23 @@ void LinkDoodService::getUnReadMessages()
     }
 }
 
-void LinkDoodService::removeChat(int64 targetid)
+void LinkDoodService::entryChat(const QString targetId)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->entryChat(targetId);
+    }
+}
+
+void LinkDoodService::deleteChat(const QString targetId)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->deleteChat(targetId);
+    }
+}
+
+void LinkDoodService::removeChat(QString targetid)
 {
     qDebug() << Q_FUNC_INFO;
     if(m_pChatObserver != NULL){
@@ -155,7 +188,7 @@ void LinkDoodService::removeChat(int64 targetid)
     }
 }
 
-void LinkDoodService::setMessageRead(int64 targetid, int64 msgid)
+void LinkDoodService::setMessageRead(QString targetid, QString msgid)
 {
     qDebug() << Q_FUNC_INFO;
     if(m_pChatObserver != NULL){
@@ -171,7 +204,7 @@ void LinkDoodService::sendMessage(Msg& msg)
     }
 }
 
-void LinkDoodService::getMessages(int64 targetid, int64 msgid, int count, int flag)
+void LinkDoodService::getMessages(QString targetid, QString msgid, int count, int flag)
 {
     qDebug() << Q_FUNC_INFO;
     if(m_pChatObserver != NULL){
@@ -179,12 +212,12 @@ void LinkDoodService::getMessages(int64 targetid, int64 msgid, int count, int fl
     }
 }
 
-void LinkDoodService::deleteMessage(int64 targetid,QStringList msgs)
+void LinkDoodService::deleteMessage(QString targetid,QStringList msgs)
 {
     qDebug() << Q_FUNC_INFO;
-    std::vector<int64> list;
+    std::vector<QString> list;
     for(auto msg:msgs){
-        list.push_back(msg.toLongLong());
+        list.push_back(msg);
     }
     if(m_pChatObserver != NULL){
         m_pChatObserver->deleteMessage(targetid,list);
@@ -358,6 +391,13 @@ void LinkDoodService::onLoginResultObserver(int code, QString userID)
 {
     qDebug() << Q_FUNC_INFO;
     emit loginResultObserver(code,userID);
+}
+
+void LinkDoodService::onSessionMessageNotice(const QString &targetId, const QString &msgId, const QString &lastMsg,
+                                             const QString &time ,const QString&name,const QString&avater)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit sessionMessageNotice(targetId, msgId, lastMsg,time,name,avater);
 }
 
 LinkDoodService::~LinkDoodService()

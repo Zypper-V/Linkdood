@@ -12,12 +12,19 @@ class ChatControler:public QObject,public IChatObserver
 public:
     void init();//初始监听接口
 
+    //进入会话UI
+    void entryChat(const QString targetId);
+    //离开会话UI
+    void deleteChat(const QString targetId);
+    //获取当前SessionId
+    bool getCurrentSessionId(QString& targetId);
+
     /**************************************************
     * @brief removeChat
     * @description: 移除会话
     * @param[in] targetid 传入会话对应的ID，群或者人
     ****************************************************/
-    void removeChat(int64 targetid);
+    void removeChat(QString targetid);
 
     /*****************************************
     * @brief setMessageRead
@@ -25,7 +32,7 @@ public:
     * @param[in] targetid 传入会话对应的ID，群或者人
     * @param[in] msgid 传入要删除的消息ID集合
     *****************************************/
-    void setMessageRead(int64 targetid, int64 msgid);
+    void setMessageRead(QString targetid, QString msgid);
 
     /*****************************************************
     * @brief getUnReadMessages
@@ -48,7 +55,7 @@ public:
     * @param[in] count 传入查询消息总数
     * @param[in] flag  传入上一页还是下一页 向上偏移 0；向下偏移 1
     ********************************************************************/
-    void getMessages(int64 targetid, int64 msgid, int count, int flag);
+    void getMessages(QString targetid, QString msgid, int count, int flag);
 
     /*************************************************
     * @brief deleteMessage
@@ -56,7 +63,7 @@ public:
     * @param[in] targetid 传入会话对应的ID，群或者人
     * @param[in] msgs 传入要删除的消息ID集合
     ***************************************************/
-    void deleteMessage(int64 targetid, std::vector<int64> msgs);
+    void deleteMessage(QString targetid, std::vector<QString> msgs);
 
     ChatControler(QObject* parent=0);
     ~ChatControler();
@@ -100,14 +107,18 @@ signals:
     //监听新消息通知
    void messageNoticeBack(Msg& msg);
     //会话消息
-   void  chatListChanged(Chat_UIList chats);
-
+   void chatListChanged(const Chat_UIList& chats);
+   //会话列表(通知栏)新消息更新通知
+   void sessionMessageNotice(const QString& targetId,
+                             const QString& msgId,
+                             const QString&lastMsg,
+                             const QString&time,
+                             const QString&name,
+                             const QString&avater);
    //发送消息返回
    void sendMessageBack(bool code,int64 sendTime,int64 msgId);
-   //void sendSrvMessageBack(bool code,int64 sendTime,int64 msgId);
    //获取消息结果返回
    void getMessagesBack(bool code,int64 sessionId,MsgList& msgList);
-   //void getSrvMessagesBack(bool code,int64 sessionId,MsgList& msgList);
    //移除会话结果返回
    void removeChatBack(bool);
     //删除消息
@@ -139,6 +150,9 @@ private:
 
     Msg msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
     service::MsgText QmsgtextTomsgtext(Msg Qmsgtext);
+
+private:
+    QString mSessionTargetID;
 };
 
 template<typename T>

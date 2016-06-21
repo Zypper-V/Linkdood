@@ -55,22 +55,22 @@ void CDoodChatManager::sendMessage(Msg &msg)
     m_pClient->sendMessage(msg);
 }
 
-void CDoodChatManager::getMessages(int64 targetid, int64 msgid, int count, int flag)
+void CDoodChatManager::getMessages(QString targetid, QString msgid, int count, int flag)
 {
-    qDebug() << Q_FUNC_INFO;
-    m_pClient->getMessages(targetid,msgid,count,flag);
+     qDebug() << Q_FUNC_INFO;
+     m_pClient->getMessages(targetid,msgid,count,flag);
 }
 
-void CDoodChatManager::removeChat(int64 targetid)
+void CDoodChatManager::removeChat(QString targetid)
 {
-    qDebug() << Q_FUNC_INFO;
-    m_pClient->removeChat(targetid);
+     qDebug() << Q_FUNC_INFO;
+     m_pClient->removeChat(targetid);
 }
 
-void CDoodChatManager::setMessageRead(const QString &targetid)
+void CDoodChatManager::setMessageRead(QString targetid, QString msgid)
 {
-    qDebug() << Q_FUNC_INFO << targetid;
-    //    m_pClient->setMessageRead(targetid,msgid);
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->setMessageRead(targetid,msgid);
 }
 
 void CDoodChatManager::getUnReadMessages()
@@ -79,7 +79,7 @@ void CDoodChatManager::getUnReadMessages()
      m_pClient->getUnReadMessages();
 }
 
-void CDoodChatManager::deleteMessage(int64 targetid, QStringList msgs)
+void CDoodChatManager::deleteMessage(QString targetid, QStringList msgs)
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->deleteMessage(targetid,msgs);

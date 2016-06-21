@@ -44,6 +44,19 @@ void AuthControler::logout()
     service::IMClient::getClient()->getAuth()->logout();
 }
 
+void AuthControler::getUserInfo(QString &userId,QString& name,QString& avater)
+{
+    qDebug() << Q_FUNC_INFO;
+    userId = QString::number(mpUserInfo->id);
+    name   = QString::fromStdString(mpUserInfo->name);
+    avater = QString::fromStdString(mpUserInfo->thumb_avatar);
+}
+
+QString AuthControler::UserId()
+{
+    return QString::number(mpUserInfo->id);
+}
+
 void AuthControler::getLoginHistory()
 {
     qDebug() << Q_FUNC_INFO;
@@ -62,6 +75,7 @@ void AuthControler::setLoginInfo(int flag, QString userid, QString username, QSt
 
 void AuthControler::init()
 {
+    mpUserInfo = std::make_shared<service::User>();
     service::IMClient::getClient()->getNotify()->setAuthObserver(this);
 }
 
@@ -106,6 +120,14 @@ void AuthControler::onAccountInfoChanged(service::User& info)
 {
     qDebug() << Q_FUNC_INFO;
      qDebug()<<"name:"<<info.name.c_str()<<"sex:"<<info.gender;
+     mpUserInfo->__set_avatar(info.avatar);
+     mpUserInfo->__set_gender(info.gender);
+     mpUserInfo->__set_extends(info.extends);
+     mpUserInfo->__set_id(info.id);
+     mpUserInfo->__set_name(info.name);
+     mpUserInfo->__set_thumb_avatar(info.thumb_avatar);
+     mpUserInfo->__set_time_zone(info.time_zone);
+
      emit loginResultObserver(0,QString::number(info.id));
 }
 

@@ -86,8 +86,38 @@ void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
     }
 }
 
+void CDoodSessionListManager::onSessionMessageNotice(const QString &targetId, const QString &msgId, const QString &lastMsg, const QString &time,
+                                                     const QString&name,
+                                                     const QString&avater)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(sessionListMap.contains(targetId)){
+        CDoodSessionListItem* item = sessionListMap.value(targetId);
+        if(item != NULL){
+            //item->setId(targetId);
+            item->setLastMsg(lastMsg);
+            item->setMsgTime(time);
+            item->setLastMsgid(msgId);
+        }
+    }else
+    {
+        CDoodSessionListItem *tmpItem = new CDoodSessionListItem(this);
+        tmpItem->setId(targetId);
+        tmpItem->setLastMsg(lastMsg);
+        tmpItem->setName(name);
+        tmpItem->setMsgTime(time);
+        tmpItem->setThumbAvatar(avater);
+        tmpItem->setMsgType(QString::number(MSG_TYPE_TEXT));
+        tmpItem->setLastMsgid(msgId);
+        addItemBegin(tmpItem);
+        sessionListMap[targetId] = tmpItem;
+         qDebug() << Q_FUNC_INFO << "new item XXXX.";
+    }
+}
+
 void CDoodSessionListManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
-    connect(m_pClient, SIGNAL(chatListChanged(const Chat_UIList &)), this, SLOT(onChatListChanged(const Chat_UIList &)));
+     connect(m_pClient, SIGNAL(chatListChanged(const Chat_UIList &)), this, SLOT(onChatListChanged(const Chat_UIList &)));
+     connect(m_pClient, SIGNAL(sessionMessageNotice(QString,QString,QString,QString,QString,QString)), this, SLOT(onSessionMessageNotice(QString,QString,QString,QString,QString,QString)));
 }

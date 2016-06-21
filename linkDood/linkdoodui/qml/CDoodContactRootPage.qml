@@ -21,8 +21,33 @@ Item {
             color:"white"
             font.pixelSize: 36
         }
-    }
+        Image {
+            id: login
 
+            anchors{
+                verticalCenter:titleText.verticalCenter
+                right:parent.right
+                rightMargin: 48
+            }
+            source: "qrc:/res/exit.png"
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    loginManager.logout();
+                }
+            }
+        }
+    }
+    Connections {
+        target: loginManager
+        onLoginoutRelust:{
+            pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+//            if(loginout){
+//                console.log("loginout OK.................");
+//                pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+//            }
+        }
+    }
     Rectangle {
         anchors.top: contactRootTitleBar.bottom
         anchors.left: parent.left

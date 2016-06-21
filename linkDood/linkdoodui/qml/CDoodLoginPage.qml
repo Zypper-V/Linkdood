@@ -4,6 +4,10 @@ import com.syberos.basewidgets 2.0
 CPage {
     id: loginPage
 
+    property string  server
+    property string  name
+    property string  password
+
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
             loginPage.statusBarHoldEnabled = true

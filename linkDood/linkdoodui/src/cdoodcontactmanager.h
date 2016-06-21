@@ -6,6 +6,7 @@
 #include "cdoodlistmodel.h"
 #include "linkdoodclient.h"
 
+class CDoodContactItem;
 class CDoodContactManager : public CDoodListModel
 {
 
@@ -22,7 +23,7 @@ private slots:
     void onContactListChanged(int oper,ContactList contacts);
 private:
     void initConnect();
-
+    QMap<QString, CDoodContactItem*> contactListMap;
     LinkDoodClient *m_pClient;
 
 };

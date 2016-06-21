@@ -10,14 +10,14 @@
 #define int64 long long
 
 enum MSG_TYPE{
-    MSG_TYPE_HTML = 1, //网页类型
-    MSG_TYPE_TEXT,//文本类型
-    MSG_TYPE_AUDIO,//音视频类型
-    MSG_TYPE_POSITION,//位置类型
-    MSG_TYPE_IMG,//图片类型
-    MSG_TYPE_FILE,//文件类型
-    MSG_TYPE_CARD,//名片类型
-    MSG_TYPE_TIP//提示类型
+MSG_TYPE_HTML = 1, //网页类型
+MSG_TYPE_TEXT,//文本类型
+MSG_TYPE_AUDIO,//音视频类型
+MSG_TYPE_POSITION,//位置类型
+MSG_TYPE_IMG,//图片类型
+MSG_TYPE_FILE,//文件类型
+MSG_TYPE_CARD,//名片类型
+MSG_TYPE_TIP//提示类型
 };
 
 //LoginInfo
@@ -246,9 +246,11 @@ public:
 public:
     int     offlineType;  /*1未读消息 2设备已读消息*/
     int     count;      //数量
-    Msg   msg;
-    //Msg* msg;
-    //QSharedPointer<Msg> msg;
+    QString msgId;
+    QString body;
+    QString targetId;
+    QString fromId;
+    QString time;
 };
 Q_DECLARE_METATYPE(IMOfflineMsg)
 QDBusArgument &operator << (QDBusArgument &argument, const IMOfflineMsg &offlineMsg);

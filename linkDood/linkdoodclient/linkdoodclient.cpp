@@ -74,6 +74,36 @@ void LinkDoodClient::login(const QString &server,
     manager.call("login", server, userId, password);
 }
 
+void LinkDoodClient::getUserInfo(QString &userId, QString &name, QString &avater)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getUserInfo", userId, name, avater);
+}
+
+QString LinkDoodClient::UserId()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    QDBusPendingReply<QString> reply = manager.call("UserId");
+    reply.waitForFinished();
+
+    QString sTmp;
+    if (!reply.isError()) {
+        sTmp = reply;
+    } else {
+        qDebug() << reply.error();
+    }
+
+    return sTmp;
+}
+
 void LinkDoodClient::logout()
 {
     qDebug() << Q_FUNC_INFO;
@@ -84,7 +114,7 @@ void LinkDoodClient::logout()
     manager.call("logout");
 }
 
-void LinkDoodClient::removeChat(int64 targetid)
+void LinkDoodClient::removeChat(QString targetid)
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
@@ -94,7 +124,7 @@ void LinkDoodClient::removeChat(int64 targetid)
     manager.call("removeChat",targetid);
 }
 
-void LinkDoodClient::setMessageRead(int64 targetid, int64 msgid)
+void LinkDoodClient::setMessageRead(QString targetid, QString msgid)
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
@@ -114,7 +144,7 @@ void LinkDoodClient::getUnReadMessages()
     manager.call("getUnReadMessages");
 }
 
-void LinkDoodClient::deleteMessage(int64 targetid, QStringList msgs)
+void LinkDoodClient::deleteMessage(QString targetid, QStringList msgs)
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
@@ -138,7 +168,7 @@ void LinkDoodClient::sendMessage(Msg& msg)
     manager.call("sendMessage",QVariant::fromValue<Msg>(msg));
 }
 
-void LinkDoodClient::getMessages(int64 targetid, int64 msgid, int count, int flag)
+void LinkDoodClient::getMessages(QString targetid, QString msgid, int count, int flag)
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
@@ -301,9 +331,20 @@ void LinkDoodClient::onLoginResultObserver(int code, QString userID)
     emit loginResultObserver(code,userID);
 }
 
+void LinkDoodClient::onSessionMessageNotice(const QString &targetId, const QString &msgId, const QString &lastMsg,
+                                            const QString &time, const QString&name, const QString&avater)
+{
+      qDebug() << Q_FUNC_INFO;
+      emit sessionMessageNotice(targetId,msgId,lastMsg,time,name,avater);
+}
+
 void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "sessionMessageNotice",
+                                          this, SLOT(onSessionMessageNotice(QString,QString,QString,QString,QString,QString)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "deleteMessagesResult",

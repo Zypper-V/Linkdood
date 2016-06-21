@@ -243,7 +243,7 @@ QDBusArgument &operator << (QDBusArgument &argument, const Contact &contact)
     argument.beginStructure();
     argument << contact.avatar << contact.extends
              << contact.gender << contact.id << contact.isStar
-             << contact.isVip <<  contact.name
+             << contact.isVip <<  contact.name << contact.name
              << contact.pinyin << contact.remark << contact.server
              << contact.thumbAvatar << contact.timeZone;
     argument.endStructure();
@@ -255,7 +255,7 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Contact &contac
     argument.beginStructure();
     argument >> contact.avatar >> contact.extends
              >> contact.gender >> contact.id >> contact.isStar
-             >> contact.isVip >>  contact.name
+             >> contact.isVip >>  contact.name >> contact.name
              >> contact.pinyin >> contact.remark >> contact.server
              >> contact.thumbAvatar >> contact.timeZone;
     argument.endStructure();
@@ -278,7 +278,8 @@ void IMOfflineMsg::init()
 QDBusArgument &operator <<(QDBusArgument &argument, const IMOfflineMsg &offlineMsg)
 {
     argument.beginStructure();
-    argument << offlineMsg.count << offlineMsg.offlineType << offlineMsg.msg;
+    argument << offlineMsg.count << offlineMsg.offlineType << offlineMsg.body
+             << offlineMsg.fromId << offlineMsg.msgId << offlineMsg.targetId << offlineMsg.time;
     argument.endStructure();
     return argument;
 }
@@ -286,7 +287,8 @@ QDBusArgument &operator <<(QDBusArgument &argument, const IMOfflineMsg &offlineM
 const QDBusArgument &operator >>(const QDBusArgument &argument, IMOfflineMsg &offlineMsg)
 {
     argument.beginStructure();
-    argument >> offlineMsg.count >> offlineMsg.offlineType >> offlineMsg.msg;
+    argument >> offlineMsg.count >> offlineMsg.offlineType >> offlineMsg.body
+            >> offlineMsg.fromId >> offlineMsg.msgId >> offlineMsg.targetId >> offlineMsg.time;
     argument.endStructure();
     return argument;
 }

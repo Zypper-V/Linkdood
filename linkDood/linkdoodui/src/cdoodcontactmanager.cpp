@@ -18,25 +18,27 @@ CDoodContactManager::~CDoodContactManager()
 void CDoodContactManager::onContactListChanged(int oper, ContactList contacts)
 {
     qDebug() << Q_FUNC_INFO << "conactListSize" << contacts.size();
-    QList <QObject* > itemlist;
     for(size_t i=0;i<contacts.size();i++)
     {
-        CDoodContactItem *tmpItem = new CDoodContactItem(this);
-        tmpItem->setId(contacts[i].id);
-        tmpItem->setGender(contacts[i].gender);
-        tmpItem->setName(contacts[i].name);
-        tmpItem->setThumbAvatar(contacts[i].thumbAvatar);
-        qDebug() << Q_FUNC_INFO << "contacts avatar111:" << contacts[i].thumbAvatar;
+        if(!contactListMap.contains(contacts[i].id)){
 
-        itemlist.append(tmpItem);
+            CDoodContactItem *tmpItem = new CDoodContactItem(this);
+            tmpItem->setId(contacts[i].id);
+            tmpItem->setGender(contacts[i].gender);
+            tmpItem->setName(contacts[i].name);
+            tmpItem->setThumbAvatar(contacts[i].thumbAvatar);
+            qDebug() << Q_FUNC_INFO << "contacts avatar111:" << contacts[i].thumbAvatar;
+            contactListMap[contacts[i].id] = tmpItem;
+            addItem(tmpItem);
+        }else{
+            CDoodContactItem *tmpItem = contactListMap.value(contacts[i].id);
+            tmpItem->setId(contacts[i].id);
+            tmpItem->setGender(contacts[i].gender);
+            tmpItem->setName(contacts[i].name);
+            tmpItem->setThumbAvatar(contacts[i].thumbAvatar);
+        }
+
     }
-    beginInsertRows(QModelIndex(), _list->count(), itemlist.size() - 1);
-    for(int i = 0; i < itemlist.size(); ++i) {
-        qDebug() << " ----CDoodContactItem list " << i;
-        _list->append(itemlist.at(i));
-        connect(itemlist.at(i), SIGNAL(destroyed()), this, SLOT(removeDestroyedItem()));
-    }
-    endInsertRows();
     emit itemCountChanged();
 }
 

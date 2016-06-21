@@ -8,18 +8,23 @@
 
 namespace service {
     class IMClient;
+    class User;
 }
 class AuthControler :public QObject, public IAuthObserver
 {
     Q_OBJECT
 public:
     AuthControler(QObject *parent = 0);
-
+    //登录
     void login(const QString &server,
                const QString &userId,
                const QString &password);
-
+    //
     void logout();
+    //用户信息
+    void getUserInfo(QString& userId,QString& name,QString& avater);
+    //用户信息UserId
+    QString UserId();
 
     /***************************************
     * @brief getLoginHistory
@@ -61,6 +66,9 @@ protected slots:
 private:
     void _getLoginHistory(std::vector<service::LoginInfo> list);
     void _loginResult(service::ErrorInfo& info,int64 userId);
+
+private:
+   std::shared_ptr<service::User> mpUserInfo;
 };
 
 #endif // AUTHCONTROLER_H

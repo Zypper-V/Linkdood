@@ -14,6 +14,9 @@
 #include "MsgUtils.h"
 #include "Msg.h"
 #include "packet.h"
+#include "linkdoodservice.h"
+
+#include<QSettings>
 
 void ChatControler::init()
 {
@@ -21,18 +24,47 @@ void ChatControler::init()
     service::IMClient::getClient()->getNotify()->setChatObserver(this);
 }
 
-void ChatControler::removeChat(int64 targetid)
+void ChatControler::entryChat(const QString targetId)
 {
     qDebug() << Q_FUNC_INFO;
-    service::IMClient::getClient()->getChat()->removeChat(targetid,
-                                                          std::bind(&ChatControler::_removeChat,this,
-                                                                    std::placeholders::_1));
+    QString path = LinkDoodService::instance()->dataPath();
+    QString fileName = path+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("SessionTargetID",targetId);
 }
 
-void ChatControler::setMessageRead(int64 targetid, int64 msgid)
+void ChatControler::deleteChat(const QString targetId)
 {
     qDebug() << Q_FUNC_INFO;
-    service::IMClient::getClient()->getChat()->setMessageRead(targetid,msgid);
+    QString path = LinkDoodService::instance()->dataPath();
+    QString fileName = path+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("SessionTargetID","");
+}
+
+bool ChatControler::getCurrentSessionId(QString &targetId)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString path = LinkDoodService::instance()->dataPath();
+    QString fileName = path+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    targetId = settings.value("SessionTargetID","").toString();
+
+    return targetId.isEmpty();
+}
+
+void ChatControler::removeChat(QString targetid)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getChat()->removeChat(targetid.toLongLong(),
+                 std::bind(&ChatControler::_removeChat,this,
+                           std::placeholders::_1));
+}
+
+void ChatControler::setMessageRead(QString targetid, QString msgid)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getChat()->setMessageRead(targetid.toLongLong(),msgid.toLongLong());
 }
 
 void ChatControler::getUnReadMessages()
@@ -44,42 +76,44 @@ void ChatControler::getUnReadMessages()
 void ChatControler::sendMessage(Msg &imMsg)
 {
     qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body;
-    //    if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
-    //    {
-    //        //MsgText& msgText = imMsgCast<MsgText>(imMsg);
-    //        service::Msg msg = QmsgtextTomsgtext(msgText);
-
-    //        service::IMClient::getClient()->getChat()->sendMessage(msg,
-    //                     std::bind(&ChatControler::_sendMesage,this,
-    //                               std::placeholders::_1,
-    //                               std::placeholders::_2,
-    //                               std::placeholders::_3));
-    //    }
+    if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
+    {
+        service::Msg msg = QmsgtextTomsgtext(imMsg);
+        service::IMClient::getClient()->getChat()->sendMessage(msg,
+                     std::bind(&ChatControler::_sendMesage,this,
+                               std::placeholders::_1,
+                               std::placeholders::_2,
+                               std::placeholders::_3));
+    }
 }
 
-void ChatControler::getMessages(int64 targetid, int64 msgid, int count, int flag)
+void ChatControler::getMessages(QString targetid, QString msgid, int count, int flag)
 {
     qDebug() << Q_FUNC_INFO;
-    service::IMClient::getClient()->getChat()->getMessages(targetid,msgid,count,flag,
-                                                           std::bind(&ChatControler::_getMesage,this,
-                                                                     std::placeholders::_1,
-                                                                     std::placeholders::_2,
-                                                                     std::placeholders::_3));
+    service::IMClient::getClient()->getChat()->getMessages(targetid.toLongLong(),msgid.toLongLong(),count,flag,
+                       std::bind(&ChatControler::_getMesage,this,
+                                 std::placeholders::_1,
+                                 std::placeholders::_2,
+                                 std::placeholders::_3));
 
 }
 
-void ChatControler::deleteMessage(int64 targetid, std::vector<int64> msgs)
+void ChatControler::deleteMessage(QString targetid, std::vector<QString> msgs)
 {
     qDebug() << Q_FUNC_INFO;
-    service::IMClient::getClient()->getChat()->deleteMessage(targetid,msgs,
-                                                             std::bind(&ChatControler::_deleteMessage,this,
-                                                                       std::placeholders::_1));
+    std::vector<int64>list;
+    for(auto iter:msgs){
+        list.push_back(iter.toLongLong());
+    }
+    service::IMClient::getClient()->getChat()->deleteMessage(targetid.toLongLong(),list,
+                             std::bind(&ChatControler::_deleteMessage,this,
+                                       std::placeholders::_1));
 }
 
 ChatControler::ChatControler(QObject* parent):
     QObject(parent)
 {
-
+    mSessionTargetID = "";
 }
 
 ChatControler::~ChatControler()
@@ -92,10 +126,18 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
     qDebug() << Q_FUNC_INFO ;
     if(msg->msgtype == MSG_TYPE_TEXT)
     {
-        std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
-        Msg imMsg = msgtextToQmsgtext(msgText);
+       std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
+       Msg imMsg = msgtextToQmsgtext(msgText);
         qDebug() << Q_FUNC_INFO << "messageNotice:"<< imMsg.body;
-        emit messageNoticeBack(imMsg);
+       QString sessionId("");
+       if(getCurrentSessionId(sessionId)){
+           emit messageNoticeBack(imMsg);
+           emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,imMsg.time,imMsg.fromid,"");
+       }
+       else{
+           emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,imMsg.time,imMsg.fromid,"");
+       }
+       qDebug() << Q_FUNC_INFO << "SessionId:" << sessionId;
     }
 
 }
@@ -117,10 +159,14 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
         imMsg.offlineType = msg.offline_type;
         imMsg.count = msg.count;
         if(msg.msg->msgtype == MSG_TYPE_TEXT){
-            std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg.msg);
-            imMsg.msg = msgtextToQmsgtext(msgText);
-            msgList.insert(msgList.size(),imMsg);
-            qDebug() << Q_FUNC_INFO << "onOfflineMsgChanged:"<< imMsg.msg.body;
+           std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg.msg);
+           Msg item = msgtextToQmsgtext(msgText);
+           imMsg.body = item.body;
+           imMsg.fromId = item.fromid;
+           imMsg.msgId = item.msgid;
+           imMsg.time = item.time;
+           msgList.insert(msgList.size(),imMsg);
+            qDebug() << Q_FUNC_INFO << "onOfflineMsgChanged:"<< imMsg.body;
         }
     }
     emit offlineMsgNoticeBack(msgList);
@@ -179,26 +225,24 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
     //std::shared_ptr<service::Msg> msg;
 
     for(auto msg:msgPtr){
-        //        if(msg->msgtype == MSG_TYPE_TEXT){
-        //            std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
-        //            MsgText item;
+        if(msg->msgtype == MSG_TYPE_TEXT){
+            std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
+            Msg item;
+            item.activeType = QString::number(msgText->active_type);
+            item.body = QString::fromStdString(msgText->body);
+            item.fromid = QString::number(msgText->fromid);
+            item.localid = QString::number(msgText->localid);
+            item.msgid = QString::number(msgText->msgid);
+            item.msgProperties = QString::fromStdString(msgText->msg_properties);
+            item.msgtype = QString::number(msgText->msgtype);
+            item.relatedMsgid = QString::number(msgText->related_msgid);
+            item.targetid = QString::number(msgText->targetid);
+            item.time = QString::number(msgText->time);
+            item.toid = QString::number(msgText->toid);
 
-        //            item.activeType = QString::number(msgText->active_type);
-        //            item.body = QString::fromStdString(msgText->body);
-        //            item.fromid = QString::number(msgText->fromid);
-        //            item.localid = QString::number(msgText->localid);
-        //            item.msgid = QString::number(msgText->msgid);
-        //            item.msgProperties = QString::fromStdString(msgText->msg_properties);
-        //            item.msgtype = QString::number(msgText->msgtype);
-        //            item.relatedMsgid = QString::number(msgText->related_msgid);
-        //            item.targetid = QString::number(msgText->targetid);
-
-        //            item.time = QString::number(msgText->time);
-        //            item.toid = QString::number(msgText->toid);
-
-        //            msgList.insert(msgList.size(),item);
-        //        }
-    }
+            msgList.insert(msgList.size(),item);
+        }
+   }
     if(!info.code()){
         emit getMessagesBack(true,targetId,msgList);
     }else{

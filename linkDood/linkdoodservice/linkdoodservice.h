@@ -40,6 +40,13 @@ signals:
 
     //删除消息
     void deleteMessagesResult(int code);
+    //会话列表(通知栏)新消息更新通知
+    void sessionMessageNotice(const QString& targetId,
+                              const QString& msgId,
+                              const QString&lastMsg,
+                              const QString&time,
+                              const QString&name,
+                              const QString&avater);
 
     //获取子组织返回
     void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
@@ -56,7 +63,7 @@ signals:
     void loginFailed(QString);
     void loginoutRelust(bool loginout);
 
-    void chatListChanged(Chat_UIList chats);
+    void chatListChanged(const Chat_UIList& chats);
 
     void contactListChanged(int oper,ContactList contacts);
 
@@ -96,18 +103,28 @@ public slots:
     void logout();
     void getContactInfo(int64 userId);
 
+    //用户信息
+    void getUserInfo(QString& userId,QString& name,QString& avater);
+    //用户信息UserId
+    QString UserId();
+
     /*****************start chat**************************/
     //获取会话列表
     void getChatList(void);
     //获取未读消息列表
     void getUnReadMessages(void);
 
+    //进入会话UI
+    void entryChat(const QString targetId);
+    //离开会话UI
+    void deleteChat(const QString targetId);
+
     /**************************************************
     * @brief removeChat
     * @description: 移除会话
     * @param[in] targetid 传入会话对应的ID，群或者人
     ****************************************************/
-    void removeChat(int64 targetid);
+    void removeChat(QString targetid);
 
     /*****************************************
     * @brief setMessageRead
@@ -115,7 +132,7 @@ public slots:
     * @param[in] targetid 传入会话对应的ID，群或者人
     * @param[in] msgid 传入要删除的消息ID集合
     *****************************************/
-    void setMessageRead(int64 targetid, int64 msgid);
+    void setMessageRead(QString targetid, QString msgid);
 
     /************************************
     * @brief sendMessage
@@ -132,7 +149,7 @@ public slots:
     * @param[in] count 传入查询消息总数
     * @param[in] flag  传入上一页还是下一页 向上偏移 0；向下偏移 1
     ********************************************************************/
-    void getMessages(int64 targetid, int64 msgid, int count, int flag);
+    void getMessages(QString targetid, QString msgid, int count, int flag);
 
     /*************************************************
     * @brief deleteMessage
@@ -140,7 +157,7 @@ public slots:
     * @param[in] targetid 传入会话对应的ID，群或者人
     * @param[in] msgs 传入要删除的消息ID集合
     ***************************************************/
-    void deleteMessage(int64 targetid, QStringList msgs);
+    void deleteMessage(QString targetid, QStringList msgs);
 
     /*****************end chat****************************/
 
@@ -205,6 +222,13 @@ protected slots:
     //登录成功自动推送
     void onLoginResultObserver(int code,QString userID);
 
+    //会话列表(通知栏)新消息更新通知
+    void onSessionMessageNotice(const QString& targetId,
+                              const QString& msgId,
+                              const QString&lastMsg,
+                              const QString&time,
+                              const QString&name,
+                              const QString&avater);
 public:
     static LinkDoodService* m_pInstance;
 

@@ -26,6 +26,10 @@
 class CDoodLoginManager : public CDoodListModel
 {
     Q_OBJECT
+//    Q_PROPERTY(QString user READ user WRITE setUser NOTIFY userChanged)
+//    Q_PROPERTY(QString server READ server WRITE setServer NOTIFY serverChanged)
+//    Q_PROPERTY(QString password READ password WRITE setPassword NOTIFY passwordChanged)
+
 public:
     explicit CDoodLoginManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
@@ -35,6 +39,13 @@ public:
                            const QString &userId,
                            const QString &password);
 
+    //用户信息UserId
+    Q_INVOKABLE QString UserId();
+    //用户信息
+    void getUserInfo(QString& userId,
+                     QString& name,
+                     QString& avater);
+
     Q_INVOKABLE bool checkFirstWordIsSpace(const QString &text);
      //获取登录历史记录
     Q_INVOKABLE void getLoginHistory(void);
@@ -42,6 +53,13 @@ public:
     Q_INVOKABLE void setLoginInfo(int flag, QString userid, QString username, QString avatar);
 
     Q_INVOKABLE QString userId();
+
+//    QString user()const;
+//    QString server()const;
+//    QString password()const;
+//    void setUser(QString user);
+//    void setServer(QString server);
+//    void setPassword(QString password);
 signals:
     void loginSucceeded();
     void loginFailed(QString err);
@@ -51,6 +69,9 @@ signals:
     //登录成功自动推送
     void loginResultObserver(int code,QString userID);
 
+//    void userChanged();
+//    void serverChanged();
+//    void passwordChanged();
 private slots:
     void onLoginSucceeded();
     void onLoginFailed(QString err);
@@ -63,6 +84,9 @@ private:
     void initConnect();
 
     QString mUserId;
+//    QString mUser;
+//    QString mServer;
+//    QString mPassword;
 
     LinkDoodClient *m_pClient;
 };
