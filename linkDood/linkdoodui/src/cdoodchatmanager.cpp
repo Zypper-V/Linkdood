@@ -12,8 +12,8 @@ void CDoodChatManager::initConnect()
             SLOT(onChatOfflineMsgNotice(IMOfflineMsgList)));
     connect(m_pClient,SIGNAL(newMessageNotice(Msg&)),this,
             SLOT(onChatMessageNotice(Msg&)));
-    connect(m_pClient,SIGNAL(sendMessageResult(bool,int64,int64)),this,
-            SLOT(onChatSendMessageResult(bool,int64,int64)));
+    connect(m_pClient,SIGNAL(sendMessageResult(bool,QString,QString)),this,
+            SLOT(onChatSendMessageResult(bool,QString,QString)));
     connect(m_pClient,SIGNAL(getMessagesResult(bool,QString,MsgList)),this,
             SLOT(onChatGetMessagesResult(bool,QString,MsgList)));
     connect(m_pClient,SIGNAL(removeChatResult(bool)),this,
@@ -109,7 +109,7 @@ void CDoodChatManager::sendText(QString fromId,QString text)
     msgText.targetid = id();
     msgText.toid = id();
     msgText.fromid = fromId;
-    qDebug() << Q_FUNC_INFO << msgText.toid << msgText.fromid;
+    qDebug() << Q_FUNC_INFO <<"sdfsfsfsfsffsfsfsff" << msgText.toid << msgText.fromid;
 
     sendMessage(msgText);
 }
