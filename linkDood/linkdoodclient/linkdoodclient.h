@@ -64,6 +64,11 @@ signals:
 public slots:
     QString installPath();
 
+    //进入会话UI
+    void entryChat(const QString targetId);
+    //离开会话UI
+    void deleteChat(const QString targetId);
+
     // 从配置文件读取登录状态
     void getAppLoginStatus(int& status);
     //向配置文件写入登录状态

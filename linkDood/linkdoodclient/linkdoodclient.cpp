@@ -42,6 +42,26 @@ QString LinkDoodClient::installPath()
     return sTmp;
 }
 
+void LinkDoodClient::entryChat(const QString targetId)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("entryChat",targetId);
+}
+
+void LinkDoodClient::deleteChat(const QString targetId)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("deleteChat",targetId);
+}
+
 void LinkDoodClient::getAppLoginStatus(int &status)
 {
     qDebug() << Q_FUNC_INFO;
@@ -156,7 +176,7 @@ void LinkDoodClient::deleteMessage(QString targetid, QStringList msgs)
 
 void LinkDoodClient::sendMessage(Msg msg)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << msg.fromid << ":" << msg.toid << ":" << msg.body;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
                            DBUS_DOOD_PATH,
                            DBUS_DOOD_INTERFACE,
