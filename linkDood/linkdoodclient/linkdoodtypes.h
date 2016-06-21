@@ -10,14 +10,14 @@
 #define int64 long long
 
 enum MSG_TYPE{
-MSG_TYPE_HTML = 1, //网页类型
-MSG_TYPE_TEXT,//文本类型
-MSG_TYPE_AUDIO,//音视频类型
-MSG_TYPE_POSITION,//位置类型
-MSG_TYPE_IMG,//图片类型
-MSG_TYPE_FILE,//文件类型
-MSG_TYPE_CARD,//名片类型
-MSG_TYPE_TIP//提示类型
+    MSG_TYPE_HTML = 1, //网页类型
+    MSG_TYPE_TEXT,//文本类型
+    MSG_TYPE_AUDIO,//音视频类型
+    MSG_TYPE_POSITION,//位置类型
+    MSG_TYPE_IMG,//图片类型
+    MSG_TYPE_FILE,//文件类型
+    MSG_TYPE_CARD,//名片类型
+    MSG_TYPE_TIP//提示类型
 };
 
 //LoginInfo
@@ -28,16 +28,16 @@ public:
     virtual ~LoginInfo(){}
     void toImLoginInfo(QVariantMap map);
 
-        int64 status;
-        int64 isRemberPass;        //是否记住密码
-        int64 isAutoLogin;         //自动登录
-        int64 userId;              //用户id
-        int64 lastLoginTime;     //上次登陆时间
-        QString server;            //服务器
-        QString name;               //用户名
-        QString account;			//账号
-        QString userIcon;          //头像
-        QString areaNum;           //国家码
+    int64 status;
+    int64 isRemberPass;        //是否记住密码
+    int64 isAutoLogin;         //自动登录
+    int64 userId;              //用户id
+    int64 lastLoginTime;     //上次登陆时间
+    QString server;            //服务器
+    QString name;               //用户名
+    QString account;			//账号
+    QString userIcon;          //头像
+    QString areaNum;           //国家码
 };
 Q_DECLARE_METATYPE(LoginInfo)
 QDBusArgument &operator << (QDBusArgument &argument, const LoginInfo &info);
@@ -74,8 +74,8 @@ public:
     // 发送时间
     QString body;// 消息内容
     QString msgProperties;
-   // QList<int64> related_users;// 秘聊时相关的用户 ID
-   // QList<int64> limit_range; //@ 人员列表
+    // QList<int64> related_users;// 秘聊时相关的用户 ID
+    // QList<int64> limit_range; //@ 人员列表
 };
 
 // Msg

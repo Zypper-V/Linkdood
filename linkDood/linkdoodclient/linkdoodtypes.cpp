@@ -243,7 +243,7 @@ QDBusArgument &operator << (QDBusArgument &argument, const Contact &contact)
     argument.beginStructure();
     argument << contact.avatar << contact.extends
              << contact.gender << contact.id << contact.isStar
-             << contact.isVip <<  contact.name << contact.name
+             << contact.isVip <<  contact.name
              << contact.pinyin << contact.remark << contact.server
              << contact.thumbAvatar << contact.timeZone;
     argument.endStructure();
@@ -255,7 +255,7 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Contact &contac
     argument.beginStructure();
     argument >> contact.avatar >> contact.extends
              >> contact.gender >> contact.id >> contact.isStar
-             >> contact.isVip >>  contact.name >> contact.name
+             >> contact.isVip >>  contact.name
              >> contact.pinyin >> contact.remark >> contact.server
              >> contact.thumbAvatar >> contact.timeZone;
     argument.endStructure();
