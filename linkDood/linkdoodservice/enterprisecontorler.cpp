@@ -19,14 +19,17 @@ EnterpriseControler::~EnterpriseControler()
 
 void EnterpriseControler::getSonOrgs(QString orgid)
 {
+    qDebug() << Q_FUNC_INFO<<orgid;
     int64 org_id;
     std::stringstream str(orgid.toStdString());
     str >> org_id;
-    service::IMClient::getClient()->getEnterprise()->getSonOrgs(org_id,
+    qDebug() << Q_FUNC_INFO<< orgid;
+    int64 i=0;
+    service::IMClient::getClient()->getEnterprise()->getSonOrgs(i,
         std::bind(&EnterpriseControler::_getSonOrgs,this,std::placeholders::_1,
         std::placeholders::_2,std::placeholders::_3));
 }
-void EnterpriseControler::_getSonOrgs(service::ErrorInfo &info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers)
+void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers)
 {
     qDebug() << Q_FUNC_INFO;
     OrgList orgList;

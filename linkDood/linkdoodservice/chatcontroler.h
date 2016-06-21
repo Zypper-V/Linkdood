@@ -100,7 +100,7 @@ signals:
     //监听新消息通知
    void messageNoticeBack(Msg& msg);
     //会话消息
-   void  chatListChanged(const Chat_UIList& chats);
+   void  chatListChanged(Chat_UIList chats);
 
    //发送消息返回
    void sendMessageBack(bool code,int64 sendTime,int64 msgId);

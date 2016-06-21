@@ -17,7 +17,7 @@ CDoodEnterpriseManager::~CDoodEnterpriseManager()
 
 void CDoodEnterpriseManager::getSonOrgs(QString orgid)
 {
-    qDebug() << Q_FUNC_INFO << orgid;
+    qDebug() << Q_FUNC_INFO << "wawawawawawawaw";
     m_pClient->getSonOrgs(orgid);
 }
 void CDoodEnterpriseManager::getOnlineStates(QStringList& userid)
@@ -37,7 +37,7 @@ void CDoodEnterpriseManager::getOrgUserInfo(QString userid)
 
 void CDoodEnterpriseManager::onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist)
 {
-    qDebug() << Q_FUNC_INFO;
+     qDebug() << Q_FUNC_INFO <<"hahahahahaahhha" << orglist[0].name;
     emit getSonOrgsResult(code,orglist,orguserlist);
 }
 

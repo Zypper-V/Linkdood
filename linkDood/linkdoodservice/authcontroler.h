@@ -51,7 +51,7 @@ protected slots:
     //void login(const QString &server, const QString &userId, const QString &password);
  signals:
     void loginSucceeded(void);
-    void loginFailed(int64 code);
+    void loginFailed(int code);
 
     void loginoutRelust(bool succeeded);
     //登录成功自动推送

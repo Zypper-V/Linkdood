@@ -241,7 +241,7 @@ void LinkDoodClient::onGetOnlineStatesResult(QOnlineStateList onlinestatelist)
     emit getOnlineStatesResult(onlinestatelist);
 }
 
-void LinkDoodClient::onGetorgUserInfoResult(int code, OrgUser &orguser)
+void LinkDoodClient::onGetorgUserInfoResult(int code, OrgUser orguser)
 {
     qDebug() << Q_FUNC_INFO;
     emit getOrgUserInfoResult(code,orguser);

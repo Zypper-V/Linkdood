@@ -14,7 +14,7 @@ public:
     ~EnterpriseControler();
     //调用底层接口并通过回调获取结果
     void getSonOrgs(QString orgid);
-    void _getSonOrgs(service::ErrorInfo &info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers);
+    void _getSonOrgs(service::ErrorInfo info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers);
 
     void getOnlineStates(QStringList& userid);
     void _getOnlineStates(std::vector<OnlineState>& states);
@@ -37,7 +37,8 @@ signals:
     //将结果抛给linkdoodservice层
     void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
     void getOnlineStatesResult(QOnlineStateList onlinestatelist);
-    void getOrgUserInfoResult(int code,OrgUser& orguser);
+    void getOrgUserInfoResult(int code,OrgUser orguser);
+
 //private:
 //    void initConnects();
 public:

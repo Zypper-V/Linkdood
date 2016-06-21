@@ -193,8 +193,8 @@ void LinkDoodService::deleteMessage(int64 targetid,QStringList msgs)
 
 void LinkDoodService::getSonOrgs(QString orgid)
 {
-    qDebug() << Q_FUNC_INFO;
-    if(m_pEnterpriseControler!=NULL){
+    qDebug() << Q_FUNC_INFO<<orgid;
+    if(m_pEnterpriseControler !=NULL){
         m_pEnterpriseControler->getSonOrgs(orgid);
     }
 }
@@ -231,7 +231,7 @@ void LinkDoodService::setLoginInfo(int flag, QString userid, QString username, Q
 
 void LinkDoodService::onGetSonOrgsResult(int code, OrgList orglist, OrgUserList orguserlist)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << "xxxxxxxxx";
     emit getSonOrgsResult(code,orglist,orguserlist);
 }
 
@@ -241,7 +241,7 @@ void LinkDoodService::onGetOnlineStatesResult(QOnlineStateList onlinestatelist)
     emit getOnlineStatesResult(onlinestatelist);
 }
 
-void LinkDoodService::onGetorgUserInfoResult(int code, OrgUser &orguser)
+void LinkDoodService::onGetorgUserInfoResult(int code, OrgUser orguser)
 {
     qDebug() << Q_FUNC_INFO;
     emit getOrgUserInfoResult(code,orguser);
@@ -250,13 +250,13 @@ void LinkDoodService::onGetorgUserInfoResult(int code, OrgUser &orguser)
 
 void LinkDoodService::onContactListChanged(int oper,ContactList contacts)
 {
-    qDebug() << Q_FUNC_INFO <<"contact size:" << contacts.size();
+    qDebug() << Q_FUNC_INFO <<"contact size111111111111111111:" << contacts.size();
     emit contactListChanged(oper,contacts);
 }
 
-void LinkDoodService::onChatListChanged(const Chat_UIList &chats)
+void LinkDoodService::onChatListChanged(Chat_UIList chats)
 {
-    qDebug() << Q_FUNC_INFO << "chats size3:" << chats.size();
+    qDebug() << Q_FUNC_INFO << "11111111111111111111111chats size3:" << chats.size();
     emit chatListChanged(chats);
 }
 
@@ -392,6 +392,7 @@ void LinkDoodService::initObserver()
     m_pAuth            = std::make_shared<AuthControler>();
     m_pContactObserver = std::make_shared<ContactControler>();
     m_pChatObserver    = std::make_shared<ChatControler>();
+    m_pEnterpriseControler = std::make_shared<EnterpriseControler>();
     m_pAuth->init();
     m_pChatObserver->init();
     m_pContactObserver->init();
@@ -417,12 +418,12 @@ void LinkDoodService::initConnects()
     QObject::connect(m_pChatObserver.get(),SIGNAL(deleteMessagesBack(int)),this,
                      SLOT(onChatDeleteMessagesResult(int)));
 
-    QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist)),this,
-                     SLOT(onGetSonOrgsResult(int code, OrgList orglist,OrgUser orguserlist)));
-    QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getOnlineStatesResult(QOnlineStateList onlinestatelist)),this,
-                     SLOT(onGetOnlineStatesResult(QOnlineStateList onlinestatelist)));
-    QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getOrgUserInfoResult(int code,OrgUser& orguser)),this,
-                     SLOT(onGetorgUserInfoResult(int code,OrgUser& orguser)));
+    QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getSonOrgsResult(int ,OrgList ,OrgUserList )),this,
+                     SLOT(onGetSonOrgsResult(int,OrgList,OrgUserList )));
+    QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getOnlineStatesResult(QOnlineStateList)),this,
+                     SLOT(onGetOnlineStatesResult(QOnlineStateList)));
+    QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getOrgUserInfoResult(int,OrgUser)),this,
+                     SLOT(onGetorgUserInfoResult(int,OrgUser)));
 
 
     QObject::connect(m_pAuth.get(),SIGNAL(getLoginHistoryResult(LoginInfoList)),this,
@@ -437,8 +438,8 @@ void LinkDoodService::initConnects()
     QObject::connect(m_pAuth.get(),SIGNAL(loginResultObserver(int,QString)),this,
                      SLOT(onLoginResultObserver(int,QString)));
 
-    QObject::connect(m_pChatObserver.get(),SIGNAL(chatListChanged(const Chat_UIList&)),this,
-                     SLOT(onChatListChanged(const Chat_UIList&)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(chatListChanged(Chat_UIList)),this,
+                     SLOT(onChatListChanged(Chat_UIList)));
     QObject::connect(m_pContactObserver.get(),SIGNAL(contactListChanged(int,ContactList)),this,
                      SLOT(onContactListChanged(int,ContactList)));
 }

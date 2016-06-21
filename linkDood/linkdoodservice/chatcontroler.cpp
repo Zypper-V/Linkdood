@@ -25,8 +25,8 @@ void ChatControler::removeChat(int64 targetid)
 {
     qDebug() << Q_FUNC_INFO;
     service::IMClient::getClient()->getChat()->removeChat(targetid,
-                 std::bind(&ChatControler::_removeChat,this,
-                           std::placeholders::_1));
+                                                          std::bind(&ChatControler::_removeChat,this,
+                                                                    std::placeholders::_1));
 }
 
 void ChatControler::setMessageRead(int64 targetid, int64 msgid)
@@ -44,27 +44,27 @@ void ChatControler::getUnReadMessages()
 void ChatControler::sendMessage(Msg &imMsg)
 {
     qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body;
-//    if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
-//    {
-//        //MsgText& msgText = imMsgCast<MsgText>(imMsg);
-//        service::Msg msg = QmsgtextTomsgtext(msgText);
+    //    if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
+    //    {
+    //        //MsgText& msgText = imMsgCast<MsgText>(imMsg);
+    //        service::Msg msg = QmsgtextTomsgtext(msgText);
 
-//        service::IMClient::getClient()->getChat()->sendMessage(msg,
-//                     std::bind(&ChatControler::_sendMesage,this,
-//                               std::placeholders::_1,
-//                               std::placeholders::_2,
-//                               std::placeholders::_3));
-//    }
+    //        service::IMClient::getClient()->getChat()->sendMessage(msg,
+    //                     std::bind(&ChatControler::_sendMesage,this,
+    //                               std::placeholders::_1,
+    //                               std::placeholders::_2,
+    //                               std::placeholders::_3));
+    //    }
 }
 
 void ChatControler::getMessages(int64 targetid, int64 msgid, int count, int flag)
 {
     qDebug() << Q_FUNC_INFO;
     service::IMClient::getClient()->getChat()->getMessages(targetid,msgid,count,flag,
-                       std::bind(&ChatControler::_getMesage,this,
-                                 std::placeholders::_1,
-                                 std::placeholders::_2,
-                                 std::placeholders::_3));
+                                                           std::bind(&ChatControler::_getMesage,this,
+                                                                     std::placeholders::_1,
+                                                                     std::placeholders::_2,
+                                                                     std::placeholders::_3));
 
 }
 
@@ -72,8 +72,8 @@ void ChatControler::deleteMessage(int64 targetid, std::vector<int64> msgs)
 {
     qDebug() << Q_FUNC_INFO;
     service::IMClient::getClient()->getChat()->deleteMessage(targetid,msgs,
-                             std::bind(&ChatControler::_deleteMessage,this,
-                                       std::placeholders::_1));
+                                                             std::bind(&ChatControler::_deleteMessage,this,
+                                                                       std::placeholders::_1));
 }
 
 ChatControler::ChatControler(QObject* parent):
@@ -92,10 +92,10 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
     qDebug() << Q_FUNC_INFO ;
     if(msg->msgtype == MSG_TYPE_TEXT)
     {
-       std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
-       Msg imMsg = msgtextToQmsgtext(msgText);
+        std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
+        Msg imMsg = msgtextToQmsgtext(msgText);
         qDebug() << Q_FUNC_INFO << "messageNotice:"<< imMsg.body;
-       emit messageNoticeBack(imMsg);
+        emit messageNoticeBack(imMsg);
     }
 
 }
@@ -117,9 +117,9 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
         imMsg.offlineType = msg.offline_type;
         imMsg.count = msg.count;
         if(msg.msg->msgtype == MSG_TYPE_TEXT){
-           std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg.msg);
-           imMsg.msg = msgtextToQmsgtext(msgText);
-           msgList.insert(msgList.size(),imMsg);
+            std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg.msg);
+            imMsg.msg = msgtextToQmsgtext(msgText);
+            msgList.insert(msgList.size(),imMsg);
             qDebug() << Q_FUNC_INFO << "onOfflineMsgChanged:"<< imMsg.msg.body;
         }
     }
@@ -129,27 +129,30 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
 void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service::User> > chats)
 {
     qDebug() << Q_FUNC_INFO;
-     qDebug() <<Q_FUNC_INFO<< "chats szie:" << chats.size();
-    //if(flag == 0x04)
-    {
-         Chat_UIList  chatList;
-
-        for(auto i: chats){
-            std::shared_ptr<service::Chat> ch = std::dynamic_pointer_cast<service::Chat>(i);
-            Chat_UI chatData;
-            chatData.name = QString::fromStdString(ch->name);
-            chatData.last_msg =  QString::fromStdString(utils::MsgUtils::getText(ch->last_msg));
-            chatData.avatar =  QString::fromStdString(ch->avatar);
-            chatData.msg_time = QDateTime::fromMSecsSinceEpoch(ch->msg_time).toString("yyyy-MM-dd hh:mm:ss");
-            chatData.id = QString::number(ch->id);
-            chatData.chat_type = ch->chat_type;
-            chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
-            chatList.push_back(chatData);
-           // qDebug() << Q_FUNC_INFO << "avatar" << chatData.avatar;
-           // qDebug() << Q_FUNC_INFO << "thumb_avatar" << ch->thumb_avatar.c_str();
+    qDebug() <<Q_FUNC_INFO<< "chats szie:" << chats.size();
+    Chat_UIList  chatList;
+    for(auto i: chats){
+        std::shared_ptr<service::Chat> ch = std::dynamic_pointer_cast<service::Chat>(i);
+        Chat_UI chatData;
+        chatData.name = QString::fromStdString(ch->name);
+        qDebug() <<Q_FUNC_INFO<<QString::fromStdString(ch->last_msg);
+        if(ch->msg_type==2){
+        chatData.last_msg =  QString::fromStdString(utils::MsgUtils::getText(ch->last_msg));
         }
-        emit chatListChanged(chatList);
+        if(ch->msg_type!=2){
+        chatData.last_msg = "不支持的消息类型，请在电脑端查看";
+        }
+        chatData.avatar =  QString::fromStdString(ch->avatar);
+        chatData.msg_time = QDateTime::fromMSecsSinceEpoch(ch->msg_time).toString("yyyy-MM-dd hh:mm:ss");
+        chatData.id = QString::number(ch->id);
+        chatData.chat_type = ch->chat_type;
+        chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
+        chatList.push_back(chatData);
+        // qDebug() << Q_FUNC_INFO << "avatar" << chatData.avatar;
+        // qDebug() << Q_FUNC_INFO << "thumb_avatar" << ch->thumb_avatar.c_str();
     }
+    emit chatListChanged(chatList);
+
 }
 
 void ChatControler::_removeChat(service::ErrorInfo &info)
@@ -176,26 +179,26 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
     //std::shared_ptr<service::Msg> msg;
 
     for(auto msg:msgPtr){
-//        if(msg->msgtype == MSG_TYPE_TEXT){
-//            std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
-//            MsgText item;
+        //        if(msg->msgtype == MSG_TYPE_TEXT){
+        //            std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
+        //            MsgText item;
 
-//            item.activeType = QString::number(msgText->active_type);
-//            item.body = QString::fromStdString(msgText->body);
-//            item.fromid = QString::number(msgText->fromid);
-//            item.localid = QString::number(msgText->localid);
-//            item.msgid = QString::number(msgText->msgid);
-//            item.msgProperties = QString::fromStdString(msgText->msg_properties);
-//            item.msgtype = QString::number(msgText->msgtype);
-//            item.relatedMsgid = QString::number(msgText->related_msgid);
-//            item.targetid = QString::number(msgText->targetid);
+        //            item.activeType = QString::number(msgText->active_type);
+        //            item.body = QString::fromStdString(msgText->body);
+        //            item.fromid = QString::number(msgText->fromid);
+        //            item.localid = QString::number(msgText->localid);
+        //            item.msgid = QString::number(msgText->msgid);
+        //            item.msgProperties = QString::fromStdString(msgText->msg_properties);
+        //            item.msgtype = QString::number(msgText->msgtype);
+        //            item.relatedMsgid = QString::number(msgText->related_msgid);
+        //            item.targetid = QString::number(msgText->targetid);
 
-//            item.time = QString::number(msgText->time);
-//            item.toid = QString::number(msgText->toid);
+        //            item.time = QString::number(msgText->time);
+        //            item.toid = QString::number(msgText->toid);
 
-//            msgList.insert(msgList.size(),item);
-//        }
-   }
+        //            msgList.insert(msgList.size(),item);
+        //        }
+    }
     if(!info.code()){
         emit getMessagesBack(true,targetId,msgList);
     }else{

@@ -4,20 +4,50 @@ CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
 {
 
 }
+QString CDoodChatItem::thumbAvatar() const
+{
+    return mThumbAvatar;
+}
+
+QString CDoodChatItem::setThumbAvatar(const QString &data)
+{
+    if(mThumbAvatar == data) {
+        return data;
+    }
+    mThumbAvatar = data;
+    emit thumbAvatarChanged();
+    return mThumbAvatar;
+}
+
+
+QString CDoodChatItem::tar_thumbAvatar() const
+{
+    return mTar_thumbAvatar;
+}
+
+QString CDoodChatItem::setTar_thumbAvatar(const QString &data)
+{
+    if(mTar_thumbAvatar == data) {
+        return data;
+    }
+    mTar_thumbAvatar = data;
+    emit tar_thumbAvatarChanged();
+    return mTar_thumbAvatar;
+}
 
 QString CDoodChatItem::msgType() const
 {
-    return mMsgYype;
+    return mMsgType;
 }
 
 QString CDoodChatItem::setMsgType(const QString &data)
 {
-    if(mMsgYype == data) {
+    if(mMsgType == data) {
         return data;
     }
-    mMsgYype = data;
+    mMsgType = data;
     emit msgTypeChanged();
-    return mMsgYype;
+    return mMsgType;
 }
 
 QString CDoodChatItem::activeType() const
@@ -95,36 +125,6 @@ QString CDoodChatItem::setToId(const QString &data)
     return mToId;
 }
 
-QString CDoodChatItem::localId() const
-{
-    return mLocalId;
-}
-
-QString CDoodChatItem::setLocalId(const QString &data)
-{
-    if(mLocalId == data) {
-        return data;
-    }
-    mLocalId = data;
-    emit localIdChanged();
-    return mLocalId;
-}
-
-QString CDoodChatItem::relatedMsgId() const
-{
-    return mRelatedMsgId;
-}
-
-QString CDoodChatItem::setRelatedMsgId(const QString &data)
-{
-    if(mRelatedMsgId == data) {
-        return data;
-    }
-    mRelatedMsgId = data;
-    emit relatedMsgIdChanged();
-    return mRelatedMsgId;
-}
-
 QString CDoodChatItem::time() const
 {
     return mTime;
@@ -155,18 +155,5 @@ QString CDoodChatItem::setBody(const QString &data)
     return mBody;
 }
 
-QString CDoodChatItem::sgProperties() const
-{
-    return msgProperties;
-}
 
-QString CDoodChatItem::setSgProperties(const QString &data)
-{
-    if(msgProperties == data) {
-        return data;
-    }
-    msgProperties = data;
-    emit sgPropertiesChanged();
-    return msgProperties;
-}
 

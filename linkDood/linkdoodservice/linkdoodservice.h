@@ -56,7 +56,7 @@ signals:
     void loginFailed(QString);
     void loginoutRelust(bool loginout);
 
-    void chatListChanged(const Chat_UIList& chats);
+    void chatListChanged(Chat_UIList chats);
 
     void contactListChanged(int oper,ContactList contacts);
 
@@ -170,12 +170,12 @@ protected slots:
     //获取子组织返回
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
     void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
-    void onGetorgUserInfoResult(int code,OrgUser& orguser);
+    void onGetorgUserInfoResult(int code,OrgUser orguser);
 
     //联系人列表更新
     void onContactListChanged(int oper,ContactList contacts);
     //会话列表更新
-    void onChatListChanged(const Chat_UIList& chats);
+    void onChatListChanged(Chat_UIList chats);
     //登录成功返回
     void onLoginSucceeded();
     //登录失败返回
@@ -220,8 +220,6 @@ private:
     // 初始化Dbus连接
     void initDBusConnection();
 
-    //获取子组织返回
-    void onGetEnterpriseSonOrgsResult(service::ErrorInfo& info, std::vector<service::Org> orgs,std::vector<service::OrgUser> orgusers);
     void onSrvGetContactInfoResult(service::ErrorInfo& info,service::User&user);
 private:
     CSystemPackageManager *m_pPackageManager;
