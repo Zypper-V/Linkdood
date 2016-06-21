@@ -75,7 +75,8 @@ void ChatControler::getUnReadMessages()
 
 void ChatControler::sendMessage(Msg &imMsg)
 {
-    qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body << "TargetId:" << imMsg.targetid;
+    emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,imMsg.time,"","");
+    qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body;
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
         service::MsgText msg = QmsgtextTomsgtext(imMsg);
@@ -276,23 +277,43 @@ Msg ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
 service::MsgText ChatControler::QmsgtextTomsgtext(Msg Qmsgtext)
 {
     service::MsgText msgtext;
+    if(Qmsgtext.activeType!=""){
     std::stringstream str(Qmsgtext.activeType.toStdString());
     str >> msgtext.active_type;
+    }
+    if(Qmsgtext.msgtype!=""){
     std::stringstream str1(Qmsgtext.msgtype.toStdString());
     str1 >> msgtext.msgtype;
+    }
+    if(Qmsgtext.msgid!=""){
     std::stringstream str2(Qmsgtext.msgid.toStdString());
     str2 >> msgtext.msgid;
+    }
+    if(Qmsgtext.targetid!=""){
     std::stringstream str3(Qmsgtext.targetid.toStdString());
     str3 >> msgtext.targetid;
+    }
+    if(Qmsgtext.fromid!=""){
     std::stringstream str4(Qmsgtext.fromid.toStdString());
     str4 >> msgtext.fromid;
+    }
+    if(Qmsgtext.toid!=""){
     std::stringstream str5(Qmsgtext.toid.toStdString());
     str5 >> msgtext.toid;
+    }
+    if(Qmsgtext.localid!=""){
     std::stringstream str6(Qmsgtext.localid.toStdString());
     str6 >> msgtext.localid;
+    }
+    if(Qmsgtext.time!=""){
     std::stringstream str7(Qmsgtext.time.toStdString());
     str7 >> msgtext.time;
+    }
+    if(Qmsgtext.msgProperties!=""){
     msgtext.msg_properties =Qmsgtext.msgProperties.toStdString();
-    msgtext.body           =utils::MsgUtils::MsgFormat(Qmsgtext.body.toStdString());
+    }
+    if(Qmsgtext.body!=""){
+    msgtext.body           =Qmsgtext.body.toStdString();
+    }
     return msgtext;
 }

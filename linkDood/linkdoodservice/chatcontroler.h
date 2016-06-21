@@ -18,7 +18,6 @@ public:
     void exitChat(const QString targetId);
     //获取当前SessionId
     bool getCurrentSessionId(QString& targetId);
-
     /**************************************************
     * @brief removeChat
     * @description: 移除会话
