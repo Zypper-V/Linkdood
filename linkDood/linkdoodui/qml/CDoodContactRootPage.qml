@@ -82,6 +82,8 @@ Item {
                 userdataManager.setName(model.modelData.name);
                 userdataManager.setGender(model.modelData.gender);
                 userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
+                userdataManager.setId(model.modelData.id);
+
                 pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
             }
 
@@ -93,7 +95,6 @@ Item {
                     background.color = "#cdcdcd"
                     mousePressBackgroud.visible = true
                 }
-
             }
 
             Rectangle {

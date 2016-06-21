@@ -15,7 +15,7 @@ public:
     explicit CDoodUserDataManage(QObject *parent = 0);
 
     QString id() const;
-    QString setId(const QString &data);
+    Q_INVOKABLE QString setId(const QString &data);
 
     QString name() const;
     Q_INVOKABLE QString setName(const QString &data);
@@ -45,8 +45,5 @@ private:
     QString mThumbAvatar;
     QString mGender;
     QString mAvatar;
-
-
-
 };
 #endif // CDOODCONTACTITEM_H

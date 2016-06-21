@@ -97,7 +97,7 @@ CDoodChatManager::CDoodChatManager(LinkDoodClient *client, QObject *parent):
 
 CDoodChatManager::~CDoodChatManager()
 {
-    exitChat("");
+    exitChat();
 }
 
 void CDoodChatManager::sendText(QString fromId,QString text)
@@ -119,7 +119,7 @@ void CDoodChatManager::sendMessage(Msg &msg)
     m_pClient->sendMessage(msg);
 }
 
-void CDoodChatManager::getMessages(QString targetid, QString msgid, int count, int flag)
+void CDoodChatManager::getMessages(QString targetid, int count)
 {
      qDebug() << Q_FUNC_INFO;
      m_pClient->getMessages(targetid,m_sBeginMsgId,count,1);
@@ -131,7 +131,7 @@ void CDoodChatManager::removeChat(QString targetid)
      m_pClient->removeChat(targetid);
 }
 
-void CDoodChatManager::setMessageRead(QString targetid, QString msgid)
+void CDoodChatManager::setMessageRead(QString targetid)
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->setMessageRead(targetid,"0");
@@ -180,9 +180,9 @@ void CDoodChatManager::entryChat(const QString &targetid)
     qDebug() << Q_FUNC_INFO << targetid;
 }
 
-void CDoodChatManager::exitChat(const QString &targetid)
+void CDoodChatManager::exitChat()
 {
-    qDebug() << Q_FUNC_INFO << targetid;
+    qDebug() << Q_FUNC_INFO;
 }
 
 void CDoodChatManager::deleteMessageListItem()
