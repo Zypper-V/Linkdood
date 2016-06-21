@@ -57,6 +57,11 @@ QString AuthControler::UserId()
     return QString::number(mpUserInfo->id);
 }
 
+QString AuthControler::userName()
+{
+    return QString::fromStdString(mpUserInfo->name);
+}
+
 void AuthControler::getLoginHistory()
 {
     qDebug() << Q_FUNC_INFO;

@@ -15,6 +15,8 @@
 #include "Msg.h"
 #include "packet.h"
 #include "linkdoodservice.h"
+#include "ISearchService.h"
+#include "IContactService.h"
 
 #include<QSettings>
 
@@ -22,6 +24,12 @@ void ChatControler::init()
 {
     qDebug() << Q_FUNC_INFO;
     service::IMClient::getClient()->getNotify()->setChatObserver(this);
+}
+
+void ChatControler::getContactInfo(QString userId,Msg msg)
+{
+    qDebug() << Q_FUNC_INFO << "xxxxxxxxxxxxxxxxxxxxxxxxx";
+    service::IMClient::getClient()->getContact()->getContactInfo(userId.toLongLong(),std::bind(&ChatControler::_getContactInfo,this,std::placeholders::_1,std::placeholders::_2,msg));
 }
 
 void ChatControler::entryChat(const QString targetId)
@@ -75,8 +83,9 @@ void ChatControler::getUnReadMessages()
 
 void ChatControler::sendMessage(Msg &imMsg)
 {
-    emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,imMsg.time,"","");
-    qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body;
+    qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body << "TargetId:" << imMsg.targetid;
+    emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,imMsg.time,imMsg.name,imMsg.thumb_avatar);
+    //getUserInfo(imMsg.targetid,imMsg);
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
         service::MsgText msg = QmsgtextTomsgtext(imMsg);
@@ -134,12 +143,9 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
        QString sessionId("");
        if(!getCurrentSessionId(sessionId)){
            emit chatMessageNotice(imMsg);
-           emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,imMsg.time,imMsg.fromid,"");
-       }
-       else{
-           emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,imMsg.time,imMsg.fromid,"");
        }
        qDebug() << Q_FUNC_INFO << "SessionId:" << sessionId;
+       getContactInfo(imMsg.fromid,imMsg);
     }
 
 }
@@ -256,6 +262,14 @@ void ChatControler::_deleteMessage(service::ErrorInfo &info)
 {
     qDebug() << Q_FUNC_INFO;
     emit deleteMessagesBack(info.code());
+}
+
+void ChatControler::_getContactInfo(service::ErrorInfo &info, service::User &user, Msg msg)
+{
+    qDebug() << Q_FUNC_INFO << "sfdsffffffffffffffffffffffffffffffff" <<  user.name.c_str();
+    msg.name = QString::fromStdString(user.name);
+    msg.thumb_avatar = QString::fromStdString(user.thumb_avatar);
+    emit sessionMessageNotice(msg.targetid,msg.msgid,msg.body,msg.time,msg.name,msg.thumb_avatar);
 }
 
 Msg ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)

@@ -141,21 +141,10 @@ QString LinkDoodService::createMsgId()
     return strId;
 }
 
-void LinkDoodService::getUserById(QString &userId)
+void LinkDoodService::getContactInfo(QString userId, Msg msg)
 {
-    qDebug() << Q_FUNC_INFO;
-    if(m_pIMClient != NULL){
-        m_pIMClient->getSearch()->getUserInfo(userId.toLongLong(),
-                       std::bind(&LinkDoodService::_getUserInfo,this,std::placeholders::_1,std::placeholders::_2));
-    }
-}
-
-void LinkDoodService::getUserInfo(QString &userId, QString &name, QString &avater)
-{
-    qDebug() << Q_FUNC_INFO;
-    if(m_pAuth != NULL){
-        m_pAuth->getUserInfo(userId,name,avater);
-    }
+    qDebug() << Q_FUNC_INFO << "xxxxxxxxxxxxxxxxxxxxxxxxx";
+    service::IMClient::getClient()->getContact()->getContactInfo(userId.toLongLong(),std::bind(&LinkDoodService::_getContactInfo,this,std::placeholders::_1,std::placeholders::_2,msg));
 }
 
 QString LinkDoodService::UserId()
@@ -163,6 +152,15 @@ QString LinkDoodService::UserId()
     qDebug() << Q_FUNC_INFO;
     if(m_pAuth != NULL){
         return m_pAuth->UserId();
+    }
+    return "";
+}
+
+QString LinkDoodService::userName()
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pAuth != NULL){
+        return m_pAuth->userName();
     }
     return "";
 }
@@ -224,10 +222,10 @@ void LinkDoodService::sendMessage(Msg msg)
     qDebug() << Q_FUNC_INFO << "msg.targetid = " << msg.targetid;
     qDebug() << Q_FUNC_INFO << "msg.fromid = " << msg.fromid;
     qDebug() << Q_FUNC_INFO << "msg.time = " << msg.time;
-
-    if(m_pChatObserver != NULL){
-        m_pChatObserver->sendMessage(msg);
-    }
+    getContactInfo(msg.targetid,msg);
+//    if(m_pChatObserver != NULL){
+//            m_pChatObserver->sendMessage(msg);
+//    }
 }
 
 void LinkDoodService::getMessages(const QString &targetid, const QString & msgid, const int& count, const int& flag)
@@ -531,9 +529,16 @@ void LinkDoodService::onSrvGetContactInfoResult(service::ErrorInfo &info, servic
      emit srvGetContactInfo(user);
 }
 
-void LinkDoodService::_getUserInfo(service::ErrorInfo &info, service::User &user)
+void LinkDoodService::_getContactInfo(service::ErrorInfo &info, service::User &user, Msg msg)
 {
-    qDebug() << Q_FUNC_INFO;
+
+    msg.name = QString::fromStdString(user.name);
+    msg.thumb_avatar = QString::fromStdString(user.thumb_avatar);
+    qDebug() << Q_FUNC_INFO << "sfdsffffffffffffffffffffffffffffffff" <<  msg.name;
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->sendMessage(msg);
+    }
+    //emit sessionMessageNotice(msg.targetid,msg.msgid,msg.body,msg.time,msg.name,msg.thumb_avatar);
 }
 
 

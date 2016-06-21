@@ -12,12 +12,15 @@ class ChatControler:public QObject,public IChatObserver
 public:
     void init();//初始监听接口
 
+     void getContactInfo(QString userId,Msg msg);
+
     //进入会话UI
     void entryChat(const QString targetId);
     //离开会话UI
     void exitChat(const QString targetId);
     //获取当前SessionId
     bool getCurrentSessionId(QString& targetId);
+
     /**************************************************
     * @brief removeChat
     * @description: 移除会话
@@ -141,6 +144,8 @@ private:
     * @description: 删除消息结果回调
     ***************************************************/
     void _deleteMessage(service::ErrorInfo& info);
+
+    void _getContactInfo(service::ErrorInfo& info, service::User& user,Msg msg);
 
     Msg msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
     service::MsgText QmsgtextTomsgtext(Msg Qmsgtext);

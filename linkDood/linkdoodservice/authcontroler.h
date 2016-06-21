@@ -25,7 +25,7 @@ public:
     void getUserInfo(QString& userId,QString& name,QString& avater);
     //用户信息UserId
     QString UserId();
-
+    QString userName();
     /***************************************
     * @brief getLoginHistory
     * @description: 获取登录历史记录

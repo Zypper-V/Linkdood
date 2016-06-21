@@ -102,12 +102,10 @@ public slots:
     QString createMsgId();
 
     //用户信息
-    void getUserInfo(QString& userId,QString& name,QString& avater);
-    void getUserById(QString& userId);
-
+    void getContactInfo(QString userId,Msg msg);
     //用户信息UserId
     QString UserId();
-
+    QString userName();
     /*****************start chat**************************/
     //获取会话列表
     void getChatList(void);
@@ -245,7 +243,7 @@ private:
     void initDBusConnection();
 
     void onSrvGetContactInfoResult(service::ErrorInfo& info,service::User&user);
-    void _getUserInfo(service::ErrorInfo& info, service::User& user);
+    void _getContactInfo(service::ErrorInfo& info, service::User& user,Msg msg);
 private:
     CSystemPackageManager *m_pPackageManager;
     QString m_sInstallPath;
