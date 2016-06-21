@@ -71,7 +71,8 @@ HEADERS += linkdoodservice_workspace.h \
     contactcontroler.h \
     chatcontroler.h \
     sysmsgcontroler.h \
-    enterprisecontroler.h
+    enterprisecontroler.h \
+    linkdoodservicethread.h
 
 SOURCES += main.cpp \
 	   linkdoodservice_workspace.cpp \
@@ -80,7 +81,8 @@ SOURCES += main.cpp \
     contactcontroler.cpp \
     chatcontroler.cpp \
     sysmsgcontroler.cpp \
-    enterprisecontorler.cpp
+    enterprisecontorler.cpp \
+    linkdoodservicethread.cpp
 
 target.path = $$INSTALL_DIR/bin
 
