@@ -68,7 +68,7 @@ public slots:
     void exitChat(const QString targetId);
 
     // 从配置文件读取登录状态
-    void getAppLoginStatus(int& status);
+     int getAppLoginStatus();
     //向配置文件写入登录状态
     void setAppLoginStatus(const int status);
     //登录

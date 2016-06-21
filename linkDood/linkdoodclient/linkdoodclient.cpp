@@ -82,14 +82,24 @@ void LinkDoodClient::exitChat(const QString targetId)
     manager.call("exitChat",targetId);
 }
 
-void LinkDoodClient::getAppLoginStatus(int &status)
+int LinkDoodClient::getAppLoginStatus()
 {
     qDebug() << Q_FUNC_INFO;
     QDBusInterface manager(DBUS_DOOD_SERVICE,
                            DBUS_DOOD_PATH,
                            DBUS_DOOD_INTERFACE,
                            QDBusConnection::sessionBus());
-    manager.call("getAppLoginStatus",status);
+    QDBusPendingReply<int> reply = manager.call("getAppLoginStatus");
+    reply.waitForFinished();
+
+    int sTmp;
+    if (!reply.isError()) {
+        sTmp = reply;
+    } else {
+        qDebug() << reply.error();
+    }
+
+    return sTmp;
 }
 
 void LinkDoodClient::setAppLoginStatus(const int status)
