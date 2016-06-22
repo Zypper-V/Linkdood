@@ -55,8 +55,10 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
       }else if(i.gender == 2){
         user.gender = QObject::tr("女");
       }
-
-       contacts.push_back(user);
+      if(user.id!="9151315548882010112")
+      {
+         contacts.push_back(user);
+      }
     }
     emit contactListChanged(operType,contacts);
 }
