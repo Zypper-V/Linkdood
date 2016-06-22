@@ -378,6 +378,35 @@ CPage {
                     }
                 }
             }
+            Rectangle{
+                id:rectSendButtunBk
+
+                anchors.left: inputMessageRoot.right
+                anchors.leftMargin: 19
+                anchors.verticalCenter: inputMessageRoot.verticalCenter
+                width:120
+                height:inputMessageRoot.height
+                radius: 6
+                color:"#ffffff"
+                Text{
+                    text:qsTr("发送")
+                    font.pixelSize: 34
+                    color:"#333333"
+                    anchors.centerIn: parent
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: {
+                            sendTextMsg();
+                        }
+                        onReleased: {
+                            rectSendButtunBk.color="#ffffff"
+                        }
+                        onPressed: {
+                            rectSendButtunBk.color="#32c2fe"
+                        }
+                    }
+                }
+            }
         }
 
         // 工具面板

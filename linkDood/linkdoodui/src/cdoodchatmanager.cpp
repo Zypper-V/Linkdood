@@ -45,6 +45,11 @@ void CDoodChatManager::analyticalMessage(MsgList list)
             pChatItem->setToId(list.at(i).toid);
             pChatItem->setTime(QDateTime::fromString(list.at(i).time, "yyyy-MM-dd hh:mm:ss"));
             pChatItem->setBody(list.at(i).body);
+            if(list.at(i).fromid != m_pClient->UserId()){
+                pChatItem->setName(name());
+            }else{
+                pChatItem->setName(m_pClient->userName());
+            }
 
 //            if(i == 0) {
 //                pChatItem->setShowTime(true);
@@ -102,9 +107,10 @@ void CDoodChatManager::addItemToListViewModel(Msg msg)
         pChatItem->setTargetId(msg.targetid);
         pChatItem->setFromId(msg.fromid);
         pChatItem->setToId(msg.toid);
+        pChatItem->setName(msg.name);
         pChatItem->setTime(QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss"));
         pChatItem->setBody(msg.body);
-
+        pChatItem->setName(msg.name);
         m_oLastMessageTime = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
         addItem(pChatItem);
         m_oChatMap[msg.msgid] = pChatItem;
@@ -135,6 +141,7 @@ void CDoodChatManager::sendText(QString text)
     msgText.msgtype = QString::number(MSG_TYPE_TEXT);
     msgText.targetid = m_sTargetid;
     msgText.fromid = m_pClient->UserId();
+    msgText.name = m_pClient->userName();
     QDateTime time;
     msgText.time = time.currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     // todo
@@ -275,7 +282,8 @@ void CDoodChatManager::onChatMessageNotice(Msg msg)
     qDebug() << Q_FUNC_INFO << msg.body;
     qDebug() << Q_FUNC_INFO << msg.msgid;
     qDebug() << Q_FUNC_INFO << msg.msgtype;
-
+    qDebug() << Q_FUNC_INFO <<"ssssssssssss"<< msg.name;
+    msg.name = m_pClient->userName();
     addItemToListViewModel(msg);
 }
 
@@ -291,7 +299,7 @@ void CDoodChatManager::onChatGetMessagesResult(bool code, QString sessionId, Msg
     if (msgList.size() <= 0) {
         return;
     }
-
+    qDebug() << Q_FUNC_INFO <<"DDD:" << name();
     analyticalMessage(msgList);
 }
 

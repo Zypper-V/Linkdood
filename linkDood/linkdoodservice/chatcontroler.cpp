@@ -149,6 +149,9 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
     if(msg->msgtype == 2)
     {
        qDebug() << Q_FUNC_INFO << "xxxxxxxxxx:" << msg->time;
+       if(msg->time == 0){
+           msg->time = QDateTime::currentDateTime().toMSecsSinceEpoch();
+       }
        std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
        Msg imMsg = msgtextToQmsgtext(msgText);
         qDebug() << Q_FUNC_INFO << "messageNotice:"<< imMsg.body;
@@ -311,7 +314,6 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
             item.targetid = QString::number(msgText->targetid);
             item.time = QString::number(msgText->time);
             item.toid = QString::number(msgText->toid);
-
             msgList.insert(msgList.size(),item);
         }
    }

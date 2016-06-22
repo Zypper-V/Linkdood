@@ -27,17 +27,17 @@ Component {
                 id: sendTextMessageHeadImageView
                 width: 75
                 height: 75
-
                 name: sessionListManager.getSubName(model.modelData.name)
-                headerColor: sessionListManager.getHeaderColor(model.modelData.targetId)
+                headerColor: sessionListManager.getHeaderColor(model.modelData.fromId)
                 iconSource: "file://"+ model.modelData.thumbAvatar
 
                 MouseArea {
                     anchors.fill: parent
 
                     onClicked: {
-                        console.log("todo show MyInfo Page !!!")
-
+                        console.log("todo show MyInfo Pagesssssssssss !!!")
+                        console.log(model.modelData.name)
+                        console.log(model.modelData.fromId)
                         if (chatListView.editing)
                             return;
                     }

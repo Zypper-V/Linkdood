@@ -61,7 +61,7 @@ Item {
                 myChatPage.targetid = model.modelData.id
                 myChatPage.chatType = model.modelData.chatType
                 myChatPage.icon = model.modelData.thumbAvatar
-
+                chatManager.setName(model.modelData.name);
                 myChatPage.initMessage();
                 pageStack.push(myChatPage);
             }

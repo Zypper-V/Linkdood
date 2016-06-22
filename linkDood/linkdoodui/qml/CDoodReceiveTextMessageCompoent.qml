@@ -71,6 +71,7 @@ Component {
 
                     onClicked: {
                         console.log("todo show Info Page !!!")
+                        console.log(model.modelData.name)
 
                         if (chatListView.editing)
                             return;
