@@ -8,32 +8,32 @@ CPage {
     anchors.fill: parent
     orientationPolicy: CPageOrientation.LockPortrait
 
-//    property bool loadDataFlag:false
+    property bool loadDataFlag:false
 //    signal prepareFinished()
 
-//    Timer{
-//        id:loadDataCheckTimer
-//        running: false
-//        repeat: false
-//        interval: 100
-//        onTriggered: {
-//            if(loadDataFlag) {
-//                loadDataFlag = false
-//                chatListView.positionViewAtEnd()
-//                viewToEndanimation.start()
-//            }
-//        }
-//    }
+    Timer{
+        id:loadDataCheckTimer
+        running: false
+        repeat: false
+        interval: 100
+        onTriggered: {
+            if(loadDataFlag) {
+                loadDataFlag = false
+                chatListView.positionViewAtEnd()
+                viewToEndanimation.start()
+            }
+        }
+    }
 
-//    Timer{
-//        id:viewToEndanimation
-//        running: false
-//        repeat: false
-//        interval: 50
-//        onTriggered: {
-//            prepareFinished()
-//        }
-//    }
+    Timer{
+        id:viewToEndanimation
+        running: false
+        repeat: false
+        interval: 50
+        onTriggered: {
+            prepareFinished()
+        }
+    }
 
     property alias wallClockCurrentTime: clock.time
 
@@ -62,15 +62,12 @@ CPage {
 
     Keys.onReleased: {
         if (event.key === Qt.Key_Back || event.key === Qt.Key_Escape) {
-            if(emotionPanel.state === "emotionState") {
-                //                emotionPanel.state = "default"
-                event.accepted = true;
-            }
+
         }
 
         if(event.key === Qt.Key_Return)
         {
-            console.log("eim === sendMsg !!!!")
+            console.log("dood === sendMsg !!!!")
             event.accepted = true;
         }
     }
@@ -93,6 +90,9 @@ CPage {
             chatPage.pageActive = false
             inputTextArea.focus = false
             chatManager.exitChat()
+        } else if (status === CPageStatus.Show) {
+            console.log("chatListView.positionViewAtEnd()")
+            chatListView.positionViewAtEnd()
         }
     }
 
@@ -116,7 +116,7 @@ CPage {
 
     function initMessage() {
         console.log("zhangp dood initMessage !!!!")
-//        chatPage.loadDataFlag = true;
+        //        chatPage.loadDataFlag = true;
 
         inputTextArea.text = ""
         chatManager.deleteMessageListItem()
@@ -130,7 +130,6 @@ CPage {
     }
 
     contentAreaItem:Item {
-        anchors.fill :parent
         Rectangle {
             id: chatPageBackground
             anchors.fill: parent
@@ -191,10 +190,10 @@ CPage {
             cacheBuffer: chatListView.height * 2
             delegate: CDoodChatDelegate {
                 Component.onCompleted: {
-//                    if(chatPage.loadDataFlag)
-//                    {
-//                        loadDataCheckTimer.restart()
-//                    }
+                    if(chatPage.loadDataFlag)
+                    {
+                        loadDataCheckTimer.restart()
+                    }
                 }
             }
 
@@ -237,7 +236,7 @@ CPage {
                 if(!moving && chatListScrollbbar.y >=0 && chatListScrollbbar.y < chatPage.getMessageHeight * 4) {
                     chatPage.bNeedViewToEnd = false
                     // todo
-                    //                    chatPage.setSearchHisory(chatPage.receiverId, chatPage.sessionType)
+                    chatManager.getMessages(chatPage.targetid, 20)
                 }
             }
 
@@ -265,18 +264,18 @@ CPage {
             }
 
             onCountChanged: {
-//                if(chatPage.loadDataFlag)
-//                {
-//                    loadDataCheckTimer.restart()
-//                }
+                if(chatPage.loadDataFlag)
+                {
+                    loadDataCheckTimer.restart()
+                }
             }
 
             onHeightChanged: {
+                console.log("zhangp === onHeightChanged!!!!")
                 if (inputShow) {
                     chatListView.cancelFlick()
                     if(!chatListView.editing) {
                         chatListView.positionViewAtEnd()
-                        //chatPage.timerchatListViewToEnd()
                     }
                 }
             }
@@ -287,7 +286,7 @@ CPage {
             id: functionPanelRoot
 
             anchors.left: parent.left
-            anchors.bottom: parent.bottom
+            anchors.bottom: selectionAddDialog.height > 0 ? selectionAddDialog.top : parent.bottom
 
             width: parent.width
             height: inputMessageRoot.visible ? inputMessageRoot.height + 30 : 100
@@ -348,8 +347,10 @@ CPage {
                     }
 
                     onFocusChanged: {
+                        console.log("zhangp onFocusChanged = ", focus)
                         if(focus) {
                             inputTextArea.cursorPosition = inputTextArea.length
+                        } else {
                         }
                     }
 
@@ -376,6 +377,25 @@ CPage {
                         oldLength = text.length
                     }
                 }
+            }
+        }
+
+        // 工具面板
+        Item {
+            id: selectionAddDialog
+            anchors.bottom: parent.bottom
+
+            width: parent.width
+            height: gInputContext.softwareInputPanelRect.height
+
+            Behavior on height {
+                NumberAnimation { duration: 150 }
+            }
+
+            Rectangle {
+                id: background
+                anchors.fill: parent
+                color: "#ffffff"
             }
         }
     }

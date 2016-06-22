@@ -30,6 +30,8 @@ CPage {
             loadingDialog.hide();
             sessionListManager.getChatList();
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+
+//            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
         }
         onLoginResultObserver:{
             console.log("onLoginResultObserver !!!!");

@@ -27,8 +27,10 @@ class CDoodLoginManager : public CDoodListModel
 {
     Q_OBJECT
     Q_PROPERTY(int loginStatus READ loginStatus)
-//    Q_PROPERTY(QString server READ server WRITE setServer NOTIFY serverChanged)
-//    Q_PROPERTY(QString password READ password WRITE setPassword NOTIFY passwordChanged)
+    //    Q_PROPERTY(QString server READ server WRITE setServer NOTIFY serverChanged)
+    //    Q_PROPERTY(QString password READ password WRITE setPassword NOTIFY passwordChanged)
+    Q_PROPERTY(bool windowFocus READ windowFocus WRITE setWindowFocus NOTIFY windowFocusChanged)
+
 
 public:
     explicit CDoodLoginManager(LinkDoodClient *client = 0, QObject *parent = 0);
@@ -40,33 +42,35 @@ public:
                            const QString &password);
 
     // 从配置文件读取登录状态
-     Q_INVOKABLE int getAppLoginStatus();
+    Q_INVOKABLE int getAppLoginStatus();
     //向配置文件写入登录状态
-     Q_INVOKABLE void setAppLoginStatus(const int status);
+    Q_INVOKABLE void setAppLoginStatus(const int status);
 
     //用户信息UserId
     Q_INVOKABLE QString userId();
+    bool windowFocus() const;
+    Q_INVOKABLE bool setWindowFocus(const bool &windowFocus);
     //用户信息
     void getUserInfo(QString& userId,
                      QString& name,
                      QString& avater);
 
     Q_INVOKABLE bool checkFirstWordIsSpace(const QString &text);
-     //获取登录历史记录
+    //获取登录历史记录
     Q_INVOKABLE void getLoginHistory(void);
     //设置登录信息
     Q_INVOKABLE void setLoginInfo(int flag, QString userid, QString username, QString avatar);
 
-  //  Q_INVOKABLE QString userId();
+    //  Q_INVOKABLE QString userId();
 
-//    QString user()const;
-//    QString server()const;
-//    QString password()const;
-//    void setUser(QString user);
-//    void setServer(QString server);
-//    void setPassword(QString password);
+    //    QString user()const;
+    //    QString server()const;
+    //    QString password()const;
+    //    void setUser(QString user);
+    //    void setServer(QString server);
+    //    void setPassword(QString password);
 
-      Q_INVOKABLE int loginStatus();
+    Q_INVOKABLE int loginStatus();
 signals:
     void loginStatusChanged();
     void loginSucceeded();
@@ -76,10 +80,11 @@ signals:
     void getLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
     void loginResultObserver(int code,QString userID);
+    void windowFocusChanged();
 
-//    void userChanged();
-//    void serverChanged();
-//    void passwordChanged();
+    //    void userChanged();
+    //    void serverChanged();
+    //    void passwordChanged();
 private slots:
     void onLoginSucceeded();
     void onLoginFailed(QString err);
@@ -92,9 +97,10 @@ private:
     void initConnect();
 
     QString mUserId;
-//    QString mUser;
-//    QString mServer;
-//    QString mPassword;
+    //    QString mUser;
+    //    QString mServer;
+    //    QString mPassword;
+    bool m_bWindowFocus;
     LinkDoodClient *m_pClient;
 };
 

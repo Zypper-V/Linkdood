@@ -86,7 +86,8 @@ void CDoodChatManager::analyticalMessage(MsgList list)
     }
 #endif
     emit itemCountChanged();
-    m_sBeginMsgId = list.at(list.size() - 1).msgid;
+    // 消息id与数据库的消息id不一致时查询结果可能会有问题
+    m_sBeginMsgId = list.at(0).msgid;
 }
 
 void CDoodChatManager::addItemToListViewModel(Msg msg)

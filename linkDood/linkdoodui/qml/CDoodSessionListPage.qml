@@ -4,7 +4,7 @@ import com.syberos.basewidgets 2.0
 Item {
     id: sessionListPage
     anchors.fill: parent
-    property var chatPage
+    property var myChatPage
 
     Rectangle{
         id:sessionListTitleBar
@@ -26,18 +26,6 @@ Item {
         }
     }
 
-//    Rectangle {
-//        anchors.top: sessionListTitleBar.bottom
-//        anchors.left: parent.left
-
-//        width:parent.width
-//        height: parent.height
-
-////        color: "#f2f2f2"
-//        color: "black"
-//        z:parent.z-1
-//    }
-
     CEditListView {
         id: sessionListView
         anchors.top: sessionListTitleBar.bottom
@@ -58,25 +46,24 @@ Item {
             height: 125
 
 //            Connections {
-//                target: chatPage
+//                target: sessionListPage.myChatPage
 
 //                onPrepareFinished:{
 //                    console.log("=======zhangpeng onPrepareFinished=======")
-//                    pageStack.push(chatPage);
+//                    pageStack.push(myChatPage);
 //                }
 //            }
 
             onClicked: {
                 console.log("model.modelData.link = ", model.modelData.lastMsg)
-                chatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
-                chatPage.chatName = model.modelData.name
-                chatPage.targetid = model.modelData.id
-                chatPage.chatType = model.modelData.chatType
-                chatPage.icon = model.modelData.thumbAvatar
+                myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
+                myChatPage.chatName = model.modelData.name
+                myChatPage.targetid = model.modelData.id
+                myChatPage.chatType = model.modelData.chatType
+                myChatPage.icon = model.modelData.thumbAvatar
 
-                chatManager.getMessages(model.modelData.id,"0",9,1);
-                chatPage.initMessage();
-                pageStack.push(chatPage);
+                myChatPage.initMessage();
+                pageStack.push(myChatPage);
             }
 
             onPressedChanged:{

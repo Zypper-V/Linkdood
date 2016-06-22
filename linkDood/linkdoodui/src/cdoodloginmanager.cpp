@@ -28,7 +28,7 @@ void CDoodLoginManager::login(const QString &server,
 {
     qDebug() << Q_FUNC_INFO << server << userId << password;
     m_pClient->login(server, userId, password);
-//    m_pClient->installPath();
+    //    m_pClient->installPath();
     //getLoginHistory();
 }
 
@@ -63,8 +63,8 @@ void CDoodLoginManager::getLoginHistory()
 
 void CDoodLoginManager::setLoginInfo(int flag, QString userid, QString username, QString avatar)
 {
-     qDebug() << Q_FUNC_INFO;
-     m_pClient->setLoginInfo(flag,userid,username,avatar);
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->setLoginInfo(flag,userid,username,avatar);
 }
 
 int CDoodLoginManager::loginStatus()
@@ -78,6 +78,23 @@ QString CDoodLoginManager::userId()
     mUserId = m_pClient->UserId();
 
     return mUserId;
+}
+
+bool CDoodLoginManager::windowFocus() const
+{
+    return m_bWindowFocus;
+}
+
+bool CDoodLoginManager::setWindowFocus(const bool &windowFocus)
+{
+    if(windowFocus) {
+        //        clearNotifications();
+        //        clearBadge();
+    }
+
+    m_bWindowFocus = windowFocus;
+    emit windowFocusChanged();
+    return windowFocus;
 }
 
 //QString CDoodLoginManager::user() const
@@ -144,9 +161,9 @@ void CDoodLoginManager::onGetLoginHistoryResult(LoginInfoList list)
 
 void CDoodLoginManager::onLoginResultObserver(int code, QString userID)
 {
-      qDebug() << Q_FUNC_INFO << "user:" << userID;
-      mUserId = userID;
-      emit loginResultObserver(code,userID);
+    qDebug() << Q_FUNC_INFO << "user:" << userID;
+    mUserId = userID;
+    emit loginResultObserver(code,userID);
 }
 
 void CDoodLoginManager::initConnect()
