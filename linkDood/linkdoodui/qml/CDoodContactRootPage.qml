@@ -62,42 +62,68 @@ Item {
         color: "white"
         z:parent.z-1
     }
-    CEditListView {
+    ListView {
         id: contactListView
         anchors.top: contactRootTitleBar.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
-        editable:false
         clip: true
         model: contactManager
 
-        editing: false
+        // todo 缺少sectionKey字段
+//        section.property: "sectionKey"
+//        section.criteria: ViewSection.FirstCharacter
+//        section.delegate: Rectangle {
+//            width: 720
+//            height: 45
+//            color: "#e7e7e7"
 
-        delegate:CEditListViewDelegate {
+//            Text {
+//                anchors.left: parent.left
+//                anchors.leftMargin: 40
+//                anchors.verticalCenter: parent.verticalCenter
+//                text: section
+//                font.pixelSize: 28
+//                color: "#333333"
+//            }
+//        }
+
+        delegate:Item {
             id:contactListDelegate
 
             width: contactListView.width
             height: 113
 
-            onClicked: {
-                //                console.log("model.modelData.link = ", model.modelData.name)
-                userdataManager.setName(model.modelData.name);
-                userdataManager.setGender(model.modelData.gender);
-                userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
-                userdataManager.setId(model.modelData.id);
+            MouseArea {
+                anchors.fill: parent
 
-                pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
-            }
+                onPressed: {
+                    if(mousePressBackgroud.visible){
+                        background.color = "#ffffff"
+                        mousePressBackgroud.visible = false
+                    }else{
+                        background.color = "#cdcdcd"
+                        mousePressBackgroud.visible = true
+                    }
+                }
 
-            onPressedChanged:{
-                if(mousePressBackgroud.visible){
+                onReleased: {
+                    userdataManager.setName(model.modelData.name);
+                    userdataManager.setGender(model.modelData.gender);
+                    userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
+                    userdataManager.setId(model.modelData.id);
+
                     background.color = "#ffffff"
                     mousePressBackgroud.visible = false
-                }else{
-                    background.color = "#cdcdcd"
-                    mousePressBackgroud.visible = true
+
+                    pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
+                }
+
+                onCanceled: {
+                    background.color = "#ffffff"
+                    mousePressBackgroud.visible = false
                 }
             }
 
