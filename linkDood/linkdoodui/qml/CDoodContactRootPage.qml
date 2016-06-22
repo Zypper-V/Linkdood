@@ -17,7 +17,7 @@ Item {
 
             anchors.centerIn: parent
 
-            text:qsTr("信源豆豆")
+            text:qsTr("天工圆圆")
             color:"white"
             font.pixelSize: 36
         }
@@ -41,6 +41,10 @@ Item {
     Connections {
         target: loginManager
         onLoginoutRelust:{
+            contactManager.clearChatList();
+            sessionListManager.clearChatList();
+            loginManager.setAppLoginStatus(0);
+
             pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
 //            if(loginout){
 //                console.log("loginout OK.................");

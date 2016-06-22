@@ -120,6 +120,12 @@ void ChatControler::deleteMessage(QString targetid, std::vector<QString> msgs)
                                        std::placeholders::_1));
 }
 
+void ChatControler::getChatList()
+{
+    qDebug() << Q_FUNC_INFO << "dddddddddddddddd";
+    service::IMClient::getClient()->getChat()->getChatList();
+}
+
 ChatControler::ChatControler(QObject* parent):
     QObject(parent)
 {

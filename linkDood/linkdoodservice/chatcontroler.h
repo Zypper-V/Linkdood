@@ -67,6 +67,9 @@ public:
     ***************************************************/
     void deleteMessage(QString targetid, std::vector<QString> msgs);
 
+    //获取会话列表
+    void getChatList(void);
+
     ChatControler(QObject* parent=0);
     ~ChatControler();
     /*************************************************************

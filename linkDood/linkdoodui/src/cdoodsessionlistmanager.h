@@ -36,6 +36,8 @@ public:
 
     //获取会话列表
     Q_INVOKABLE void getChatList();
+    //清空会话列表
+    Q_INVOKABLE void clearChatList();
 
     Q_INVOKABLE QString getHeaderColor(const QString &id);
 

@@ -17,6 +17,12 @@ ContactControler::~ContactControler()
 
 }
 
+void ContactControler::getContactList()
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getContact()->getContactList();
+}
+
 void ContactControler::init()
 {
     qDebug() << Q_FUNC_INFO;

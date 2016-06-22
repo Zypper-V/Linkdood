@@ -103,6 +103,8 @@ public slots:
 
     //用户信息
     void getContactInfo(QString userId,Msg msg);
+    //获取会话列表
+    void getContactList();
     //用户信息UserId
     QString UserId();
     QString userName();

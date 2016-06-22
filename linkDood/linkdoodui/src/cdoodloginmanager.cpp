@@ -9,7 +9,6 @@ CDoodLoginManager::CDoodLoginManager(LinkDoodClient *client, QObject *parent) :
     qDebug() << Q_FUNC_INFO;
     qRegisterMetaType<CDoodLoginManager*>();
     initConnect();
-    m_bWindowFocus = true;
 }
 
 CDoodLoginManager::~CDoodLoginManager()
@@ -31,6 +30,18 @@ void CDoodLoginManager::login(const QString &server,
     m_pClient->login(server, userId, password);
 //    m_pClient->installPath();
     //getLoginHistory();
+}
+
+int CDoodLoginManager::getAppLoginStatus()
+{
+    qDebug() << Q_FUNC_INFO << "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk";
+    return m_pClient->getAppLoginStatus();
+}
+
+void CDoodLoginManager::setAppLoginStatus(const int status)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->setAppLoginStatus(status);
 }
 
 void CDoodLoginManager::getUserInfo(QString &userId, QString &name, QString &avater)
@@ -56,29 +67,17 @@ void CDoodLoginManager::setLoginInfo(int flag, QString userid, QString username,
      m_pClient->setLoginInfo(flag,userid,username,avatar);
 }
 
+int CDoodLoginManager::loginStatus()
+{
+    return getAppLoginStatus();
+}
+
 QString CDoodLoginManager::userId()
 {
     qDebug() << Q_FUNC_INFO;
     mUserId = m_pClient->UserId();
 
     return mUserId;
-}
-
-bool CDoodLoginManager::windowFocus() const
-{
-    return m_bWindowFocus;
-}
-
-bool CDoodLoginManager::setWindowFocus(const bool &windowFocus)
-{
-    if(windowFocus) {
-//        clearNotifications();
-//        clearBadge();
-    }
-
-    m_bWindowFocus = windowFocus;
-    emit windowFocusChanged();
-    return windowFocus;
 }
 
 //QString CDoodLoginManager::user() const
@@ -119,7 +118,7 @@ void CDoodLoginManager::onLoginSucceeded()
 {
     qDebug() << Q_FUNC_INFO;
     emit loginSucceeded();
-
+    setAppLoginStatus(1);
 }
 
 void CDoodLoginManager::onLoginFailed(QString err)

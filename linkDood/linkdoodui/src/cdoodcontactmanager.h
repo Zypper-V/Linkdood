@@ -16,7 +16,10 @@ public:
     explicit CDoodContactManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
     ~CDoodContactManager();
-
+    //获取会话列表
+    Q_INVOKABLE void getContactList();
+    //清空列表
+    Q_INVOKABLE void clearChatList();
 signals:
     void contactListChanged(int oper,ContactList contacts);
 private slots:

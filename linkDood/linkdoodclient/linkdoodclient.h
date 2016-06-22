@@ -91,6 +91,8 @@ public slots:
     void setMessageRead(QString targetid, QString msgid);
     //获取未读消息列表
     void getUnReadMessages(void);
+    //获取会话列表
+    void getChatList();
     //删除消息
     void deleteMessage(QString targetid, QStringList msgs);
     //发送消息
@@ -101,6 +103,8 @@ public slots:
     void getLoginHistory(void);
     //设置登录信息
     void setLoginInfo(int flag, QString userid, QString username, QString avatar);
+    //获取会话列表
+    void getContactList();
 
     /*****************start Enterprise**************************/
    void getSonOrgs(QString orgid);

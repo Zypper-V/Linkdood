@@ -15,6 +15,22 @@ CDoodContactManager::~CDoodContactManager()
 
 }
 
+void CDoodContactManager::getContactList()
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->getContactList();
+}
+
+void CDoodContactManager::clearChatList()
+{
+    qDebug() << Q_FUNC_INFO;
+    QList<CDoodContactItem*>  itemList = contactListMap.values();
+    for(int i= 0;i< itemList.size();i++){
+        removeItem(itemList.value(i));
+    }
+    contactListMap.clear();
+}
+
 void CDoodContactManager::onContactListChanged(int oper, ContactList contacts)
 {
     qDebug() << Q_FUNC_INFO << "conactListSize" << contacts.size();

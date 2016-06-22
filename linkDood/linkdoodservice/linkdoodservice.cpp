@@ -147,6 +147,14 @@ void LinkDoodService::getContactInfo(QString userId, Msg msg)
     service::IMClient::getClient()->getContact()->getContactInfo(userId.toLongLong(),std::bind(&LinkDoodService::_getContactInfo,this,std::placeholders::_1,std::placeholders::_2,msg));
 }
 
+void LinkDoodService::getContactList()
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pContactObserver != NULL){
+        m_pContactObserver->getContactList();
+    }
+}
+
 QString LinkDoodService::UserId()
 {
     qDebug() << Q_FUNC_INFO;
@@ -167,9 +175,10 @@ QString LinkDoodService::userName()
 void LinkDoodService::getChatList()
 {
     qDebug() << Q_FUNC_INFO;
-    if(m_pIMClient != NULL)
+    if(m_pChatObserver != NULL)
     {
-        m_pIMClient->getChat()->getChatList();
+        qDebug() << Q_FUNC_INFO << "dfffffdggffffffffffffff";
+        m_pChatObserver->getChatList();
     }
 }
 

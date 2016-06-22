@@ -16,13 +16,22 @@ CDoodSessionListManager::CDoodSessionListManager(LinkDoodClient *client, QObject
 
 CDoodSessionListManager::~CDoodSessionListManager()
 {
-
 }
 
 void CDoodSessionListManager::getChatList()
 {
     qDebug() << Q_FUNC_INFO;
-    //    m_pClient->
+    m_pClient->getChatList();
+}
+
+void CDoodSessionListManager::clearChatList()
+{
+    qDebug() << Q_FUNC_INFO;
+    QList<CDoodSessionListItem*>  itemList = sessionListMap.values();
+    for(int i= 0;i< itemList.size();i++){
+        removeItem(itemList.value(i));
+    }
+    sessionListMap.clear();
 }
 
 QString CDoodSessionListManager::getHeaderColor(const QString &id)
@@ -110,7 +119,7 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
         tmpItem->setLastMsgid(msgId);
         addItemBegin(tmpItem);
         sessionListMap[targetId] = tmpItem;
-         qDebug() << Q_FUNC_INFO << "new item XXXX.";
+         qDebug() << Q_FUNC_INFO << "name:" << name;
     }
 }
 

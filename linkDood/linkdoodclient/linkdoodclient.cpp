@@ -212,6 +212,16 @@ void LinkDoodClient::getUnReadMessages()
     manager.call("getUnReadMessages");
 }
 
+void LinkDoodClient::getChatList()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getChatList");
+}
+
 void LinkDoodClient::deleteMessage(QString targetid, QStringList msgs)
 {
     qDebug() << Q_FUNC_INFO;
@@ -293,6 +303,16 @@ void LinkDoodClient::setLoginInfo(int flag, QString userid, QString username, QS
                            DBUS_DOOD_INTERFACE,
                            QDBusConnection::sessionBus());
     manager.call("setLoginInfo",flag,userid,username,avatar);
+}
+
+void LinkDoodClient::getContactList()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getContactList");
 }
 
 void LinkDoodClient::onLoginoutRelust(bool loginout)

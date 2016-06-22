@@ -49,10 +49,16 @@ CPageStackWindow {
 
     Component.onCompleted: {
         console.log("main.qml onCompleted!!!")
-        var tmp =  Qt.createComponent(Qt.resolvedUrl("CPortalLoginPage.qml", Component.Asynchronous));
-        tmp.destroy();
+        var code = loginManager.loginStatus;
+        if(code === 0){
+            pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+        }else{
+            sessionListManager.getChatList();
+            contactManager.getContactList();
+            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+        }
 
-        pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
-
+//        var tmp =  Qt.createComponent(Qt.resolvedUrl("CPortalLoginPage.qml", Component.Asynchronous));
+//        tmp.destroy();
     }
 }

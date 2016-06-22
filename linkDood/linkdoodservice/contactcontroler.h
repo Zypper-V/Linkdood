@@ -14,6 +14,10 @@ public:
 
     ContactControler(QObject *parent = 0);
     ~ContactControler();
+
+    //获取会话列表
+    void getContactList();
+
     void init();
     void onListChanged(int operType, std::vector<service::Contact>& users);
     void onAvatarChanged(int64 userid, std::string avatar);
