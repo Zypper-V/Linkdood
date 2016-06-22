@@ -435,7 +435,8 @@ void LinkDoodService::onSessionMessageNotice(QString targetId,QString msgId,QStr
 
 LinkDoodService::~LinkDoodService()
 {
-
+    qDebug() << Q_FUNC_INFO <<"sdfdsgdgdfhfghfjg";
+    setAppLoginStatus(0);
 }
 
 void LinkDoodService::initSdk()

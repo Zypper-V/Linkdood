@@ -84,11 +84,16 @@ void ChatControler::getUnReadMessages()
 void ChatControler::sendMessage(Msg &imMsg)
 {
     qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body << "TargetId:" << imMsg.targetid;
-    emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,imMsg.time,imMsg.name,imMsg.thumb_avatar);
-    //getUserInfo(imMsg.targetid,imMsg);
+
+    QDateTime dateTime = QDateTime::fromString(imMsg.time,"yyyy-MM-dd hh:mm:ss");
+    qDebug() << "dddddddddddd:"<< imMsg.time;
+    QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
+
+    emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,time,imMsg.name,imMsg.thumb_avatar);
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
         service::MsgText msg = QmsgtextTomsgtext(imMsg);
+        qDebug() << Q_FUNC_INFO << "cccc:" << msg.time;
         service::IMClient::getClient()->getChat()->sendMessage(msg,
                      std::bind(&ChatControler::_sendMesage,this,
                                std::placeholders::_1,
@@ -143,6 +148,7 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
 
     if(msg->msgtype == 2)
     {
+       qDebug() << Q_FUNC_INFO << "xxxxxxxxxx:" << msg->time;
        std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
        Msg imMsg = msgtextToQmsgtext(msgText);
         qDebug() << Q_FUNC_INFO << "messageNotice:"<< imMsg.body;
@@ -150,7 +156,7 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
        if(!getCurrentSessionId(sessionId)){
            emit chatMessageNotice(imMsg);
        }
-       qDebug() << Q_FUNC_INFO << "SessionId:" << sessionId;
+       qDebug() << Q_FUNC_INFO << "SessionId:" << sessionId << "Time:" << imMsg.time;
        getContactInfo(imMsg.fromid,imMsg);
     }
 
@@ -203,7 +209,7 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
         chatData.last_msg = "不支持的消息类型，请在电脑端查看";
         }
         chatData.avatar =  QString::fromStdString(ch->avatar);
-        chatData.msg_time = QDateTime::fromMSecsSinceEpoch(ch->msg_time).toString("yyyy-MM-dd hh:mm:ss");
+        chatData.msg_time = dealTime(ch->msg_time,1);
         chatData.id = QString::number(ch->id);
         chatData.chat_type = ch->chat_type;
         chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
@@ -213,6 +219,58 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
     }
     emit chatListChanged(chatList);
 
+}
+
+QString ChatControler::dealTime(qint64 msgtime, int type)
+{
+    QString strDateTime("");
+        QDateTime msgDateTime;
+        int distance = 0;
+        if (!msgtime)
+        {
+            return strDateTime;
+        }
+        msgDateTime.setMSecsSinceEpoch(msgtime);
+        distance = msgDateTime.daysTo(QDateTime::currentDateTime());
+        //今天
+        if (qFabs(distance) <= 0)
+        {
+            strDateTime = msgDateTime.toString("HH:mm");
+        }
+        //昨天
+        else if (qFabs(distance) <= 1)
+        {
+            if ( 1 == type)
+            {
+                strDateTime = "昨天";
+            }
+            else {
+                strDateTime = "昨天" + QString::fromLocal8Bit(" ") + msgDateTime.toString("HH:mm");
+            }
+
+        }
+        //前天
+        else if (qFabs(distance) <= 2)
+        {
+            if (1 == type)
+            {
+                strDateTime = "前天";
+            }
+            else {
+                strDateTime = "前天" + QString::fromLocal8Bit(" ") + msgDateTime.toString("HH:mm");
+            }
+        }
+        else
+        {
+            if (1 == type)
+            {
+                strDateTime = msgDateTime.toString("MM月dd日");
+            }
+            else {
+                strDateTime = msgDateTime.toString("MM月dd日") +QString::fromLocal8Bit(" ")+msgDateTime.toString("HH:mm");
+            }
+        }
+        return strDateTime;
 }
 
 void ChatControler::_removeChat(service::ErrorInfo &info)
@@ -275,7 +333,10 @@ void ChatControler::_getContactInfo(service::ErrorInfo &info, service::User &use
     qDebug() << Q_FUNC_INFO << "sfdsffffffffffffffffffffffffffffffff" <<  user.name.c_str();
     msg.name = QString::fromStdString(user.name);
     msg.thumb_avatar = QString::fromStdString(user.thumb_avatar);
-    emit sessionMessageNotice(msg.targetid,msg.msgid,msg.body,msg.time,msg.name,msg.thumb_avatar);
+    QDateTime dateTime = QDateTime::fromString(msg.time,"yyyy-MM-dd hh:mm:ss");
+    qDebug() << "dddddddddddd:"<< msg.time;
+    QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
+    emit sessionMessageNotice(msg.targetid,msg.msgid,msg.body,time,msg.name,msg.thumb_avatar);
 }
 
 Msg ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
@@ -326,10 +387,11 @@ service::MsgText ChatControler::QmsgtextTomsgtext(Msg Qmsgtext)
     str6 >> msgtext.localid;
     }
     if(Qmsgtext.time!=""){
-    std::stringstream str7(Qmsgtext.time.toStdString());
-    str7 >> msgtext.time;
+
+      QDateTime dateTime = QDateTime::fromString(Qmsgtext.time,"yyyy-MM-dd hh:mm:ss");
+      msgtext.time = dateTime.toMSecsSinceEpoch();
     }
-    if(Qmsgtext.msgProperties!=""){
+     if(Qmsgtext.msgProperties!=""){
     msgtext.msg_properties =Qmsgtext.msgProperties.toStdString();
     }
     if(Qmsgtext.body!=""){

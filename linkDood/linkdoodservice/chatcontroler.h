@@ -124,6 +124,9 @@ signals:
     //删除消息
     void deleteMessagesBack(int code);
 private:
+    //处理时间显示
+    //type 1 会话列表时间 2聊天界面时间
+    QString dealTime(qint64 msgtime,int type);
 
     /************************************
     * @brief onRemoveChat
