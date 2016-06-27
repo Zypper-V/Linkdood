@@ -56,12 +56,13 @@ CPageStackWindow {
         tmp.destroy();
 
         var code = loginManager.loginStatus;
+        console.log("sfdsgsdfgsfdg:"+code);
         if(code === 1){
             sessionListManager.getChatList();
             contactManager.getContactList();
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
         }else{
-             pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+            pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
         }
     }
 }

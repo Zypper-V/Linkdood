@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import com.syberos.basewidgets 2.0
-
+import QtQml.Models 2.1
 Item {
     id: sessionListPage
     anchors.fill: parent
@@ -25,224 +25,225 @@ Item {
             font.pixelSize: 36
         }
     }
-
-    CEditListView {
+    ListView {
         id: sessionListView
+
         anchors.top: sessionListTitleBar.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+        property var selectedItem: null
 
-        editable:false
         clip: true
-        model: sessionListManager
-
-        editing: false
-
-        delegate:CEditListViewDelegate {
-            id:sessionListDelegate
-
-            width: sessionListView.width
-            height: 125
-
-//            Connections {
-//                target: sessionListPage.myChatPage
-
-//                onPrepareFinished:{
-//                    console.log("=======zhangpeng onPrepareFinished=======")
-//                    pageStack.push(myChatPage);
-//                }
-//            }
-
-            onClicked: {
-                console.log("model.modelData.link = ", model.modelData.lastMsg)
-                myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
-                myChatPage.chatName = model.modelData.name
-                myChatPage.targetid = model.modelData.id
-                myChatPage.chatType = model.modelData.chatType
-                myChatPage.icon = model.modelData.thumbAvatar
-                chatManager.setName(model.modelData.name);
-                chatManager.setId(model.modelData.id);
-                myChatPage.initMessage();
-                pageStack.push(myChatPage);
-            }
-
-            onPressedChanged:{
-                if(mousePressBackgroud.visible){
-                    background.color = "#ffffff"
-                    mousePressBackgroud.visible = false
-                }else{
-                    background.color = "#cdcdcd"
-                    mousePressBackgroud.visible = true
-                }
-
-            }
-
-            Rectangle {
-                width: sessionListDelegate.width
-                height: sessionListDelegate.height
-
-
-                Rectangle {
-                    id : mousePressBackgroud
-                    anchors.fill: parent
-                    visible: false
-                    color: "#cdcdcd"
-                }
-
-                Rectangle {
-                    id : background
-                    anchors.fill: parent
-                    anchors.topMargin: 1
-                    anchors.bottomMargin: 3
-                    anchors.leftMargin: 2
-                    anchors.rightMargin:  2
-
-                    CDoodHeaderImage {
-                        id: headPortraitImage
-                        anchors.left: parent.left
-                        anchors.leftMargin: 20
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 80
-                        height: 80
-
-                        name: sessionListManager.getSubName(model.modelData.name)
-                        headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                        iconSource: "file://"+ model.modelData.thumbAvatar
-
-                    }
-
-                    Text {
-                        id: nameText
-                        anchors.left: headPortraitImage.right
-                        anchors.leftMargin: 30
-                        anchors.right: timeText.left
-                        anchors.rightMargin: 20
-                        anchors.top: parent.top
-                        anchors.topMargin: 25
-                        font.pixelSize: 30
-                        height: 33
-                        clip: true
-                        color: "#333333"
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                        text: model.modelData.name
-                    }
-
-                    Item {
-                        id: atTextRoot
-                        anchors.left: nameText.left
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 25
-                        height: 28
-                        width: 0
-
-                        clip: true
-                        visible: width === 0 ? false : true
-
-                        Text {
-                            id: atText
-                            font.pixelSize: 24
-                            color: "red"
-                            elide: Text.ElideMiddle;
-                            text: os.i18n.ctr(qsTr("[You were mentioned]")) // qsTr("[有人@你] ")
-                        }
-                    }
-                    Text {
-                        id: contentText
-                        anchors.left: atTextRoot.right
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 10
-                        anchors.right: notDisTurb.left
-                        anchors.rightMargin: 15
-                        font.pixelSize: 24
-                        height: 40
-                        clip: true
-                        color: "#777777"
-                        elide: Text.ElideRight
-                        text: model.modelData.lastMsg
-                    }
-
-                    Text {
-                        id: timeText
-                        anchors.right: parent.right
-                        anchors.rightMargin: sessionListView.editing ? 100 : 40
-                        anchors.top: nameText.top
-                        height: nameText.height
-                        verticalAlignment: Text.AlignVCenter
-
-                        font.pixelSize: 22
-                        color: "#999999"
-
-                        text: model.modelData.msgTime
-                    }
-
-                    Image {
-                        id: badgeImage
-                        anchors.right: parent.right
-                        anchors.rightMargin: sessionListView.editing ? 100 : 40
-                        anchors.top: timeText.bottom
-                        anchors.topMargin: 12
-                        fillMode: Image.PreserveAspectFit
-                        width: 64
-                        height: 30
-                        visible: false
-
-                        Text {
-                            id: badgeText
-                            anchors.centerIn: parent
-                            horizontalAlignment: Text.AlignHCenter
-                            verticalAlignment: Text.AlignVCenter
-
-                            font.pixelSize: 24
-                            color: "#ffffff"
-                        }
-                    }
-
-                    Image {
-                        id: badge0Image
-                        anchors.right: parent.right
-                        anchors.rightMargin: sessionListView.editing ? 100 : 40
-                        anchors.top: timeText.bottom
-                        anchors.topMargin: 12
-                        fillMode: Image.PreserveAspectFit
-                        width: 16
-                        height: 16
-                        visible: false
-                    }
-
-                    Image {
-                        id: notDisTurb
-                        anchors.right: badgeImage.visible ? badgeImage.left : badge0Image.left
-                        anchors.rightMargin: 16
-                        anchors.top: timeText.bottom
-                        anchors.topMargin: 12
-
-                        width: 25
-                        height: 25
-                        sourceSize: Qt.size(25, 25)
-                        smooth: true
-                        cache: false
-                        asynchronous: true
-                        visible: false
-                    }
-                }
-            }
-
-            CLine {
-                width: parent.width
-                anchors.left: parent.left
-                anchors.leftMargin: 150
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                z: parent.z+2
+        function unsetSelectedItem()
+        {
+            if (selectedItem) {
+                selectedItem.toInitState();
+                selectedItem = null;
             }
         }
-        CScrollDecorator{
-            flickableItem: sessionListView
+
+        function setSelectedItem(item) {
+            if (selectedItem !== item) {
+                console.debug("overhere")
+                unsetSelectedItem();
+                selectedItem = item;
+            }
+        }
+
+        displaced: Transition {
+            NumberAnimation { properties: "x,y"; easing.type: Easing.OutQuad }
+        }
+
+        Behavior on contentY {
+            NumberAnimation { duration: 200 }
+        }
+        model: DelegateModel {
+            id: visualModel
+            model: sessionListManager
+            delegate: Item {
+                id: rootItem
+
+                width: parent.width/*gScreenInfo.platformWidth*/
+                height: 125
+                property int visualIndex: DelegateModel.itemsIndex
+
+                SlideDelegate {
+                    id: delegateRoot
+                    anchors.fill: parent
+
+                    //                drag.target: cellItem
+                    //                drag.axis: Drag.XAndYAxis
+
+                    //                onPressAndHold: {
+                    //                    delegateRoot.drag.target = cellItem
+                    //                }
+
+                    onClicked: {
+                         delegateRoot.toInitState();
+                         sessionListView.unsetSelectedItem();
+
+                        chatManager.setName(model.modelData.name);
+                        chatManager.setId(model.modelData.id);
+
+                        myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
+                        myChatPage.chatName = model.modelData.name
+                        myChatPage.targetid = model.modelData.id
+                        myChatPage.chatType = model.modelData.chatType
+                        myChatPage.icon = model.modelData.thumbAvatar
+                        myChatPage.initMessage();
+                        pageStack.push(myChatPage);
+                    }
+
+                    onSlideFinished: {
+                        sessionListView.setSelectedItem(delegateRoot);
+                    }
+
+                    _rightMenuItem: Item {
+                        width: 140
+                        height: delegateRoot.height
+
+                        Rectangle {
+                            anchors.fill: parent
+                            anchors.margins: 1
+
+                            color: "#72cfD7"
+                            Text{
+                                anchors.centerIn: parent
+                                text:qsTr("删除")
+                                font.pixelSize: 34
+                                color:"#333333"
+                            }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                sessionListManager.removeChatItem(model.modelData.id);
+                            }
+                        }
+                    }
+                    property Item contentItem: Rectangle {
+                        id: cellItem
+
+                        parent:delegateRoot.slideItem
+
+                        anchors.fill: delegateRoot.slideItem
+                        anchors.margins: 1
+
+                        color: "white"
+
+                        Rectangle {
+                            width: cellItem.width
+                            height: cellItem.height
+
+                            Rectangle {
+                                id : mousePressBackgroud
+                                anchors.fill: parent
+                                visible: false
+                                color: "#cdcdcd"
+                            }
+                            Rectangle {
+                                id : background
+
+                                anchors.fill: parent
+                                anchors.topMargin: 1
+                                anchors.bottomMargin: 3
+                                anchors.leftMargin: 2
+                                anchors.rightMargin:  2
+
+                                CDoodHeaderImage {
+                                    id: headPortraitImage
+
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 20
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    width: 80
+                                    height: 80
+
+                                    name: sessionListManager.getSubName(model.modelData.name)
+                                    headerColor: sessionListManager.getHeaderColor(model.modelData.id)
+                                    iconSource: "file://"+ model.modelData.thumbAvatar
+
+                                }
+
+                                Text {
+                                    id: nameText
+
+                                    anchors.left: headPortraitImage.right
+                                    anchors.leftMargin: 30
+                                    anchors.right: timeText.left
+                                    anchors.rightMargin: 20
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 25
+
+                                    font.pixelSize: 30
+                                    height: 33
+                                    clip: true
+                                    color: "#333333"
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                    text: model.modelData.name
+                                }
+                                Text {
+                                    id: contentText
+
+                                    anchors.left: headPortraitImage.right
+                                    anchors.leftMargin: 30
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 10
+                                    anchors.top: nameText.bottom
+                                    anchors.topMargin: 24
+
+                                    font.pixelSize: 24
+                                    height: 40
+                                    clip: true
+                                    color: "#777777"
+                                    text: model.modelData.lastMsg
+                                }
+
+                                Text {
+                                    id: timeText
+
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: sessionListView.editing ? 100 : 40
+                                    anchors.top: nameText.top
+                                    height: nameText.height
+                                    verticalAlignment: Text.AlignVCenter
+
+                                    font.pixelSize: 22
+                                    color: "#999999"
+
+                                    text: model.modelData.msgTime
+                                }
+                            }
+                        }
+
+                        CLine {
+                            width: parent.width
+                            anchors.left: parent.left
+                            anchors.leftMargin: 150
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            z: parent.z+2
+                        }
+                    DropArea {
+                        id: dropArea
+                        anchors { fill: parent; margins: 15 }
+
+                        onEntered: visualModel.items.move(drag.source.visualIndex, rootItem.visualIndex)
+                    }
+                }
+
+                Component.onCompleted: {
+                   // medoRecordManager.startQueryAttachments(model.modelData.id);
+                }
+            }
         }
     }
-
-    Component.onCompleted: {
+    CScrollDecorator{
+        flickableItem: sessionListView
     }
+  }
 }
+

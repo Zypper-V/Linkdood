@@ -4,47 +4,14 @@ Item {
     id: contactRootPage
     anchors.fill: parent
 
-    Rectangle{
-        id:contactRootTitleBar
 
-        anchors.top: parent.top
-        anchors.left: parent.left
-        width:parent.width
-        height: 110
-        color:"#1c1b21"
-        Text{
-            id:titleText
-
-            anchors.centerIn: parent
-
-            text:qsTr("天工圆圆")
-            color:"white"
-            font.pixelSize: 36
-        }
-        Image {
-            id: login
-
-            anchors{
-                verticalCenter:titleText.verticalCenter
-                right:parent.right
-                rightMargin: 48
-            }
-            source: "qrc:/res/exit.png"
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    loginManager.logout();
-                }
-            }
-        }
-    }
     Connections {
         target: loginManager
         onLoginoutRelust:{
             contactManager.clearChatList();
             sessionListManager.clearChatList();
             loginManager.setAppLoginStatus(0);
-            chatManager.reset();
+
             pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
 //            if(loginout){
 //                console.log("loginout OK.................");
@@ -53,7 +20,7 @@ Item {
         }
     }
     Rectangle {
-        anchors.top: contactRootTitleBar.bottom
+        anchors.top: parent.top
         anchors.left: parent.left
 
         width:parent.width
@@ -64,10 +31,14 @@ Item {
     }
     ListView {
         id: contactListView
-        anchors.top: contactRootTitleBar.bottom
+        anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+
+        onCountChanged: {
+            console.log("SSSSSSSSSSSSSSSSSSSS:"+contactListView.count)
+        }
 
         clip: true
         model: contactManager

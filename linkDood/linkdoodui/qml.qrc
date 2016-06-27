@@ -12,5 +12,9 @@
         <file>qml/CDoodChatDelegate.qml</file>
         <file>qml/CDoodReceiveTextMessageCompoent.qml</file>
         <file>qml/CDoodSendTextMessageCompoent.qml</file>
+        <file>qml/SlideDelegate.qml</file>
+        <file>qml/CDoodContactMainPage.qml</file>
+        <file>qml/CDoodEnterprise.qml</file>
+        <file>qml/CDoodTabViewEnterStyle.qml</file>
     </qresource>
 </RCC>

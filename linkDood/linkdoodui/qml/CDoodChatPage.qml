@@ -44,7 +44,7 @@ CPage {
     property bool inputShow: false
     property bool bNeedViewToEnd: true
     property int getMessageHeight: 50
-    property string myID :  loginManager.userId
+    property string myID :  loginManager.userId()
 
     property bool pageActive
     property bool pageWindowFocus: loginManager.windowFocus
@@ -302,9 +302,12 @@ CPage {
             Item {
                 id: inputMessageRoot
 
-                anchors.centerIn: parent
-                anchors.horizontalCenterOffset: -30
-                width: 460
+                //anchors.centerIn: parent
+                //anchors.horizontalCenterOffset: -30
+                anchors.left: parent.left
+                anchors.leftMargin: 30
+                anchors.verticalCenter: parent.verticalCenter
+                width: 550
                 height: inputTextArea.contentHeight < 70 ? 70 : inputTextArea.contentHeight > 218 ? 218 : inputTextArea.contentHeight
 
                 visible: true

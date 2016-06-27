@@ -22,5 +22,6 @@
         <file>res/send/vidio_2.png</file>
         <file>res/send/vidio_3.png</file>
         <file>res/sendfailed.png</file>
+        <file>res/departLogo.png</file>
     </qresource>
 </RCC>

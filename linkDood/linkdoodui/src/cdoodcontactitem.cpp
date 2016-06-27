@@ -51,6 +51,21 @@ QString CDoodContactItem::setThumbAvatar(const QString &data)
     return mThumbAvatar;
 }
 
+bool CDoodContactItem::isOrg() const
+{
+    return mIsOrg;
+}
+
+bool CDoodContactItem::setIsOrg(bool isOrg)
+{
+    if(mIsOrg == isOrg) {
+        return isOrg;
+    }
+    mIsOrg = isOrg;
+    emit isOrgChanged();
+    return mIsOrg;
+}
+
 QString CDoodContactItem::gender() const
 {
     return mGender;

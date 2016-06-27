@@ -19,6 +19,7 @@ class CDoodContactItem : public QObject
     Q_PROPERTY(QString remark READ remark WRITE setRemark NOTIFY remarkChanged)
     Q_PROPERTY(QString server READ server WRITE setServer NOTIFY serverChanged)
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
+    Q_PROPERTY(bool isOrg READ isOrg WRITE setIsOrg NOTIFY isOrgChanged)
 
 public:
     explicit CDoodContactItem(QObject *parent = 0);
@@ -56,6 +57,9 @@ public:
     QString thumbAvatar() const;
     QString setThumbAvatar(const QString &data);
 
+    bool isOrg() const;
+    bool setIsOrg(bool isOrg);
+
 signals:
     void idChanged();
     void nameChanged();
@@ -68,6 +72,7 @@ signals:
     void timeZoneChanged();
     void avatarChanged();
     void thumbAvatarChanged();
+    void isOrgChanged();
 public slots:
 
 private:
@@ -82,7 +87,7 @@ private:
     QString mPinYin;
     QString mRemark;
     QString mServer;
-
+    bool mIsOrg;
 
 };
 #endif // CDOODCONTACTITEM_H

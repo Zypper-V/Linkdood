@@ -20,6 +20,7 @@ class CDoodContactManager;
 class CDoodChatManager;
 class CDoodUserDataManage;
 class CDoodEnterpriseManager;
+class CDoodOrgManager;
 
 class linkdoodui_Workspace : public CWorkspace
 {
@@ -41,6 +42,7 @@ private:
     QSharedPointer<CDoodChatManager> m_pChatManager;
     QSharedPointer<CDoodUserDataManage> m_pUserDataManager;
     QSharedPointer<CDoodEnterpriseManager> m_pEnterPriseManager;
+    QSharedPointer<CDoodOrgManager> m_pOrgManager;
     QSharedPointer<LinkDoodClient> m_pClient;
 };
 

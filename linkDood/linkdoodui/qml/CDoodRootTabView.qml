@@ -4,7 +4,7 @@ import com.syberos.basewidgets 2.0
 CPage {
     id: rootTabViewPage
 
-    property Component contactRootPageCompoent: CDoodContactRootPage {
+    property Component contactRootPageCompoent: CDoodContactMainPage {
         anchors.fill: parent
     }
 

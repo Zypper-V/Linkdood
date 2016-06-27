@@ -33,7 +33,10 @@ HEADERS += src/linkdoodui_workspace.h \
     src/cdoodenterprisemanager.h\
     src/cdoodchatmanager.h\
     src/cdooduserdatamanage.h \
-    src/cdoodchatitem.h
+    src/cdoodchatitem.h \
+    src/cdoodorgitem.h \
+    src/cdoodorguseritem.h \
+    src/cdoodorgmanager.h
 
 SOURCES += src/main.cpp \
 		   src/linkdoodui_workspace.cpp \
@@ -46,7 +49,10 @@ SOURCES += src/main.cpp \
     src/cdoodenterprisemanager.cpp\
     src/cdoodchatmanager.cpp\
     src/cdooduserdatamanage.cpp \
-    src/cdoodchatitem.cpp
+    src/cdoodchatitem.cpp \
+    src/cdoodorgitem.cpp \
+    src/cdoodorguseritem.cpp \
+    src/cdoodorgmanager.cpp
 OTHER_FILES += qml/*.qml
 
 target.path = $$INSTALL_DIR/bin
@@ -66,4 +72,7 @@ DISTFILES += \
     qml/CDoodUserDataPage.qml \
     qml/CDoodChatDelegate.qml \
     qml/CDoodSendTextMessageCompoent.qml \
-    qml/CDoodReceiveTextMessageCompoent.qml
+    qml/CDoodReceiveTextMessageCompoent.qml \
+    qml/CDoodContactMainPage.qml \
+    qml/CDoodEnterprise.qml \
+    qml/CDoodTabViewEnterStyle.qml
