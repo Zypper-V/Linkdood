@@ -20,6 +20,7 @@ MSG_TYPE_CARD,//名片类型
 MSG_TYPE_TIP//提示类型
 };
 
+#define APP_DATA_PATH "/data/data/com.vrv.linkDood/"
 //LoginInfo
 class LoginInfo{
 public:

@@ -20,6 +20,10 @@ void CDoodLoginManager::logout()
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->logout();
+    qDebug() << Q_FUNC_INFO;
+    QString fileName ="/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("Status",0);
 }
 
 void CDoodLoginManager::login(const QString &server,
@@ -75,9 +79,18 @@ int CDoodLoginManager::loginStatus()
 QString CDoodLoginManager::userId()
 {
     qDebug() << Q_FUNC_INFO;
-    mUserId = m_pClient->UserId();
-
+    //mUserId = m_pClient->UserId();
+    QString fileName = QString::fromStdString(APP_DATA_PATH)+"config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    mUserId = settings.value("myId","").toString();
+    qDebug()<<Q_FUNC_INFO<<"sddfdfhfhdfh:" << mUserId;
     return mUserId;
+}
+
+void CDoodLoginManager::setUserId(QString userId)
+{
+    mUserId = m_pClient->UserId();
+    emit userIdChanged();
 }
 
 bool CDoodLoginManager::windowFocus() const

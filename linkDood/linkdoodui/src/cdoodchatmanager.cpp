@@ -135,13 +135,14 @@ CDoodChatManager::~CDoodChatManager()
 
 void CDoodChatManager::sendText(QString text)
 {
-    qDebug() << Q_FUNC_INFO << "send Text:" << text;
+    qDebug() << Q_FUNC_INFO << "send Text:" << text<<"dd:"<<m_sTargetid;
     Msg msgText;
     msgText.body = text;
     msgText.msgtype = QString::number(MSG_TYPE_TEXT);
     msgText.targetid = m_sTargetid;
     msgText.fromid = m_pClient->UserId();
     msgText.name = m_pClient->userName();
+    qDebug() << Q_FUNC_INFO << "name:" <<  msgText.name <<"id:" << m_pClient->UserId();
     QDateTime time;
     msgText.time = time.currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     // todo
@@ -161,6 +162,9 @@ void CDoodChatManager::sendMessage(Msg msg)
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->sendMessage(msg);
+    msg.fromid = m_pClient->UserId();
+    msg.name = m_pClient->userName();
+    qDebug() <<Q_FUNC_INFO<<"sfsdgsdfgfdshfsdhsrhsfhfh:"<<msg.fromid << ":" << msg.targetid;
     addItemToListViewModel(msg);
 }
 
@@ -283,7 +287,12 @@ void CDoodChatManager::onChatMessageNotice(Msg msg)
     qDebug() << Q_FUNC_INFO << msg.msgid;
     qDebug() << Q_FUNC_INFO << msg.msgtype;
     qDebug() << Q_FUNC_INFO <<"ssssssssssss"<< msg.name;
-    msg.name = m_pClient->userName();
+    if(msg.fromid == m_pClient->UserId()){
+        msg.name = m_pClient->userName();
+    }else{
+        msg.name = name();
+    }
+
     addItemToListViewModel(msg);
 }
 

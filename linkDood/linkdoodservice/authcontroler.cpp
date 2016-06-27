@@ -41,6 +41,10 @@ void AuthControler::login(const QString &server, const QString &userId, const QS
 void AuthControler::logout()
 {
     qDebug() << Q_FUNC_INFO;
+    QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("myId","");
+    settings.setValue("myName","");
     service::IMClient::getClient()->getAuth()->logout();
 }
 
@@ -54,12 +58,26 @@ void AuthControler::getUserInfo(QString &userId,QString& name,QString& avater)
 
 QString AuthControler::UserId()
 {
-    return QString::number(mpUserInfo->id);
+    qDebug() << Q_FUNC_INFO <<"Id:" << mpUserInfo->id;
+    QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    QString myId = settings.value("myId","").toString();
+    qDebug() << Q_FUNC_INFO << myId;
+    return myId;
+
+    //return QString::number(mpUserInfo->id);
 }
 
 QString AuthControler::userName()
 {
-    return QString::fromStdString(mpUserInfo->name);
+    qDebug() << Q_FUNC_INFO <<"userName:" << mpUserInfo->name.c_str();
+
+    QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    QString myName = settings.value("myName","").toString();
+    qDebug() << Q_FUNC_INFO << "sfdgxdfgxfhfgxh:"<<myName;
+    return myName;
+    //return QString::fromStdString(mpUserInfo->name);
 }
 
 void AuthControler::getLoginHistory()
@@ -133,6 +151,11 @@ void AuthControler::onAccountInfoChanged(service::User& info)
      mpUserInfo->__set_thumb_avatar(info.thumb_avatar);
      mpUserInfo->__set_time_zone(info.time_zone);
 
+     qDebug() << Q_FUNC_INFO << "sfsdfsfdg:" << QString::fromStdString(info.name);
+     QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
+     QSettings settings(fileName, QSettings::IniFormat);
+     settings.setValue("myName",QString::fromStdString(info.name));
+     settings.setValue("myId",QString::number(info.id));
      emit loginResultObserver(0,QString::number(info.id));
 }
 
@@ -182,6 +205,11 @@ void AuthControler::_loginResult(service::ErrorInfo &info, long long userId)
     if(info.code() == 0)
     {
         qDebug() << Q_FUNC_INFO << "loginSucceeded";
+
+        QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
+        QSettings settings(fileName, QSettings::IniFormat);
+        settings.setValue("myId",QString::number(userId));
+
        emit loginSucceeded();
     }
     else

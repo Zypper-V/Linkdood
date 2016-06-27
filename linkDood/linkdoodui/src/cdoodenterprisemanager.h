@@ -6,6 +6,7 @@
 #include <QtQuick/QQuickView>
 #include "linkdoodclient.h"
 #include "cdoodlistmodel.h"
+#include "cdoodorgitem.h"
 class CDoodEnterpriseManager: public CDoodListModel
 {
     Q_OBJECT
@@ -28,7 +29,7 @@ private slots:
     void onGetorgUserInfoResult(int code,OrgUser& orguser);
 private:
     void initConnect();
-
+    QMap<QString, CDoodOrgItem*> orgListMap;
     LinkDoodClient *m_pClient;
 };
 #endif // CDOODENTERPRISEMANAGER_H

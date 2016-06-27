@@ -76,6 +76,21 @@ bool CDoodSessionListManager::checkFileExists(const QString &path)
     return bExists;
 }
 
+void CDoodSessionListManager::removeChatItem(QString id)
+{
+    qDebug() << Q_FUNC_INFO;
+    CDoodSessionListItem *tmpItem  = sessionListMap.value(id);
+    if(tmpItem != NULL){
+        removeItem(tmpItem);
+        m_pClient->removeChat(id);
+    }
+    QMap<QString, CDoodSessionListItem*>::iterator iter = sessionListMap.find(id);
+    if(iter != sessionListMap.end()){
+
+        sessionListMap.erase(iter);
+    }
+}
+
 void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
 {
     qDebug() << Q_FUNC_INFO << "zhangp **** chat size4 = " << chats.size();

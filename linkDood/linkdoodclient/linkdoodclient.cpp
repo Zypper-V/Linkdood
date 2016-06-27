@@ -149,6 +149,11 @@ QString LinkDoodClient::UserId()
         qDebug() << reply.error();
     }
 
+    if(sTmp == ""){
+        QString fileName = QString::fromStdString(APP_DATA_PATH)+"config.ini";
+        QSettings settings(fileName, QSettings::IniFormat);
+        sTmp = settings.value("myId","").toString();
+    }
     return sTmp;
 }
 
@@ -169,6 +174,11 @@ QString LinkDoodClient::userName()
         qDebug() << reply.error();
     }
 
+    if(sTmp == ""){
+        QString fileName =QString::fromStdString(APP_DATA_PATH)+"config.ini";
+        QSettings settings(fileName, QSettings::IniFormat);
+        sTmp = settings.value("myName","").toString();
+    }
     return sTmp;
 }
 

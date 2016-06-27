@@ -83,12 +83,20 @@ LinkDoodService::LinkDoodService(QObject *parent) :
     initSdk();
 
     initDBusConnection();
+
+    //如果已经是登录状态主动拉取一次联系人
+    int code= getAppLoginStatus();
+    if(code == 1){
+        getChatList();
+        getContactList();
+    }
 }
 
 void LinkDoodService::login(const QString &server,
                             const QString &userId,
                             const QString &password)
 {
+     qDebug() << Q_FUNC_INFO;
     if(m_pAuth != NULL){
         m_pAuth->login(server,userId,password);
     }
@@ -453,6 +461,7 @@ void LinkDoodService::initSdk()
     qDebug() << Q_FUNC_INFO << "m_client->initret:" << ret;
     if(ret)
     {
+        qDebug() << Q_FUNC_INFO <<"dggsdgsdhgdfdfhdfhgf";
        initObserver();
     }
 

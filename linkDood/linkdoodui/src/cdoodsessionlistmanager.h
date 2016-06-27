@@ -44,7 +44,8 @@ public:
     Q_INVOKABLE QString getSubName(const QString &name);
 
     Q_INVOKABLE bool checkFileExists(const QString &path);
-
+    //删除列表项
+    Q_INVOKABLE void removeChatItem(QString id);
 signals:
     void chatListChanged(const Chat_UIList& chats);
 private slots:

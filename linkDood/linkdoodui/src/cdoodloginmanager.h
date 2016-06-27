@@ -27,8 +27,7 @@ class CDoodLoginManager : public CDoodListModel
 {
     Q_OBJECT
     Q_PROPERTY(int loginStatus READ loginStatus)
-    //    Q_PROPERTY(QString server READ server WRITE setServer NOTIFY serverChanged)
-    //    Q_PROPERTY(QString password READ password WRITE setPassword NOTIFY passwordChanged)
+    Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
     Q_PROPERTY(bool windowFocus READ windowFocus WRITE setWindowFocus NOTIFY windowFocusChanged)
 
 
@@ -48,6 +47,8 @@ public:
 
     //用户信息UserId
     Q_INVOKABLE QString userId();
+    Q_INVOKABLE void setUserId(QString userId);
+
     bool windowFocus() const;
     Q_INVOKABLE bool setWindowFocus(const bool &windowFocus);
     //用户信息
@@ -81,10 +82,12 @@ signals:
     //登录成功自动推送
     void loginResultObserver(int code,QString userID);
     void windowFocusChanged();
+    void userIdChanged();
 
     //    void userChanged();
     //    void serverChanged();
     //    void passwordChanged();
+
 private slots:
     void onLoginSucceeded();
     void onLoginFailed(QString err);

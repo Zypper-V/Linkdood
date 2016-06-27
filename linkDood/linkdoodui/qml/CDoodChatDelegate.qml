@@ -27,7 +27,7 @@ CEditListViewDelegate {
 
             console.log("chatPage.myID", chatPage.myID)
 
-            if(model.modelData.fromId === chatPage.myID) {
+            if(model.modelData.fromId === loginManager.userId) {
                 return chatDelegateRoot.sendTextMsgObj
             } else {
                 return chatDelegateRoot.receiveTextMsgObj

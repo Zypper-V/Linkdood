@@ -62,6 +62,7 @@ Item {
                 myChatPage.chatType = model.modelData.chatType
                 myChatPage.icon = model.modelData.thumbAvatar
                 chatManager.setName(model.modelData.name);
+                chatManager.setId(model.modelData.id);
                 myChatPage.initMessage();
                 pageStack.push(myChatPage);
             }

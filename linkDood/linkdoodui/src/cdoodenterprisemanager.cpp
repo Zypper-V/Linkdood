@@ -32,9 +32,6 @@ void CDoodEnterpriseManager::getOrgUserInfo(QString userid)
 }
 
 
-
-
-
 void CDoodEnterpriseManager::onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist)
 {
      qDebug() << Q_FUNC_INFO <<"hahahahahaahhha" << orglist[0].name;

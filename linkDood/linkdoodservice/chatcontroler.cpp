@@ -148,7 +148,7 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
 
     if(msg->msgtype == 2)
     {
-       qDebug() << Q_FUNC_INFO << "xxxxxxxxxx:" << msg->time;
+       qDebug() << Q_FUNC_INFO << "adaFZSDZDFGDFGfdxggxgf:" << msg->time;
        if(msg->time == 0){
            msg->time = QDateTime::currentDateTime().toMSecsSinceEpoch();
        }
@@ -201,6 +201,7 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
     qDebug() <<Q_FUNC_INFO<< "chats szie:" << chats.size();
     Chat_UIList  chatList;
     for(auto i: chats){
+
         std::shared_ptr<service::Chat> ch = std::dynamic_pointer_cast<service::Chat>(i);
         Chat_UI chatData;
         chatData.name = QString::fromStdString(ch->name);
@@ -216,7 +217,9 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
         chatData.id = QString::number(ch->id);
         chatData.chat_type = ch->chat_type;
         chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
-        chatList.push_back(chatData);
+        if(chatData.chat_type == 1){
+            chatList.push_back(chatData);
+        }
         // qDebug() << Q_FUNC_INFO << "avatar" << chatData.avatar;
         // qDebug() << Q_FUNC_INFO << "thumb_avatar" << ch->thumb_avatar.c_str();
     }

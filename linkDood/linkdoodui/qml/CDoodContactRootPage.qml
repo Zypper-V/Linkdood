@@ -44,7 +44,7 @@ Item {
             contactManager.clearChatList();
             sessionListManager.clearChatList();
             loginManager.setAppLoginStatus(0);
-
+            chatManager.reset();
             pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
 //            if(loginout){
 //                console.log("loginout OK.................");
