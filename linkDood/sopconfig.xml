@@ -8,6 +8,9 @@
     <application syberos:debuggable="true" syberos:name="linkDood" syberos:icon="res/linkdoodui.png" syberos:description="linkDood for syberos.">
         <uiapp syberos:background="" syberos:name="天工圆圆" syberos:icon="res/linkdoodui.png" syberos:splash="" syberos:launcher="true" syberos:id="linkdoodui" syberos:exec="bin/linkdoodui">
             <doctype syberos:id=""/>
+            <url>
+                <scheme>linkDood</scheme>
+            </url>
         </uiapp>
         <service syberos:background="" syberos:name="" syberos:icon="" syberos:splash="" syberos:launcher="false" syberos:id="linkdoodservice" syberos:exec="bin/linkdoodservice">
             <receiver syberos:id="">

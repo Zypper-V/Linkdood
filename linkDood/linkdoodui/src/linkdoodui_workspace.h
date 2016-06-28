@@ -35,6 +35,12 @@ public:
     // 应用启动结束时，回调此函数。根据传入的option，应用可以区分启动的方式。
     void onLaunchComplete(Option option, const QStringList& params);
 
+    void openByUrl(const QUrl& url);
+
+private:
+    void showLinkDood(const QString &id, const QString &pwd);
+    void setActiveWindow();
+
 private:
     QSharedPointer<CDoodLoginManager> m_pLoginManager;
     QSharedPointer<CDoodSessionListManager> m_pSessionListManager;

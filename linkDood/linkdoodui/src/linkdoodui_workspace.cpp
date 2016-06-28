@@ -9,6 +9,10 @@
 #include "cdoodenterprisemanager.h"
 #include "cdoodorgmanager.h"
 #include <QQmlContext>
+#include <QUrl>
+#include <QUrlQuery>
+#include <QGuiApplication>
+#include <qpa/qplatformnativeinterface.h>
 #include <QDebug>
 
 linkdoodui_Workspace::linkdoodui_Workspace()
@@ -78,6 +82,8 @@ void linkdoodui_Workspace::onLaunchComplete(Option option, const QStringList& pa
         qDebug()<< "Start by Home";
         break;
     case CWorkspace::URL:
+        qDebug() << "Start by URL";
+        openByUrl(QUrl(params.at(0)));
         break;
     case CWorkspace::EVENT:
         break;
@@ -86,5 +92,41 @@ void linkdoodui_Workspace::onLaunchComplete(Option option, const QStringList& pa
     default:
         break;
     }
+}
+
+void linkdoodui_Workspace::openByUrl(const QUrl &url)
+{
+    qDebug()<<Q_FUNC_INFO<<__LINE__<<url.toString();
+    QString scheme = url.scheme();
+    QString path = url.path();
+    QUrlQuery query(url.query());
+    if (scheme == "linkDood") {
+        if (path == "showLinkDood") {
+            //linkDood:showLinkDood?id=xxx&pwd=xxx
+            QString id = query.queryItemValue("id");
+            QString pwd = query.queryItemValue("pwd");
+            showLinkDood(id, pwd);
+            setActiveWindow();
+        }
+    } else {
+        qDebug() << Q_FUNC_INFO << "not linkDood!!!!";
+    }
+}
+
+void linkdoodui_Workspace::showLinkDood(const QString &id, const QString &pwd)
+{
+    qDebug() << Q_FUNC_INFO << __LINE__ << id << " " << pwd;
+    // TODO
+}
+
+void linkdoodui_Workspace::setActiveWindow()
+{
+    qDebug() << Q_FUNC_INFO;
+    m_view->requestActivate();
+    m_view->raise();
+    m_view->showFullScreen();
+    QPlatformNativeInterface *native = QGuiApplication::platformNativeInterface();
+    native->setWindowProperty(m_view->handle(), "STATUSBAR_VISIBLE", "true");
+    native->setWindowProperty(m_view->handle(), "STATUSBAR_STYLE", "transblack");
 }
 
