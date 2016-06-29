@@ -48,6 +48,13 @@ public:
     ************************************/
     void getAccountInfo(void);
 
+    /************************************
+    * @brief updateAccountInfo
+    * @description: 更新用户信息
+    * @param[in] user 传入用户信息
+    *************************************/
+    void updateAccountInfo(Contact user);
+
     void init(void);
     void onConnectChanged(int flag);
     void onLoginResultObserver(service::ErrorInfo& info, int64 userid);
@@ -74,7 +81,7 @@ protected slots:
 private:
     void _getLoginHistory(std::vector<service::LoginInfo> list);
     void _loginResult(service::ErrorInfo& info,int64 userId);
-
+    void _updateAccountInfo(service::ErrorInfo& info);
 private:
    std::shared_ptr<service::User> mpUserInfo;
 };

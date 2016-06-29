@@ -62,6 +62,16 @@ void CDoodUserProfileManager::getAccountInfo()
     m_pClient->getAccountInfo();
 }
 
+void CDoodUserProfileManager::updateAccountInfo(QString name, QString avater, QString gender)
+{
+    Contact user;
+    user.name = name;
+    user.avatar = avater;
+    user.gender = gender;
+    user.id     = id();
+    m_pClient->updateAccountInfo(user);
+}
+
 void CDoodUserProfileManager::onAccountInfoChanged(Contact user)
 {
     qDebug() << Q_FUNC_INFO;

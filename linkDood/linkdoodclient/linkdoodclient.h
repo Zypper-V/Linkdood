@@ -88,6 +88,8 @@ public slots:
 
     //获取账户信息
     void getAccountInfo(void);
+    //更新用户信息
+    void updateAccountInfo(Contact user);
     //退出登录
     void logout();
     //移除会话

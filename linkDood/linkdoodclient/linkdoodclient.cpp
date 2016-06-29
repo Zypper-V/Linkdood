@@ -192,6 +192,16 @@ void LinkDoodClient::getAccountInfo()
     manager.call("getAccountInfo");
 }
 
+void LinkDoodClient::updateAccountInfo(Contact user)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("updateAccountInfo",QVariant::fromValue<Contact>(user));
+}
+
 void LinkDoodClient::logout()
 {
     qDebug() << Q_FUNC_INFO;

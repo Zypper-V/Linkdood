@@ -87,8 +87,7 @@ LinkDoodService::LinkDoodService(QObject *parent) :
     //如果已经是登录状态主动拉取一次联系人
     int code= getAppLoginStatus();
     if(code == 1){
-        getChatList();
-        getContactList();
+        //TODO
     }
 }
 
@@ -219,6 +218,14 @@ void LinkDoodService::getAccountInfo()
     qDebug() << Q_FUNC_INFO;
     if(m_pAuth != NULL){
         m_pAuth->getAccountInfo();
+    }
+}
+
+void LinkDoodService::updateAccountInfo(Contact user)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pAuth != NULL){
+        m_pAuth->updateAccountInfo(user);
     }
 }
 

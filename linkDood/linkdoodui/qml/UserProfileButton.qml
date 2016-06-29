@@ -10,6 +10,8 @@ Rectangle{
     property bool showLine:true
     property bool editable:false
     
+    signal clicked()
+
     radius: 0
     height: 100
     color: "white"
@@ -30,12 +32,14 @@ Rectangle{
         anchors.left: parent.left
         anchors.leftMargin: 30
     }
-    
-    Image {
-        id:rightIcon
-        
-        source: comp.rightImg
-        sourceSize: Qt.size(60,60)
+    CDoodHeaderImage {
+        id: rightIcon
+
+        width: 90
+        height: 90
+        radius: 10
+        headerColor: "transparent"
+        iconSource: comp.rightImg
         anchors{
             right: arrowTip.left
             rightMargin: 20
@@ -74,5 +78,8 @@ Rectangle{
         anchors.fill: parent
         onPressed: parent.color = "#32c2fe"
         onReleased: parent.color = "white"
+        onClicked: {
+            emit: comp.clicked();
+        }
     }
 }

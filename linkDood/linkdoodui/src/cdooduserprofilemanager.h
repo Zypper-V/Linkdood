@@ -36,6 +36,8 @@ public:
 
     //获取账户信息
     Q_INVOKABLE void getAccountInfo(void);
+    //更新用户信息
+    Q_INVOKABLE void updateAccountInfo(QString name,QString avater,QString gender);
 signals:
     void idChanged();
     void nameChanged();

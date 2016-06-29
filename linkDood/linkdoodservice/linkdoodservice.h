@@ -123,6 +123,9 @@ public slots:
     void exitChat(const QString targetId);
     //获取账户信息
     void getAccountInfo(void);
+    //更新用户信息
+    void updateAccountInfo(Contact user);
+
     /**************************************************
     * @brief removeChat
     * @description: 移除会话

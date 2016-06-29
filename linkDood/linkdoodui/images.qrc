@@ -28,5 +28,7 @@
         <file>res/main_title_back_button.png</file>
         <file>res/tab_personal_normal.png</file>
         <file>res/tab_personal_pressed.png</file>
+        <file>res/moren_icon.png</file>
+        <file>res/moren_icon_female.png</file>
     </qresource>
 </RCC>

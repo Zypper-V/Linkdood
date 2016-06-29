@@ -41,7 +41,7 @@ CPage {
                 Text{
                     text:qsTr("个人信息")
                     color:"white"
-                    font.pixelSize: 34
+                    font.pixelSize: 36
 
                     anchors.centerIn: parent
                 }
@@ -66,10 +66,9 @@ CPage {
                     id:btnIcon
 
                     leftText: qsTr("头像")
-                    rightImg: "qrc:/res/linkdoodui.png"
                     height: 120
                     radius: 4
-
+                    rightImg: "qrc:/res/moren_icon_female.png"
                     anchors.top: parent.top
                 }
 
@@ -78,7 +77,14 @@ CPage {
 
                     leftText: qsTr("名字")
                     editable:true
+                    rigthText: userProfileManager.name
                     anchors.top: btnIcon.bottom
+                    onClicked: {
+                        inputDialog.titleText= qsTr("名字");
+                        inputDialog.setText(userProfileManager.name);
+                        inputDialog.type = 1;
+                        inputDialog.show();
+                    }
                 }
                 UserProfileButton{
                     id:btnMap
@@ -121,8 +127,13 @@ CPage {
                     leftText: qsTr("性别")
                     editable:true
                     radius: 4
-
+                    rigthText: userProfileManager.gender
                     anchors.top: parent.top
+                    onClicked: {
+                        sexListDialog.deselect();
+                        sexListDialog.select(sexListDialog.initSelect(),true);
+                        sexListDialog.show();
+                    }
                 }
                 UserProfileButton{
                     id:btnBirth
@@ -158,6 +169,38 @@ CPage {
 
                 }
             }
+        }
+    }
+    CInputDialog{
+        id:inputDialog
+
+        property int  type
+        messageTextColor:"#777777"
+        onAccepted: {
+            if(type === 1){
+                userProfileManager.updateAccountInfo(inputDialog.text(),"","");
+            }
+        }
+    }
+    CListDialog{
+        id: sexListDialog
+
+        titleText: qsTr("性别")
+        onDelegateItemTriggered:{
+            console.log("xxxxxxxxx:"+model[index]);
+            userProfileManager.updateAccountInfo(btnName.rigthText,"",model[index]);
+        }
+        Component.onCompleted: {
+            model = [qsTr("保密"),qsTr("男"),qsTr("女")]
+        }
+        function initSelect(){
+            if(userProfileManager.gender === qsTr("女")){
+                return 2;
+            }
+            if(userProfileManager.gender === qsTr("男")){
+                return 1;
+            }
+            return 0;
         }
     }
 }

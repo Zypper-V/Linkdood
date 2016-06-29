@@ -45,16 +45,20 @@ Rectangle{
                 border.width: 1
                 border.color: "#777777"
                 radius: 10
-                Image {
+                CDoodHeaderImage {
                     id: userIcon
-
-                    source: userProfileManager.thumbAvatar !=="" ? userProfileManager.thumbAvatar: "qrc:/res/headerDefault.png"
 
                     anchors{
                         left: parent.left
                         leftMargin: 20
                         verticalCenter: parent.verticalCenter
                     }
+                    width: 120
+                    height: 120
+                    radius: 10
+                    headerColor: "white"
+                    iconSource: userProfileManager.thumbAvatar !=="" ? "file://"+userProfileManager.thumbAvatar: "qrc:/res/moren_icon_female.png"
+
                 }
                 Text{
                     id:userName
@@ -72,6 +76,7 @@ Rectangle{
                     id:userDD
 
                     text:qsTr("圆圆号：")
+                    font.pixelSize: 26
                     anchors{
                         bottom: parent.bottom
                         bottomMargin: 40

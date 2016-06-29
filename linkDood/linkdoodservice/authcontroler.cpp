@@ -101,6 +101,37 @@ void AuthControler::getAccountInfo()
     service::IMClient::getClient()->getAuth()->getAccountInfo();
 }
 
+void AuthControler::updateAccountInfo(Contact user)
+{
+    qDebug() << Q_FUNC_INFO << "ssssssssssssss:" << user.name;
+    service::User item;
+    if(user.avatar != ""){
+        item.__set_avatar(user.avatar.toStdString());
+    }
+    if(user.thumbAvatar != ""){
+        item.__set_thumb_avatar(user.thumbAvatar.toStdString());
+    }
+    if(user.name != ""){
+        item.__set_avatar(user.name.toStdString());
+    }
+    item.__set_id(user.id.toLongLong());
+
+    if(user.gender != ""){
+        if(user.gender == "保密"){
+            item.__set_gender(0);
+        }
+        if(user.gender == "男"){
+            item.__set_gender(1);
+        }
+        if(user.gender == "女"){
+            item.__set_gender(2);
+        }
+    }
+    qDebug() << Q_FUNC_INFO << "end:" << user.name;
+
+    service::IMClient::getClient()->getAuth()->updateAccountInfo(item,std::bind(&AuthControler::_updateAccountInfo,this,std::placeholders::_1));
+}
+
 void AuthControler::init()
 {
     mpUserInfo = std::make_shared<service::User>();
@@ -241,6 +272,11 @@ void AuthControler::_loginResult(service::ErrorInfo &info, long long userId)
         qDebug() << Q_FUNC_INFO << "loginFailed = " << info.code();
         emit loginFailed(info.code());
     }
+}
+
+void AuthControler::_updateAccountInfo(service::ErrorInfo &info)
+{
+    //TODO
 }
 
 
