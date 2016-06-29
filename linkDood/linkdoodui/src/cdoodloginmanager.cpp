@@ -48,6 +48,31 @@ void CDoodLoginManager::setAppLoginStatus(const int status)
     m_pClient->setAppLoginStatus(status);
 }
 
+void CDoodLoginManager::setLoginPhone(QString service, QString phone)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("Service",service);
+    settings.setValue("Phone",phone);
+}
+
+QString CDoodLoginManager::getLoginPhone()
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    return settings.value("Phone","").toString();
+}
+
+QString CDoodLoginManager::getLoginService()
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    return settings.value("Service","").toString();
+}
+
 bool CDoodLoginManager::checkFirstWordIsSpace(const QString &text)
 {
     return text.startsWith(" ");

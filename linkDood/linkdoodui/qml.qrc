@@ -20,5 +20,6 @@
         <file>qml/CDoodSettingProfileDataPage.qml</file>
         <file>qml/IconButton.qml</file>
         <file>qml/UserProfileButton.qml</file>
+        <file>qml/CDoodWelcomePage.qml</file>
     </qresource>
 </RCC>

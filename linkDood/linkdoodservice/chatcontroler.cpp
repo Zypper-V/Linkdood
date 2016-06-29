@@ -215,6 +215,7 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
         chatData.avatar =  QString::fromStdString(ch->avatar);
         chatData.msg_time = dealTime(ch->msg_time,1);
         chatData.id = QString::number(ch->id);
+        qDebug() << Q_FUNC_INFO << "name" << chatData.name<<"id"<<chatData.id;
         chatData.chat_type = ch->chat_type;
         chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
         if(chatData.chat_type == 1){

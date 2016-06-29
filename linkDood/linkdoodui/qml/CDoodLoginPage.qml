@@ -8,6 +8,7 @@ CPage {
     property string  name
     property string  password
 
+
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
             loginPage.statusBarHoldEnabled = true
@@ -29,6 +30,7 @@ CPage {
             console.log("onLoginSuccess !!!!")
             loadingDialog.hide();
             sessionListManager.getChatList();
+            loginManager.setLoginPhone(srvLineEdit.text,userLineEdit.text);
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
 
 //            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
@@ -79,157 +81,159 @@ CPage {
                 anchors.left: parent.left
 
                 width:parent.width
-                height: 110
-                color:"#1c1b21"
+                height: 86
+                color:"#003658"
                 Text{
                     id:titleText
 
                     anchors.centerIn: parent
 
-                    text:qsTr("登录-天工圆圆")
+                    text:qsTr("手机用户登录")
                     color:"white"
                     font.pixelSize: 36
-                }
-            }
-
-            Item {
-                id: logoInlogonImage
-
-                anchors.top: titleBackground.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                width: parent.width
-                height: 310
-
-                Image {
-                    id: logoImage
-
-                    anchors.centerIn: parent
-                    width: 128
-                    height: 128
-                    z: 10
-
-                    smooth: true
-                    asynchronous: true
-                    sourceSize: Qt.size(128, 128)
-                    source: "qrc:/res/logo.png"
-
-                    onStatusChanged: {
-                        if (logoImage.status === Image.Error || logoImage.status === Image.Null) {
-                            logoImage.source = "qrc:/res/logo.png"
-                        }
-                    }
                 }
             }
 
             Rectangle {
                 id: inputBackGround
 
-                anchors.top: logoInlogonImage.bottom
-                anchors.bottom: passWordEdit.bottom
-                width: parent.width
+                anchors.top: titleBackground.bottom
+                height: 404
+                anchors.topMargin: 16
+                anchors.left: parent.left
+                anchors.right:parent.right
+                anchors.leftMargin: 16
+                anchors.rightMargin:16
+                border.color: "#777777"
+                border.width: 1
+                radius:10
                 color: "#ffffff"
             }
 
-            Item {
-                id: moreBtnRoot
-                anchors.top: logoInlogonImage.bottom
-                anchors.topMargin: 28
-                anchors.right: parent.right
+//            Item {
+//                id: moreBtnRoot
+//                anchors.top: logoInlogonImage.bottom
+//                anchors.topMargin: 28
+//                anchors.right: parent.right
 
-                height: 120
-                visible: false
-                width:  91
+//                height: 120
+//                visible: true
+//                width:  91
 
-                Image {
-                    id: moreBtn
-                    anchors.centerIn: parent
-                    smooth: true
-                    sourceSize: Qt.size(31, 20)
-                    source: "qrc:/res/more.png"
-                    asynchronous: true
+//                Image {
+//                    id: moreBtn
+//                    anchors.centerIn: parent
+//                    smooth: true
+//                    sourceSize: Qt.size(31, 20)
+//                    source: "qrc:/res/more.png"
+//                    asynchronous: true
+//                }
+
+//                Behavior on opacity {
+//                    NumberAnimation { duration: 200 }
+//                }
+
+//                MouseArea {
+//                    anchors.fill: parent
+
+//                    onPressed: {
+//                        moreBtnRoot.opacity = 0.3
+//                    }
+
+//                    onReleased: {
+//                        moreBtnRoot.opacity = 1
+
+//                        if(loginPage.state !== "show")
+//                            loginPage.state = "show"
+//                        else
+//                            loginPage.state = "hidden"
+//                    }
+
+//                    onCanceled: {
+//                        moreBtnRoot.opacity = 1
+//                    }
+//                }
+//            }
+
+            Text{
+               id:conTip
+
+                anchors{
+                    left:inputBackGround.left
+                    leftMargin: 25
+                    verticalCenter: conLineEdit.verticalCenter
                 }
+                width:100
+                text:qsTr("国家和地区")
+                font.pixelSize: 30
+            }
 
-                Behavior on opacity {
-                    NumberAnimation { duration: 200 }
-                }
+            CLineEdit {
+                id: conLineEdit
+                anchors.top: inputBackGround.top
+                anchors.left: conTip.right
+                anchors.right:inputBackGround.right
+                anchors.leftMargin: 50/*srvLineEdit.text ==="" ? 50 : 0*/
 
-                MouseArea {
-                    anchors.fill: parent
+                height: 101
+                passwordLabelEnabled: false
+                textLeftMargin: 50
+                clip: true
 
-                    onPressed: {
-                        moreBtnRoot.opacity = 0.3
-                    }
+//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+                textColor:"#787777"
+                font.pixelSize: 30
+                placeholderText:os.i18n.ctr(qsTr("请输入国家"))
 
-                    onReleased: {
-                        moreBtnRoot.opacity = 1
+                inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
+                text: "中国"
 
-                        if(loginPage.state !== "show")
-                            loginPage.state = "show"
-                        else
-                            loginPage.state = "hidden"
-                    }
+                onTextChanged: {
+                    passWordEdit.text = ""
 
-                    onCanceled: {
-                        moreBtnRoot.opacity = 1
+                    if(loginPage.state !== "hidden") {
+                        loginPage.state = "hidden"
                     }
                 }
             }
-
             CLine {
-                width: parent.width
+                width: inputBackGround.width
+                anchors.top: conLineEdit.bottom
+                anchors.left:inputBackGround.left
                 z: parent.z+2
-
-                anchors.bottom: srvLineEdit.bottom
             }
-
-            Rectangle{
-                anchors.top: logoInlogonImage.bottom
-                anchors.left: parent.left
-
-                height: 85
-                z: moreBtnRoot.z - 5
-                width: parent.width
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        srvLineEdit.focus = true;
-                    }
-                }
-            }
-
             Text{
                id:srvTip
 
                 anchors{
-                    left:parent.left
-                    leftMargin: 30
+                    left:inputBackGround.left
+                    leftMargin: 25
                     verticalCenter: srvLineEdit.verticalCenter
                 }
+                width:100
                 text:qsTr("服务器")
                 font.pixelSize: 30
             }
 
             CLineEdit {
                 id: srvLineEdit
+                anchors.top: conLineEdit.bottom
+                anchors.left: srvTip.right
+                anchors.right:inputBackGround.right
+                anchors.leftMargin: 50/*srvLineEdit.text ==="" ? 50 : 0*/
 
-                anchors.top: logoInlogonImage.bottom
-                anchors.left: parent.left
-                anchors.leftMargin: srvLineEdit.text ==="" ? 165 : 0
-                anchors.right: moreBtnRoot.left
-
-                height: 85
+                height: 101
                 passwordLabelEnabled: false
-                textLeftMargin: 90
+                textLeftMargin: 50
                 clip: true
 
-                horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
-                placeholderText:os.i18n.ctr(qsTr("请输入服务器")) // "请输入帐号"
+                placeholderText:os.i18n.ctr(qsTr("请输入服务器"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-                text: "vrv"
+                text: loginManager.getLoginService();
 
                 onTextChanged: {
                     passWordEdit.text = ""
@@ -239,39 +243,44 @@ CPage {
                     }
                 }
             }
-
+            CLine {
+                width: inputBackGround.width
+                anchors.top: srvLineEdit.bottom
+                anchors.left:inputBackGround.left
+                z: parent.z+2
+            }
             Text{
-               id:srvUsr
+               id:userTip
 
                 anchors{
-                    left:parent.left
-                    leftMargin: 30
-                    verticalCenter: nameLineEdit.verticalCenter
+                    left:inputBackGround.left
+                    leftMargin: 25
+                    verticalCenter: userLineEdit.verticalCenter
                 }
-
+                width:100
                 text:qsTr("+86")
                 font.pixelSize: 30
             }
+
             CLineEdit {
-                id: nameLineEdit
-
+                id: userLineEdit
                 anchors.top: srvLineEdit.bottom
-                anchors.left: parent.left
-                anchors.leftMargin: nameLineEdit.text ==="" ? 165 : 0
-                anchors.right: moreBtnRoot.left
-                height: srvLineEdit.height
+                anchors.left: userTip.right
+                anchors.right:inputBackGround.right
+                anchors.leftMargin: 50/*srvLineEdit.text ==="" ? 50 : 0*/
 
+                height: 101
                 passwordLabelEnabled: false
-                textLeftMargin: 90
+                textLeftMargin: 50
                 clip: true
 
-                horizontalAlignment: nameLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
-                placeholderText:os.i18n.ctr(qsTr("请输入手机号")) // "请输入帐号"
+                placeholderText:os.i18n.ctr(qsTr("请输入手机号"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-                text: "15829282366"
+                text: loginManager.getLoginPhone();
 
                 onTextChanged: {
                     passWordEdit.text = ""
@@ -281,76 +290,70 @@ CPage {
                     }
                 }
             }
-
             CLine {
-                width: parent.width
-                anchors.top: nameLineEdit.bottom
+                width: inputBackGround.width
+                anchors.top: userLineEdit.bottom
+                anchors.left:inputBackGround.left
                 z: parent.z+2
             }
-
-            Rectangle{
-                anchors.top: nameLineEdit.bottom
-                anchors.left: parent.left
-                height: passWordEdit.height
-                width: parent.width
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        passWordEdit.focus = true;
-                    }
-                }
-            }
+//            Rectangle{
+//                anchors.top: userLineEdit.bottom
+//                anchors.left: inputBackGround.left
+//                height: passWordEdit.height
+//                width: inputBackGround.width
+//                MouseArea {
+//                    anchors.fill: parent
+//                    onClicked: {
+//                        passWordEdit.focus = true;
+//                    }
+//                }
+//            }
 
             Text{
                id:srvPwd
 
                 anchors{
-                    left:parent.left
-                    leftMargin: 30
+                    left:inputBackGround.left
+                    leftMargin: 25
                     verticalCenter: passWordEdit.verticalCenter
                 }
-
+                width: 100
                 text:qsTr("密码")
                 font.pixelSize: 30
             }
 
             CLineEdit {
                 id: passWordEdit
-                anchors.top: nameLineEdit.bottom
-                anchors.left: parent.left
-                anchors.leftMargin: passWordEdit.text ==="" ? 165 : 0
-                anchors.right: moreBtnRoot.left
-                height: nameLineEdit.height
+                anchors.top: userLineEdit.bottom
+                anchors.left: srvPwd.right
+                anchors.right:inputBackGround.right
+                anchors.leftMargin: 50/*srvLineEdit.text ==="" ? 50 : 0*/
 
+                height: 101
                 passwordLabelEnabled: false
                 echoMode: TextInput.Password
-                textLeftMargin: 90
+                textLeftMargin: 50
                 clip: true
-                horizontalAlignment: passWordEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+
+//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
-                placeholderText:os.i18n.ctr(qsTr("请输入密码号")) // "密码"
+                placeholderText:os.i18n.ctr(qsTr("请输入密码"))
 
-                inputMethodHints:Qt.ImhHiddenText|Qt.ImhPreferLatin
-                text: "chengcy2015"
-            }
-
-            CLine {
-                width: parent.width
-                anchors.top: passWordEdit.bottom
-                z: parent.z+2
+                inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
+//                text: "111111"
             }
 
             CButton {
                 id: loginButton
 
                 anchors.top: passWordEdit.bottom
-                anchors.topMargin: 105
+                anchors.topMargin: 19
                 anchors.horizontalCenter: parent.horizontalCenter
-                height: 77
-                width:655
+                height:121
+                width:680
 
-                opacity : pressed ? 1: (nameLineEdit.text .trim()==="" || passWordEdit.text.trim() ==="" ? 0.5 : 1)
+                opacity : pressed ? 1: (userLineEdit.text .trim()==="" || passWordEdit.text.trim() ==="" ? 0.5 : 1)
                 text:os.i18n.ctr(qsTr("登 录")) // "登 录"
                 textColor:  "#ffffff"
 
@@ -362,30 +365,49 @@ CPage {
 
                 onClicked: {
                     console.log("login onClicked !!!")
-                    if(nameLineEdit.text ==="" || passWordEdit.text ==="")
+                    if(userLineEdit.text ==="" || passWordEdit.text ==="")
                         return;
-                    if(loginManager.checkFirstWordIsSpace(nameLineEdit.text)) {
-                        nameLineEdit.text = ""
-                        nameLineEdit.focus = true
+                    if(loginManager.checkFirstWordIsSpace(userLineEdit.text)) {
+                        userLineEdit.text = ""
+                        userLineEdit.focus = true
                         if(immanager.windowFocus)
                             gToast.requestToast("账号格式不正确","","");
                         return
                     }
-                    if(nameLineEdit.text === "") {
-                        nameLineEdit.focus = true
+                    if(userLineEdit.text === "") {
+                        userLineEdit.focus = true
                         gToast.requestToast("帐号不能为空","","");
                     } else if(passWordEdit.text === "") {
                         passWordEdit.focus = true
                         gToast.requestToast("密码不能为空","","");
                     } else {
                         loadingDialog.show();
-                        loginManager.login(srvLineEdit.text, nameLineEdit.text, passWordEdit.text);
+                        loginManager.login(srvLineEdit.text, userLineEdit.text, passWordEdit.text);
                     }
                 }
 
                 Behavior on opacity {
                     PropertyAnimation { duration: 200 }
                 }
+            }
+            CButton{
+                id:forgetpsw
+                anchors.top: loginButton.bottom
+                anchors.topMargin: 50
+                anchors.right: parent.right
+                height:50
+                width:200
+                text:os.i18n.ctr(qsTr("忘记密码"))
+                textColor:  "#32c2fe"
+                backgroundComponent: Rectangle {
+                    anchors.fill: parent
+                    color:"#f2f2f2"
+                    radius: 10
+                }
+                 onClicked: {
+                     var tll = Qt.openUrlExternally("http://www.baidu.com");
+                     console.log("sssss",tll);
+                 }
             }
 
             CIndicatorDialog {
@@ -395,5 +417,5 @@ CPage {
             }
 
         }
-    }
+   }
 }
