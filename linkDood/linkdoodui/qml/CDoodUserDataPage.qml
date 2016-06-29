@@ -20,41 +20,31 @@ CPage {
             color: "#f2f2f2"
         }
         Rectangle{
-            id:titleBackground
+            id: titleBackground
 
-            anchors.top: parent.top
-            anchors.left: parent.left
-
+            color:"#003953"
             width:parent.width
-            height: 110
-            color:"#1c1b21"
-            Text{
-                id:titleText
-
-                anchors.centerIn: parent
-
-                text:qsTr("详细资料")
-                color:"white"
-                font.pixelSize: 36
+            height:86
+            anchors{
+                top:parent.top
+                left:parent.left
             }
-            CButton{
-                id:backbutton
-                anchors.left:parent.left
-                anchors.top:parent.top
-                anchors.leftMargin:20
+            IconButton{
+                id:btnBack
+                anchors.left: parent.left
+                anchors.leftMargin: 30
                 anchors.verticalCenter: parent.verticalCenter
-                backgroundComponent: Rectangle {
-                    anchors.fill: parent
-                    color:"#1c1b21"
-                }
-                text:os.i18n.ctr(qsTr("< 返回"))
-                textColor:"white"
                 onClicked: {
                     pageStack.pop();
                 }
             }
+            Text{
+                text:qsTr("详细资料")
+                color:"white"
+                font.pixelSize: 36
+                anchors.centerIn: parent
+            }
         }
-
         Rectangle{
             id:userdatapic
             anchors.top:titleBackground.bottom

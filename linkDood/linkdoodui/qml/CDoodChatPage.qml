@@ -136,42 +136,34 @@ CPage {
             color: "#f2f2f2"
         }
         Rectangle{
-            id:titleBackground
+            id: titleBackground
 
-            anchors.top: parent.top
-            anchors.left: parent.left
-
+            color:"#003953"
             width:parent.width
-            height: 110
-            color:"#1c1b21"
+            height:86
+            anchors{
+                top:parent.top
+                left:parent.left
+            }
+            IconButton{
+                id:btnBack
+                anchors.left: parent.left
+                anchors.leftMargin: 30
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: {
+                    pageStack.pop();
+                }
+            }
             Text{
-                id:titleText
-
-                anchors.centerIn: parent
-
                 text:chatPage.chatName
                 color:"white"
                 font.pixelSize: 36
-            }
-            CButton{
-                id:backbutton
 
-                anchors.left:parent.left
-                anchors.top:parent.top
-                anchors.leftMargin:20
+                anchors.left: btnBack.right
+                anchors.leftMargin: 50
                 anchors.verticalCenter: parent.verticalCenter
-                backgroundComponent: Rectangle {
-                    anchors.fill: parent
-                    color:"#1c1b21"
-                }
-                text:os.i18n.ctr(qsTr("< 返回"))
-                textColor:"white"
-                onClicked: {
-                    pageStack.pop()
-                }
             }
         }
-
         CEditListView {
             id: chatListView
             anchors.top: parent.top

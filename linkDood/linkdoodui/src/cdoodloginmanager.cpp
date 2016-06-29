@@ -48,12 +48,6 @@ void CDoodLoginManager::setAppLoginStatus(const int status)
     m_pClient->setAppLoginStatus(status);
 }
 
-void CDoodLoginManager::getUserInfo(QString &userId, QString &name, QString &avater)
-{
-    m_pClient->getUserInfo(userId, name, avater);
-    qDebug() << Q_FUNC_INFO << userId << name << avater;
-}
-
 bool CDoodLoginManager::checkFirstWordIsSpace(const QString &text)
 {
     return text.startsWith(" ");

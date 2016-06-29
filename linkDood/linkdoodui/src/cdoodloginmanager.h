@@ -29,8 +29,6 @@ class CDoodLoginManager : public CDoodListModel
     Q_PROPERTY(int loginStatus READ loginStatus)
     Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
     Q_PROPERTY(bool windowFocus READ windowFocus WRITE setWindowFocus NOTIFY windowFocusChanged)
-
-
 public:
     explicit CDoodLoginManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
@@ -51,26 +49,12 @@ public:
 
     bool windowFocus() const;
     Q_INVOKABLE bool setWindowFocus(const bool &windowFocus);
-    //用户信息
-    void getUserInfo(QString& userId,
-                     QString& name,
-                     QString& avater);
 
     Q_INVOKABLE bool checkFirstWordIsSpace(const QString &text);
     //获取登录历史记录
     Q_INVOKABLE void getLoginHistory(void);
     //设置登录信息
     Q_INVOKABLE void setLoginInfo(int flag, QString userid, QString username, QString avatar);
-
-    //  Q_INVOKABLE QString userId();
-
-    //    QString user()const;
-    //    QString server()const;
-    //    QString password()const;
-    //    void setUser(QString user);
-    //    void setServer(QString server);
-    //    void setPassword(QString password);
-
     Q_INVOKABLE int loginStatus();
 signals:
     void loginStatusChanged();
@@ -84,10 +68,6 @@ signals:
     void windowFocusChanged();
     void userIdChanged();
 
-    //    void userChanged();
-    //    void serverChanged();
-    //    void passwordChanged();
-
 private slots:
     void onLoginSucceeded();
     void onLoginFailed(QString err);
@@ -100,9 +80,6 @@ private:
     void initConnect();
 
     QString mUserId;
-    //    QString mUser;
-    //    QString mServer;
-    //    QString mPassword;
     bool m_bWindowFocus;
     LinkDoodClient *m_pClient;
 };

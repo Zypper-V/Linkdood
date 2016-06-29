@@ -60,6 +60,7 @@ CPageStackWindow {
         if(code === 1){
             sessionListManager.getChatList();
             contactManager.getContactList();
+            userProfileManager.getAccountInfo();
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
         }else{
             pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);

@@ -96,6 +96,11 @@ void AuthControler::setLoginInfo(int flag, QString userid, QString username, QSt
                 avatar.toStdString());
 }
 
+void AuthControler::getAccountInfo()
+{
+    service::IMClient::getClient()->getAuth()->getAccountInfo();
+}
+
 void AuthControler::init()
 {
     mpUserInfo = std::make_shared<service::User>();
@@ -157,6 +162,25 @@ void AuthControler::onAccountInfoChanged(service::User& info)
      settings.setValue("myName",QString::fromStdString(info.name));
      settings.setValue("myId",QString::number(info.id));
      emit loginResultObserver(0,QString::number(info.id));
+
+     //推送用户信息
+     Contact user;
+     user.timeZone = info.time_zone;
+     if(info.gender == 0){
+          user.gender = "保密";
+     }
+     if(info.gender == 1){
+          user.gender = "男";
+     }
+     if(info.gender == 2){
+          user.gender = "女";
+     }
+     user.id = QString::number(info.id);
+     user.name = QString::fromStdString(info.name);
+     user.extends = QString::fromStdString(info.extends);
+     user.thumbAvatar = QString::fromStdString(info.thumb_avatar);
+     user.avatar = QString::fromStdString(info.avatar);
+     emit accountInfoChanged(user);
 }
 
 void AuthControler::onClientKeyChanged(service::ErrorInfo& info, std::string& clientKey)

@@ -16,5 +16,9 @@
         <file>qml/CDoodContactMainPage.qml</file>
         <file>qml/CDoodEnterprise.qml</file>
         <file>qml/CDoodTabViewEnterStyle.qml</file>
+        <file>qml/CDoodProfileDataPage.qml</file>
+        <file>qml/CDoodSettingProfileDataPage.qml</file>
+        <file>qml/IconButton.qml</file>
+        <file>qml/UserProfileButton.qml</file>
     </qresource>
 </RCC>

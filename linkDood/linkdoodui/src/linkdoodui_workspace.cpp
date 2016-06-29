@@ -8,6 +8,8 @@
 #include "cdooduserdatamanage.h"
 #include "cdoodenterprisemanager.h"
 #include "cdoodorgmanager.h"
+#include "cdooduserprofilemanager.h"
+
 #include <QQmlContext>
 #include <QUrl>
 #include <QUrlQuery>
@@ -57,6 +59,12 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     if (!m_pOrgManager.data()) {
         qDebug() << Q_FUNC_INFO << "m_pEnterPriseManager init error !!!";
     }
+
+    m_pUserProfileManager = QSharedPointer<CDoodUserProfileManager>(new CDoodUserProfileManager(m_pClient.data()));
+    if (!m_pUserProfileManager.data()) {
+        qDebug() << Q_FUNC_INFO << "m_pUserProfileManager init error !!!";
+    }
+
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), qApp, SLOT(quit()));
     m_view->engine()->rootContext()->setContextProperty("loginManager", m_pLoginManager.data());
@@ -66,6 +74,7 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     m_view->engine()->rootContext()->setContextProperty("userdataManager", m_pUserDataManager.data());
     m_view->engine()->rootContext()->setContextProperty("enterpriseManager", m_pEnterPriseManager.data());
     m_view->engine()->rootContext()->setContextProperty("orgManager", m_pOrgManager.data());
+    m_view->engine()->rootContext()->setContextProperty("userProfileManager", m_pUserProfileManager.data());
 
     m_view->setSource(QUrl("qrc:/qml/main.qml"));
     m_view->showFullScreen();

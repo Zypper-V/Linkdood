@@ -42,6 +42,12 @@ public:
     *************************************************/
     void setLoginInfo(int flag, QString userid, QString username, QString avatar);
 
+    /**********************************
+    * @brief getAccountInfo
+    * @description: 获取账户信息
+    ************************************/
+    void getAccountInfo(void);
+
     void init(void);
     void onConnectChanged(int flag);
     void onLoginResultObserver(service::ErrorInfo& info, int64 userid);
@@ -63,6 +69,8 @@ protected slots:
     void loginResultObserver(int code,QString userID);
     //获取登录历史记录
     void getLoginHistoryResult(LoginInfoList list);
+    //推送用户信息
+    void accountInfoChanged(Contact user);
 private:
     void _getLoginHistory(std::vector<service::LoginInfo> list);
     void _loginResult(service::ErrorInfo& info,int64 userId);

@@ -182,6 +182,16 @@ QString LinkDoodClient::userName()
     return sTmp;
 }
 
+void LinkDoodClient::getAccountInfo()
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getAccountInfo");
+}
+
 void LinkDoodClient::logout()
 {
     qDebug() << Q_FUNC_INFO;
@@ -429,6 +439,12 @@ void LinkDoodClient::onLoginResultObserver(int code, QString userID)
     emit loginResultObserver(code,userID);
 }
 
+void LinkDoodClient::onAccountInfoChanged(Contact user)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit accountInfoChanged(user);
+}
+
 void LinkDoodClient::onSessionMessageNotice(QString targetId, QString msgId,QString lastMsg,
                                             QString time,QString name, QString avater)
 {
@@ -502,8 +518,9 @@ void LinkDoodClient::initDBusConnect()
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "getorgUserInfoResult",
                                           this, SLOT(onGetorgUserInfoResult(int,OrgUse)));
-
-
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "accountInfoChanged",
+                                          this, SLOT(onAccountInfoChanged(Contact)));
 
 
 }

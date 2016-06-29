@@ -214,6 +214,14 @@ void LinkDoodService::exitChat(const QString targetId)
     }
 }
 
+void LinkDoodService::getAccountInfo()
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pAuth != NULL){
+        m_pAuth->getAccountInfo();
+    }
+}
+
 void LinkDoodService::removeChat(QString targetid)
 {
     qDebug() << Q_FUNC_INFO;
@@ -434,6 +442,12 @@ void LinkDoodService::onLoginResultObserver(int code, QString userID)
     emit loginResultObserver(code,userID);
 }
 
+void LinkDoodService::onAccountInfoChanged(Contact user)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit accountInfoChanged(user);
+}
+
 void LinkDoodService::onSessionMessageNotice(QString targetId,QString msgId,QString lastMsg,
                                              QString time ,QString name,QString avater)
 {
@@ -522,6 +536,8 @@ void LinkDoodService::initConnects()
                      SLOT(onLoginoutRelust(bool)));
     QObject::connect(m_pAuth.get(),SIGNAL(loginResultObserver(int,QString)),this,
                      SLOT(onLoginResultObserver(int,QString)));
+    QObject::connect(m_pAuth.get(),SIGNAL(accountInfoChanged(Contact)),this,
+                     SLOT(onAccountInfoChanged(Contact)));
 
     QObject::connect(m_pChatObserver.get(),SIGNAL(chatListChanged(Chat_UIList)),this,
                      SLOT(onChatListChanged(Chat_UIList)));

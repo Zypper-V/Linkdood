@@ -229,7 +229,7 @@ CPage {
                 placeholderText:os.i18n.ctr(qsTr("请输入服务器")) // "请输入帐号"
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-                text: ""
+                text: "vrv"
 
                 onTextChanged: {
                     passWordEdit.text = ""
@@ -271,7 +271,7 @@ CPage {
                 placeholderText:os.i18n.ctr(qsTr("请输入手机号")) // "请输入帐号"
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-                text: ""
+                text: "15829282366"
 
                 onTextChanged: {
                     passWordEdit.text = ""
@@ -332,7 +332,7 @@ CPage {
                 placeholderText:os.i18n.ctr(qsTr("请输入密码号")) // "密码"
 
                 inputMethodHints:Qt.ImhHiddenText|Qt.ImhPreferLatin
-                text: ""
+                text: "chengcy2015"
             }
 
             CLine {

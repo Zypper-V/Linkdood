@@ -54,6 +54,8 @@ signals:
     void getLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
     void loginResultObserver(int code,QString userID);
+    //推送用户信息
+    void accountInfoChanged(Contact user);
     //会话列表(通知栏)新消息更新通知
     void sessionMessageNotice(QString,QString,QString,QString,QString,QString);
 public slots:
@@ -83,6 +85,9 @@ public slots:
     //用户信息UserId
     QString UserId();
     QString userName();
+
+    //获取账户信息
+    void getAccountInfo(void);
     //退出登录
     void logout();
     //移除会话
@@ -105,7 +110,6 @@ public slots:
     void setLoginInfo(int flag, QString userid, QString username, QString avatar);
     //获取会话列表
     void getContactList();
-
     /*****************start Enterprise**************************/
    void getSonOrgs(QString orgid);
    void getOnlineStates(QStringList& userid);
@@ -140,6 +144,8 @@ private slots:
     void onGetLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
     void onLoginResultObserver(int code,QString userID);
+    //推送用户信息
+    void onAccountInfoChanged(Contact user);
     //会话列表(通知栏)新消息更新通知
     void onSessionMessageNotice(QString,QString,QString,QString,QString,QString);
 private:

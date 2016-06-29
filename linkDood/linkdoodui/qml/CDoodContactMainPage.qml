@@ -31,44 +31,44 @@ Item {
 //        component.initMessage();
 //    }
 
-    Rectangle{
-        id:contactRootTitleBar
+//    Rectangle{
+//        id:contactRootTitleBar
 
-        anchors.top: parent.top
-        anchors.left: parent.left
-        width:parent.width
-        height: 110
-        color:"#1c1b21"
-        Text{
-            id:titleText
+//        anchors.top: parent.top
+//        anchors.left: parent.left
+//        width:parent.width
+//        height: 110
+//        color:"#1c1b21"
+//        Text{
+//            id:titleText
 
-            anchors.centerIn: parent
+//            anchors.centerIn: parent
 
-            text:qsTr("天工圆圆")
-            color:"white"
-            font.pixelSize: 36
-        }
-        Image {
-            id: login
+//            text:qsTr("天工圆圆")
+//            color:"white"
+//            font.pixelSize: 36
+//        }
+//        Image {
+//            id: login
 
-            anchors{
-                verticalCenter:titleText.verticalCenter
-                right:parent.right
-                rightMargin: 48
-            }
-            source: "qrc:/res/exit.png"
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    loginManager.logout();
-                }
-            }
-        }
-    }
+//            anchors{
+//                verticalCenter:titleText.verticalCenter
+//                right:parent.right
+//                rightMargin: 48
+//            }
+//            source: "qrc:/res/exit.png"
+//            MouseArea{
+//                anchors.fill: parent
+//                onClicked: {
+//                    loginManager.logout();
+//                }
+//            }
+//        }
+//    }
     CTabView {
         id: myTabView
 
-        anchors.top: contactRootTitleBar.bottom
+        anchors.top: parent.top
         anchors.bottom: parent.bottom
         tabBar: CDoodTabViewEnterStyle{
             tabView: myTabView

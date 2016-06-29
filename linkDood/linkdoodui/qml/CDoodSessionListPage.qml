@@ -6,29 +6,29 @@ Item {
     anchors.fill: parent
     property var myChatPage
 
-    Rectangle{
-        id:sessionListTitleBar
+//    Rectangle{
+//        id:sessionListTitleBar
 
-        anchors.top: parent.top
-        anchors.left: parent.left
+//        anchors.top: parent.top
+//        anchors.left: parent.left
 
-        width:parent.width
-        height: 110
-        color:"#1c1b21"
-        Text{
-            id:titleText
+//        width:parent.width
+//        height: 110
+//        color:"#1c1b21"
+//        Text{
+//            id:titleText
 
-            anchors.centerIn: parent
+//            anchors.centerIn: parent
 
-            text:qsTr("天工圆圆")
-            color:"white"
-            font.pixelSize: 36
-        }
-    }
+//            text:qsTr("天工圆圆")
+//            color:"white"
+//            font.pixelSize: 36
+//        }
+//    }
     ListView {
         id: sessionListView
 
-        anchors.top: sessionListTitleBar.bottom
+        anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom

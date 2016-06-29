@@ -54,6 +54,9 @@ signals:
     //登录成功自动推送
     void loginResultObserver(int code,QString userID);
 
+    //推送用户信息
+    void accountInfoChanged(Contact user);
+
     void loginSucceeded();
     void loginFailed(QString);
     void loginoutRelust(bool loginout);
@@ -118,7 +121,8 @@ public slots:
     void entryChat(const QString targetId);
     //离开会话UI
     void exitChat(const QString targetId);
-
+    //获取账户信息
+    void getAccountInfo(void);
     /**************************************************
     * @brief removeChat
     * @description: 移除会话
@@ -221,7 +225,8 @@ protected slots:
     void onGetLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
     void onLoginResultObserver(int code,QString userID);
-
+    //推送用户信息
+    void onAccountInfoChanged(Contact user);
     //会话列表(通知栏)新消息更新通知
     void onSessionMessageNotice(QString targetId,
                                QString msgId,

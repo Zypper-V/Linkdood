@@ -49,20 +49,47 @@ CPage {
     contentAreaItem: Item {
         Rectangle {
             id: rootTabViewBackground
+
             anchors.top: parent.top
-            anchors.bottom: tabView.top
+            color:"#003953"
             width:parent.width
-            color: "#1c1b21"
-            z:parent.z-1
+            height:86
+            Text{
+                id:logo
+
+                color: "white"
+                text:qsTr("天工圆圆")
+                font.pixelSize: 36
+
+                anchors.left: parent.left
+                anchors.leftMargin: 21
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Text{
+                color: "white"
+                text:"["+userProfileManager.name+"]"
+                font.pixelSize: 20
+
+                anchors.left: logo.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: 8
+            }
         }
 
         CTabView {
             id:tabView
             tabPosition : Qt.BottomEdge
 
+            anchors.top: rootTabViewBackground.bottom
+            anchors.bottom: parent.bottom
+
+            width:parent.width
             tabBar: Row {
                 anchors.bottom: parent.bottom
-                height: 160
+                anchors.bottomMargin: 10
+                height: 108
                 Repeater {
                     delegate: CDoodTabViewStyle {
                         tabview: tabView
@@ -104,6 +131,19 @@ CPage {
                     anchors.fill: parent
                     asynchronous: false
                     sourceComponent: contactRootPageCompoent
+                }
+            }
+            CTab {
+                id:userListTab
+                property url imgSource: "qrc:/res/tab_personal_normal.png"
+                property url imgActiveSource: "qrc:/res/tab_personal_pressed.png"
+                property bool newMessage: false
+
+                title: os.i18n.ctr(qsTr("我的"))
+
+                CDoodProfileDataPage{
+                    id: userRootPage
+                    anchors.fill: parent
                 }
             }
         }
