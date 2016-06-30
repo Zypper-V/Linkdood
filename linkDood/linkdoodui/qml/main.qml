@@ -63,7 +63,7 @@ CPageStackWindow {
             userProfileManager.getAccountInfo();
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
         }else{
-            pageStack.replace(Qt.resolvedUrl("CDoodWelcomePage.qml"), "", true);
+            pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
         }
     }
 }

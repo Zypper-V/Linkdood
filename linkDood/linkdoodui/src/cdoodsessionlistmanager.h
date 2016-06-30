@@ -56,7 +56,8 @@ private slots:
                                 QString lastMsg,
                                 QString time,
                                 QString name,
-                                QString avater);
+                                QString avater,
+                                QString unreadmsg);
 private:
     void initConnect();
 

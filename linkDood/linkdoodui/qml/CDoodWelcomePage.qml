@@ -30,7 +30,7 @@ CPage {
                 anchors.topMargin: 300
                 source: "qrc:/res/logo.png"
 //                SequentialAnimation {
-//                    PropertyAction { target: image; property: "opacity"; value: .5 }
+//                    PropertyAction {target:image; property: "opacity"; value: .5 }
 //                    NumberAnimation { target: image; property: "width"; to: 300; duration: 10000 }
 //                    PropertyAction { target: image; property: "opacity"; value: 1 }
 //                }

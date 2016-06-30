@@ -3,10 +3,10 @@
 
 CDoodOrgManager::CDoodOrgManager(QObject *parent) : CDoodListModel(parent)
 {
-//    CDoodOrgItem *item = new CDoodOrgItem(this);
-//    item->setId("1");
-//    item->setName("vrv");
-//    addItem(item);
+    CDoodOrgItem *item = new CDoodOrgItem(this);
+    item->setId("1");
+    item->setName("vrv");
+    addItem(item);
 }
 
 void CDoodOrgManager::addOrg(QString id, const QString &name)

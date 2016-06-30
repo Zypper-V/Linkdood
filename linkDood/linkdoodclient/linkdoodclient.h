@@ -57,7 +57,7 @@ signals:
     //推送用户信息
     void accountInfoChanged(Contact user);
     //会话列表(通知栏)新消息更新通知
-    void sessionMessageNotice(QString,QString,QString,QString,QString,QString);
+    void sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString);
 public slots:
     QString installPath();
 
@@ -149,7 +149,7 @@ private slots:
     //推送用户信息
     void onAccountInfoChanged(Contact user);
     //会话列表(通知栏)新消息更新通知
-    void onSessionMessageNotice(QString,QString,QString,QString,QString,QString);
+    void onSessionMessageNotice(QString,QString,QString,QString,QString,QString,QString);
 private:
     void initDBusConnect();
 };

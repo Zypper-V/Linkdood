@@ -138,7 +138,7 @@ void CDoodChatManager::sendText(QString text)
     qDebug() << Q_FUNC_INFO << "send Text:" << text<<"dd:"<<m_sTargetid;
     Msg msgText;
     msgText.body = text;
-    msgText.msgtype = QString::number(MSG_TYPE_TEXT);
+    msgText.msgtype = "2";
     msgText.targetid = m_sTargetid;
     msgText.fromid = m_pClient->UserId();
     msgText.name = m_pClient->userName();
@@ -234,6 +234,7 @@ void CDoodChatManager::entryChat(const QString &targetid)
 void CDoodChatManager::exitChat()
 {
     qDebug() << Q_FUNC_INFO;
+    m_pClient->exitChat(m_sTargetid);
 }
 
 void CDoodChatManager::deleteMessageListItem()

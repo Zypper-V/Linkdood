@@ -89,11 +89,14 @@ void ChatControler::sendMessage(Msg &imMsg)
     qDebug() << "dddddddddddd:"<< imMsg.time;
     QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
 
-    emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,time,imMsg.name,imMsg.thumb_avatar);
+    emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,time,imMsg.name,imMsg.thumb_avatar,"0");
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
         service::MsgText msg = QmsgtextTomsgtext(imMsg);
         qDebug() << Q_FUNC_INFO << "cccc:" << msg.time;
+        qDebug() << Q_FUNC_INFO << "sssssssssssss123:" << msg.msgtype;
+//        msg.msgtype=2;
+
         service::IMClient::getClient()->getChat()->sendMessage(msg,
                      std::bind(&ChatControler::_sendMesage,this,
                                std::placeholders::_1,
@@ -215,9 +218,10 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
         chatData.avatar =  QString::fromStdString(ch->avatar);
         chatData.msg_time = dealTime(ch->msg_time,1);
         chatData.id = QString::number(ch->id);
-        qDebug() << Q_FUNC_INFO << "name" << chatData.name<<"id"<<chatData.id;
+        qDebug() << Q_FUNC_INFO << "name" << chatData.name<<"id"<<chatData.id<<"unreadcount"<<QString::number(ch->unread_count);
         chatData.chat_type = ch->chat_type;
         chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
+        chatData.unread_count=ch->unread_count;
         if(chatData.chat_type == 1){
             chatList.push_back(chatData);
         }
@@ -342,7 +346,13 @@ void ChatControler::_getContactInfo(service::ErrorInfo &info, service::User &use
     QDateTime dateTime = QDateTime::fromString(msg.time,"yyyy-MM-dd hh:mm:ss");
     qDebug() << "dddddddddddd:"<< msg.time;
     QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
-    emit sessionMessageNotice(msg.targetid,msg.msgid,msg.body,time,msg.name,msg.thumb_avatar);
+    QString sessionId("");
+    if(!getCurrentSessionId(sessionId)){
+       emit sessionMessageNotice(msg.targetid,msg.msgid,msg.body,time,msg.name,msg.thumb_avatar,"0");
+    }
+    else{
+       emit sessionMessageNotice(msg.targetid,msg.msgid,msg.body,time,msg.name,msg.thumb_avatar,"1");
+    }
 }
 
 Msg ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)

@@ -77,6 +77,21 @@ public:
     // 发送时间
     QString body;// 消息内容
     QString msgProperties;
+
+    QString f_state;
+    QString f_id;
+    QString f_size;
+    QString encrypt_user;
+    QString encrypt_key;
+    QString f_path;
+    QString f_url;
+    QString filename;
+
+    QString i_width;
+    QString i_height;
+    QString thumb_url;
+    QString main_url;
+
     // QList<int64> related_users;// 秘聊时相关的用户 ID
     // QList<int64> limit_range; //@ 人员列表
 };

@@ -102,8 +102,11 @@ void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
             tmpItem->setLastMsg(historysession.last_msg);
             tmpItem->setName(historysession.name);
             tmpItem->setMsgTime(historysession.msg_time);
+            if(historysession.unread_count!=0){
+                tmpItem->setUnReadCount(QString::number(historysession.unread_count));
+            }
             tmpItem->setThumbAvatar(historysession.thumb_avatar);
-            qDebug() << Q_FUNC_INFO << "chat avatar111:" << historysession.thumb_avatar;
+            qDebug() << Q_FUNC_INFO << "session unreadcount.......:" << QString::number(historysession.unread_count);
             addItem(tmpItem);
             sessionListMap[historysession.id] = tmpItem;
         }
@@ -111,9 +114,10 @@ void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
 }
 
 void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString msgId, QString lastMsg, QString time,
-       QString name, QString avater)
+                                                     QString name, QString avater,QString unreadmsg)
 {
-    qDebug() << Q_FUNC_INFO<<"1111111111111111111111111111";
+    qDebug() << Q_FUNC_INFO<<"1111111111111111111111111111"<<unreadmsg;
+
     if(sessionListMap.contains(targetId)){
         CDoodSessionListItem* item = sessionListMap.value(targetId);
         if(item != NULL){
@@ -121,6 +125,19 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
             item->setLastMsg(lastMsg);
             item->setMsgTime(time);
             item->setLastMsgid(msgId);
+            QString URC=item->unReadCount();
+            if(unreadmsg=="1"){
+                int count;
+                if(URC!="")
+                {
+                    count=URC.toInt()+1;
+                }
+                else
+                {
+                    count=1;
+                }
+                item->setUnReadCount(QString::number(count));
+            }
         }
     }else
     {
@@ -131,16 +148,19 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
         tmpItem->setMsgTime(time);
         tmpItem->setThumbAvatar(avater);
         tmpItem->setMsgType(QString::number(MSG_TYPE_TEXT));
+        if(unreadmsg=="1"){
+            tmpItem->setUnReadCount("1");
+        }
         tmpItem->setLastMsgid(msgId);
         addItemBegin(tmpItem);
         sessionListMap[targetId] = tmpItem;
-         qDebug() << Q_FUNC_INFO << "name:" << name;
+        qDebug() << Q_FUNC_INFO << "name:" << name;
     }
 }
 
 void CDoodSessionListManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
-     connect(m_pClient, SIGNAL(chatListChanged(const Chat_UIList &)), this, SLOT(onChatListChanged(const Chat_UIList &)));
-     connect(m_pClient, SIGNAL(sessionMessageNotice(QString,QString,QString,QString,QString,QString)), this, SLOT(onSessionMessageNotice(QString,QString,QString,QString,QString,QString)));
+    connect(m_pClient, SIGNAL(chatListChanged(const Chat_UIList &)), this, SLOT(onChatListChanged(const Chat_UIList &)));
+    connect(m_pClient, SIGNAL(sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString)), this, SLOT(onSessionMessageNotice(QString,QString,QString,QString,QString,QString,QString)));
 }

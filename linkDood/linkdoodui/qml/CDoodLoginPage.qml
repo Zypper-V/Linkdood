@@ -30,7 +30,6 @@ CPage {
             console.log("onLoginSuccess !!!!")
             loadingDialog.hide();
             sessionListManager.getChatList();
-            loginManager.setLoginPhone(srvLineEdit.text,userLineEdit.text);
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
 
 //            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
@@ -382,6 +381,8 @@ CPage {
                         gToast.requestToast("密码不能为空","","");
                     } else {
                         loadingDialog.show();
+                        loginManager.setLoginPhone(userLineEdit.text);
+                        loginManager.setLoginService(srvLineEdit.text);
                         loginManager.login(srvLineEdit.text, userLineEdit.text, passWordEdit.text);
                     }
                 }

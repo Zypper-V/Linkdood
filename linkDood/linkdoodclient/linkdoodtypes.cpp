@@ -49,6 +49,42 @@ void Msg::toImMassage(QVariantMap map)
         if (iter.key() == "msgProperties") {
             msgProperties = iter.value().toString();
         }
+        if (iter.key() == "f_state") {
+            f_state = iter.value().toString();
+        }
+        if (iter.key() == "f_id") {
+            f_id = iter.value().toString();
+        }
+        if (iter.key() == "f_size") {
+            f_size = iter.value().toString();
+        }
+        if (iter.key() == "encrypt_user") {
+            encrypt_user = iter.value().toString();
+        }
+        if (iter.key() == "encrypt_key") {
+            encrypt_key = iter.value().toString();
+        }
+        if (iter.key() == "f_path") {
+            f_path = iter.value().toString();
+        }
+        if (iter.key() == "f_url") {
+            f_url = iter.value().toString();
+        }
+        if (iter.key() == "filename") {
+            filename = iter.value().toString();
+        }
+        if (iter.key() == "i_width") {
+            i_width = iter.value().toString();
+        }
+        if (iter.key() == "i_height") {
+            i_height = iter.value().toString();
+        }
+        if (iter.key() == "thumb_url") {
+            thumb_url = iter.value().toString();
+        }
+        if (iter.key() == "main_url") {
+            main_url = iter.value().toString();
+        }
         if (iter.key() == "related_users") {
             // related_users.clear();
             // related_users.append(iter.value());
@@ -70,7 +106,10 @@ QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
     argument.beginStructure();
     argument << msg.name << msg.thumb_avatar << msg.msgtype << msg.activeType
              << msg.msgid << msg.targetid << msg.fromid << msg.toid
-             << msg.localid << msg.relatedMsgid << msg.time << msg.body << msg.msgProperties;
+             << msg.localid << msg.relatedMsgid << msg.time << msg.body
+             <<msg.encrypt_key<<msg.encrypt_user<<msg.filename<<msg.f_id
+             <<msg.f_path<<msg.f_size<<msg.f_state<<msg.f_url<<msg.i_height
+             <<msg.i_width<<msg.main_url<<msg.thumb_url<< msg.msgProperties;
     argument.endStructure();
     return argument;
 }
@@ -80,7 +119,10 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Msg &msg)
     argument.beginStructure();
     argument >> msg.name >> msg.thumb_avatar >> msg.msgtype >> msg.activeType
              >> msg.msgid >> msg.targetid >> msg.fromid >> msg.toid
-             >> msg.localid >> msg.relatedMsgid >> msg.time >> msg.body >> msg.msgProperties;
+             >> msg.localid >> msg.relatedMsgid >> msg.time >> msg.body
+             >>msg.encrypt_key>>msg.encrypt_user>>msg.filename>>msg.f_id
+             >>msg.f_path>>msg.f_size>>msg.f_state>>msg.f_url>>msg.i_height
+             >>msg.i_width>>msg.main_url>>msg.thumb_url>> msg.msgProperties;
     argument.endStructure();
     return argument;
 }

@@ -456,10 +456,10 @@ void LinkDoodService::onAccountInfoChanged(Contact user)
 }
 
 void LinkDoodService::onSessionMessageNotice(QString targetId,QString msgId,QString lastMsg,
-                                             QString time ,QString name,QString avater)
+                                             QString time ,QString name,QString avater,QString unreadmsg)
 {
     qDebug() << Q_FUNC_INFO;
-    emit sessionMessageNotice(targetId, msgId, lastMsg,time,name,avater);
+    emit sessionMessageNotice(targetId, msgId, lastMsg,time,name,avater,unreadmsg);
 }
 
 LinkDoodService::~LinkDoodService()
@@ -519,8 +519,8 @@ void LinkDoodService::initConnects()
                      SLOT(onChatRemoveChatResult(bool)));
     QObject::connect(m_pChatObserver.get(),SIGNAL(chatMessageNotice(Msg)),this,
                      SLOT(onChatMessageNotice(Msg)));
-    QObject::connect(m_pChatObserver.get(),SIGNAL(sessionMessageNotice(QString,QString,QString,QString,QString,QString)),this,
-                     SLOT(onSessionMessageNotice(QString,QString,QString,QString, QString,QString)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString)),this,
+                     SLOT(onSessionMessageNotice(QString,QString,QString,QString, QString,QString,QString)));
     QObject::connect(m_pChatObserver.get(),SIGNAL(deleteMessagesBack(int)),this,
                      SLOT(onChatDeleteMessagesResult(int)));
 

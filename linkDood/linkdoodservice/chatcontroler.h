@@ -114,7 +114,7 @@ signals:
     //会话消息
    void chatListChanged(const Chat_UIList& chats);
    //会话列表(通知栏)新消息更新通知
-   void sessionMessageNotice(QString,QString,QString,QString,QString,QString);
+   void sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString);
    //发送消息返回
    void sendMessageBack(bool code,int64 sendTime,int64 msgId);
    //获取消息结果返回

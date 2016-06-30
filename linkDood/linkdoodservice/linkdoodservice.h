@@ -41,7 +41,7 @@ signals:
     //删除消息
     void deleteMessagesResult(int code);
     //会话列表(通知栏)新消息更新通知
-    void sessionMessageNotice(QString,QString,QString,QString,QString,QString);
+    void sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString);
 
     //获取子组织返回
     void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
@@ -236,7 +236,8 @@ protected slots:
                                QString lastMsg,
                                QString time,
                                QString name,
-                               QString avater);
+                               QString avater,
+                               QString unreadmsg);
 public:
     static LinkDoodService* m_pInstance;
 

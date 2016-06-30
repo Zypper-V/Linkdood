@@ -43,7 +43,8 @@ public:
     //向配置文件写入登录状态
     Q_INVOKABLE void setAppLoginStatus(const int status);
 
-    Q_INVOKABLE void setLoginPhone(QString service,QString phone);
+    Q_INVOKABLE void setLoginPhone(QString phone);
+    Q_INVOKABLE void setLoginService(QString service);
     Q_INVOKABLE QString getLoginPhone();
     Q_INVOKABLE QString getLoginService();
 

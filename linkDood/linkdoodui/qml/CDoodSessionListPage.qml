@@ -6,25 +6,25 @@ Item {
     anchors.fill: parent
     property var myChatPage
 
-//    Rectangle{
-//        id:sessionListTitleBar
+    //    Rectangle{
+    //        id:sessionListTitleBar
 
-//        anchors.top: parent.top
-//        anchors.left: parent.left
+    //        anchors.top: parent.top
+    //        anchors.left: parent.left
 
-//        width:parent.width
-//        height: 110
-//        color:"#1c1b21"
-//        Text{
-//            id:titleText
+    //        width:parent.width
+    //        height: 110
+    //        color:"#1c1b21"
+    //        Text{
+    //            id:titleText
 
-//            anchors.centerIn: parent
+    //            anchors.centerIn: parent
 
-//            text:qsTr("天工圆圆")
-//            color:"white"
-//            font.pixelSize: 36
-//        }
-//    }
+    //            text:qsTr("天工圆圆")
+    //            color:"white"
+    //            font.pixelSize: 36
+    //        }
+    //    }
     ListView {
         id: sessionListView
 
@@ -80,12 +80,12 @@ Item {
                     //                }
 
                     onClicked: {
-                         delegateRoot.toInitState();
-                         sessionListView.unsetSelectedItem();
+                        delegateRoot.toInitState();
+                        sessionListView.unsetSelectedItem();
 
                         chatManager.setName(model.modelData.name);
                         chatManager.setId(model.modelData.id);
-
+                        model.modelData.unReadCount="";
                         myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
                         myChatPage.chatName = model.modelData.name
                         myChatPage.targetid = model.modelData.id
@@ -166,12 +166,34 @@ Item {
                                     iconSource: "file://"+ model.modelData.thumbAvatar
 
                                 }
+                                Rectangle{
+                                    id:unreadcount
+                                    property string strUnRead: model.modelData.unReadCount
+                                    anchors.left: headPortraitImage.right
+                                    anchors.leftMargin: 30
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 25
+                                    width: 33
+                                    height: 33
+                                    radius: 16.5
+                                    visible: model.modelData.unReadCount==="" ? false : true
+                                    color:"red"
+                                    Text{
+                                        font.pixelSize: 26
+                                        anchors.centerIn: parent
+                                        color:"white"
+                                        text:model.modelData.unReadCount
+                                    }
+                                    onStrUnReadChanged: {
+                                        console.log("unReadCount============",model.modelData.unReadCount);
+                                    }
+                                }
 
                                 Text {
                                     id: nameText
 
-                                    anchors.left: headPortraitImage.right
-                                    anchors.leftMargin: 30
+                                    anchors.left: model.modelData.unReadCount==="" ? headPortraitImage.right:unreadcount.right
+                                    anchors.leftMargin: model.modelData.unReadCount==="" ? 30:0
                                     anchors.right: timeText.left
                                     anchors.rightMargin: 20
                                     anchors.top: parent.top
@@ -222,28 +244,27 @@ Item {
                         CLine {
                             width: parent.width
                             anchors.left: parent.left
-                            anchors.leftMargin: 150
+//                            anchors.leftMargin: 150
                             anchors.right: parent.right
                             anchors.bottom: parent.bottom
                             z: parent.z+2
                         }
-                    DropArea {
-                        id: dropArea
-                        anchors { fill: parent; margins: 15 }
+                        DropArea {
+                            id: dropArea
+                            anchors { fill: parent; margins: 15 }
 
-                        onEntered: visualModel.items.move(drag.source.visualIndex, rootItem.visualIndex)
+                            onEntered: visualModel.items.move(drag.source.visualIndex, rootItem.visualIndex)
+                        }
                     }
-                }
-
-                Component.onCompleted: {
-                   // medoRecordManager.startQueryAttachments(model.modelData.id);
+                    Component.onCompleted: {
+                        // medoRecordManager.startQueryAttachments(model.modelData.id);
+                    }
                 }
             }
         }
+        CScrollDecorator{
+            flickableItem: sessionListView
+        }
     }
-    CScrollDecorator{
-        flickableItem: sessionListView
-    }
-  }
 }
 

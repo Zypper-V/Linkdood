@@ -456,10 +456,10 @@ void LinkDoodClient::onAccountInfoChanged(Contact user)
 }
 
 void LinkDoodClient::onSessionMessageNotice(QString targetId, QString msgId,QString lastMsg,
-                                            QString time,QString name, QString avater)
+                                            QString time,QString name, QString avater,QString unreadmsg)
 {
       qDebug() << Q_FUNC_INFO;
-      emit sessionMessageNotice(targetId,msgId,lastMsg,time,name,avater);
+      emit sessionMessageNotice(targetId,msgId,lastMsg,time,name,avater,unreadmsg);
 }
 
 void LinkDoodClient::initDBusConnect()
@@ -468,7 +468,7 @@ void LinkDoodClient::initDBusConnect()
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "sessionMessageNotice",
-                                          this, SLOT(onSessionMessageNotice(QString,QString,QString,QString,QString,QString)));
+                                          this, SLOT(onSessionMessageNotice(QString,QString,QString,QString,QString,QString,QString)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "deleteMessagesResult",

@@ -47,14 +47,19 @@ void CDoodLoginManager::setAppLoginStatus(const int status)
     qDebug() << Q_FUNC_INFO;
     m_pClient->setAppLoginStatus(status);
 }
-
-void CDoodLoginManager::setLoginPhone(QString service, QString phone)
+void CDoodLoginManager::setLoginPhone(QString phone)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("Phone",phone);
+}
+void CDoodLoginManager::setLoginService(QString service)
 {
     qDebug() << Q_FUNC_INFO;
     QString fileName = "/data/data/com.vrv.linkDood/config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
     settings.setValue("Service",service);
-    settings.setValue("Phone",phone);
 }
 
 QString CDoodLoginManager::getLoginPhone()
