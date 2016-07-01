@@ -147,34 +147,13 @@ Item {
                                     iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
                                 }
-                                Rectangle{
-                                    id:unreadcount
-                                    property string strUnRead: model.modelData.unReadCount
-                                    anchors.left: headPortraitImage.right
-                                    anchors.leftMargin: 30
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 25
-                                    width: 33
-                                    height: 33
-                                    radius: 16.5
-                                    visible: model.modelData.unReadCount==="" ? false : true
-                                    color:"red"
-                                    Text{
-                                        font.pixelSize: 26
-                                        anchors.centerIn: parent
-                                        color:"white"
-                                        text:model.modelData.unReadCount
-                                    }
-                                    onStrUnReadChanged: {
-                                        console.log("unReadCount============",model.modelData.unReadCount);
-                                    }
-                                }
+
 
                                 Text {
                                     id: nameText
 
-                                    anchors.left: model.modelData.unReadCount==="" ? headPortraitImage.right:unreadcount.right
-                                    anchors.leftMargin: model.modelData.unReadCount==="" ? 30:0
+                                    anchors.left: headPortraitImage.right
+                                    anchors.leftMargin:30
                                     anchors.right: timeText.left
                                     anchors.rightMargin: 20
                                     anchors.top: parent.top
@@ -218,6 +197,24 @@ Item {
                                     color: "#999999"
 
                                     text: model.modelData.msgTime
+                                }
+                                Rectangle{
+                                    id:unreadcount
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 10
+                                    anchors.right: parent.right
+                                    anchors.rightMargin:40
+                                    width: 33
+                                    height: 33
+                                    radius: 16.5
+                                    visible: model.modelData.unReadCount==="" ? false : true
+                                    color:"red"
+                                    Text{
+                                        font.pixelSize: 26
+                                        anchors.centerIn: parent
+                                        color:"white"
+                                        text:model.modelData.unReadCount
+                                    }
                                 }
                             }
                         }

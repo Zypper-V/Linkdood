@@ -122,6 +122,16 @@ void LinkDoodClient::login(const QString &server,
     manager.call("login", server, userId, password);
 }
 
+void LinkDoodClient::changepassword(QString oldpsw, QString newpsw)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("changepassword",oldpsw,newpsw);
+}
+
 void LinkDoodClient::getUserInfo(QString &userId, QString &name, QString &avater)
 {
     qDebug() << Q_FUNC_INFO;
@@ -468,6 +478,12 @@ void LinkDoodClient::onLoginFailed(QString err)
     emit loginFailed(err);
 }
 
+void LinkDoodClient::onChangePasswordResult(QString result)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit changePasswordResult(result);
+}
+
 
 
 void LinkDoodClient::onGetSonOrgsResult(int code, OrgList orglist, OrgUserList orguserlist)
@@ -664,6 +680,10 @@ void LinkDoodClient::initDBusConnect()
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "loginoutRelust",
                                           this, SLOT(onLoginoutRelust(bool)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "changePasswordResult",
+                                          this, SLOT(onChangePasswordResult(QString)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "loginFailed",

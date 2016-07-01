@@ -20,6 +20,8 @@ public:
                const QString &userId,
                const QString &password);
     //
+    void changepassword(QString oldpsw,QString newpsw);
+    void _changepassword(service::ErrorInfo& info);
     void logout();
     //用户信息
     void getUserInfo(QString& userId,QString& name,QString& avater);
@@ -70,6 +72,7 @@ protected slots:
  signals:
     void loginSucceeded(void);
     void loginFailed(int code);
+    void changePasswordResult(QString result);
 
     void loginoutRelust(bool succeeded);
     //登录成功自动推送

@@ -34,6 +34,7 @@ public:
 
     ~CDoodLoginManager();
     Q_INVOKABLE void logout();
+    Q_INVOKABLE void changepassword(QString oldpsw,QString newpsw);
     Q_INVOKABLE void login(const QString &server,
                            const QString &userId,
                            const QString &password);
@@ -66,6 +67,7 @@ signals:
     void loginSucceeded();
     void loginFailed(QString err);
     void loginoutRelust(bool loginout);
+    void changePasswordResult(QString result);
     //获取登录历史记录
     void getLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
@@ -77,6 +79,7 @@ private slots:
     void onLoginSucceeded();
     void onLoginFailed(QString err);
     void onLoginoutRelust(bool loginout);
+    void onChangePasswordResult(QString result);
     //获取登录历史记录
     void onGetLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送

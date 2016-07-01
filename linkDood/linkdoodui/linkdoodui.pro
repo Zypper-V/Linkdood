@@ -78,4 +78,7 @@ DISTFILES += \
     qml/CDoodContactMainPage.qml \
     qml/CDoodEnterprise.qml \
     qml/CDoodTabViewEnterStyle.qml \
-    qml/CDoodProfileDataPage.qml
+    qml/CDoodProfileDataPage.qml \
+    qml/CDoodMailLoginPage.qml \
+    qml/CDoodActivateAccountPage.qml \
+    qml/CDoodChangePasswordPage.qml

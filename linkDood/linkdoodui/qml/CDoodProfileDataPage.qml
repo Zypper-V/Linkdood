@@ -106,10 +106,51 @@ Rectangle{
 
         Rectangle{
             color:"transparent"
-            height: 300
+            height: 150
             width:parent.width
         }
 
+        Text{
+            id:changepswTip
+
+            text:qsTr("修改密码")
+            color:tipTextClr
+            font.pixelSize: 34
+            anchors{
+                left:parent.left
+                leftMargin: 30
+            }
+        }
+        Rectangle{
+            id:changepsw
+
+            border.width: 1
+            border.color: "#777777"
+            radius: 10
+            color:"white"
+            height: 100
+
+            Text{
+                text:qsTr("修改密码")
+                font.pixelSize: 34
+                color:"red"
+                anchors.centerIn: parent
+            }
+
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.right: parent.right
+            anchors.rightMargin:20
+            MouseArea{
+                anchors.fill: parent
+                onPressed: changepsw.color = "#7c9dd9"
+                onReleased: changepsw.color = "white"
+                onClicked: {
+                    pageStack.push(Qt.resolvedUrl("CDoodChangePasswordPage.qml"));
+                    console.log("sdddddddddddddddddddddddddddd")
+                }
+            }
+        }
         Text{
             id:loginoutTip
 
@@ -182,6 +223,10 @@ Rectangle{
                 loginManager.setAppLoginStatus(0);
                 pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
             }else{
+                contactManager.clearChatList();
+                sessionListManager.clearChatList();
+                loginManager.setAppLoginStatus(0);
+                pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
                 //TODO
             }
         }

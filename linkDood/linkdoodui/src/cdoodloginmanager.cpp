@@ -26,6 +26,12 @@ void CDoodLoginManager::logout()
     settings.setValue("Status",0);
 }
 
+void CDoodLoginManager::changepassword(QString oldpsw, QString newpsw)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->changepassword(oldpsw, newpsw);
+}
+
 void CDoodLoginManager::login(const QString &server,
                               const QString &userId,
                               const QString &password)
@@ -187,6 +193,12 @@ void CDoodLoginManager::onLoginoutRelust(bool loginout)
     emit loginoutRelust(loginout);
 }
 
+void CDoodLoginManager::onChangePasswordResult(QString result)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit changePasswordResult(result);
+}
+
 void CDoodLoginManager::onGetLoginHistoryResult(LoginInfoList list)
 {
     qDebug() << Q_FUNC_INFO << "LoginHistorySize:" << list.size();
@@ -205,6 +217,7 @@ void CDoodLoginManager::onLoginResultObserver(int code, QString userID)
 
 void CDoodLoginManager::initConnect()
 {
+    connect(m_pClient, SIGNAL(changePasswordResult(QString)), this, SLOT(onChangePasswordResult(QString)));
     connect(m_pClient, SIGNAL(loginoutRelust(bool)), this, SLOT(onLoginoutRelust(bool)));
     connect(m_pClient, SIGNAL(loginSucceeded()), this, SLOT(onLoginSucceeded()));
     connect(m_pClient, SIGNAL(loginResultObserver(int,QString)), this, SLOT(onLoginResultObserver(int,QString)));

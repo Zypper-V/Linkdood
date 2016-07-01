@@ -27,6 +27,7 @@ public:
 
 signals:
     void loginSucceeded();
+    void changePasswordResult(QString);
     void chatListChanged(const Chat_UIList& chats);
     void loginFailed(QString err);
     void contactListChanged(int oper,ContactList contacts);
@@ -99,7 +100,7 @@ public slots:
     void login(const QString &server,
                const QString &userId,
                const QString &password);
-
+    void changepassword(QString oldpsw,QString newpsw);
     //用户信息
     void getUserInfo(QString& userId,
                      QString& name,
@@ -166,6 +167,7 @@ private slots:
     void onChatListChanged(const Chat_UIList& chats);
     void onContactListChanged(int oper,ContactList contacts);
     void onLoginFailed(QString err);
+    void onChangePasswordResult(QString result);
 
     //获取组织返回
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);

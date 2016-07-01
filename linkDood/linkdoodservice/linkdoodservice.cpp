@@ -121,6 +121,14 @@ void LinkDoodService::login(const QString &server,
     // emit loginSucceeded();
 }
 
+void LinkDoodService::changepassword(QString oldpsw, QString newpsw)
+{
+    qDebug() << Q_FUNC_INFO;
+   if(m_pAuth != NULL){
+       m_pAuth->changepassword(oldpsw,newpsw);
+   }
+}
+
 void LinkDoodService::logout()
 {
     qDebug() << Q_FUNC_INFO;
@@ -399,6 +407,12 @@ void LinkDoodService::onGetorgUserInfoResult(int code, OrgUser orguser)
     emit getOrgUserInfoResult(code,orguser);
 }
 
+void LinkDoodService::onChangePasswordResult(QString result)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit changePasswordResult(result);
+}
+
 void LinkDoodService::onContactInfoChanged(int oper, Contact user)
 {
     qDebug() << Q_FUNC_INFO<< "333333333333333333333333333333";
@@ -445,6 +459,8 @@ void LinkDoodService::onLoginFailed(int errCode)
     case 113:
         err = "帐号已经登录";
         break;
+    case 1303:
+        err="首次登录，请激活帐号";
     default:
         err = "登录失败";
         break;
@@ -677,6 +693,8 @@ void LinkDoodService::initConnects()
                      SLOT(onLoginSucceeded()));
     QObject::connect(m_pAuth.get(),SIGNAL(loginFailed(int)),this,
                      SLOT(onLoginFailed(int)));
+    QObject::connect(m_pAuth.get(),SIGNAL(changePasswordResult(QString)),this,
+                     SLOT(onChangePasswordResult(QString)));
 
     QObject::connect(m_pAuth.get(),SIGNAL(loginoutRelust(bool)),this,
                      SLOT(onLoginoutRelust(bool)));

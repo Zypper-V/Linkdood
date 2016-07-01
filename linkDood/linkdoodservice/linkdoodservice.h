@@ -65,6 +65,7 @@ signals:
     void loginSucceeded();
     void loginFailed(QString);
     void loginoutRelust(bool loginout);
+    void changePasswordResult(QString);
 
     void chatListChanged(const Chat_UIList& chats);
 
@@ -120,6 +121,7 @@ public slots:
     void login(const QString &server,
                const QString &userId,
                const QString &password);
+    void changepassword(QString oldpsw,QString newpsw);
 
     void logout();
     void getContactInfo(int64 userId);
@@ -285,6 +287,9 @@ protected slots:
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
     void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
     void onGetorgUserInfoResult(int code,OrgUser orguser);
+
+
+    void onChangePasswordResult(QString result);
 
     //联系人信息更新
     void onContactInfoChanged(int oper,Contact user);

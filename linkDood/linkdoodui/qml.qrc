@@ -23,5 +23,8 @@
         <file>qml/CDoodWelcomePage.qml</file>
         <file>qml/CDoodPopWndLayer.qml</file>
         <file>qml/IndicatorDialog.qml</file>
+        <file>qml/CDoodMailLoginPage.qml</file>
+        <file>qml/CDoodActivateAccountPage.qml</file>
+        <file>qml/CDoodChangePasswordPage.qml</file>
     </qresource>
 </RCC>

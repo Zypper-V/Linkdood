@@ -2,7 +2,7 @@ import QtQuick 2.0
 import com.syberos.basewidgets 2.0
 
 CPage {
-    id: loginPage
+    id: mailloginPage
 
     property string  server
     property string  name
@@ -11,9 +11,9 @@ CPage {
 
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
-            loginPage.statusBarHoldEnabled = true
+            mailloginPage.statusBarHoldEnabled = true
             gScreenInfo.setStatusBar(loginPage.statusBarHoldEnabled)
-            loginPage.statusBarHoldItemColor = "#edf0f0"
+            mailloginPage.statusBarHoldItemColor = "#edf0f0"
             gScreenInfo.setStatusBarStyle("black")
         }
     }
@@ -43,10 +43,6 @@ CPage {
             console.log("onLoginFailed !!!!")
             loadingDialog.hide();
             gToast.requestToast(err,"","");
-            if(err==="首次登录，请激活帐号")
-            {
-               pageStack.replace(Qt.resolvedUrl("CDoodActivateAccountPage.qml"), "", true);
-            }
         }
     }
 
@@ -91,7 +87,7 @@ CPage {
 
                     anchors.centerIn: parent
 
-                    text:qsTr("手机用户登录")
+                    text:qsTr("邮箱/豆豆号登录")
                     color:"white"
                     font.pixelSize: 36
                 }
@@ -101,7 +97,7 @@ CPage {
                 id: inputBackGround
 
                 anchors.top: titleBackground.bottom
-                height: 404
+                height: 303
                 anchors.topMargin: 16
                 anchors.left: parent.left
                 anchors.right:parent.right
@@ -111,99 +107,6 @@ CPage {
                 border.width: 1
                 radius:10
                 color: "#ffffff"
-            }
-
-//            Item {
-//                id: moreBtnRoot
-//                anchors.top: logoInlogonImage.bottom
-//                anchors.topMargin: 28
-//                anchors.right: parent.right
-
-//                height: 120
-//                visible: true
-//                width:  91
-
-//                Image {
-//                    id: moreBtn
-//                    anchors.centerIn: parent
-//                    smooth: true
-//                    sourceSize: Qt.size(31, 20)
-//                    source: "qrc:/res/more.png"
-//                    asynchronous: true
-//                }
-
-//                Behavior on opacity {
-//                    NumberAnimation { duration: 200 }
-//                }
-
-//                MouseArea {
-//                    anchors.fill: parent
-
-//                    onPressed: {
-//                        moreBtnRoot.opacity = 0.3
-//                    }
-
-//                    onReleased: {
-//                        moreBtnRoot.opacity = 1
-
-//                        if(loginPage.state !== "show")
-//                            loginPage.state = "show"
-//                        else
-//                            loginPage.state = "hidden"
-//                    }
-
-//                    onCanceled: {
-//                        moreBtnRoot.opacity = 1
-//                    }
-//                }
-//            }
-
-            Text{
-               id:conTip
-
-                anchors{
-                    left:inputBackGround.left
-                    leftMargin: 25
-                    verticalCenter: conLineEdit.verticalCenter
-                }
-                width:100
-                text:qsTr("国家和地区")
-                font.pixelSize: 30
-            }
-
-            CLineEdit {
-                id: conLineEdit
-                anchors.top: inputBackGround.top
-                anchors.left: conTip.right
-                anchors.right:inputBackGround.right
-                anchors.leftMargin: 50/*srvLineEdit.text ==="" ? 50 : 0*/
-
-                height: 101
-                passwordLabelEnabled: false
-                textLeftMargin: 50
-                clip: true
-
-//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
-                textColor:"#787777"
-                font.pixelSize: 30
-                placeholderText:os.i18n.ctr(qsTr("请输入国家"))
-
-                inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-                text: "中国"
-
-                onTextChanged: {
-                    passWordEdit.text = ""
-
-                    if(loginPage.state !== "hidden") {
-                        loginPage.state = "hidden"
-                    }
-                }
-            }
-            CLine {
-                width: inputBackGround.width
-                anchors.top: conLineEdit.bottom
-                anchors.left:inputBackGround.left
-                z: parent.z+2
             }
             Text{
                id:srvTip
@@ -220,7 +123,7 @@ CPage {
 
             CLineEdit {
                 id: srvLineEdit
-                anchors.top: conLineEdit.bottom
+                anchors.top: inputBackGround.top
                 anchors.left: srvTip.right
                 anchors.right:inputBackGround.right
                 anchors.leftMargin: 50/*srvLineEdit.text ==="" ? 50 : 0*/
@@ -236,7 +139,6 @@ CPage {
                 placeholderText:os.i18n.ctr(qsTr("请输入服务器"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-                text: loginManager.getLoginService();
 
                 onTextChanged: {
                     passWordEdit.text = ""
@@ -261,7 +163,7 @@ CPage {
                     verticalCenter: userLineEdit.verticalCenter
                 }
                 width:100
-                text:qsTr("+86")
+                text:qsTr("邮箱/豆豆号")
                 font.pixelSize: 30
             }
 
@@ -280,10 +182,9 @@ CPage {
 //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
-                placeholderText:os.i18n.ctr(qsTr("请输入手机号"))
+                placeholderText:os.i18n.ctr(qsTr("请输入邮箱/豆豆号"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-                text: loginManager.getLoginPhone();
 
                 onTextChanged: {
                     passWordEdit.text = ""
@@ -299,18 +200,6 @@ CPage {
                 anchors.left:inputBackGround.left
                 z: parent.z+2
             }
-//            Rectangle{
-//                anchors.top: userLineEdit.bottom
-//                anchors.left: inputBackGround.left
-//                height: passWordEdit.height
-//                width: inputBackGround.width
-//                MouseArea {
-//                    anchors.fill: parent
-//                    onClicked: {
-//                        passWordEdit.focus = true;
-//                    }
-//                }
-//            }
 
             Text{
                id:srvPwd
@@ -350,7 +239,7 @@ CPage {
             CButton {
                 id: loginButton
 
-                anchors.top: passWordEdit.bottom
+                anchors.top: inputBackGround.bottom
                 anchors.topMargin: 19
                 anchors.horizontalCenter: parent.horizontalCenter
                 height:121
@@ -385,9 +274,7 @@ CPage {
                         gToast.requestToast("密码不能为空","","");
                     } else {
                         loadingDialog.show();
-                        loginManager.setLoginPhone(userLineEdit.text);
-                        loginManager.setLoginService(srvLineEdit.text);
-                        loginManager.login(srvLineEdit.text, "0086"+userLineEdit.text, passWordEdit.text);
+                        loginManager.login(srvLineEdit.text, userLineEdit.text, passWordEdit.text);
                     }
                 }
 
@@ -416,14 +303,14 @@ CPage {
                  }
             }
             CButton{
-                id:maillogin
+                id:phonelogin
                 anchors.top: loginButton.bottom
                 anchors.topMargin: 50
                 anchors.leftMargin: 20
                 anchors.left: parent.left
                 height:50
                 width:200
-                text:os.i18n.ctr(qsTr("其他方式登录"))
+                text:os.i18n.ctr(qsTr("手机号登录"))
                 textColor:  "#32c2fe"
                 backgroundComponent: Rectangle {
                     anchors.fill: parent
@@ -431,7 +318,7 @@ CPage {
                     radius: 10
                 }
                  onClicked: {
-                      pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
+                     pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
                  }
             }
 
