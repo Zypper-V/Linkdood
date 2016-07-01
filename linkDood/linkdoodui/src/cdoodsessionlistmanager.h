@@ -28,7 +28,7 @@ class CDoodSessionListItem;
 class CDoodSessionListManager : public CDoodListModel
 {
     Q_OBJECT
-
+    Q_PROPERTY(int unreadCount READ unreadCount WRITE setUnreadCount NOTIFY unreadCountChanged)
 public:
     explicit CDoodSessionListManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
@@ -46,7 +46,15 @@ public:
     Q_INVOKABLE bool checkFileExists(const QString &path);
     //删除列表项
     Q_INVOKABLE void removeChatItem(QString id);
+
+    Q_INVOKABLE void clickChatItem(QString id);
+
+    int  unreadCount()const;
+    //count 负数：未读数减少
+    void setUnreadCount(int count);
 signals:
+    void unreadCountChanged();
+
     void chatListChanged(const Chat_UIList& chats);
 private slots:
     void onChatListChanged(const Chat_UIList& chats);
@@ -63,7 +71,7 @@ private:
 
 private:
     LinkDoodClient *m_pClient;
-
+    int mUnreadCount;
     QMap<QString, CDoodSessionListItem*> sessionListMap;
 
 };

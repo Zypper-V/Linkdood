@@ -12,6 +12,7 @@ CDoodSessionListManager::CDoodSessionListManager(LinkDoodClient *client, QObject
     qDebug() << Q_FUNC_INFO;
     qRegisterMetaType<CDoodSessionListManager*>();
     initConnect();
+    mUnreadCount = 0;
 }
 
 CDoodSessionListManager::~CDoodSessionListManager()
@@ -32,6 +33,7 @@ void CDoodSessionListManager::clearChatList()
         removeItem(itemList.value(i));
     }
     sessionListMap.clear();
+    mUnreadCount = 0;
 }
 
 QString CDoodSessionListManager::getHeaderColor(const QString &id)
@@ -84,7 +86,33 @@ void CDoodSessionListManager::removeChatItem(QString id)
         removeItem(tmpItem);
         m_pClient->removeChat(id);
         sessionListMap.remove(id);
+        setUnreadCount(-tmpItem->unReadCount().toInt());
     }
+}
+
+void CDoodSessionListManager::clickChatItem(QString id)
+{
+    CDoodSessionListItem *tmpItem  = sessionListMap.value(id);
+    if(tmpItem != NULL){
+        setUnreadCount(-tmpItem->unReadCount().toInt());
+        tmpItem->setUnReadCount(0);
+    }
+}
+
+int CDoodSessionListManager::unreadCount() const
+{
+    qDebug() << Q_FUNC_INFO << "mUnreadCount:" << mUnreadCount;
+    return mUnreadCount;
+}
+
+void CDoodSessionListManager::setUnreadCount(int count)
+{
+    qDebug() << Q_FUNC_INFO << "mUnreadCount:" << mUnreadCount;
+    mUnreadCount += count;
+    if(mUnreadCount<0){
+        mUnreadCount = 0;
+    }
+    emit unreadCountChanged();
 }
 
 void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
@@ -100,6 +128,7 @@ void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
             tmpItem->setMsgTime(historysession.msg_time);
             if(historysession.unread_count!=0){
                 tmpItem->setUnReadCount(QString::number(historysession.unread_count));
+                setUnreadCount(historysession.unread_count);
             }
             tmpItem->setThumbAvatar(historysession.thumb_avatar);
             qDebug() << Q_FUNC_INFO << "session unreadcount.......:" << QString::number(historysession.unread_count);
@@ -137,6 +166,7 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
                     item = (CDoodSessionListItem*)takeItemAt(index);
                     addItemBegin(item);
                 }
+                setUnreadCount(1);
             }
         }
     }else
@@ -150,6 +180,7 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
         tmpItem->setMsgType(QString::number(MSG_TYPE_TEXT));
         if(unreadmsg=="1"){
             tmpItem->setUnReadCount("1");
+            setUnreadCount(1);
         }
         tmpItem->setLastMsgid(msgId);
         addItemBegin(tmpItem);

@@ -63,7 +63,7 @@ Item {
                     onClicked: {
                         delegateRoot.toInitState();
                         sessionListView.unsetSelectedItem();
-
+                        sessionListManager.clickChatItem(model.modelData.id);
                         chatManager.setName(model.modelData.name);
                         chatManager.setId(model.modelData.id);
                         model.modelData.unReadCount="";

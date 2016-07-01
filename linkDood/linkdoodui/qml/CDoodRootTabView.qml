@@ -109,7 +109,7 @@ CPage {
                 id:sessionListTab
                 property url imgSource: "qrc:/res/icon-message.png"
                 property url imgActiveSource: "qrc:/res/icon-message-h.png"
-                property bool newMessage: false
+                property bool newMessage: sessionListManager.unreadCount>0
 
                 title: os.i18n.ctr(qsTr("消息"))
 
