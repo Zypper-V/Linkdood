@@ -107,12 +107,12 @@ Item {
                             anchors.fill: parent
                             anchors.margins: 1
 
-                            color: "#72cfD7"
+                            color: "red"
                             Text{
                                 anchors.centerIn: parent
                                 text:qsTr("删除")
                                 font.pixelSize: 34
-                                color:"#333333"
+                                color:"white"
                             }
                         }
 

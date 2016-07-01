@@ -141,6 +141,9 @@ Item {
                                 font.pixelSize: 20
                                 anchors.centerIn: parent
                             }
+                            onVisibleChanged: {
+                               indicatorDialog.hide();
+                            }
                         }
                     }
                     Text {
@@ -184,6 +187,15 @@ Item {
             flickableItem: contactListView
         }
     }
+    IndicatorDialog{
+        id:indicatorDialog
+
+        messageText:qsTr("操作正在执行...")
+        onBackKeyReleased: {
+            indicatorDialog.hide();
+        }
+    }
+
     CDoodPopWndLayer{
         id:menu
 
@@ -233,6 +245,7 @@ Item {
                     }else{
                        contactManager.updateContactInfo(menu.id,"1");
                     }
+                    indicatorDialog.show();
                 }
             }
         }

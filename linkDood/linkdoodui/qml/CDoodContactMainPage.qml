@@ -72,7 +72,6 @@ Item {
         anchors.bottom: parent.bottom
         tabBar: CDoodTabViewEnterStyle{
             tabView: myTabView
-            titleHighlightColor:"#00afee"
         }
         CTab {
             title: qsTr("联系人")

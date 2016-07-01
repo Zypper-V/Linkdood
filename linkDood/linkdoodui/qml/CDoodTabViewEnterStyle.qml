@@ -1,98 +1,10 @@
-//import QtQuick 2.0
-
-//Item {
-//    id:tabStyle
-
-//    width: 100
-//    height: 120
-//    /**
-//    @brief 被使用的CTabView
-//    */
-//    property Item tabview
-
-//    /**
-//    @brief 用于设置当前标签的数据，其有currentIndex，index以及title内容
-//    */
-//    property alias styleData:viewData
-//    /*
-//      * since 14.7.3
-//    @brief 现实title的Text，用户可通过此设置text的相关属性
-//    */
-//    property alias text:txt
-
-//    //property alias imgSource:img
-
-//    QtObject{
-//        id:viewData
-//        property int index:-1
-//        property int currentIndex:0
-//        property string title
-//    }
-
-//    Rectangle {
-//        anchors.top: parent.top
-//        width: parent.width
-//        height:parent.height
-//        z:parent.z+2
-//        radius: 5
-//        color: index === tabview.currentIndex? "#32c2fe" : "white"
-//    }
-
-//    Text {
-//        id:txt
-//        //anchors.bottom: parent.bottom
-//        //anchors.bottomMargin: 15
-//        //anchors.horizontalCenter: parent.horizontalCenter
-//        anchors.centerIn: parent
-//        z:parent.z+2
-//        width:Math.min(parent.width-2,implicitWidth)//margin
-//        font.pixelSize: 32
-//        clip:true
-//        color:index === tabview.currentIndex? "#00afee" : "#777777"
-//        text:tab.title
-//    }
-
-//    MouseArea {
-//        anchors.fill: parent
-
-//        onClicked: {
-//            if(tabView.currentIndex != index)
-//                tabView.currentIndex = index
-//        }
-
-//        onDoubleClicked: {
-//            if(tabView.currentIndex != index) {
-//                tabView.currentIndex = index
-//            } else if(index === 0) {
-//                console.log("sessionpage onDoubleClicked!!!")
-//            }
-//        }
-//    }
-//}
-
-/*
- * This file is part of syberos-toolkit-core
- * Copyright (C) 2015 Beijing Yuan Xin Technology Co.,Ltd. All rights reserved.
- * Authors:
- *       Cai Zhenbin <caizhenbin@syberos.com>
- *
- * This software, including documentation, is protected by copyright controlled
- * by Beijing Yuan Xin Technology Co.,Ltd. All rights are reserved.
- */
 
 import QtQuick 2.3
-
-/*!
-    \qmltype CTabBar
-    \inqmlmodule com.syberos.basewidgets
-    \since 2.0
-    \ingroup viewaddons
-    \brief CTabView的标签导航栏控件
-*/
+import com.syberos.basewidgets 2.0
 
 Rectangle {
     id: tabBar
-    implicitHeight: 88
+    implicitHeight: 120
     anchors.left: parent.left
     anchors.right: parent.right
     color: "white"
@@ -101,28 +13,28 @@ Rectangle {
     property var tabView: null
 
     /*! 标签高度 */
-    property real tabHeight: 64
+    property real tabHeight: 60
 
     /*! 标签宽度 */
-    property real tabWidth: 179
+    property real tabWidth: 240
 
     /*! 字体大小 */
     property int titlePixelSize: gUiConst.getValue("S3")
 
     /*! 文字颜色 */
-    property color titleColor: gUiConst.getValue("CT2")
+    property color titleColor: "#4E83B6"
 
     /*! 高亮文字颜色 */
-    property color titleHighlightColor: gUiConst.getValue("CT5")
+    property color titleHighlightColor: "white"
 
     /*! 标签颜色 */
     property color tabColor: "white"
 
     /*! 高亮标签颜色 */
-    property color tabHighlightColor: "#F8F8F8"
+    property color tabHighlightColor: "#4E83B6"
 
     /*! 框线颜色 */
-    property color borderColor: gUiConst.getValue("CB6")
+    property color borderColor: "#4E83B6"
 
     /*!
         \qmlproperty color CTabView::backgroundColor
@@ -145,24 +57,6 @@ Rectangle {
 
     /*! 标识动画是否正在进行，只读属性。*/
     readonly property bool animating: anchorAnimation.running
-
-    onThemeChanged: {
-        if(theme == "light") {
-            titleColor = gUiConst.getValue("CT2");
-            //titleHighlightColor = gUiConst.getValue("CT5")
-            tabColor = "white";
-            tabHighlightColor = "#F8F8F8";
-            borderColor = gUiConst.getValue("CB6");
-            backgroundColor = "white";
-        } else if(theme == "dark") {
-            titleColor = gUiConst.getValue("CTB3");
-           // titleHighlightColor = gUiConst.getValue("CTB1")
-            tabColor = "black";
-            tabHighlightColor = "#242424";
-            borderColor = "#363636";
-            backgroundColor = "black";
-        }
-    }
 
     Rectangle {
         id: bar
@@ -230,6 +124,10 @@ Rectangle {
                 }
             }
         }
+    }
+    CLine{
+        height: 2
+        anchors.bottom: parent.bottom
     }
     state: tabView.tabPosition === Qt.TopEdge ?
                (tabView.tabVisible ? "top" : "top-hide") : (tabView.tabVisible ? "bottom" : "bottom-hide")

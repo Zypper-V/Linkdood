@@ -102,14 +102,16 @@ void ContactControler::onContactInfoChanged(int operType, service::User &users)
 
 void ContactControler::onOnlineChanged(OnlineState &status)
 {
-    qDebug() << Q_FUNC_INFO;
-    QString device;
-    if(status.deviceType == 1)
-        device = "[电脑]";
-    else if(status.deviceType == 2)
-        device = "[手机]";
-    if(status.flag == -1)
-        device = "";
+    qDebug() << Q_FUNC_INFO<< "5555555555555555555555555555555";
+    QString device("");
+
+    if(status.flag == 1)
+    {
+        if(status.deviceType == 1)
+            device = "[电脑]";
+        else if(status.deviceType == 2)
+            device = "[手机]";
+    }
     emit contactOnlineChanged(QString::number(status.userID), device);
 }
 

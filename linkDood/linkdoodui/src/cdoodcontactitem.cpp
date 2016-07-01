@@ -71,6 +71,7 @@ QString CDoodContactItem::setSection(const QString &section)
 
 QString CDoodContactItem::onlineStatus() const
 {
+    qDebug() << Q_FUNC_INFO<<"7777777777777:"<< mOnlineStatus;
     return mOnlineStatus;
 }
 

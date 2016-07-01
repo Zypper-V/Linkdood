@@ -29,6 +29,12 @@ void CDoodContactManager::clearChatList()
         removeItem(itemList.value(i));
     }
     contactListMap.clear();
+
+    itemList = starContactListMap.values();
+    for(int i= 0;i< itemList.size();i++){
+        removeItem(itemList.value(i));
+    }
+    starContactListMap.clear();
 }
 
 void CDoodContactManager::updateContactInfo(QString userId, QString operStar, QString remark)

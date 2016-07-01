@@ -22,5 +22,6 @@
         <file>qml/UserProfileButton.qml</file>
         <file>qml/CDoodWelcomePage.qml</file>
         <file>qml/CDoodPopWndLayer.qml</file>
+        <file>qml/IndicatorDialog.qml</file>
     </qresource>
 </RCC>

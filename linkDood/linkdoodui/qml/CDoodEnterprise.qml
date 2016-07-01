@@ -18,22 +18,21 @@ Item {
         id: orgTitleListView
         anchors.top: parent.top
         anchors.left: parent.left
-        anchors.leftMargin: 10
         width: parent.width
-        height: 64
+        height: 101
         orientation:ListView.Horizontal
         spacing: 6
         model: orgManager
         Rectangle{
             anchors.fill: parent
-            color:"white"
+            color:"#F2F2F2"
             z:parent.z -1
         }
 
         delegate: Rectangle{
             width: 120
             height: parent.height
-            color: "white"
+            color: "#F2F2F2"
             Text {
                 id: name
                 anchors.left: parent.left
@@ -81,7 +80,7 @@ Item {
 
                 onPressed: {
                     if(mousePressBackgroud.visible){
-                        background.color = "#ffffff"
+                        background.color = "white"
                         mousePressBackgroud.visible = false
                     }else{
                         background.color = "#cdcdcd"
@@ -95,7 +94,7 @@ Item {
                     //                    userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
                     //                    userdataManager.setId(model.modelData.id);
 
-                    background.color = "#ffffff"
+                    background.color = "white"
                     mousePressBackgroud.visible = false
                     console.log(" model.modelData.id: ",model.modelData.id)
                     console.log(" model.modelData.name: ",model.modelData.name)
@@ -106,7 +105,7 @@ Item {
                 }
 
                 onCanceled: {
-                    background.color = "#ffffff"
+                    background.color = "white"
                     mousePressBackgroud.visible = false
                 }
             }
