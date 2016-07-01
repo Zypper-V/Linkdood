@@ -7,6 +7,7 @@
 #include "IContactService.h"
 #include "INotifyService.h"
 #include "Contact.h"
+#include "IDRangeJuge.hpp"
 
 ContactControler::ContactControler(QObject *parent):QObject(parent)
 {
@@ -64,7 +65,7 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
        user.thumbAvatar  = QString::fromStdString(i.thumb_avatar);
        user.timeZone  = i.time_zone;
        user.gender = genderConvert(i.gender);
-      if(user.id!="4328621727"&&user.id!="9151315548882010112")
+      if(!IS_MSG_APP(i.id))
       {
          contacts.push_back(user);
       }

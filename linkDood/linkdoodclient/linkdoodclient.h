@@ -40,6 +40,9 @@ signals:
     //联系人信息更新
     void contactInfoChanged(int oper,Contact user);
 
+    //监听联系人信息更新
+    void contactOnlineChanged(QString id,QString deviceText);
+
     //会话列表头像更新
     void chatAvatarChanged(int64 id,QString avatar);
     //监听离线消息通知

@@ -37,7 +37,7 @@ Item {
                 anchors.leftMargin: 40
                 anchors.verticalCenter: parent.verticalCenter
                 text: section
-                font.pixelSize: 28
+                font.pixelSize: 32
                 color: "#333333"
                 onTextChanged: {
                     console.log("xxxxxx:"+text)
@@ -74,7 +74,7 @@ Item {
                     background.color = "#ffffff"
                     mousePressBackgroud.visible = false
 
-                    if(dx<1.0){
+                    if(dx<0.5){
                         userdataManager.setName(model.modelData.name);
                         userdataManager.setGender(model.modelData.gender);
                         userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
@@ -148,14 +148,28 @@ Item {
                         anchors.left: headPortraitImage.right
                         anchors.leftMargin: 30
                         anchors.rightMargin: 20
-                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.top: headPortraitImage.top
+                        anchors.topMargin: 10
                         font.pixelSize: 32
-                        height: 33
                         clip: true
                         color: "#333333"
                         verticalAlignment: Text.AlignVCenter
                         elide: Text.ElideRight
                         text: model.modelData.name
+                    }
+                    Text {
+                        id: onLineText
+                        anchors.left: headPortraitImage.right
+                        anchors.leftMargin: 30
+                        anchors.rightMargin: 20
+                        anchors.top: nameText.bottom
+                        anchors.topMargin: 10
+                        font.pixelSize: 26
+                        clip: true
+                        color: "#777777"
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                        text: model.modelData.onlineStatus
                     }
                     CLine {
                         width: parent.width

@@ -72,7 +72,8 @@ HEADERS += linkdoodservice_workspace.h \
     chatcontroler.h \
     sysmsgcontroler.h \
     enterprisecontroler.h \
-    linkdoodservicethread.h
+    linkdoodservicethread.h \
+    linkdood_sdk/include/utils/IDRangeJuge.hpp
 
 SOURCES += main.cpp \
 	   linkdoodservice_workspace.cpp \
