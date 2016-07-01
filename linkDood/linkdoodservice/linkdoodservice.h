@@ -59,6 +59,8 @@ signals:
 
     //联系人信息更新
     void contactInfoChanged(int oper,Contact user);
+    //联系人状态改变
+    void contactOnlineChanged(QString id, QString deviceType);
 
     void loginSucceeded();
     void loginFailed(QString);
@@ -132,6 +134,8 @@ public slots:
     void getContactInfo(QString userId,Msg msg);
     //获取会话列表
     void getContactList();
+    //改变联系人状态
+    void onOnlineChanged(QString id, QString deviceType);
     //用户信息UserId
     QString UserId();
     QString userName();

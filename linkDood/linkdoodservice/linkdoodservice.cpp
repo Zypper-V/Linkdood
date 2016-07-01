@@ -170,6 +170,12 @@ void LinkDoodService::getContactList()
     }
 }
 
+void LinkDoodService::onOnlineChanged(QString id, QString deviceType)
+{
+    qDebug() << Q_FUNC_INFO;
+   emit contactOnlineChanged(id, deviceType);
+}
+
 QString LinkDoodService::UserId()
 {
     qDebug() << Q_FUNC_INFO;
@@ -685,6 +691,7 @@ void LinkDoodService::initConnects()
                      SLOT(onContactListChanged(int,ContactList)));
     QObject::connect(m_pContactObserver.get(),SIGNAL(contactInfoChanged(int,Contact)),this,
                      SLOT(onContactInfoChanged(int,Contact)));
+    QObject::connect(m_pContactObserver.get(),SIGNAL(contactOnlineChanged(QString,QString)),this,SLOT(onOnlineChanged(QString,QString)));
 }
 
 void LinkDoodService::initDBusConnection()

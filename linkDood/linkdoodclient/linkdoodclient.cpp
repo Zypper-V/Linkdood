@@ -192,6 +192,16 @@ void LinkDoodClient::updateContactInfo(QString userId, QString operStar, QString
     manager.call("updateContactInfo",userId,operStar,remark);
 }
 
+void LinkDoodClient::onOnlineChanged(QString id, QString deviceType)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("onOnlineChanged",id,deviceType);
+}
+
 void LinkDoodClient::getAccountInfo()
 {
     qDebug() << Q_FUNC_INFO;
@@ -667,6 +677,7 @@ void LinkDoodClient::initDBusConnect()
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "contactListChanged",
                                           this, SLOT(onContactListChanged(int,ContactList)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH, DBUS_DOOD_INTERFACE, "contactOnlineChanged", this, SLOT(onOnlineChanged(QString,QString)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "loginSucceeded",

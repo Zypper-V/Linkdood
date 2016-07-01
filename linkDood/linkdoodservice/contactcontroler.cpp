@@ -102,6 +102,14 @@ void ContactControler::onContactInfoChanged(int operType, service::User &users)
 void ContactControler::onOnlineChanged(OnlineState &status)
 {
     qDebug() << Q_FUNC_INFO;
+    QString device;
+    if(status.deviceType == 1)
+        device = "[电脑]";
+    else if(status.deviceType == 2)
+        device = "[手机]";
+    if(status.flag == -1)
+        device = "";
+    emit contactOnlineChanged(QString::number(status.userID), device);
 }
 
 ContactList ContactControler::sort(const ContactList &contactList)

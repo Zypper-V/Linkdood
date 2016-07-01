@@ -39,6 +39,8 @@ signals:
 
     //联系人信息更新
     void contactInfoChanged(int oper,Contact user);
+    //联系人状态改变
+    void contactOnlineChanged(QString id, QString deviceType);
 
     //会话列表头像更新
     void chatAvatarChanged(int64 id,QString avatar);
@@ -108,6 +110,8 @@ public slots:
 
     //更新联系人信息
      void updateContactInfo(QString userId,QString operStar,QString remark="");
+     //改变联系人状态
+     void onOnlineChanged(QString id, QString deviceType);
 
     //获取账户信息
     void getAccountInfo(void);
