@@ -39,9 +39,6 @@ signals:
 
     //联系人信息更新
     void contactInfoChanged(int oper,Contact user);
-    //联系人状态改变
-    void contactOnlineChanged(QString id, QString deviceType);
-
     //监听联系人信息更新
     void contactOnlineChanged(QString id,QString deviceText);
 
