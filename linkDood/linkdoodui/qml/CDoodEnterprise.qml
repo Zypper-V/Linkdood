@@ -136,12 +136,13 @@ Item {
                         anchors.leftMargin: 25
                         anchors.topMargin: 16
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 72
-                        height: 72
-                        visible: !model.modelData.isOrg
-                        name: sessionListManager.getSubName(model.modelData.name)
+                        width: 90
+                        height: 90
+                        radius: 6
+                        name:""
                         headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                        iconSource: "file://"+ model.modelData.thumbAvatar
+                        iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
+                        visible: !model.modelData.isOrg
                     }
                     Text {
                         id: nameText

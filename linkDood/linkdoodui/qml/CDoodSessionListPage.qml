@@ -6,25 +6,6 @@ Item {
     anchors.fill: parent
     property var myChatPage
 
-    //    Rectangle{
-    //        id:sessionListTitleBar
-
-    //        anchors.top: parent.top
-    //        anchors.left: parent.left
-
-    //        width:parent.width
-    //        height: 110
-    //        color:"#1c1b21"
-    //        Text{
-    //            id:titleText
-
-    //            anchors.centerIn: parent
-
-    //            text:qsTr("天工圆圆")
-    //            color:"white"
-    //            font.pixelSize: 36
-    //        }
-    //    }
     ListView {
         id: sessionListView
 
@@ -158,12 +139,12 @@ Item {
                                     anchors.left: parent.left
                                     anchors.leftMargin: 20
                                     anchors.verticalCenter: parent.verticalCenter
-                                    width: 80
-                                    height: 80
-
-                                    name: sessionListManager.getSubName(model.modelData.name)
+                                    width: 90
+                                    height: 90
+                                    radius: 6
+                                    name:""
                                     headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                                    iconSource: "file://"+ model.modelData.thumbAvatar
+                                    iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
                                 }
                                 Rectangle{

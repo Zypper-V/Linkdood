@@ -51,10 +51,28 @@ Item {
             width: contactListView.width
             height: 104
 
+            Timer {
+                id:pressTimer
+
+                interval: 1500
+                repeat: false
+                onTriggered:{
+                    if(mouse.bPress && !mouse.bMove){
+                        menu.id = model.modelData.id;
+                        menu.isStar= model.modelData.isStar;
+                        menu.show();
+                    }
+                    pressTimer.stop();
+                }
+            }
             MouseArea {
+                id:mouse
+
                 anchors.fill: parent
 
                 property var pressTime;
+                property bool bPress
+                property bool bMove
                 onPressed: {
                     if(mousePressBackgroud.visible){
                         background.color = "#ffffff"
@@ -64,7 +82,15 @@ Item {
                         mousePressBackgroud.visible = true
                     }
 
+                    bMove  = false;
+                    bPress = true;
+                    pressTimer.start();
+
                     pressTime = (new Date()).getTime();
+                }
+
+                onPositionChanged: {
+                    bMove = true;
                 }
 
                 onReleased: {
@@ -73,17 +99,21 @@ Item {
 
                     background.color = "#ffffff"
                     mousePressBackgroud.visible = false
-
-                    if(dx<0.5){
+                    bPress = false;
+                    bMove  = false;
+                    if(pressTimer.running){
+                        pressTimer.stop();
                         userdataManager.setName(model.modelData.name);
                         userdataManager.setGender(model.modelData.gender);
                         userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
                         userdataManager.setId(model.modelData.id);
                         pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
+                    }
+
+                    if(dx<0.5){
+
                     }else{
-                        menu.id = model.modelData.id;
-                        menu.isStar= model.modelData.isStar;
-                        menu.show();
+
                     }
                 }
 
@@ -122,7 +152,7 @@ Item {
                         width: 90
                         height: 90
                         radius: 6
-                        name:"" /*sessionListManager.getSubName(model.modelData.name)*/
+                        name:""
                         headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                         iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
                         Rectangle{
@@ -142,7 +172,7 @@ Item {
                                 anchors.centerIn: parent
                             }
                             onVisibleChanged: {
-                               indicatorDialog.hide();
+                                indicatorDialog.hide();
                             }
                         }
                     }
@@ -241,9 +271,9 @@ Item {
 
                     console.log("33333333333333333333333333")
                     if(menu.isStar == "1"){
-                       contactManager.updateContactInfo(menu.id,"2");
+                        contactManager.updateContactInfo(menu.id,"2");
                     }else{
-                       contactManager.updateContactInfo(menu.id,"1");
+                        contactManager.updateContactInfo(menu.id,"1");
                     }
                     indicatorDialog.show();
                 }

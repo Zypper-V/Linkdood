@@ -68,7 +68,7 @@ CPage {
                     leftText: qsTr("头像")
                     height: 120
                     radius: 4
-                    rightImg: "qrc:/res/moren_icon_female.png"
+                    rightImg: "qrc:/res/headerDefault.png"
                     anchors.top: parent.top
                 }
 

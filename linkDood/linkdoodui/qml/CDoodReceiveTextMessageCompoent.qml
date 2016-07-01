@@ -59,12 +59,12 @@ Component {
 
             CDoodHeaderImage {
                 id: receiveTextMsgHeadImageView
-                width: 75
-                height: 75
-
-                name: sessionListManager.getSubName(model.modelData.name)
-                headerColor: sessionListManager.getHeaderColor(model.modelData.targetId)
-                iconSource: "file://"+ model.modelData.thumbAvatar
+                width: 90
+                height: 90
+                radius: 6
+                name:""
+                headerColor: sessionListManager.getHeaderColor(model.modelData.id)
+                iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
                 MouseArea {
                     anchors.fill: parent

@@ -57,7 +57,7 @@ Rectangle{
                     height: 120
                     radius: 10
                     headerColor: "white"
-                    iconSource: userProfileManager.thumbAvatar !=="" ? "file://"+userProfileManager.thumbAvatar: "qrc:/res/moren_icon_female.png"
+                    iconSource: userProfileManager.thumbAvatar !=="" ? "file://"+userProfileManager.thumbAvatar: "qrc:/res/headerDefault.png"
 
                 }
                 Text{

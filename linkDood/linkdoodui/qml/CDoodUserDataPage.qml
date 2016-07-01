@@ -2,7 +2,7 @@ import QtQuick 2.0
 import com.syberos.basewidgets 2.0
 
 CPage {
-    id: userdataPage    
+    id: userdataPage
 
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
@@ -71,18 +71,20 @@ CPage {
                     font.pixelSize: 36
                 }
             }
-            Image{
+            CDoodHeaderImage {
                 id:headImage
                 anchors.top:parent.top
                 anchors.left:parent.left
                 width:160
                 height: 160
+                radius:10
+                z:100
                 anchors{
                     topMargin:138
                     leftMargin:36
                 }
-                z:10
-                    source:"qrc:/res/logo.png"
+                name:""
+                iconSource: "qrc:/res/headerDefault.png"
             }
             CLine {
                 width: parent.width
@@ -207,20 +209,21 @@ CPage {
         }
         CButton{
             id:sendmessage
+
             anchors.top:userdata.bottom
-            width: parent.width
             anchors.topMargin: 147
-            height: 83
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            width: parent.width - 40
+            height: 90
+            opacity : pressed ? 1: 0.7
+            text:os.i18n.ctr(qsTr("发消息"))
+            textColor:  "#ffffff"
+            pixelSize:34
             backgroundComponent: Rectangle {
                 anchors.fill: parent
-                color:"white"
-            }
-            Text{
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                color:"blue"
-                font.pixelSize: 32
-                text:qsTr("发消息")
+                color:"#32c2fe"
+                radius: 10
             }
             onClicked: {
                 chatManager.showChatPage(userdataManager.name, userdataManager.id,
