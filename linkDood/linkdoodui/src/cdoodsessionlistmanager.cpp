@@ -117,12 +117,11 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
     if(sessionListMap.contains(targetId)){
         CDoodSessionListItem* item = sessionListMap.value(targetId);
         if(item != NULL){
-            //item->setId(targetId);
             item->setLastMsg(lastMsg);
             item->setMsgTime(time);
             item->setLastMsgid(msgId);
             QString URC=item->unReadCount();
-            if(unreadmsg=="1"){
+            if(unreadmsg=="1"){//未读数+1
                 int count;
                 if(URC!="")
                 {
@@ -133,6 +132,11 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
                     count=1;
                 }
                 item->setUnReadCount(QString::number(count));
+                int index = indexOf(item);
+                if(index>0 && index <itemCount()){
+                    item = (CDoodSessionListItem*)takeItemAt(index);
+                    addItemBegin(item);
+                }
             }
         }
     }else
