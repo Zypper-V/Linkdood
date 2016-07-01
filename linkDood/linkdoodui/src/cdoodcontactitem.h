@@ -20,6 +20,7 @@ class CDoodContactItem : public QObject
     Q_PROPERTY(QString server READ server WRITE setServer NOTIFY serverChanged)
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
     Q_PROPERTY(QString sectionKey READ sectionKey WRITE setSection NOTIFY sectionChanged)
+    Q_PROPERTY(QString onlineStatus READ onlineStatus WRITE setOnlineStatus NOTIFY onlineStatusChanged)
 
 
 public:
@@ -60,6 +61,9 @@ public:
     QString sectionKey() const;
     QString setSection(const QString &section);
 
+    QString onlineStatus() const;
+    QString setOnlineStatus(const QString &onlineStatus);
+
     bool isOrg() const;
     bool setIsOrg(bool isOrg);
 
@@ -77,6 +81,7 @@ signals:
     void thumbAvatarChanged();
     void isOrgChanged();
     void sectionChanged();
+    void onlineStatusChanged();
 public slots:
 
 private:
@@ -92,6 +97,7 @@ private:
     QString mRemark;
     QString mServer;
     QString mSection;
+    QString mOnlineStatus;
     bool mIsOrg;
 
 };

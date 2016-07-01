@@ -29,6 +29,8 @@ private slots:
     void onContactListChanged(int oper,ContactList contacts);
     //联系人信息更新
     void onContactInfoChanged(int oper,Contact user);
+    //监听联系人信息更新
+    void onContactOnlineChanged(QString id,QString deviceText);
 private:
 
     void initConnect();

@@ -149,11 +149,25 @@ void CDoodContactManager::onContactInfoChanged(int oper, Contact user)
 
 }
 
+void CDoodContactManager::onContactOnlineChanged(QString id, QString deviceText)
+{
+    qDebug() << Q_FUNC_INFO;
+    CDoodContactItem *item = starContactListMap.value(id,NULL);
+    if(item != NULL){
+       item->setOnlineStatus(deviceText);
+    }
+    item = contactListMap.value(id,NULL);
+    if(item != NULL){
+       item->setOnlineStatus(deviceText);
+    }
+}
+
 void CDoodContactManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
     connect(m_pClient, SIGNAL(contactListChanged(int, ContactList)), this, SLOT(onContactListChanged(int, ContactList)));
     connect(m_pClient, SIGNAL(contactInfoChanged(int, Contact)), this, SLOT(onContactInfoChanged(int, Contact)));
+    connect(m_pClient, SIGNAL(contactOnlineChanged(QString , QString)), this, SLOT(onContactOnlineChanged(QString , QString)));
 }
 
 int CDoodContactManager::indexOfSection(QString sectnion)

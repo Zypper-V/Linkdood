@@ -3,7 +3,8 @@
 
 CDoodContactItem::CDoodContactItem(QObject *parent) : QObject(parent)
 {
-    mSection = "A";
+    mSection = "";
+    mOnlineStatus = "";
 }
 
 QString CDoodContactItem::id() const
@@ -66,6 +67,22 @@ QString CDoodContactItem::setSection(const QString &section)
     emit sectionChanged();
     qDebug() << Q_FUNC_INFO;
     return mSection;
+}
+
+QString CDoodContactItem::onlineStatus() const
+{
+    return mOnlineStatus;
+}
+
+QString CDoodContactItem::setOnlineStatus(const QString &onlineStatus)
+{
+    if(mOnlineStatus == onlineStatus) {
+        return onlineStatus;
+    }
+    mOnlineStatus = onlineStatus;
+    emit onlineStatusChanged();
+    qDebug() << Q_FUNC_INFO;
+    return mOnlineStatus;
 }
 
 bool CDoodContactItem::isOrg() const
