@@ -194,12 +194,7 @@ void LinkDoodClient::updateContactInfo(QString userId, QString operStar, QString
 
 void LinkDoodClient::onOnlineChanged(QString id, QString deviceType)
 {
-    qDebug() << Q_FUNC_INFO;
-    QDBusInterface manager(DBUS_DOOD_SERVICE,
-                           DBUS_DOOD_PATH,
-                           DBUS_DOOD_INTERFACE,
-                           QDBusConnection::sessionBus());
-    manager.call("onOnlineChanged",id,deviceType);
+    emit contactOnlineChanged(id,deviceType);
 }
 
 void LinkDoodClient::getAccountInfo()
