@@ -21,6 +21,9 @@ class CDoodChatItem : public QObject
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
     Q_PROPERTY(QString tar_thumbAvatar READ tar_thumbAvatar WRITE setTar_thumbAvatar NOTIFY tar_thumbAvatarChanged)
 
+
+
+
 public:
 
     explicit CDoodChatItem(QObject *parent = 0);

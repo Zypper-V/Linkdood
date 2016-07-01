@@ -51,6 +51,21 @@ public:
 
     Q_INVOKABLE void initChatState();
 
+    //上传头像
+    void uploadAvatar(QString path);
+    //上传文件
+    void uploadFile(QString path, QString property);
+    //下载文件
+    void downloadFile(QString path, QString url, QString property);
+    //上传图片
+    void uploadImage(QString thumbimg, QString srcimg, QString property);
+    //下载图片
+    void downloadImage(QString url, QString property);
+    //解密文件
+    bool decryptFile(QString encryptkey, QString srcpath, QString destpath);
+    //获取文件列表
+    void getFileList(int64 targetid, int64 fileid, int count, int flag);
+
 signals:
     //会话列表头像更新
     void chatAvatarChanged(int64 id,QString avatar);
@@ -88,6 +103,21 @@ private slots:
     void onChatRemoveChatResult(bool code);
     //移除消息结果返回
     void onChatDeleteMessagesResult(int code);
+
+    //上传头像返回
+    void onChatUploadAvatar(QString orgijson, QString thumbjson, int code);
+    //上传文件返回
+    void onChatUploadFile(int64 tagetid, QString jasoninfo, int code);
+    //文件进度
+    void onChatFileProgress(int extra_req, int process, QString info);
+    //下载文件返回
+    void onChatDownloadFile(int code, QString localpath, int64 tagetid);
+    //上传图片返回
+    void onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code);
+    //下载图片返回
+    void onChatDownloadImage(int code, QString localpath, int64 tagetid);
+    //获取文件列表返回
+    void onChatGetFileList(int code, std::vector<MsgFileInfo> files);
 
 private:
     void initConnect();

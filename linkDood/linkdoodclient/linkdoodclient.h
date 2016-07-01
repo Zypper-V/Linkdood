@@ -197,7 +197,7 @@ private slots:
     void onAccountInfoChanged(Contact user);
     //会话列表(通知栏)新消息更新通知
     void onSessionMessageNotice(QString,QString,QString,QString,QString,QString,QString);
-//上传头像返回
+    //上传头像返回
     void onChatUploadAvatar(QString orgijson, QString thumbjson, int code);
     //上传文件返回
     void onChatUploadFile(int64 tagetid, QString jasoninfo, int code);

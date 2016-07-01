@@ -20,6 +20,20 @@ void CDoodChatManager::initConnect()
             SLOT(onChatRemoveChatResult(bool)));
     connect(m_pClient,SIGNAL(deleteMessagesResult(int)),this,
             SLOT(onChatDeleteMessagesResult(int)));
+    connect(m_pClient,SIGNAL(uploadAvatarResult),this,
+        SLOT(onChatAvatarChanged(long long,QString)));
+    connect(m_pClient,SIGNAL(uploadFileResult),this,
+        SLOT(onChatUploadFile(long long,QString,int)));
+    connect(m_pClient,SIGNAL(fileProgressResult),this,
+        SLOT(onChatFileProgress(int,int,QString)));
+    connect(m_pClient,SIGNAL(downloadFileResult),this,
+        SLOT(onChatDownloadFile(int,QString,long long)));
+    connect(m_pClient,SIGNAL(uploadImageResult),this,
+        SLOT(onChatupLoadImage(int64,QString,QString,int)));
+    connect(m_pClient,SIGNAL(downloadImageResult),this,
+        SLOT(onChatDownloadImage(int,QString,int64)));
+    connect(m_pClient,SIGNAL(getFileListResult),this,
+        SLOT(onChatGetFileList(int,std::vector<MsgFileInfo>)));
 
     /*    connect(m_pClient,SIGNAL(),this,
             SLOT())*/;
@@ -270,16 +284,59 @@ void CDoodChatManager::initChatState()
     m_sTargetid = "";
 }
 
+void CDoodChatManager::uploadAvatar(QString path)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->uploadAvatar(path);
+}
+
+void CDoodChatManager::uploadFile(QString path, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->uploadFile(path, property);
+}
+
+void CDoodChatManager::downloadFile(QString path, QString url, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->downloadFile(path, url, property);
+}
+
+void CDoodChatManager::uploadImage(QString thumbimg, QString srcimg, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->uploadImage(thumbimg, srcimg, property);
+}
+
+void CDoodChatManager::downloadImage(QString url, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->downloadImage(url, property);
+}
+
+bool CDoodChatManager::decryptFile(QString encryptkey, QString srcpath, QString destpath)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->decryptFile(encryptkey, srcpath, destpath);
+}
+
+void CDoodChatManager::getFileList(int64 targetid, int64 fileid, int count, int flag)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->getFileList(targetid, fileid, count, flag);
+}
+
+
 void CDoodChatManager::onChatAvatarChanged(int64 id, QString avatar)
 {
     qDebug() << Q_FUNC_INFO;
-    emit chatAvatarChanged(id,avatar);
+   // emit chatAvatarChanged(id,avatar);
 }
 
 void CDoodChatManager::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
 {
     qDebug() << Q_FUNC_INFO << msgList.size();
-    emit offlineMsgNotice(msgList);
+    //emit offlineMsgNotice(msgList);
 }
 
 void CDoodChatManager::onChatMessageNotice(Msg msg)
@@ -300,7 +357,7 @@ void CDoodChatManager::onChatMessageNotice(Msg msg)
 void CDoodChatManager::onChatSendMessageResult(bool code, QString sendTime, QString msgId)
 {
     qDebug() << Q_FUNC_INFO;
-    emit sendMessageResult(code,sendTime,msgId);
+//    emit sendMessageResult(code,sendTime,msgId);
 }
 
 void CDoodChatManager::onChatGetMessagesResult(bool code, QString sessionId, MsgList msgList)
@@ -316,10 +373,45 @@ void CDoodChatManager::onChatGetMessagesResult(bool code, QString sessionId, Msg
 void CDoodChatManager::onChatRemoveChatResult(bool code)
 {
     qDebug() << Q_FUNC_INFO;
-    emit removeChatResult(code);
+//    emit removeChatResult(code);
 }
 
 void CDoodChatManager::onChatDeleteMessagesResult(int code)
 {
 
+}
+
+void CDoodChatManager::onChatUploadAvatar(QString orgijson, QString thumbjson, int code)
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
+void CDoodChatManager::onChatUploadFile(int64 tagetid, QString jasoninfo, int code)
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
+void CDoodChatManager::onChatFileProgress(int extra_req, int process, QString info)
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
+void CDoodChatManager::onChatDownloadFile(int code, QString localpath, int64 tagetid)
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
+void CDoodChatManager::onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code)
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
+void CDoodChatManager::onChatDownloadImage(int code, QString localpath, int64 tagetid)
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
+void CDoodChatManager::onChatGetFileList(int code, std::vector<MsgFileInfo> files)
+{
+    qDebug() << Q_FUNC_INFO;
 }
