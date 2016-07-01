@@ -70,6 +70,24 @@ signals:
 
     void srvGetContactInfo(service::User&user);
     void getContactInfo();
+
+
+    //上传头像返回
+    void uploadAvatarResult(QString orgijson, QString thumbjson, int code);
+    //上传文件返回
+    void uploadFileResult(QString tagetid, QString jasoninfo, int code);
+    //文件进度返回
+    void fileProgressResult(int32 extra_req, int32 process, QString info);
+    //下载文件返回
+    void downloadFileResult(int code, QString localpath, QString tagetid);
+    //上传图片返回
+    void uploadImageResult(QString tagetid, QString orgijson, QString thumbjson, int code);
+    //下载图片返回
+    void downloadImageResult(int code, QString jasoninfo, QString tagetid);
+    //获取文件列表返回
+    void getFileListResult(int code, FileInfoList fileList);
+
+
 public slots:
 
     /**************************************
@@ -196,6 +214,68 @@ public slots:
     *************************************************/
     void setLoginInfo(int flag, QString userid, QString username, QString avatar);
 
+    /************************************************************************
+    * @brief uploadAvatar
+    * @description: 上传头像
+    * @param[in] path 传入头像本地路径
+    ************************************************************************/
+    void uploadAvatar(QString path);
+
+    /************************************************************************
+    * @brief uploadFile
+    * @description: 上传文件
+    * @param[in] path 传入文件本地路径
+    * @param[in] property 传入文件属性
+    ************************************************************************/
+    void uploadFile(QString path, QString property);
+
+    /************************************************************************
+    * @brief downloadFile
+    * @description: 下载文件
+    * @param[in] path 传入下载路径
+    * @param[in] url 传入url
+    * @param[in] property 传入文件属性
+    ************************************************************************/
+    void downloadFile(QString path, QString url, QString property);
+
+    /************************************************************************
+    * @brief uploadImage
+    * @description: 上传照片
+    * @param[in] thumbimg 传入缩略图
+    * @param[in] srcimg 传入原图
+    * @param[in] property 传入图片属性
+    ************************************************************************/
+    void uploadImage(QString thumbimg, QString srcimg, QString property);
+
+    /************************************************************************
+    * @brief downloadImage
+    * @description: 下载图片
+    * @param[in] url 传入图片url
+    * @param[in] property 传入图片属性
+    * @param[in] await  传入接收结果回调
+    ************************************************************************/
+    void downloadImage(QString url, QString property);
+
+    /************************************************************************
+    * @brief decryptFile
+    * @description: 解密文件
+    * @param[in] encryptkey 传入解密密码
+    * @param[in] srcpath 传入原图路径
+    * @param[in] destpath 传入解密后图片路径
+    ************************************************************************/
+    bool decryptFile(QString encryptkey, QString srcpath, QString destpath);
+
+    /************************************************************************
+    * @brief getFileList
+    * @description: 获取文件列表
+    * @param[in] targetid 传入查询对象id
+    * @param[in] fileid 传入起始文件id
+    * @param[in] count 传入数量
+    * @param[in] flag 传入偏移标志0为向上1为向下
+    ***********************************************************************/
+    void getFileList(int64 targetid, int64 fileid, int count, int flag);
+
+
 protected slots:
     //获取子组织返回
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
@@ -232,6 +312,24 @@ protected slots:
     void onChatRemoveChatResult(bool);
     //删除消息
     void onChatDeleteMessagesResult(int code);
+
+
+    //上传头像返回
+    void onChatUploadAvatar(QString orgijson, QString thumbjson, int code);
+    //上传文件返回
+    void onChatUploadFile(int64 tagetid, QString jasoninfo, int code);
+    //文件进度
+    void onChatFileProgress(int32 extra_req, int32 process, QString info);
+    //下载文件返回
+    void onChatDownloadFile(service::ErrorInfo& info, QString localpath, int64 tagetid);
+    //上传图片返回
+    void onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code);
+    //下载图片返回
+    void onChatDownloadImage(service::ErrorInfo& info, QString localpath, int64 tagetid);
+    //获取文件列表返回
+    void onChatGetFileList(service::ErrorInfo& info, std::vector<FileInfo> files);
+
+
 
     //获取登录历史记录
     void onGetLoginHistoryResult(LoginInfoList list);

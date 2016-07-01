@@ -17,6 +17,7 @@
 #include "linkdoodservice.h"
 #include "ISearchService.h"
 #include "IContactService.h"
+#include "IFileService.h"
 
 #include<QSettings>
 
@@ -232,6 +233,51 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
 
 }
 
+void ChatControler::uploadAvatar(QString path)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getFile()->uploadAvatar(path.toStdString(), std::bind(&ChatControler::_uploadAvatar, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
+
+void ChatControler::uploadFile(QString path, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getFile()->uploadFile(path.toStdString(), property.toStdString(), std::bind(&ChatControler::_uploadFile, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), std::bind(&ChatControler::_fileProgress, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+}
+
+void ChatControler::downloadFile(QString path, QString url, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getFile()->downloadFile(path.toStdString(), url.toStdString(), property.toStdString(), std::bind(&ChatControler::_downloadFile, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), std::bind(&ChatControler::_fileProgress, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+}
+
+void ChatControler::uploadImage(QString thumbimg, QString srcimg, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getFile()->uploadImage(thumbimg.toStdString(), srcimg.toStdString(), property.toStdString(), std::bind(&ChatControler::_uploadImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+}
+
+void ChatControler::downloadImage(QString url, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getFile()->downloadImage(url.toStdString(), property.toStdString(), std::bind(&ChatControler::_downloadImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
+
+bool ChatControler::decryptFile(QString encryptkey, QString srcpath, QString destpath)
+{
+    qDebug() << Q_FUNC_INFO;
+    return service::IMClient::getClient()->getFile()->decryptFile(encryptkey.toStdString(), srcpath.toStdString(), destpath.toStdString());
+}
+
+void ChatControler::getFileList(int64 targetid, int64 fileid, int count, int flag)
+{
+    qDebug() << Q_FUNC_INFO;
+    return service::IMClient::getClient()->getFile()->getFileList(targetid, fileid, count, flag, std::bind(&ChatControler::_getFileList, this, std::placeholders::_1, std::placeholders::_2));
+}
+
+
 QString ChatControler::dealTime(qint64 msgtime, int type)
 {
     QString strDateTime("");
@@ -354,6 +400,63 @@ void ChatControler::_getContactInfo(service::ErrorInfo &info, service::User &use
        emit sessionMessageNotice(msg.targetid,msg.msgid,msg.body,time,msg.name,msg.thumb_avatar,"1");
     }
 }
+
+
+
+
+
+
+
+void ChatControler::_uploadAvatar(std::string orgijson, std::string thumbjson, int code)
+{
+    emit uploadAvatarBack(orgijson, thumbjson, code);
+}
+
+void ChatControler::_uploadFile(int64 tagetid, std::string jasoninfo, int code)
+{
+    emit uploadFileBack(tagetid, jasoninfo, code);
+}
+
+void ChatControler::_fileProgress(int32 extra_req, int32 process, std::string info)
+{
+    emit fileProgressBack(extra_req, process, info);
+}
+
+void ChatControler::_downloadFile(service::ErrorInfo &info, std::string localpath, int64 tagetid)
+{
+    emit downloadFileBack(info.code(), localpath, tagetid);
+}
+
+void ChatControler::_uploadImage(int64 tagetid, std::string orgijson, std::string thumbjson, int code)
+{
+    emit uploadImageBack(tagetid, orgijson, thumbjson, code);
+}
+
+void ChatControler::_downloadImage(service::ErrorInfo &info, std::string localpath, int64 tagetid)
+{
+    emit downloadImageBack(info.code(), localpath, tagetid);
+}
+
+void ChatControler::_getFileList(service::ErrorInfo &info, std::vector<FileInfo> files)
+{
+    FileInfoList msgList;
+    MsgFileInfo fileInfo;
+    for(auto msg:files)
+    {
+        fileInfo.fileid = QString::number(msg.fileid);
+        fileInfo.userid = QString::number(msg.userid);
+        fileInfo.targetid = QString::number(msg.targetid);
+        fileInfo.size = msg.size;
+        fileInfo.time = msg.time;
+        fileInfo.path = QString::fromStdString(msg.path);
+        fileInfo.name = QString::fromStdString(msg.name);
+        fileInfo.url = QString::fromStdString(msg.url);
+        fileInfo.encrypt_key = QString::fromStdString(msg.encrypt_key);
+        msgList.push_back(fileInfo);
+    }
+    emit getFileListBack(info.code(), msgList);
+}
+
 
 Msg ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
 {

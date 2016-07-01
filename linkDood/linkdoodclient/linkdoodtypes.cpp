@@ -683,3 +683,37 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, LoginInfo &info
     argument.endStructure();
     return argument;
 }
+
+MsgFileInfo::MsgFileInfo()
+{
+    init();
+}
+
+void MsgFileInfo::toImMsgFileInfo(QVariantMap map)
+{
+    QVariantMap::const_iterator iter;
+    for (iter = map.constBegin(); iter != map.constEnd(); ++iter)
+    {
+        if(iter.key() == "path")
+            this->path = iter.value().toString();
+        if(iter.key() == "name")
+            this->name = iter.value().toString();
+        if(iter.key() == "url")
+            this->url = iter.value().toString();
+        if(iter.key() == "encrypt_key")
+            this->encrypt_key = iter.value().toString();
+    }
+}
+
+void MsgFileInfo::init()
+{
+    fileid = "";
+    userid = "";
+    targetid = "";
+    size = 0;
+    time = 0;
+    path = "";
+    name = "";
+    url = "";
+    encrypt_key = "";
+}

@@ -326,6 +326,55 @@ void LinkDoodService::setLoginInfo(int flag, QString userid, QString username, Q
     }
 }
 
+void LinkDoodService::uploadAvatar(QString path)
+{
+     qDebug() << Q_FUNC_INFO;
+     if(m_pChatObserver != NULL)
+         m_pChatObserver->uploadAvatar(path);
+}
+
+void LinkDoodService::uploadFile(QString path, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL)
+        m_pChatObserver->uploadFile(path, property);
+}
+
+void LinkDoodService::downloadFile(QString path, QString url, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL)
+        m_pChatObserver->downloadFile(path, url, property);
+}
+
+void LinkDoodService::uploadImage(QString thumbimg, QString srcimg, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL)
+        m_pChatObserver->uploadImage(thumbimg, srcimg, property);
+}
+
+void LinkDoodService::downloadImage(QString url, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL)
+        m_pChatObserver->downloadImage(url, property);
+}
+
+bool LinkDoodService::decryptFile(QString encryptkey, QString srcpath, QString destpath)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL)
+        m_pChatObserver->decryptFile(encryptkey, srcpath, destpath);
+}
+
+void LinkDoodService::getFileList(int64 targetid, int64 fileid, int count, int flag)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL)
+        m_pChatObserver->getFileList(targetid, fileid, count, flag);
+}
+
 void LinkDoodService::onGetSonOrgsResult(int code, OrgList orglist, OrgUserList orguserlist)
 {
     qDebug() << Q_FUNC_INFO << "xxxxxxxxx";
@@ -469,6 +518,64 @@ void LinkDoodService::onAccountInfoChanged(Contact user)
     emit accountInfoChanged(user);
 }
 
+void LinkDoodService::onChatUploadAvatar(QString orgijson, QString thumbjson, int code)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit uploadAvatarResult(orgijson, thumbjson, code);
+}
+
+void LinkDoodService::onChatUploadFile(int64 tagetid, QString jasoninfo, int code)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit uploadFileResult(QString::number(tagetid), jasoninfo, code);
+}
+
+void LinkDoodService::onChatFileProgress(int32 extra_req, int32 process, QString info)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit fileProgressResult(extra_req, process, info);
+}
+
+void LinkDoodService::onChatDownloadFile(service::ErrorInfo &info, QString localpath, int64 tagetid)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit downloadFileResult(info.code(), localpath, QString::number(tagetid));
+}
+
+void LinkDoodService::onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit uploadImageResult(QString::number(tagetid), orgijson, thumbjson, code);
+}
+
+void LinkDoodService::onChatDownloadImage(service::ErrorInfo &info, QString localpath, int64 tagetid)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit downloadImageResult(info.code(), localpath, QString::number(tagetid));
+}
+
+void LinkDoodService::onChatGetFileList(service::ErrorInfo &info, std::vector<FileInfo> files)
+{
+    qDebug() << Q_FUNC_INFO;
+    FileInfoList msgList;
+    MsgFileInfo fileInfo;
+    for(auto msg:files)
+    {
+        fileInfo.fileid = QString::number(msg.fileid);
+        fileInfo.userid = QString::number(msg.userid);
+        fileInfo.targetid = QString::number(msg.targetid);
+        fileInfo.size = msg.size;
+        fileInfo.time = msg.time;
+        fileInfo.path = QString::fromStdString(msg.path);
+        fileInfo.name = QString::fromStdString(msg.name);
+        fileInfo.url = QString::fromStdString(msg.url);
+        fileInfo.encrypt_key = QString::fromStdString(msg.encrypt_key);
+        msgList.push_back(fileInfo);
+    }
+
+    emit getFileListResult(info.code(), msgList);
+}
+
 void LinkDoodService::onSessionMessageNotice(QString targetId,QString msgId,QString lastMsg,
                                              QString time ,QString name,QString avater,QString unreadmsg)
 {
@@ -537,6 +644,18 @@ void LinkDoodService::initConnects()
                      SLOT(onSessionMessageNotice(QString,QString,QString,QString, QString,QString,QString)));
     QObject::connect(m_pChatObserver.get(),SIGNAL(deleteMessagesBack(int)),this,
                      SLOT(onChatDeleteMessagesResult(int)));
+
+    QObject::connect(m_pChatObserver.get(), SIGNAL(uploadAvatarBack(std::string,std::string,int)), this, SLOT(onChatUploadAvatar(QString,QString,int)));
+    QObject::connect(m_pChatObserver.get(), SIGNAL(uploadFileBack(std::string,std::string,int)), this, SLOT(onChatUploadFile(QString,QString,int)));
+    QObject::connect(m_pChatObserver.get(), SIGNAL(fileProgressBack(std::string,std::string,int)), this, SLOT(onChatFileProgress(QString,QString,int)));
+    QObject::connect(m_pChatObserver.get(), SIGNAL(downloadFileBack(std::string,std::string,int)), this, SLOT(onChatDownloadFile(QString,QString,int)));
+    QObject::connect(m_pChatObserver.get(), SIGNAL(uploadImageBack(std::string,std::string,int)), this, SLOT(onChatupLoadImage(QString,QString,int)));
+    QObject::connect(m_pChatObserver.get(), SIGNAL(downloadImageBack(std::string,std::string,int)), this, SLOT(onChatDownloadImage(QString,QString,int)));
+    QObject::connect(m_pChatObserver.get(), SIGNAL(getFileListBack(std::string,std::string,int)), this, SLOT(onChatGetFileList(QString,QString,int)));
+
+
+
+
 
     QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getSonOrgsResult(int ,OrgList ,OrgUserList )),this,
                      SLOT(onGetSonOrgsResult(int,OrgList,OrgUserList )));

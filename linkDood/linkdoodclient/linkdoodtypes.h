@@ -306,6 +306,29 @@ inline int genderConvert(QString sex){
     return 0;
 }
 
+class MsgFileInfo{
+public:
+    explicit MsgFileInfo();
+    void toImMsgFileInfo(QVariantMap map);
+    void init();
+
+    QString fileid;                 //文件ID
+    QString userid;                 //发送者ID
+    QString targetid;               //目标ID,可以是群,也可以是用户
+    int64 size;                     //文件大小
+    int64 time;                     //上传时间
+    QString path;                   //本地路径
+    QString name;                   //文件名
+    QString url;                    //文件url
+    QString encrypt_key;            //加密KEY
+};
+
+Q_DECLARE_METATYPE(MsgFileInfo)
+QDBusArgument &operator << (QDBusArgument &argument, const MsgFileInfo &contact);
+const QDBusArgument &operator >> (const QDBusArgument &argument, MsgFileInfo &contact);
+
+typedef QList<MsgFileInfo> FileInfoList;
+Q_DECLARE_METATYPE (FileInfoList);
 inline void registerDoodDataTypes() {
     qDebug() << Q_FUNC_INFO;
     qDBusRegisterMetaType<Msg>();

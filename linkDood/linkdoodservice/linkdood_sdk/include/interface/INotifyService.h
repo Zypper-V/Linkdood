@@ -96,6 +96,7 @@ namespace service {
 		* @param[in] observer 传入监听对象实例
 		************************************************************************/
 		virtual void removeSysMsgObserver(SysMsgObserverPtr observer) = 0;
+
 	};
 	std::shared_ptr<INotifyService> getNotifyInstance(void);
 }

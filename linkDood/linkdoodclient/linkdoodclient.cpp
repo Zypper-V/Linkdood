@@ -355,6 +355,84 @@ void LinkDoodClient::getContactList()
     manager.call("getContactList");
 }
 
+void LinkDoodClient::uploadAvatar(QString path)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("uploadAvatar", path);
+}
+
+void LinkDoodClient::uploadFile(QString path, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("uploadFile", path, property);
+}
+
+void LinkDoodClient::downloadFile(QString path, QString url, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("downloadFile", path, url, property);
+}
+
+void LinkDoodClient::uploadImage(QString thumbimg, QString srcimg, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("uploadImage", thumbimg, srcimg, property);
+}
+
+void LinkDoodClient::downloadImage(QString url, QString property)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("downloadImage", url, property);
+}
+
+bool LinkDoodClient::decryptFile(QString encryptkey, QString srcpath, QString destpath)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    QDBusPendingReply<bool> reply = manager.call("decryptFile", encryptkey, srcpath, destpath);
+
+    if (!reply.isError())
+        return true;
+    else
+    {
+        qDebug() << reply.error();
+        return false;
+    }
+}
+
+void LinkDoodClient::getFileList(int64 targetid, int64 fileid, int count, int flag)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getFileList", targetid, fileid, count, flag);
+}
+
 void LinkDoodClient::onLoginoutRelust(bool loginout)
 {
     qDebug() << Q_FUNC_INFO << loginout;
@@ -478,6 +556,53 @@ void LinkDoodClient::onSessionMessageNotice(QString targetId, QString msgId,QStr
       emit sessionMessageNotice(targetId,msgId,lastMsg,time,name,avater,unreadmsg);
 }
 
+void LinkDoodClient::onChatUploadAvatar(QString orgijson, QString thumbjson, int code)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit uploadAvatarResult(orgijson, thumbjson, code);
+}
+
+void LinkDoodClient::onChatUploadFile(int64 tagetid, QString jasoninfo, int code)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit uploadFileResult(QString::number(tagetid), jasoninfo, code);
+}
+
+void LinkDoodClient::onChatFileProgress(int extra_req, int process, QString info)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit fileProgressResult(extra_req, process, info);
+}
+
+void LinkDoodClient::onChatDownloadFile(int code, QString localpath, int64 tagetid)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit downloadFileResult(code, localpath, QString::number(tagetid));
+}
+
+void LinkDoodClient::onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit uploadImageResult(QString::number(tagetid), orgijson, thumbjson, code);
+}
+
+void LinkDoodClient::onChatDownloadImage(int code, QString localpath, long long tagetid)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit downloadImageResult(code, localpath, QString::number(tagetid));
+}
+
+void LinkDoodClient::onChatGetFileList(int code, std::vector<MsgFileInfo> files)
+{
+    qDebug() << Q_FUNC_INFO;
+    FileInfoList fileList;
+    for(auto msg:files)
+    {
+        fileList.push_back(msg);
+    }
+    emit getFileListResult(code, fileList);
+}
+
 void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
@@ -507,6 +632,29 @@ void LinkDoodClient::initDBusConnect()
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "removeChatResult",
                                           this, SLOT(onChatRemoveChatResult(bool)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "uploadAvatarResult",
+                                          this, SLOT(onChatUploadAvatar(QString,QString,int)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "uploadFileResult",
+                                          this, SLOT(onChatUploadFile(long long,QString,int)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "fileProgressResult",
+                                          this, SLOT(onChatFileProgress(int32,int32,QString)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "downloadFileResult",
+                                          this, SLOT(onChatDownloadFile(int,QString, int64)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "uploadImageResult",
+                                          this, SLOT(onChatupLoadImage(int64,QString,QString,int)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "downloadImageResult",
+                                          this, SLOT(onChatDownloadImage(int,QString,int64)));
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "getFileListResult",
+                                          this, SLOT(onChatGetFileList(int,std::vector<MsgFileInfo>)));
+
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "loginoutRelust",
