@@ -36,6 +36,10 @@ signals:
     void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
     void getOnlineStatesResult(QOnlineStateList onlinestatelist);
     void getOrgUserInfoResult(int code,OrgUser orguser);
+
+    //联系人信息更新
+    void contactInfoChanged(int oper,Contact user);
+
     //会话列表头像更新
     void chatAvatarChanged(int64 id,QString avatar);
     //监听离线消息通知
@@ -86,6 +90,9 @@ public slots:
     QString UserId();
     QString userName();
 
+    //更新联系人信息
+     void updateContactInfo(QString userId,QString operStar,QString remark="");
+
     //获取账户信息
     void getAccountInfo(void);
     //更新用户信息
@@ -128,6 +135,10 @@ private slots:
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
     void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
     void onGetorgUserInfoResult(int code,OrgUser orguser);
+
+    //联系人信息更新
+    void onContactInfoChanged(int oper,Contact user);
+
     //会话列表头像更新
     void onChatAvatarChanged(int64 id,QString avatar);
     //监听离线消息通知

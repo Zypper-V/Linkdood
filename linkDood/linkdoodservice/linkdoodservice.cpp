@@ -148,6 +148,14 @@ QString LinkDoodService::createMsgId()
     return strId;
 }
 
+void LinkDoodService::updateContactInfo(QString userId, QString operStar, QString remark)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pContactObserver != NULL){
+        m_pContactObserver->updateContactInfo(userId,operStar,remark);
+    }
+}
+
 void LinkDoodService::getContactInfo(QString userId, Msg msg)
 {
     qDebug() << Q_FUNC_INFO << "xxxxxxxxxxxxxxxxxxxxxxxxx";
@@ -334,6 +342,12 @@ void LinkDoodService::onGetorgUserInfoResult(int code, OrgUser orguser)
 {
     qDebug() << Q_FUNC_INFO;
     emit getOrgUserInfoResult(code,orguser);
+}
+
+void LinkDoodService::onContactInfoChanged(int oper, Contact user)
+{
+    qDebug() << Q_FUNC_INFO<< "333333333333333333333333333333";
+    emit contactInfoChanged(oper,user);
 }
 
 
@@ -550,6 +564,8 @@ void LinkDoodService::initConnects()
                      SLOT(onChatListChanged(Chat_UIList)));
     QObject::connect(m_pContactObserver.get(),SIGNAL(contactListChanged(int,ContactList)),this,
                      SLOT(onContactListChanged(int,ContactList)));
+    QObject::connect(m_pContactObserver.get(),SIGNAL(contactInfoChanged(int,Contact)),this,
+                     SLOT(onContactInfoChanged(int,Contact)));
 }
 
 void LinkDoodService::initDBusConnection()

@@ -76,7 +76,7 @@ Rectangle{
     }
     MouseArea{
         anchors.fill: parent
-        onPressed: parent.color = "#32c2fe"
+        onPressed: parent.color = "#7c9dd9"
         onReleased: parent.color = "white"
         onClicked: {
             emit: comp.clicked();

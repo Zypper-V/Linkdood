@@ -277,6 +277,35 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, IMOfflineMsg &o
 typedef QList<IMOfflineMsg> IMOfflineMsgList;
 Q_DECLARE_METATYPE (IMOfflineMsgList);
 
+inline QString genderConvert(int sex){
+    QString cur("保密");
+
+    switch (sex) {
+    case 1:
+        cur = "男";
+        break;
+    case 2:
+        cur = "女";
+        break;
+    default:
+        break;
+    }
+    return cur;
+}
+
+inline int genderConvert(QString sex){
+    if(sex == "保密"){
+        return 0;
+    }
+    if(sex == "男"){
+        return 1;
+    }
+    if(sex == "女"){
+        return 2;
+    }
+    return 0;
+}
+
 inline void registerDoodDataTypes() {
     qDebug() << Q_FUNC_INFO;
     qDBusRegisterMetaType<Msg>();

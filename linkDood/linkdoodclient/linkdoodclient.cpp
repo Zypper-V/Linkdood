@@ -182,6 +182,16 @@ QString LinkDoodClient::userName()
     return sTmp;
 }
 
+void LinkDoodClient::updateContactInfo(QString userId, QString operStar, QString remark)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("updateContactInfo",userId,operStar,remark);
+}
+
 void LinkDoodClient::getAccountInfo()
 {
     qDebug() << Q_FUNC_INFO;
@@ -395,6 +405,12 @@ void LinkDoodClient::onGetorgUserInfoResult(int code, OrgUser orguser)
     emit getOrgUserInfoResult(code,orguser);
 }
 
+void LinkDoodClient::onContactInfoChanged(int oper, Contact user)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit contactInfoChanged(oper,user);
+}
+
 void LinkDoodClient::onChatAvatarChanged(int64 id, QString avatar)
 {
     qDebug() << Q_FUNC_INFO;
@@ -531,6 +547,10 @@ void LinkDoodClient::initDBusConnect()
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "accountInfoChanged",
                                           this, SLOT(onAccountInfoChanged(Contact)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "contactInfoChanged",
+                                          this, SLOT(onContactInfoChanged(int,Contact)));
 
 
 }

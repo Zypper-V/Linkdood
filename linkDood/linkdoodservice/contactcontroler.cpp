@@ -2,7 +2,7 @@
 #include<iostream>
 #include<QDebug>
 #include <QMetaType>
-
+#include <QtAlgorithms>
 #include "IMClient.h"
 #include "IContactService.h"
 #include "INotifyService.h"
@@ -23,6 +23,22 @@ void ContactControler::getContactList()
     service::IMClient::getClient()->getContact()->getContactList();
 }
 
+void ContactControler::updateContactInfo(QString userId, QString operStar, QString remark)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::Contact user;
+
+    user.__set_id(userId.toLongLong());
+    if(operStar != ""){
+        user.__set_isStar(operStar.toInt());
+    }
+    if(remark != ""){
+        user.__set_remark(remark.toStdString());
+    }
+    service::IMClient::getClient()->getContact()->updateContactInfo(user,
+                      std::bind(&ContactControler::_updateContactInfo,this,std::placeholders::_1));
+}
+
 void ContactControler::init()
 {
     qDebug() << Q_FUNC_INFO;
@@ -31,11 +47,11 @@ void ContactControler::init()
 
 void ContactControler::onListChanged(int operType, std::vector<service::Contact> &users)
 {
-    qDebug() << Q_FUNC_INFO << "oper:" << operType << "contactSize:" << users.size();
+    qDebug() << Q_FUNC_INFO << "oper:" << operType << "222222222222222contactSize:" << users.size();
     ContactList contacts;
     for(auto i: users){
        Contact user;
-       qDebug() << Q_FUNC_INFO <<"ssssssssss"<<QString::fromStdString(i.pinyin);
+
        user.avatar = QString::fromStdString(i.avatar);
        user.name  = QString::fromStdString(i.name);
        user.extends  = QString::fromStdString(i.extends);
@@ -47,14 +63,7 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
        user.server  = QString::fromStdString(i.server);
        user.thumbAvatar  = QString::fromStdString(i.thumb_avatar);
        user.timeZone  = i.time_zone;
-        qDebug() << Q_FUNC_INFO << "sdfsdgsdgdsfgdfg:" <<user.id <<"text:"<< user.name;
-      if(i.gender == 0){
-        user.gender = QObject::tr("保密");
-      }else if(i.gender == 1){
-        user.gender = QObject::tr("男");
-      }else if(i.gender == 2){
-        user.gender = QObject::tr("女");
-      }
+       user.gender = genderConvert(i.gender);
       if(user.id!="4328621727"&&user.id!="9151315548882010112")
       {
          contacts.push_back(user);
@@ -70,12 +79,67 @@ void ContactControler::onAvatarChanged(int64 userid, std::string avatar)
 
 void ContactControler::onContactInfoChanged(int operType, service::User &users)
 {
-    qDebug() << Q_FUNC_INFO;
+    service::Contact& contact = dynamic_cast<service::Contact&>(users);
+    qDebug() << Q_FUNC_INFO << "operType:" << operType<< "name:"<< contact.name.c_str() << "isStar:"<<contact.isStar;
+    Contact user;
+
+    user.isStar = contact.isStar;
+    user.extends = QString::fromStdString(contact.extends);
+    user.gender = genderConvert(contact.gender);
+    user.id = QString::number(contact.id);
+    user.isVip = contact.isVip;
+    user.name  = QString::fromStdString(contact.name);
+    user.pinyin  = QString::fromStdString(contact.pinyin);
+    user.remark  = QString::fromStdString(contact.remark);
+    user.server  = QString::fromStdString(contact.server);
+    user.thumbAvatar  = QString::fromStdString(contact.thumb_avatar);
+    user.timeZone     = contact.time_zone;
+
+    qDebug() << Q_FUNC_INFO << "end ssssssssssssssssssssssoperType:" << operType<< "name:"<< contact.name.c_str() << "isStar:"<<contact.isStar;
+    emit contactInfoChanged(operType,user);
 }
 
 void ContactControler::onOnlineChanged(OnlineState &status)
 {
     qDebug() << Q_FUNC_INFO;
+}
+
+ContactList ContactControler::sort(const ContactList &contactList)
+{
+    //
+    ContactList starList;
+    ContactList otherList;
+    ContactList list;
+
+    for(auto item:contactList){
+        if(item.isStar == 1){
+            starList.insert(starList.size(),item);
+        }else{
+            otherList.insert(otherList.size(),item);
+        }
+    }
+
+    qSort(starList.begin(),starList.end(),CmpByTeam);
+    qSort(otherList.begin(),otherList.end(),CmpByTeam);
+
+    for(auto item:starList){
+        list.insert(list.size(),item);
+    }
+
+    for(auto item:otherList){
+        list.insert(list.size(),item);
+    }
+    return list;
+}
+
+void ContactControler::_updateContactInfo(service::ErrorInfo &info)
+{
+    qDebug() << Q_FUNC_INFO << "44444444444444444444444444444";
+}
+
+bool CmpByTeam(const Contact first, const Contact second)
+{
+    return  first.pinyin.at(0).toUpper() <= second.pinyin.at(0).toUpper();
 }
 
 

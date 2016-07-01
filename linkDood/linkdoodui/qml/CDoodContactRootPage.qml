@@ -3,22 +3,6 @@ import com.syberos.basewidgets 2.0
 Item {
     id: contactRootPage
     anchors.fill: parent
-
-
-    Connections {
-        target: loginManager
-        onLoginoutRelust:{
-            contactManager.clearChatList();
-            sessionListManager.clearChatList();
-            loginManager.setAppLoginStatus(0);
-
-            pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
-//            if(loginout){
-//                console.log("loginout OK.................");
-//                pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
-//            }
-        }
-    }
     Rectangle {
         anchors.top: parent.top
         anchors.left: parent.left
@@ -31,45 +15,46 @@ Item {
     }
     ListView {
         id: contactListView
+
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
-        onCountChanged: {
-            console.log("SSSSSSSSSSSSSSSSSSSS:"+contactListView.count)
-        }
-
         clip: true
         model: contactManager
 
         // todo 缺少sectionKey字段
-//        section.property: "sectionKey"
-//        section.criteria: ViewSection.FirstCharacter
-//        section.delegate: Rectangle {
-//            width: 720
-//            height: 45
-//            color: "#e7e7e7"
+        section.property: "modelData.sectionKey"
+        section.criteria: ViewSection.FullString
+        section.delegate: Rectangle {
+            width: contactRootPage.width
+            height: 58
+            color: "#e7e7e7"
 
-//            Text {
-//                anchors.left: parent.left
-//                anchors.leftMargin: 40
-//                anchors.verticalCenter: parent.verticalCenter
-//                text: section
-//                font.pixelSize: 28
-//                color: "#333333"
-//            }
-//        }
+            Text {
+                anchors.left: parent.left
+                anchors.leftMargin: 40
+                anchors.verticalCenter: parent.verticalCenter
+                text: section
+                font.pixelSize: 28
+                color: "#333333"
+                onTextChanged: {
+                    console.log("xxxxxx:"+text)
+                }
+            }
+        }
 
         delegate:Item {
             id:contactListDelegate
 
             width: contactListView.width
-            height: 113
+            height: 104
 
             MouseArea {
                 anchors.fill: parent
 
+                property var pressTime;
                 onPressed: {
                     if(mousePressBackgroud.visible){
                         background.color = "#ffffff"
@@ -78,18 +63,28 @@ Item {
                         background.color = "#cdcdcd"
                         mousePressBackgroud.visible = true
                     }
+
+                    pressTime = (new Date()).getTime();
                 }
 
                 onReleased: {
-                    userdataManager.setName(model.modelData.name);
-                    userdataManager.setGender(model.modelData.gender);
-                    userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
-                    userdataManager.setId(model.modelData.id);
+                    var curTime = (new Date()).getTime();
+                    var dx = (curTime - pressTime)/1000;
 
                     background.color = "#ffffff"
                     mousePressBackgroud.visible = false
 
-                    pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
+                    if(dx<1.0){
+                        userdataManager.setName(model.modelData.name);
+                        userdataManager.setGender(model.modelData.gender);
+                        userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
+                        userdataManager.setId(model.modelData.id);
+                        pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
+                    }else{
+                        menu.id = model.modelData.id;
+                        menu.isStar= model.modelData.isStar;
+                        menu.show();
+                    }
                 }
 
                 onCanceled: {
@@ -120,24 +115,40 @@ Item {
 
                     CDoodHeaderImage {
                         id: headPortraitImage
+
                         anchors.left: parent.left
                         anchors.leftMargin: 25
-                        anchors.topMargin: 16
                         anchors.verticalCenter: parent.verticalCenter
-                        width: 72
-                        height: 72
-
-                        name: sessionListManager.getSubName(model.modelData.name)
+                        width: 90
+                        height: 90
+                        radius: 6
+                        name:"" /*sessionListManager.getSubName(model.modelData.name)*/
                         headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                        iconSource: "file://"+ model.modelData.thumbAvatar
+                        iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
+                        Rectangle{
+
+                            visible: model.modelData.isStar ==="1"
+                            width:36
+                            height: width
+                            radius: width/2
+                            color: "#f9b230"
+                            anchors.bottom: parent.bottom
+                            anchors.right: parent.right
+                            anchors.rightMargin: -width/2
+                            Text{
+                                color:"white"
+                                text:qsTr("V")
+                                font.pixelSize: 20
+                                anchors.centerIn: parent
+                            }
+                        }
                     }
                     Text {
                         id: nameText
                         anchors.left: headPortraitImage.right
                         anchors.leftMargin: 30
                         anchors.rightMargin: 20
-                        anchors.top: parent.top
-                        anchors.topMargin: 25
+                        anchors.verticalCenter: parent.verticalCenter
                         font.pixelSize: 32
                         height: 33
                         clip: true
@@ -148,9 +159,6 @@ Item {
                     }
                     CLine {
                         width: parent.width
-                        anchors.left: parent.left
-                        anchors.leftMargin: 150
-                        anchors.right: parent.right
                         anchors.bottom: parent.bottom
                         z: parent.z+2
                     }
@@ -160,6 +168,68 @@ Item {
         }
         CScrollDecorator{
             flickableItem: contactListView
+        }
+    }
+    CDoodPopWndLayer{
+        id:menu
+
+        property string isStar
+        property string id: ""
+
+        contentItem:Rectangle{
+
+            color: "white"
+            radius: 10
+            width:489
+            height: 190
+            Text{
+                id:title
+
+                text:qsTr("好友操作")
+                font.pixelSize: 36
+                color:"#333333"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 20
+            }
+            CLine{
+                id:line
+
+                anchors.top:title.bottom
+                anchors.topMargin: 10
+                height: 2
+            }
+            UserProfileButton{
+                id:btnStar
+
+                width:parent.width
+                leftText: menu.isStar ==="1"?qsTr("取消V标好友") :qsTr("标为V标好友") ;
+                radius: 4
+
+                anchors.top: line.bottom
+                anchors.topMargin: 10
+                anchors.bottom:parent.bottom
+                anchors.bottomMargin: 2
+                onClicked: {
+                    menu.hide();
+
+                    console.log("33333333333333333333333333")
+                    if(menu.isStar == "1"){
+                       contactManager.updateContactInfo(menu.id,"2");
+                    }else{
+                       contactManager.updateContactInfo(menu.id,"1");
+                    }
+                }
+            }
+        }
+
+        onBackKeyReleased: {
+            console.log("11111111111111111111111111111111111")
+            menu.hide();
+        }
+        onOutAreaClicked: {
+            console.log("222222222222222222222222222222")
+            menu.hide();
         }
     }
 }

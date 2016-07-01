@@ -66,10 +66,13 @@ bool CDoodListModel::setData(const QModelIndex &index, const QVariant &value, in
 
 void CDoodListModel::insertItem(int index, QObject *item)
 {
+    qDebug() << Q_FUNC_INFO << "size1:" << _list->count();
+
     beginInsertRows(QModelIndex(), index, index);
     _list->insert(index, item);
     connect(item, SIGNAL(destroyed()), this, SLOT(removeDestroyedItem()));
     endInsertRows();
+    qDebug() << Q_FUNC_INFO << "size2:" << _list->count();
 
     emit itemAdded(item);
     emit itemCountChanged();
@@ -77,7 +80,9 @@ void CDoodListModel::insertItem(int index, QObject *item)
 
 void CDoodListModel::addItem(QObject *item)
 {
+    qDebug() << Q_FUNC_INFO << "size:" << _list->count();
     insertItem(_list->count(), item);
+
 }
 
 void CDoodListModel::addItemBegin(QObject *item)
@@ -101,6 +106,14 @@ void CDoodListModel::removeItem(QObject *item)
         endRemoveRows();
         emit itemCountChanged();
     }
+}
+
+QObject *CDoodListModel::itemOfIndex(int index)
+{
+    if(index<0 || index>= _list->size()){
+        return NULL;
+    }
+    return _list->at(index);
 }
 
 //! modify

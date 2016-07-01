@@ -31,36 +31,140 @@ void CDoodContactManager::clearChatList()
     contactListMap.clear();
 }
 
+void CDoodContactManager::updateContactInfo(QString userId, QString operStar, QString remark)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->updateContactInfo(userId,operStar,remark);
+}
+
 void CDoodContactManager::onContactListChanged(int oper, ContactList contacts)
 {
     qDebug() << Q_FUNC_INFO << "conactListSize" << contacts.size();
     for(size_t i=0;i<contacts.size();i++)
     {
         if(!contactListMap.contains(contacts[i].id)){
+            addContact(contacts[i]);
 
-            CDoodContactItem *tmpItem = new CDoodContactItem(this);
-            tmpItem->setId(contacts[i].id);
-            tmpItem->setGender(contacts[i].gender);
-            tmpItem->setName(contacts[i].name);
-            tmpItem->setThumbAvatar(contacts[i].thumbAvatar);
-            qDebug() << Q_FUNC_INFO << "contacts avatar111:" << contacts[i].thumbAvatar;
-            contactListMap[contacts[i].id] = tmpItem;
-            addItem(tmpItem);
         }else{
-            CDoodContactItem *tmpItem = contactListMap.value(contacts[i].id);
-            tmpItem->setId(contacts[i].id);
-            tmpItem->setGender(contacts[i].gender);
-            tmpItem->setName(contacts[i].name);
-            tmpItem->setThumbAvatar(contacts[i].thumbAvatar);
+            modifyContact(contacts[i]);
         }
-
     }
     emit itemCountChanged();
+}
+
+void CDoodContactManager::addContact(Contact user)
+{
+    //TODO
+    CDoodContactItem *tmpItem = new CDoodContactItem(this);
+    CDoodContactItem *starItem = NULL;
+
+    tmpItem->setId(user.id);
+    tmpItem->setGender(user.gender);
+    tmpItem->setName(user.name);
+    tmpItem->setThumbAvatar(user.thumbAvatar);
+    tmpItem->setIsStar(QString::number(user.isStar));
+    tmpItem->setSection(user.pinyin);
+
+    if(user.isStar == 1){
+        starItem = new CDoodContactItem(this);
+
+        starItem->setId(user.id);
+        starItem->setGender(user.gender);
+        starItem->setName(user.name);
+        starItem->setThumbAvatar(user.thumbAvatar);
+        starItem->setIsStar(QString::number(user.isStar));
+        starItem->setSection("v标好友");
+
+        //插入v标末尾
+        insertItem(starContactListMap.size(),starItem);
+
+        starContactListMap[user.id] = starItem;
+    }
+
+    insertItem(indexOfSection(tmpItem->sectionKey()),tmpItem);
+    contactListMap[user.id] = tmpItem;
+}
+
+void CDoodContactManager::modifyContact(Contact user)
+{
+    //TODO
+    CDoodContactItem *tmpItem = contactListMap.value(user.id);
+    tmpItem->setId(user.id);
+    tmpItem->setGender(user.gender);
+    tmpItem->setName(user.name);
+    tmpItem->setThumbAvatar(user.thumbAvatar);
+    tmpItem->setSection("");
+    tmpItem->setIsStar(QString::number(user.isStar));
+
+    CDoodContactItem *item = starContactListMap.value(tmpItem->id(),NULL);
+    if(item != NULL && user.isStar == 2){
+        removeItem(indexOf(item));
+        starContactListMap.remove(user.id);
+    }else if(item == NULL && user.isStar == 1){
+
+        CDoodContactItem* starItem = new CDoodContactItem(this);
+        starItem->setId(user.id);
+        starItem->setGender(user.gender);
+        starItem->setName(user.name);
+        starItem->setThumbAvatar(user.thumbAvatar);
+        starItem->setIsStar(QString::number(user.isStar));
+        starItem->setSection("v标好友");
+        //插入v标末尾
+        insertItem(starContactListMap.size(),starItem);
+        starContactListMap[user.id] = starItem;
+    }else{
+        //TODO
+    }
+}
+
+void CDoodContactManager::removeContact(Contact user)
+{
+    //TODO
+    CDoodContactItem *item = starContactListMap.value(user.id,NULL);
+    if(item != NULL){
+        removeItem(indexOf(item));
+        starContactListMap.remove(user.id);
+    }
+    item = contactListMap.value(user.id,NULL);
+    if(item != NULL){
+        removeItem(indexOf(item));
+        contactListMap.remove(user.id);
+    }
+}
+
+void CDoodContactManager::onContactInfoChanged(int oper, Contact user)
+{
+    qDebug() << Q_FUNC_INFO;
+    switch(oper){
+    case 1://add
+        addContact(user);
+        break;
+    case 2://modify
+        modifyContact(user);
+        break;
+    case 3://delete
+        removeContact(user);
+        break;
+    }
+
 }
 
 void CDoodContactManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
     connect(m_pClient, SIGNAL(contactListChanged(int, ContactList)), this, SLOT(onContactListChanged(int, ContactList)));
+    connect(m_pClient, SIGNAL(contactInfoChanged(int, Contact)), this, SLOT(onContactInfoChanged(int, Contact)));
+}
+
+int CDoodContactManager::indexOfSection(QString sectnion)
+{
+    int index = starContactListMap.size();
+    for(;index < itemCount();++index){
+        CDoodContactItem *tmpItem = (CDoodContactItem *)itemOfIndex(index);
+        if(tmpItem->sectionKey() == sectnion){
+            return index;
+        }
+    }
+    return index;
 }
 

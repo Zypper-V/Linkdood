@@ -21,5 +21,6 @@
         <file>qml/IconButton.qml</file>
         <file>qml/UserProfileButton.qml</file>
         <file>qml/CDoodWelcomePage.qml</file>
+        <file>qml/CDoodPopWndLayer.qml</file>
     </qresource>
 </RCC>

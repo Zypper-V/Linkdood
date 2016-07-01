@@ -3,7 +3,7 @@
 
 CDoodContactItem::CDoodContactItem(QObject *parent) : QObject(parent)
 {
-
+    mSection = "A";
 }
 
 QString CDoodContactItem::id() const
@@ -49,6 +49,23 @@ QString CDoodContactItem::setThumbAvatar(const QString &data)
     mThumbAvatar = data;
     emit thumbAvatarChanged();
     return mThumbAvatar;
+}
+
+QString CDoodContactItem::sectionKey() const
+{
+    qDebug() << Q_FUNC_INFO<<"fdgdddddddddddddddddddddddd";
+    return mSection;
+}
+
+QString CDoodContactItem::setSection(const QString &section)
+{
+    if(mSection == section) {
+        return section;
+    }
+    mSection = section;
+    emit sectionChanged();
+    qDebug() << Q_FUNC_INFO;
+    return mSection;
 }
 
 bool CDoodContactItem::isOrg() const

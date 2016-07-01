@@ -83,11 +83,7 @@ void CDoodSessionListManager::removeChatItem(QString id)
     if(tmpItem != NULL){
         removeItem(tmpItem);
         m_pClient->removeChat(id);
-    }
-    QMap<QString, CDoodSessionListItem*>::iterator iter = sessionListMap.find(id);
-    if(iter != sessionListMap.end()){
-
-        sessionListMap.erase(iter);
+        sessionListMap.remove(id);
     }
 }
 

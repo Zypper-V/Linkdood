@@ -37,6 +37,8 @@ public:
     void addItem(QObject *item);
     void addItemBegin(QObject *item);
     void removeItem(QObject *item);
+    QObject* itemOfIndex(int index);
+
     Q_INVOKABLE void removeItem(int index);
     Q_INVOKABLE QObject* get(int index);
     int indexOf(QObject *obj) const;

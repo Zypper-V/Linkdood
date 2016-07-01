@@ -57,6 +57,9 @@ signals:
     //推送用户信息
     void accountInfoChanged(Contact user);
 
+    //联系人信息更新
+    void contactInfoChanged(int oper,Contact user);
+
     void loginSucceeded();
     void loginFailed(QString);
     void loginoutRelust(bool loginout);
@@ -103,6 +106,9 @@ public slots:
 
     //唯一标识Id
     QString createMsgId();
+
+    //更新联系人信息
+     void updateContactInfo(QString userId,QString operStar,QString remark="");
 
     //用户信息
     void getContactInfo(QString userId,Msg msg);
@@ -195,6 +201,9 @@ protected slots:
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
     void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
     void onGetorgUserInfoResult(int code,OrgUser orguser);
+
+    //联系人信息更新
+    void onContactInfoChanged(int oper,Contact user);
 
     //联系人列表更新
     void onContactListChanged(int oper,ContactList contacts);

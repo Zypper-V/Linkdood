@@ -48,13 +48,6 @@ CPageStackWindow {
     }
 
     Component.onCompleted: {
-        console.log("main.qml onCompleted!!!")
-        var tmp =  Qt.createComponent(Qt.resolvedUrl("CPortalLoginPage.qml", Component.Asynchronous));
-        tmp.destroy();
-
-        tmp = Qt.createComponent(Qt.resolvedUrl("CDoodChatPage.qml", Component.Asynchronous));
-        tmp.destroy();
-
         var code = loginManager.loginStatus;
         console.log("sfdsgsdfgsfdg:"+code);
         if(code === 1){

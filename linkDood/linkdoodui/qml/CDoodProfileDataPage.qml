@@ -95,7 +95,7 @@ Rectangle{
                     }
                 }
             }
-            onPressed: rectBackground.color = "#32c2fe"
+            onPressed: rectBackground.color = "#7c9dd9"
             onReleased: rectBackground.color = "white"
 
             onClicked: {
@@ -143,7 +143,7 @@ Rectangle{
             anchors.rightMargin:20
             MouseArea{
                 anchors.fill: parent
-                onPressed: btnLoginout.color = "#32c2fe"
+                onPressed: btnLoginout.color = "#7c9dd9"
                 onReleased: btnLoginout.color = "white"
                 onClicked: {
                     alertDialog.show();
@@ -161,9 +161,29 @@ Rectangle{
         onAccepted: {
             console.log("ok")
             loginManager.logout();
+            loadingDialog.show();
         }
         onCanceled: {
             console.log("onCanceled")
+        }
+    }
+    CIndicatorDialog {
+        id:loadingDialog
+        messageText: os.i18n.ctr(qsTr("正在注销..."))
+    }
+    Connections {
+        target: loginManager
+        onLoginoutRelust:{
+            loadingDialog.hide();
+            if(loginout){
+
+                contactManager.clearChatList();
+                sessionListManager.clearChatList();
+                loginManager.setAppLoginStatus(0);
+                pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+            }else{
+                //TODO
+            }
         }
     }
 }
