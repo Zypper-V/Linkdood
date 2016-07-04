@@ -143,6 +143,8 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
 {
     qDebug() << Q_FUNC_INFO<<"1111111111111111111111111111"<<unreadmsg;
 
+    qDebug() << Q_FUNC_INFO << "targetID:" << targetId << " msgId:" << msgId << " lastMsg:" << lastMsg << " time:" << time << " name:" << name << " avater:" << avater << " unreadMsg:" << unreadmsg;
+
     if(sessionListMap.contains(targetId)){
         CDoodSessionListItem* item = sessionListMap.value(targetId);
         if(item != NULL){
@@ -189,9 +191,68 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
     }
 }
 
+void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
+{
+    qDebug() << Q_FUNC_INFO << "msgList.size() = " << msgList.size();
+    IMOfflineMsg offMsg;
+    foreach(offMsg, msgList)
+    {
+//        int     offlineType;  /*1未读消息 2设备已读消息*/
+//        int     count;      //数量
+//        QString msgId;
+//        QString body;
+//        QString targetId;
+//        QString fromId;
+//        QString time;
+        qDebug() << Q_FUNC_INFO << " offlineType:" << offMsg.offlineType << " count:" << offMsg.count << " msgId:" << offMsg.msgId << " body:" << offMsg.body << " targetId:" << offMsg.targetId << " fromId:" << offMsg.fromId << " time:" << offMsg.time;
+
+        if(sessionListMap.contains(offMsg.fromId))
+        {
+            CDoodSessionListItem* item = sessionListMap.value(offMsg.fromId);
+            item->setLastMsg(offMsg.body);
+            item->setMsgTime(offMsg.time);
+            item->setLastMsgid(offMsg.msgId);
+            QString URC=item->unReadCount();
+            if(offMsg.offlineType == 1)
+            {//未读数+1
+                int count;
+                if(URC!="")
+                    count=URC.toInt() + offMsg.count;
+                else
+                    count=offMsg.count;
+                item->setUnReadCount(QString::number(count));
+                int index = indexOf(item);
+                if(index>0 && index <itemCount())
+                {
+                    item = (CDoodSessionListItem*)takeItemAt(index);
+                    addItemBegin(item);
+                }
+                setUnreadCount(offMsg.count);
+            }
+        }
+        else
+        {
+            CDoodSessionListItem *tmpItem = new CDoodSessionListItem(this);
+            tmpItem->setId(offMsg.fromId);
+            tmpItem->setLastMsg(offMsg.body);
+            tmpItem->setMsgTime(offMsg.time);
+            tmpItem->setMsgType(QString::number(MSG_TYPE_TEXT));
+            if(offMsg.offlineType == 1)
+            {
+                tmpItem->setUnReadCount(QString::number(offMsg.count));
+                setUnreadCount(offMsg.count);
+            }
+            tmpItem->setLastMsgid(offMsg.msgId);
+            addItemBegin(tmpItem);
+            sessionListMap[offMsg.fromId] = tmpItem;
+        }
+    }
+}
+
 void CDoodSessionListManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
     connect(m_pClient, SIGNAL(chatListChanged(const Chat_UIList &)), this, SLOT(onChatListChanged(const Chat_UIList &)));
     connect(m_pClient, SIGNAL(sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString)), this, SLOT(onSessionMessageNotice(QString,QString,QString,QString,QString,QString,QString)));
+    connect(m_pClient,SIGNAL(offlineMsgNotice(IMOfflineMsgList)), this, SLOT(onOfflineMsgNotice(IMOfflineMsgList)));
 }

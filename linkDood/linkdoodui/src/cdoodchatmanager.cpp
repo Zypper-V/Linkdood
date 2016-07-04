@@ -20,20 +20,21 @@ void CDoodChatManager::initConnect()
             SLOT(onChatRemoveChatResult(bool)));
     connect(m_pClient,SIGNAL(deleteMessagesResult(int)),this,
             SLOT(onChatDeleteMessagesResult(int)));
-    connect(m_pClient,SIGNAL(uploadAvatarResult),this,
-        SLOT(onChatAvatarChanged(long long,QString)));
-    connect(m_pClient,SIGNAL(uploadFileResult),this,
-        SLOT(onChatUploadFile(long long,QString,int)));
-    connect(m_pClient,SIGNAL(fileProgressResult),this,
+    connect(m_pClient,SIGNAL(uploadAvatarResult(QString,QString)),this,
+        SLOT(onChatAvatarChanged(QString,QString)));
+    connect(m_pClient,SIGNAL(uploadFileResult(QString,QString,int)),this,
+        SLOT(onChatUploadFile(QString,QString,int)));
+    connect(m_pClient,SIGNAL(fileProgressResult(int,int,QString)),this,
         SLOT(onChatFileProgress(int,int,QString)));
-    connect(m_pClient,SIGNAL(downloadFileResult),this,
-        SLOT(onChatDownloadFile(int,QString,long long)));
-    connect(m_pClient,SIGNAL(uploadImageResult),this,
-        SLOT(onChatupLoadImage(int64,QString,QString,int)));
-    connect(m_pClient,SIGNAL(downloadImageResult),this,
-        SLOT(onChatDownloadImage(int,QString,int64)));
-    connect(m_pClient,SIGNAL(getFileListResult),this,
-        SLOT(onChatGetFileList(int,std::vector<MsgFileInfo>)));
+    connect(m_pClient,SIGNAL(downloadFileResult(int,QString,QString)),this,
+        SLOT(onChatDownloadFile(int,QString,QString)));
+    connect(m_pClient,SIGNAL(uploadImageResult(QString,QString,QString,int)),this,
+        SLOT(onChatupLoadImage(QString,QString,QString,int)));
+    connect(m_pClient,SIGNAL(downloadImageResult(int,QString,QString)),this,
+        SLOT(onChatDownloadImage(int,QString,QString)));
+    connect(m_pClient,SIGNAL(getFileListResult(int,FileInfoList)),this,
+        SLOT(onChatGetFileList(int,FileInfoList)));
+
 
     /*    connect(m_pClient,SIGNAL(),this,
             SLOT())*/;
@@ -317,7 +318,7 @@ void CDoodChatManager::downloadImage(QString url, QString property)
 bool CDoodChatManager::decryptFile(QString encryptkey, QString srcpath, QString destpath)
 {
     qDebug() << Q_FUNC_INFO;
-    m_pClient->decryptFile(encryptkey, srcpath, destpath);
+     return m_pClient->decryptFile(encryptkey, srcpath, destpath);
 }
 
 void CDoodChatManager::getFileList(int64 targetid, int64 fileid, int count, int flag)
@@ -386,7 +387,7 @@ void CDoodChatManager::onChatUploadAvatar(QString orgijson, QString thumbjson, i
     qDebug() << Q_FUNC_INFO;
 }
 
-void CDoodChatManager::onChatUploadFile(int64 tagetid, QString jasoninfo, int code)
+void CDoodChatManager::onChatUploadFile(QString tagetid, QString jasoninfo, int code)
 {
     qDebug() << Q_FUNC_INFO;
 }
@@ -396,22 +397,22 @@ void CDoodChatManager::onChatFileProgress(int extra_req, int process, QString in
     qDebug() << Q_FUNC_INFO;
 }
 
-void CDoodChatManager::onChatDownloadFile(int code, QString localpath, int64 tagetid)
+void CDoodChatManager::onChatDownloadFile(int code, QString localpath, QString tagetid)
 {
     qDebug() << Q_FUNC_INFO;
 }
 
-void CDoodChatManager::onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code)
+void CDoodChatManager::onChatupLoadImage(QString tagetid, QString orgijson, QString thumbjson, int code)
 {
     qDebug() << Q_FUNC_INFO;
 }
 
-void CDoodChatManager::onChatDownloadImage(int code, QString localpath, int64 tagetid)
+void CDoodChatManager::onChatDownloadImage(int code, QString localpath, QString tagetid)
 {
     qDebug() << Q_FUNC_INFO;
 }
 
-void CDoodChatManager::onChatGetFileList(int code, std::vector<MsgFileInfo> files)
+void CDoodChatManager::onChatGetFileList(int code, FileInfoList files)
 {
     qDebug() << Q_FUNC_INFO;
 }

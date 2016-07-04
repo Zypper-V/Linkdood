@@ -66,6 +66,8 @@ private slots:
                                 QString name,
                                 QString avater,
                                 QString unreadmsg);
+    //监听离线消息通知
+    void onOfflineMsgNotice(IMOfflineMsgList msgList);
 private:
     void initConnect();
 

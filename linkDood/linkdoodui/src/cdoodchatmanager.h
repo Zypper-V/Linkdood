@@ -107,17 +107,17 @@ private slots:
     //上传头像返回
     void onChatUploadAvatar(QString orgijson, QString thumbjson, int code);
     //上传文件返回
-    void onChatUploadFile(int64 tagetid, QString jasoninfo, int code);
+    void onChatUploadFile(QString tagetid, QString jasoninfo, int code);
     //文件进度
     void onChatFileProgress(int extra_req, int process, QString info);
     //下载文件返回
-    void onChatDownloadFile(int code, QString localpath, int64 tagetid);
+    void onChatDownloadFile(int code, QString localpath, QString tagetid);
     //上传图片返回
-    void onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code);
+    void onChatupLoadImage(QString tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
-    void onChatDownloadImage(int code, QString localpath, int64 tagetid);
+    void onChatDownloadImage(int code, QString localpath, QString tagetid);
     //获取文件列表返回
-    void onChatGetFileList(int code, std::vector<MsgFileInfo> files);
+    void onChatGetFileList(int code, FileInfoList files);
 
 private:
     void initConnect();
