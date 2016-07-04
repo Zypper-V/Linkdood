@@ -37,7 +37,9 @@ HEADERS += src/linkdoodui_workspace.h \
     src/cdoodorgitem.h \
     src/cdoodorguseritem.h \
     src/cdoodorgmanager.h \
-    src/cdooduserprofilemanager.h
+    src/cdooduserprofilemanager.h \
+    src/cdoodemojimanager.h \
+    src/cdoodemojiitem.h
 
 SOURCES += src/main.cpp \
 		   src/linkdoodui_workspace.cpp \
@@ -54,7 +56,9 @@ SOURCES += src/main.cpp \
     src/cdoodorgitem.cpp \
     src/cdoodorguseritem.cpp \
     src/cdoodorgmanager.cpp \
-    src/cdooduserprofilemanager.cpp
+    src/cdooduserprofilemanager.cpp \
+    src/cdoodemojimanager.cpp \
+    src/cdoodemojiitem.cpp
 OTHER_FILES += qml/*.qml
 
 target.path = $$INSTALL_DIR/bin
