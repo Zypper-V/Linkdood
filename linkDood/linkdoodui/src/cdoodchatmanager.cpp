@@ -20,8 +20,8 @@ void CDoodChatManager::initConnect()
             SLOT(onChatRemoveChatResult(bool)));
     connect(m_pClient,SIGNAL(deleteMessagesResult(int)),this,
             SLOT(onChatDeleteMessagesResult(int)));
-    connect(m_pClient,SIGNAL(uploadAvatarResult(QString,QString)),this,
-        SLOT(onChatAvatarChanged(QString,QString)));
+    connect(m_pClient,SIGNAL(uploadAvatarResult(QString,QString,int)),this,
+        SLOT(onChatAvatarChanged(QString,QString,int)));
     connect(m_pClient,SIGNAL(uploadFileResult(QString,QString,int)),this,
         SLOT(onChatUploadFile(QString,QString,int)));
     connect(m_pClient,SIGNAL(fileProgressResult(int,int,QString)),this,
@@ -328,7 +328,7 @@ void CDoodChatManager::getFileList(int64 targetid, int64 fileid, int count, int 
 }
 
 
-void CDoodChatManager::onChatAvatarChanged(int64 id, QString avatar)
+void CDoodChatManager::onChatAvatarChanged(int64 id, QString avatar,int code)
 {
     qDebug() << Q_FUNC_INFO;
    // emit chatAvatarChanged(id,avatar);

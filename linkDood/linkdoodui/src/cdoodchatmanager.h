@@ -90,7 +90,7 @@ signals:
 
 private slots:
     //会话列表头像更新
-    void onChatAvatarChanged(int64 id,QString avatar);
+    void onChatAvatarChanged(int64 id,QString avatar,int code);
     //监听离线消息通知
     void onChatOfflineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
