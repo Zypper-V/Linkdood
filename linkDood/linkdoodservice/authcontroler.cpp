@@ -167,7 +167,7 @@ void AuthControler::init()
 
 void AuthControler::onConnectChanged(int flag)
 {
-        qDebug() << Q_FUNC_INFO;
+        qDebug() << Q_FUNC_INFO<<"lixinlixinlixinlixinlixin"<<flag;
 }
 
 void AuthControler::onLoginResultObserver(service::ErrorInfo& info, int64 userid)

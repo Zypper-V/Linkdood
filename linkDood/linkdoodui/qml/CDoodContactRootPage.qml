@@ -54,7 +54,7 @@ Item {
             Timer {
                 id:pressTimer
 
-                interval: 1500
+                interval: 700
                 repeat: false
                 onTriggered:{
                     if(mouse.bPress && !mouse.bMove){

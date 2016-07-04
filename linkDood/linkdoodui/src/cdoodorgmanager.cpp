@@ -1,11 +1,12 @@
 #include "cdoodorgmanager.h"
+#include"cdoodcontactitem.h"
 #include <QDebug>
 
 CDoodOrgManager::CDoodOrgManager(QObject *parent) : CDoodListModel(parent)
 {
     CDoodOrgItem *item = new CDoodOrgItem(this);
     item->setId("1");
-    item->setName("vrv");
+    item->setName("北信源");
     addItem(item);
 }
 
@@ -17,6 +18,8 @@ void CDoodOrgManager::addOrg(QString id, const QString &name)
     item->setId(id);
     item->setName(name);
     addItem(item);
+    qobject_cast<CDoodOrgItem*>(_list->at(_list->count()-2))->setSelect("");
+    qobject_cast<CDoodOrgItem*>(_list->at(_list->count()-1))->setSelect("ss");
 }
 
 void CDoodOrgManager::selectOrg(QString id)
@@ -26,9 +29,10 @@ void CDoodOrgManager::selectOrg(QString id)
     for(int i = _list->count(); i > 1; i--) {
         qDebug()<<"CDoodOrgManager::selectOrg i:"<<i;
 
-        if(id.toInt() == i) {
+        if(id == (qobject_cast<CDoodOrgItem*>(_list->at(i-1)))->id()) {
             break;
         }
         removeItem(_list->at(i-1));
     }
+    qobject_cast<CDoodOrgItem*>(_list->at(_list->count()-1))->setSelect("ss");
 }

@@ -30,5 +30,7 @@
         <file>res/tab_personal_pressed.png</file>
         <file>res/moren_icon.png</file>
         <file>res/moren_icon_female.png</file>
+        <file>res/selected.png</file>
+        <file>res/unselected.png</file>
     </qresource>
 </RCC>

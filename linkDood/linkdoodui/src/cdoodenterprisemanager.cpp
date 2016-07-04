@@ -32,23 +32,23 @@ void CDoodEnterpriseManager::getSonOrgs(QString orgid)
     if(orgid == "1") {
         CDoodContactItem *item1 = new CDoodContactItem(this);
         item1->setId("2");
-        item1->setName("vrvbj");
+        item1->setName("北信源南京分公司");
         item1->setIsOrg(true);
         addItem(item1);
         CDoodContactItem *item2 = new CDoodContactItem(this);
         item2->setId("3");
-        item2->setName("vrvxa");
+        item2->setName("北信源西安研发中心");
         item2->setIsOrg(true);
         addItem(item2);
     } else if(orgid == "2" || orgid == "3") {
         CDoodContactItem *item1 = new CDoodContactItem(this);
         item1->setId("4");
-        item1->setName("developer");
+        item1->setName("研发部");
         item1->setIsOrg(true);
         addItem(item1);
         CDoodContactItem *item2 = new CDoodContactItem(this);
         item2->setId("5");
-        item2->setName("marketing");
+        item2->setName("销售部");
         item2->setIsOrg(true);
         addItem(item2);
     }

@@ -14,46 +14,64 @@ Item {
         color: "white"
         //z:parent.z-1
     }
-    ListView{
-        id: orgTitleListView
+    Rectangle{
+        id:orgTitleListViewbackground
         anchors.top: parent.top
         anchors.left: parent.left
         width: parent.width
         height: 101
-        orientation:ListView.Horizontal
-        spacing: 6
-        model: orgManager
-        Rectangle{
-            anchors.fill: parent
-            color:"#F2F2F2"
-            z:parent.z -1
-        }
-
-        delegate: Rectangle{
-            width: 120
-            height: parent.height
-            color: "#F2F2F2"
-            Text {
-                id: name
-                anchors.left: parent.left
-                anchors.verticalCenter: parent.verticalCenter
-
-                text: model.modelData.name
-                font.pixelSize: 34
-                color:"#333333"
-            }
-            Image{
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: name.right
-                anchors.leftMargin: 10
-                source: "qrc:/res/departLogo.png"
-                visible: index !== (orgTitleListView.count -1)
-            }
-            MouseArea{
+        color:"#F2F2F2"
+        ListView{
+            id: orgTitleListView
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.leftMargin: 47
+            //        anchors.topMargin: 21
+            width: parent.width
+            height: 101
+            orientation:ListView.Horizontal
+            spacing: -25
+            model: orgManager
+            Rectangle{
                 anchors.fill: parent
-                onClicked: {
-                    orgManager.selectOrg(model.modelData.id)
-                    enterpriseManager.getSonOrgs(model.modelData.id)
+                color:"#F2F2F2"
+                z:parent.z -1
+            }
+
+            delegate: Rectangle{
+                width: name.contentWidth+80
+                height: 50
+                anchors.top:parent.top
+                color:"#F2F2F2"
+                anchors.topMargin: 21
+                BorderImage{
+                    width: parent.width
+                    height: parent.height
+                    border.left: 25
+                    border.right: 25
+                    anchors.top:parent.top
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: -25
+                    source: model.modelData.select===""?"qrc:/res/unselected.png":"qrc:/res/selected.png"
+                    visible: index !== (orgTitleListView.count)
+                    z:parent.z+10
+                    Text {
+                        id: name
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: model.modelData.name
+                        font.pixelSize: 26
+                        color:"#333333"
+                    }
+
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        orgManager.selectOrg(model.modelData.id)
+                        enterpriseManager.getSonOrgs(model.modelData.id)
+                    }
                 }
             }
         }
@@ -61,7 +79,7 @@ Item {
 
     ListView {
         id: orgListView
-        anchors.top: orgTitleListView.bottom
+        anchors.top: orgTitleListViewbackground.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -162,7 +180,7 @@ Item {
                     CLine {
                         width: parent.width
                         anchors.left: parent.left
-                        anchors.leftMargin: 150
+                        //                        anchors.leftMargin: 150
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
                         z: parent.z+2

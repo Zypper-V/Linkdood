@@ -34,3 +34,18 @@ QString CDoodOrgItem::setName(const QString &data)
     emit nameChanged();
     return mName;
 }
+
+QString CDoodOrgItem::select() const
+{
+    return mSelect;
+}
+
+QString CDoodOrgItem::setSelect(const QString &data)
+{
+    if(mSelect == data) {
+        return data;
+    }
+    mSelect = data;
+    emit selectChanged();
+    return mSelect;
+}
