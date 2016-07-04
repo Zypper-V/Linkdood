@@ -21,7 +21,8 @@ LIBS += -L../linkdoodclient
 LIBS += -llinkdoodclient
 QMAKE_LFLAGS += -Wl,-rpath=$$LIB_DIR -Wl,-Bsymbolic
 
-RESOURCES += qml.qrc images.qrc
+RESOURCES += qml.qrc images.qrc \
+    smilies.qrc
 
 HEADERS += src/linkdoodui_workspace.h \
     src/cdoodlistmodel.h \

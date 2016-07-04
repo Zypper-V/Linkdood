@@ -36,7 +36,7 @@ CPage {
         }
         onLoginResultObserver:{
             console.log("onLoginResultObserver !!!!");
-            loginManager.setLoginInfo(2,userID,srvUsr.text,"");
+            loginManager.setLoginInfo(2,userID,userLineEdit.text,"");
         }
 
         onLoginFailed: {

@@ -9,7 +9,7 @@ CPage {
     orientationPolicy: CPageOrientation.LockPortrait
 
     property bool loadDataFlag:false
-//    signal prepareFinished()
+    //    signal prepareFinished()
 
     Timer{
         id:loadDataCheckTimer
@@ -44,7 +44,7 @@ CPage {
     property bool inputShow: false
     property bool bNeedViewToEnd: true
     property int getMessageHeight: 50
-    property string myID :  loginManager.userId()
+    property string myID :  loginManager.userId
 
     property bool pageActive
     property bool pageWindowFocus: loginManager.windowFocus
@@ -62,7 +62,7 @@ CPage {
 
     Keys.onReleased: {
         if (event.key === Qt.Key_Back || event.key === Qt.Key_Escape) {
-
+            btnEmotion.isKeyboard = true;
         }
 
         if(event.key === Qt.Key_Return)
@@ -151,6 +151,7 @@ CPage {
                 anchors.leftMargin: 30
                 anchors.verticalCenter: parent.verticalCenter
                 onClicked: {
+                    btnEmotion.isKeyboard = true;
                     pageStack.pop();
                 }
             }
@@ -289,17 +290,41 @@ CPage {
                 anchors.fill: parent
                 color: "#ffffff"
             }
+            //表情按钮
+            CToolButton{
+                id:btnEmotion
+
+                backgroundIconSource:!isKeyboard ? "qrc:/res/chatting_setmode_keyboard_btn.png": "qrc:/res/chatting_biaoqing_btn.png"
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                property bool isKeyboard: true
+                onClicked: {
+
+                    console.log("123xxxxxxxxxxxxxxx:"+isKeyboard)
+                    if(isKeyboard){
+
+                        isKeyboard = false;
+                        inputTextArea.focus = false;
+                        //btnEmotion.backgroundIconSource = "qrc:/res/chatting_setmode_keyboard_btn.png";
+                    }else{
+                        isKeyboard = true;
+                        inputTextArea.focus = true;
+                        //btnEmotion.backgroundIconSource = "qrc:/res/chatting_biaoqing_btn.png";
+                    }
+                }
+            }
 
             // 输入文字信息
             Item {
                 id: inputMessageRoot
 
-                //anchors.centerIn: parent
-                //anchors.horizontalCenterOffset: -30
-                anchors.left: parent.left
-                anchors.leftMargin: 30
-                anchors.verticalCenter: parent.verticalCenter
-                width: 550
+                anchors.centerIn: parent
+                anchors.horizontalCenterOffset: -30
+                //anchors.left: parent.left
+                //anchors.leftMargin: 30
+                //anchors.verticalCenter: parent.verticalCenter
+                width: 460
                 height: inputTextArea.contentHeight < 70 ? 70 : inputTextArea.contentHeight > 218 ? 218 : inputTextArea.contentHeight
 
                 visible: true
@@ -345,7 +370,10 @@ CPage {
                         console.log("zhangp onFocusChanged = ", focus)
                         if(focus) {
                             inputTextArea.cursorPosition = inputTextArea.length
+                            btnEmotion.isKeyboard = true
+
                         } else {
+                            btnEmotion.isKeyboard = false
                         }
                     }
 
@@ -377,15 +405,17 @@ CPage {
                 id:rectSendButtunBk
 
                 anchors.left: inputMessageRoot.right
-                anchors.leftMargin: 19
+                anchors.leftMargin: 20
                 anchors.verticalCenter: inputMessageRoot.verticalCenter
-                width:120
+                width:100
                 height:inputMessageRoot.height
-                radius: 6
+                radius: 10
                 color:"#ffffff"
                 Text{
+                    id:sendBtn
+
                     text:qsTr("发送")
-                    font.pixelSize: 34
+                    font.pixelSize: 30
                     color:"#333333"
                     anchors.centerIn: parent
                     MouseArea{
@@ -395,9 +425,11 @@ CPage {
                         }
                         onReleased: {
                             rectSendButtunBk.color="#ffffff"
+                            sendBtn.color = "#333333"
                         }
                         onPressed: {
-                            rectSendButtunBk.color="#32c2fe"
+                            rectSendButtunBk.color="#003953"
+                            sendBtn.color = "white"
                         }
                     }
                 }
@@ -410,16 +442,24 @@ CPage {
             anchors.bottom: parent.bottom
 
             width: parent.width
-            height: gInputContext.softwareInputPanelRect.height
+            visible: !btnEmotion.isKeyboard
+            height: setHieght()
 
             Behavior on height {
                 NumberAnimation { duration: 150 }
             }
-
-            Rectangle {
+            CDoodEmojiTabView{
                 id: background
                 anchors.fill: parent
-                color: "#ffffff"
+                width:parent.width
+            }
+            function setHieght(){
+
+                console.log("softwareInputPanelRect:"+gInputContext.softwareInputPanelRect.height)
+                if(!btnEmotion.isKeyboard){
+                    return 480;
+                }
+                return gInputContext.softwareInputPanelRect.height;
             }
         }
     }
