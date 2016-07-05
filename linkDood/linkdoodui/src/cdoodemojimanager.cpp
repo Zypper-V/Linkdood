@@ -7,16 +7,25 @@ CDoodEmojiManager::CDoodEmojiManager(LinkDoodClient *client, QObject *parent) :
     CDoodListModel(parent), m_pClient(client)
 {
     qRegisterMetaType<CDoodEmojiManager*>();
-    GetEmojiPic();
+    getEmojiPic();
 }
 
-void CDoodEmojiManager::GetEmojiPic()
+void CDoodEmojiManager::getEmojiPic()
 {
-    //GetUserDefEmojiPic();
+//    loadEmoji(":/res/smilies/dynamic_expression");
+    loadEmoji(":/res/smilies/emoji_face/");
+    loadEmoji(":/res/smilies/instruct/");
+}
 
+void CDoodEmojiManager::onBtnItemClicked(QString index)
+{
+    emit signalEmojiChanged(emojiListMap[index]->path());
+}
+
+void CDoodEmojiManager::loadEmoji(QString path)
+{
     QDir faceDir;
-    faceDir.setPath(":/res/smilies/emoji_face/");
-
+    faceDir.setPath(path);
 
     QFileInfoList faceFileInfoList = faceDir.entryInfoList(QDir::Files, QDir::Name);
     QString faceName="";
@@ -26,7 +35,6 @@ void CDoodEmojiManager::GetEmojiPic()
     for (int i = 0; i < faceFileInfoList.size(); i++)
     {
         facePath = "qrc"+faceFileInfoList.at(i).absoluteFilePath();
-
         faceName = faceFileInfoList.at(i).baseName();
 
         if (emojiListMap.contains(faceName))
@@ -44,34 +52,4 @@ void CDoodEmojiManager::GetEmojiPic()
         }
         qDebug() << Q_FUNC_INFO << "name" <<faceName <<"path:" <<facePath;
     }
-}
-
-void CDoodEmojiManager::GetUserDefEmojiPic()
-{
-    QDir faceDir;
-
-    faceDir.setPath("ui/image/smilies/instruct");
-    QFileInfoList faceFileInfoList = faceDir.entryInfoList(QDir::Files, QDir::Name);
-    QString faceName;
-    QString facePath;
-    CDoodEmojiItem item;
-    for (int i = 0; i < faceFileInfoList.size(); i++)
-    {
-        faceName = faceFileInfoList.at(i).baseName();
-        item.setName(faceName);
-
-        facePath = faceFileInfoList.at(i).absoluteFilePath();
-        if (!facePath.isEmpty())
-        {
-            facePath = "file:///" + facePath;
-        }
-
-        item.setPath(facePath);
-        emojiListMap[faceName] = &item;
-    }
-}
-
-void CDoodEmojiManager::onBtnItemClicked(QString index)
-{
-    emit signalEmojiChanged(emojiListMap[index]->path());
 }
