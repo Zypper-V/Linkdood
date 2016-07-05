@@ -24,6 +24,8 @@ public:
     static LinkDoodService* instance();
 
 signals:
+    //servie重启信号
+    void serviceRestart();
 
     //会话列表头像更新
     void chatAvatarChanged(int64 id,QString avatar);

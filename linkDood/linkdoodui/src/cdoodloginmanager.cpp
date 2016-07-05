@@ -215,6 +215,12 @@ void CDoodLoginManager::onLoginResultObserver(int code, QString userID)
     emit loginResultObserver(code,userID);
 }
 
+void CDoodLoginManager::onServiceRestart()
+{
+    qDebug() << Q_FUNC_INFO<<"0000000000000000000000000";
+    emit serviceRestart();
+}
+
 void CDoodLoginManager::initConnect()
 {
     connect(m_pClient, SIGNAL(changePasswordResult(QString)), this, SLOT(onChangePasswordResult(QString)));
@@ -223,4 +229,6 @@ void CDoodLoginManager::initConnect()
     connect(m_pClient, SIGNAL(loginResultObserver(int,QString)), this, SLOT(onLoginResultObserver(int,QString)));
     connect(m_pClient, SIGNAL(loginFailed(QString)), this, SLOT(onLoginFailed(QString)));
     connect(m_pClient, SIGNAL(getLoginHistoryResult(LoginInfoList)), this, SLOT(onGetLoginHistoryResult(LoginInfoList)));
+    connect(m_pClient, SIGNAL(serviceRestart()), this, SLOT(onServiceRestart()));
+
 }

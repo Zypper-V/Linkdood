@@ -75,6 +75,8 @@ signals:
     void windowFocusChanged();
     void userIdChanged();
 
+    //servie重启信号
+    void serviceRestart();
 private slots:
     void onLoginSucceeded();
     void onLoginFailed(QString err);
@@ -84,6 +86,9 @@ private slots:
     void onGetLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
     void onLoginResultObserver(int code,QString userID);
+
+    //servie重启信号
+    void onServiceRestart();
 private:
     void initConnect();
 

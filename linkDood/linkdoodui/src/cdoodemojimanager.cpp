@@ -40,8 +40,10 @@ CDoodEmojiManager::CDoodEmojiManager(LinkDoodClient *client, int type, QObject *
     CDoodListModel(parent), m_pClient(client), mType(type)
 {
     qRegisterMetaType<CDoodEmojiManager*>();
+    clearData();
     if(type == 1)
     {
+        qDebug() << Q_FUNC_INFO <<"init dy..........";
         initEmojiExplainMap();
         loadEmoji(":/res/smilies/dynamic_expression");
     }
@@ -98,4 +100,14 @@ void CDoodEmojiManager::loadEmoji(QString path)
         }
         qDebug() << Q_FUNC_INFO << "name" <<faceName <<"path:" <<facePath;
     }
+}
+
+void CDoodEmojiManager::clearData()
+{
+    QList<CDoodEmojiItem*>  itemList = mEmojiListMap.values();
+    for(int i= 0;i< itemList.size();i++){
+        removeItem(itemList.value(i));
+    }
+    mEmojiListMap.clear();
+    mType = 0;
 }

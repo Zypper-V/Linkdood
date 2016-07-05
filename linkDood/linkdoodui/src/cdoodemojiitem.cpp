@@ -1,4 +1,5 @@
 #include "cdoodemojiitem.h"
+#include<QDebug>
 
 CDoodEmojiItem::CDoodEmojiItem(QObject *parent) : QObject(parent)
 {
@@ -37,6 +38,7 @@ QString CDoodEmojiItem::setPath(const QString &data)
 
 QString CDoodEmojiItem::explain() const
 {
+    qDebug() << Q_FUNC_INFO<<"3333333333:"<<mExplain;
     return mExplain;
 }
 

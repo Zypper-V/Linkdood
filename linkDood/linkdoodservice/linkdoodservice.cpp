@@ -86,8 +86,10 @@ LinkDoodService::LinkDoodService(QObject *parent) :
 
     //如果已经是登录状态主动拉取一次联系人
     int code= getAppLoginStatus();
+    qDebug() << "restart 88888888888888888:" << code;
     if(code == 1){
         //TODO
+        emit serviceRestart();
     }
 }
 

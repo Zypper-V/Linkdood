@@ -2,10 +2,10 @@ import QtQuick 2.0
 
 
 Rectangle{
-    id: root
+    id: dyRoot
     color: "white"
 
-    property int columns: root.width/70
+    property int columns: dyRoot.width/80
     property int rows: 4
     property int itemsPerPage: columns*rows
     property variant flow: GridView.TopToBottom
@@ -22,7 +22,7 @@ Rectangle{
         cellWidth: grid.width/columns
         clip: true
         snapMode: GridView.SnapToRow
-        flow: root.flow
+        flow: dyRoot.flow
 
 
         delegate: _testComponent
@@ -52,12 +52,27 @@ Rectangle{
                 opacity: mouseCell.pressed ? 0.5: 1;
 
                 anchors.centerIn: _item
-                BorderImage {
+                AnimatedImage{
                     id: img
                     source: model.modelData.path
-                    width: 40
+                    width: 64
                     height: width
-                    anchors.fill: parent
+                    playing:false
+
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+                Text{
+                    text:model.modelData.explain
+                    onTextChanged: {
+                        console.log("explain:"+model.modelData.explain)
+                    }
+
+                    font.pixelSize: 28
+                    color: "#333333"
+                    anchors.top: img.bottom
+                    anchors.topMargin: 10
+                    anchors.horizontalCenter: parent.horizontalCenter
                 }
             }
             MouseArea{
@@ -67,8 +82,8 @@ Rectangle{
                 onClicked: {
                     grid.forceActiveFocus();
                     grid.currentIndex = index;
-                    userDyEmojiManager.onBtnItemClicked(""+index);
-                    console.log("ddddddddddddddddd:"+root.width +"h:"+root.height)
+                    //userDyEmojiManager.onBtnItemClicked(""+index);
+                   // console.log("ddddddddddddddddd:"+dyRoot.width +"h:"+dyRoot.height)
                 }
             }
         }

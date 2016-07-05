@@ -504,6 +504,12 @@ void LinkDoodClient::onGetorgUserInfoResult(int code, OrgUser orguser)
     emit getOrgUserInfoResult(code,orguser);
 }
 
+void LinkDoodClient::onServiceRestart()
+{
+    qDebug() << Q_FUNC_INFO;
+    emit serviceRestart();
+}
+
 void LinkDoodClient::onContactInfoChanged(int oper, Contact user)
 {
     qDebug() << Q_FUNC_INFO;
@@ -726,5 +732,7 @@ void LinkDoodClient::initDBusConnect()
                                           DBUS_DOOD_INTERFACE, "contactInfoChanged",
                                           this, SLOT(onContactInfoChanged(int,Contact)));
 
-
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "serviceRestart",
+                                          this, SLOT(onServiceRestart()));
 }

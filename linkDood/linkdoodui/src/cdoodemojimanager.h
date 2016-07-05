@@ -18,7 +18,7 @@ signals:
 
 private:
     void loadEmoji(QString path);
-
+    void clearData();
     int mType;
     LinkDoodClient *m_pClient;
     QMap<QString, QString>         mEmojiExplain;

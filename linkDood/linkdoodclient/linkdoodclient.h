@@ -38,6 +38,9 @@ signals:
     void getOnlineStatesResult(QOnlineStateList onlinestatelist);
     void getOrgUserInfoResult(int code,OrgUser orguser);
 
+    //servie重启信号
+    void serviceRestart();
+
     //联系人信息更新
     void contactInfoChanged(int oper,Contact user);
     //监听联系人信息更新
@@ -174,6 +177,8 @@ private slots:
     void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
     void onGetorgUserInfoResult(int code,OrgUser orguser);
 
+    //servie重启信号
+    void onServiceRestart();
     //联系人信息更新
     void onContactInfoChanged(int oper,Contact user);
 

@@ -48,6 +48,9 @@ CPage {
                pageStack.replace(Qt.resolvedUrl("CDoodActivateAccountPage.qml"), "", true);
             }
         }
+        onServiceRestart:{
+            gToast.requestToast("后台服务重启...","","");
+        }
     }
 
     contentAreaItem: Item {

@@ -59,7 +59,7 @@ CTabView{
     }
     CTab {
         id:gifTab
-        CDoodEmojiGridView{
+        CDoodDyEmojiGridView{
             anchors.fill: parent
         }
         property url imgSource: "qrc:/res/smilies/instruct/aoman.png"
