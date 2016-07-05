@@ -249,6 +249,8 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
     }
 }
 
+
+
 void CDoodSessionListManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;

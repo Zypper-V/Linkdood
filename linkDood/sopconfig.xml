@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sopconfig syberos:shareUserId="" syberos:versionName="1.0.0" xmlns:syberos="http://schemas.syberos.com/rpm/res/syberos" syberos:sopid="com.vrv.linkDood" syberos:versionCode="1">
+<sopconfig syberos:versionCode="1" syberos:shareUserId="" syberos:versionName="1.0.0" xmlns:syberos="http://schemas.syberos.com/rpm/res/syberos" syberos:sopid="com.vrv.linkDood">
     <uses-permission syberos:name="syberos.permission.ACCESS_ALARM"/>
     <uses-permission syberos:name="syberos.permission.ACCESS_DATA_NETWORK"/>
     <uses-permission syberos:name="syberos.permission.ACCESS_NOTIFICATION"/>
     <uses-permission syberos:name="syberos.permission.ACCESS_WIFI"/>
-    <uses-sdk syberos:targetSdkVersion="" syberos:minSdkVersion=""/>
-    <application syberos:debuggable="true" syberos:name="linkDood" syberos:icon="res/linkdoodui.png" syberos:description="linkDood for syberos.">
-        <uiapp syberos:background="" syberos:name="天工圆圆" syberos:icon="res/linkdoodui.png" syberos:splash="" syberos:launcher="true" syberos:id="linkdoodui" syberos:exec="bin/linkdoodui">
-            <doctype syberos:id=""/>
-            <url>
+    <uses-permission syberos:name="syberos.permission.READ_NETWORK_STATE"/>
+    <uses-sdk syberos:minSdkVersion="" syberos:targetSdkVersion=""/>
+    <application syberos:description="linkDood for syberos." syberos:name="linkDood" syberos:icon="res/linkdoodui.png" syberos:debuggable="true">
+        <uiapp syberos:id="linkdoodui" syberos:name="天工圆圆" syberos:icon="res/linkdoodui.png" syberos:background="" syberos:splash="" syberos:launcher="true" syberos:exec="bin/linkdoodui">
+            <url syberos:id="">
                 <scheme>linkDood</scheme>
             </url>
+            <doctype syberos:id=""/>
         </uiapp>
-        <service syberos:background="" syberos:name="" syberos:icon="" syberos:splash="" syberos:launcher="false" syberos:id="linkdoodservice" syberos:exec="bin/linkdoodservice">
+        <service syberos:id="linkdoodservice" syberos:name="" syberos:icon="" syberos:background="" syberos:splash="" syberos:launcher="false" syberos:exec="bin/linkdoodservice">
             <receiver syberos:id="">
                 <event>BOOT_COMPLETE</event>
             </receiver>

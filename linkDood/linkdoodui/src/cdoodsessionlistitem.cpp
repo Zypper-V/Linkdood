@@ -169,3 +169,4 @@ QString CDoodSessionListItem::setThumbAvatar(const QString &data)
     emit thumbAvatarChanged();
     return mThumbAvatar;
 }
+

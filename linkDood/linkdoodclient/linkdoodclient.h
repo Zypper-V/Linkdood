@@ -28,6 +28,7 @@ public:
 signals:
     void loginSucceeded();
     void changePasswordResult(QString);
+    void connectChanged(QString);
     void chatListChanged(const Chat_UIList& chats);
     void loginFailed(QString err);
     void contactListChanged(int oper,ContactList contacts);
@@ -45,6 +46,7 @@ signals:
     void contactInfoChanged(int oper,Contact user);
     //监听联系人信息更新
     void contactOnlineChanged(QString id,QString deviceText);
+    void elsewhereLogin(QString tip);
 
     //会话列表头像更新
     void chatAvatarChanged(int64 id,QString avatar);
@@ -116,6 +118,7 @@ public slots:
      void updateContactInfo(QString userId,QString operStar,QString remark="");
      //改变联系人状态
      void onOnlineChanged(QString id, QString deviceType);
+     void onElsewhereLogin(QString tip);
 
     //获取账户信息
     void getAccountInfo(void);
@@ -171,6 +174,7 @@ private slots:
     void onContactListChanged(int oper,ContactList contacts);
     void onLoginFailed(QString err);
     void onChangePasswordResult(QString result);
+    void onConnectChanged(QString flag);
 
     //获取组织返回
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);

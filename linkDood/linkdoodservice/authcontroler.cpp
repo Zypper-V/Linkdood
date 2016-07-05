@@ -8,41 +8,45 @@
 #include "LoginInfo.hpp"
 #include "Account.h"
 #include "linkdoodservice.h"
+#include<QDateTime>
+
 
 AuthControler::AuthControler(QObject *parent)
     :QObject(parent)
 {
     init();
+    m_net=new CNetworkManager();
+    initConnects();
 }
 
 void AuthControler::login(const QString &server, const QString &userId, const QString &password)
 {
-//    QString user("0086");
+    //    QString user("0086");
 
-//    QByteArray ba = userId.toLatin1();
-//    const char *s = ba.data();
-//    while(*s && *s>='0' && *s<='9') s++;
-//    bool isNum = *s ? false:true;
+    //    QByteArray ba = userId.toLatin1();
+    //    const char *s = ba.data();
+    //    while(*s && *s>='0' && *s<='9') s++;
+    //    bool isNum = *s ? false:true;
 
-//    if(isNum && !userId.startsWith("0086"))
-//    {
-//        user = user+userId;
-//    }else
-//    {
-//       user = userId;
-//    }
+    //    if(isNum && !userId.startsWith("0086"))
+    //    {
+    //        user = user+userId;
+    //    }else
+    //    {
+    //       user = userId;
+    //    }
     qDebug() << Q_FUNC_INFO << server << userId << password;
     service::IMClient::getClient()->getAuth()->login(userId.toStdString(),
-                                  password.toStdString(),
-                                  server.toStdString(),
+                                                     password.toStdString(),
+                                                     server.toStdString(),
                                                      std::bind(&AuthControler::_loginResult,this,std::placeholders::_1,std::placeholders::_2));
 }
 
 void AuthControler::changepassword(QString oldpsw, QString newpsw)
 {
-     qDebug() << Q_FUNC_INFO;
-     service::IMClient::getClient()->getAuth()->changePassword(oldpsw.toStdString(),newpsw.toStdString(),
-                                                               std::bind(&AuthControler::_changepassword,this,std::placeholders::_1));
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getAuth()->changePassword(oldpsw.toStdString(),newpsw.toStdString(),
+                                                              std::bind(&AuthControler::_changepassword,this,std::placeholders::_1));
 }
 
 void AuthControler::_changepassword(service::ErrorInfo &info)
@@ -167,13 +171,19 @@ void AuthControler::init()
 
 void AuthControler::onConnectChanged(int flag)
 {
-        qDebug() << Q_FUNC_INFO<<"lixinlixinlixinlixinlixin"<<flag;
+    qDebug() << Q_FUNC_INFO<<"lixinlixinlixinlixinlixin"<<flag;
+    if(flag==0){
+        emit connectChanged("");
+    }
+    else{
+        emit connectChanged("服务器连接中...");
+    }
 }
 
 void AuthControler::onLoginResultObserver(service::ErrorInfo& info, int64 userid)
 {
-     qDebug() << Q_FUNC_INFO << "chengcy0000000000000" << info << userid;
-     emit loginResultObserver(info.code(),QString::number(userid));
+    qDebug() << Q_FUNC_INFO << "chengcy0000000000000" << info << userid;
+    emit loginResultObserver(info.code(),QString::number(userid));
 }
 
 void AuthControler::onDBUpdateFinished(int val)
@@ -196,40 +206,40 @@ void AuthControler::onLogoutChanged(service::ErrorInfo& info)
 void AuthControler::onAccountInfoChanged(service::User& info)
 {
     qDebug() << Q_FUNC_INFO;
-     qDebug()<<"name:"<<info.name.c_str()<<"sex:"<<info.gender;
-     mpUserInfo->__set_avatar(info.avatar);
-     mpUserInfo->__set_gender(info.gender);
-     mpUserInfo->__set_extends(info.extends);
-     mpUserInfo->__set_id(info.id);
-     mpUserInfo->__set_name(info.name);
-     mpUserInfo->__set_thumb_avatar(info.thumb_avatar);
-     mpUserInfo->__set_time_zone(info.time_zone);
+    qDebug()<<"name:"<<info.name.c_str()<<"sex:"<<info.gender;
+    mpUserInfo->__set_avatar(info.avatar);
+    mpUserInfo->__set_gender(info.gender);
+    mpUserInfo->__set_extends(info.extends);
+    mpUserInfo->__set_id(info.id);
+    mpUserInfo->__set_name(info.name);
+    mpUserInfo->__set_thumb_avatar(info.thumb_avatar);
+    mpUserInfo->__set_time_zone(info.time_zone);
 
-     qDebug() << Q_FUNC_INFO << "sfsdfsfdg:" << QString::fromStdString(info.name);
-     QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
-     QSettings settings(fileName, QSettings::IniFormat);
-     settings.setValue("myName",QString::fromStdString(info.name));
-     settings.setValue("myId",QString::number(info.id));
-     emit loginResultObserver(0,QString::number(info.id));
+    qDebug() << Q_FUNC_INFO << "sfsdfsfdg:" << QString::fromStdString(info.name);
+    QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("myName",QString::fromStdString(info.name));
+    settings.setValue("myId",QString::number(info.id));
+    emit loginResultObserver(0,QString::number(info.id));
 
-     //推送用户信息
-     Contact user;
-     user.timeZone = info.time_zone;
-     if(info.gender == 0){
-          user.gender = "保密";
-     }
-     if(info.gender == 1){
-          user.gender = "男";
-     }
-     if(info.gender == 2){
-          user.gender = "女";
-     }
-     user.id = QString::number(info.id);
-     user.name = QString::fromStdString(info.name);
-     user.extends = QString::fromStdString(info.extends);
-     user.thumbAvatar = QString::fromStdString(info.thumb_avatar);
-     user.avatar = QString::fromStdString(info.avatar);
-     emit accountInfoChanged(user);
+    //推送用户信息
+    Contact user;
+    user.timeZone = info.time_zone;
+    if(info.gender == 0){
+        user.gender = "保密";
+    }
+    if(info.gender == 1){
+        user.gender = "男";
+    }
+    if(info.gender == 2){
+        user.gender = "女";
+    }
+    user.id = QString::number(info.id);
+    user.name = QString::fromStdString(info.name);
+    user.extends = QString::fromStdString(info.extends);
+    user.thumbAvatar = QString::fromStdString(info.thumb_avatar);
+    user.avatar = QString::fromStdString(info.avatar);
+    emit accountInfoChanged(user);
 }
 
 void AuthControler::onClientKeyChanged(service::ErrorInfo& info, std::string& clientKey)
@@ -244,6 +254,25 @@ void AuthControler::onPasswordRuleChanged(service::ErrorInfo& info, int16 rule)
 
 void AuthControler::onAvatarChanged(std::string avatar)
 {
+
+}
+
+void AuthControler::onNetworkStatusChanged(bool connected, CNetworkManager::NetworkType type)
+{
+    qDebug() << Q_FUNC_INFO<<"sssssssssssxinxinxinxinxinxinxin";
+    if(connected){
+        emit connectChanged("");
+    }
+    else{
+        emit connectChanged("网络连接中...");
+    }
+
+}
+
+void AuthControler::initConnects()
+{
+    qDebug() << Q_FUNC_INFO<<"chushihuachushihua";
+    QObject::connect(m_net,SIGNAL(networkStatusChanged(bool,CNetworkManager::NetworkType)),this,SLOT(onNetworkStatusChanged(bool, CNetworkManager::NetworkType)));
 
 }
 
@@ -284,7 +313,7 @@ void AuthControler::_loginResult(service::ErrorInfo &info, long long userId)
         QSettings settings(fileName, QSettings::IniFormat);
         settings.setValue("myId",QString::number(userId));
 
-       emit loginSucceeded();
+        emit loginSucceeded();
     }
     else
     {

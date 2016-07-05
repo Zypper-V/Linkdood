@@ -180,9 +180,12 @@ void LinkDoodService::getContactList()
     }
 }
 
-void LinkDoodService::onOnlineChanged(QString id, QString deviceType)
+void LinkDoodService::onOnlineChanged(QString id, QString deviceType,int flag)
 {
     qDebug() << Q_FUNC_INFO;
+    if(id==m_userid&&flag==(-1)){
+        emit elsewhereLogin("您的帐号已在别处登录");
+    }
    emit contactOnlineChanged(id, deviceType);
 }
 
@@ -415,6 +418,12 @@ void LinkDoodService::onChangePasswordResult(QString result)
     emit changePasswordResult(result);
 }
 
+void LinkDoodService::onConnectChanged(QString flag)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit connectChanged(flag);
+}
+
 void LinkDoodService::onContactInfoChanged(int oper, Contact user)
 {
     qDebug() << Q_FUNC_INFO<< "333333333333333333333333333333";
@@ -437,6 +446,9 @@ void LinkDoodService::onChatListChanged(Chat_UIList chats)
 void LinkDoodService::onLoginSucceeded()
 {
     qDebug() << Q_FUNC_INFO;
+    if(m_pAuth != NULL){
+       m_userid=m_pAuth->UserId();
+    }
     emit loginSucceeded();
 }
 
@@ -697,6 +709,8 @@ void LinkDoodService::initConnects()
                      SLOT(onLoginFailed(int)));
     QObject::connect(m_pAuth.get(),SIGNAL(changePasswordResult(QString)),this,
                      SLOT(onChangePasswordResult(QString)));
+    QObject::connect(m_pAuth.get(),SIGNAL(connectChanged(QString)),this,
+                     SLOT(onConnectChanged(QString)));
 
     QObject::connect(m_pAuth.get(),SIGNAL(loginoutRelust(bool)),this,
                      SLOT(onLoginoutRelust(bool)));
@@ -711,7 +725,7 @@ void LinkDoodService::initConnects()
                      SLOT(onContactListChanged(int,ContactList)));
     QObject::connect(m_pContactObserver.get(),SIGNAL(contactInfoChanged(int,Contact)),this,
                      SLOT(onContactInfoChanged(int,Contact)));
-    QObject::connect(m_pContactObserver.get(),SIGNAL(contactOnlineChanged(QString,QString)),this,SLOT(onOnlineChanged(QString,QString)));
+    QObject::connect(m_pContactObserver.get(),SIGNAL(contactOnlineChanged(QString,QString,int)),this,SLOT(onOnlineChanged(QString,QString,int)));
 }
 
 void LinkDoodService::initDBusConnection()

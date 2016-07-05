@@ -28,7 +28,7 @@ Item {
             anchors.leftMargin: 47
             //        anchors.topMargin: 21
             width: parent.width
-            height: 101
+            height: parent.height
             orientation:ListView.Horizontal
             spacing: -25
             model: orgManager
@@ -76,114 +76,144 @@ Item {
             }
         }
     }
-
-    ListView {
-        id: orgListView
+    Rectangle{
+        id:memberRec
         anchors.top: orgTitleListViewbackground.bottom
+        height: 43
+        anchors.left: parent.left
+        anchors.right: parent.right
+        color:"#EAEEF2"
+        Text{
+            //            anchors.top: parent.top
+            anchors.left:parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: 45
+            //            color:"black"
+            text:qsTr("成员")
+            font.pixelSize: 26
+        }
+    }
+    Rectangle{
+        anchors.top: memberRec.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+        color:"#F2F2F2"
 
-        clip: true
-        model: enterpriseManager
+        ListView {
+            id: orgListView
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
 
-        delegate:Item {
-            id:contactListDelegate
 
-            width: orgTitleListView.width
-            height: 113
 
-            MouseArea {
-                anchors.fill: parent
+            clip: true
+            model: enterpriseManager
 
-                onPressed: {
-                    if(mousePressBackgroud.visible){
+            delegate:Item {
+                id:contactListDelegate
+
+                width: orgTitleListView.width
+                height: 113
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onPressed: {
+                        if(mousePressBackgroud.visible){
+                            background.color = "#F2F2F2"
+                            mousePressBackgroud.visible = false
+                        }else{
+                            background.color = "#cdcdcd"
+                            mousePressBackgroud.visible = true
+                        }
+                    }
+
+                    onReleased: {
+                        //                    userdataManager.setName(model.modelData.name);
+                        //                    userdataManager.setGender(model.modelData.gender);
+                        //                    userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
+                        //                    userdataManager.setId(model.modelData.id);
+
                         background.color = "white"
                         mousePressBackgroud.visible = false
-                    }else{
-                        background.color = "#cdcdcd"
-                        mousePressBackgroud.visible = true
+                        console.log(" model.modelData.id: ",model.modelData.id)
+                        console.log(" model.modelData.name: ",model.modelData.name)
+                        orgManager.addOrg(model.modelData.id, model.modelData.name);
+
+                        enterpriseManager.getSonOrgs(model.modelData.id)
+                        //pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
                     }
-                }
 
-                onReleased: {
-                    //                    userdataManager.setName(model.modelData.name);
-                    //                    userdataManager.setGender(model.modelData.gender);
-                    //                    userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
-                    //                    userdataManager.setId(model.modelData.id);
-
-                    background.color = "white"
-                    mousePressBackgroud.visible = false
-                    console.log(" model.modelData.id: ",model.modelData.id)
-                    console.log(" model.modelData.name: ",model.modelData.name)
-                    orgManager.addOrg(model.modelData.id, model.modelData.name);
-
-                    enterpriseManager.getSonOrgs(model.modelData.id)
-                    //pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
-                }
-
-                onCanceled: {
-                    background.color = "white"
-                    mousePressBackgroud.visible = false
-                }
-            }
-
-            Rectangle {
-                width: contactListDelegate.width
-                height: contactListDelegate.height
-
-
-                Rectangle {
-                    id : mousePressBackgroud
-                    anchors.fill: parent
-                    visible: false
-                    color: "#cdcdcd"
+                    onCanceled: {
+                        background.color = "#F2F2F2"
+                        mousePressBackgroud.visible = false
+                    }
                 }
 
                 Rectangle {
-                    id : background
-                    anchors.fill: parent
-                    anchors.topMargin: 1
-                    anchors.bottomMargin: 3
-                    anchors.leftMargin: 2
-                    anchors.rightMargin:  2
+                    width: contactListDelegate.width
+                    height: contactListDelegate.height
+                    color:"#F2F2F2"
 
-                    CDoodHeaderImage {
-                        id: headPortraitImage
-                        anchors.left: parent.left
-                        anchors.leftMargin: 25
-                        anchors.topMargin: 16
-                        anchors.verticalCenter: parent.verticalCenter
-                        width: 90
-                        height: 90
-                        radius: 6
-                        name:""
-                        headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                        iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
-                        visible: !model.modelData.isOrg
+
+                    Rectangle {
+                        id : mousePressBackgroud
+                        anchors.fill: parent
+                        visible: false
+                        color: "#cdcdcd"
                     }
-                    Text {
-                        id: nameText
-                        anchors.left: headPortraitImage.right
-                        anchors.leftMargin: 30
-                        anchors.rightMargin: 20
-                        anchors.top: parent.top
-                        anchors.topMargin: 25
-                        font.pixelSize: 32
-                        height: 33
-                        clip: true
-                        color: "#333333"
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                        text: model.modelData.name
-                    }
-                    CLine {
-                        width: parent.width
-                        anchors.left: parent.left
-                        //                        anchors.leftMargin: 150
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        z: parent.z+2
+
+                    Rectangle {
+                        id : background
+                        anchors.fill: parent
+//                        anchors.topMargin: 1
+//                        anchors.bottomMargin: 3
+//                        anchors.leftMargin: 2
+//                        anchors.rightMargin:  2
+                        color:"#F2F2F2"
+
+                        CDoodHeaderImage {
+                            id: headPortraitImage
+                            anchors.left: parent.left
+                            anchors.leftMargin: 25
+                            anchors.topMargin: 16
+                            anchors.verticalCenter: parent.verticalCenter
+                            width: 90
+                            height: 90
+                            radius: 6
+                            name:""
+                            headerColor: sessionListManager.getHeaderColor(model.modelData.id)
+                            iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
+                            visible: !model.modelData.isOrg
+                        }
+                        Text {
+                            id: nameText
+                            anchors.left: headPortraitImage.right
+                            anchors.leftMargin: 30
+                            anchors.rightMargin: 20
+                            anchors.top: parent.top
+                            anchors.topMargin: 25
+                            font.pixelSize: 32
+                            height: 33
+                            clip: true
+                            color: "#333333"
+                            verticalAlignment: Text.AlignVCenter
+                            elide: Text.ElideRight
+                            text: model.modelData.name
+                        }
+                        CLine {
+//                            width: parent.width
+                            width: 3
+                            anchors.left: parent.left
+                            color:"#cdcdcd"
+                            //                        anchors.leftMargin: 150
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            z: parent.z+2
+                        }
                     }
                 }
             }

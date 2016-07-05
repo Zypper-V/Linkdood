@@ -68,6 +68,7 @@ signals:
     void loginFailed(QString err);
     void loginoutRelust(bool loginout);
     void changePasswordResult(QString result);
+    void elsewhereLogin(QString tip);
     //获取登录历史记录
     void getLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
@@ -78,6 +79,7 @@ signals:
     //servie重启信号
     void serviceRestart();
 private slots:
+    void onElsewhereLogin(QString tip);
     void onLoginSucceeded();
     void onLoginFailed(QString err);
     void onLoginoutRelust(bool loginout);

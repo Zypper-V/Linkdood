@@ -63,11 +63,12 @@ signals:
     void contactInfoChanged(int oper,Contact user);
     //联系人状态改变
     void contactOnlineChanged(QString id, QString deviceType);
-
+    void elsewhereLogin(QString);
     void loginSucceeded();
     void loginFailed(QString);
     void loginoutRelust(bool loginout);
     void changePasswordResult(QString);
+    void connectChanged(QString);
 
     void chatListChanged(const Chat_UIList& chats);
 
@@ -139,7 +140,7 @@ public slots:
     //获取会话列表
     void getContactList();
     //改变联系人状态
-    void onOnlineChanged(QString id, QString deviceType);
+    void onOnlineChanged(QString id, QString deviceType,int flag);
     //用户信息UserId
     QString UserId();
     QString userName();
@@ -292,6 +293,7 @@ protected slots:
 
 
     void onChangePasswordResult(QString result);
+    void onConnectChanged(QString flag);
 
     //联系人信息更新
     void onContactInfoChanged(int oper,Contact user);
@@ -376,6 +378,7 @@ private:
 private:
     CSystemPackageManager *m_pPackageManager;
     QString m_sInstallPath;
+    QString m_userid;
 
     std::shared_ptr<AuthControler>  m_pAuth;
     std::shared_ptr<ChatControler>  m_pChatObserver;

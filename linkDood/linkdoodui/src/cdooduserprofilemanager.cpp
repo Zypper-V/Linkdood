@@ -9,7 +9,7 @@ CDoodUserProfileManager::CDoodUserProfileManager(LinkDoodClient *client,QObject 
 void CDoodUserProfileManager::initConnect()
 {
     connect(m_pClient, SIGNAL(accountInfoChanged(Contact)), this, SLOT(onAccountInfoChanged(Contact)));
-
+    connect(m_pClient, SIGNAL(connectChanged(QString)), this, SLOT(onConnectChanged(QString)));
 }
 
 QString CDoodUserProfileManager::id() const
@@ -82,6 +82,12 @@ void CDoodUserProfileManager::onAccountInfoChanged(Contact user)
     setThumbAvatar(user.thumbAvatar);
 }
 
+void CDoodUserProfileManager::onConnectChanged(QString flag)
+{
+    qDebug() << Q_FUNC_INFO<<"asasasasasaassa"<<flag;
+    setConnectFlag(flag);
+}
+
 QString CDoodUserProfileManager::gender() const
 {
     return mGender;
@@ -109,5 +115,19 @@ QString CDoodUserProfileManager::setAvatar(const QString &data)
     mAvatar = data;
     emit avatarChanged();
     return mAvatar;
+}
+QString CDoodUserProfileManager::connectFlag() const
+{
+    return mConnectFlag;
+}
+
+QString CDoodUserProfileManager::setConnectFlag(const QString &data)
+{
+    if(mConnectFlag == data) {
+        return data;
+    }
+    mConnectFlag = data;
+    emit connectFlagChanged();
+    return mConnectFlag;
 }
 

@@ -106,6 +106,11 @@ int CDoodLoginManager::loginStatus()
     return getAppLoginStatus();
 }
 
+void CDoodLoginManager::onElsewhereLogin(QString tip)
+{
+    emit elsewhereLogin(tip);
+}
+
 QString CDoodLoginManager::userId()
 {
     qDebug() << Q_FUNC_INFO;
@@ -223,6 +228,7 @@ void CDoodLoginManager::onServiceRestart()
 
 void CDoodLoginManager::initConnect()
 {
+    connect(m_pClient, SIGNAL(elsewhereLogin(QString)), this, SLOT(onElsewhereLogin(QString)));
     connect(m_pClient, SIGNAL(changePasswordResult(QString)), this, SLOT(onChangePasswordResult(QString)));
     connect(m_pClient, SIGNAL(loginoutRelust(bool)), this, SLOT(onLoginoutRelust(bool)));
     connect(m_pClient, SIGNAL(loginSucceeded()), this, SLOT(onLoginSucceeded()));

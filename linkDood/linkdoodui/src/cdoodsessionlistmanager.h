@@ -56,6 +56,7 @@ signals:
     void unreadCountChanged();
 
     void chatListChanged(const Chat_UIList& chats);
+
 private slots:
     void onChatListChanged(const Chat_UIList& chats);
     //会话列表(通知栏)新消息更新通知

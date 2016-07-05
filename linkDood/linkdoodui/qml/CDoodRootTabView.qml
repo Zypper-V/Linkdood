@@ -29,6 +29,18 @@ CPage {
             tabView.currentIndex = 0;
         }
     }
+    Connections {
+        target: loginManager
+
+        onElsewhereLogin: {
+            console.log("CDoodRootTabbView  onElsewhereLogin !!!")
+            gToast.requestToast(tip,"","");
+            contactManager.clearChatList();
+            sessionListManager.clearChatList();
+            loginManager.setAppLoginStatus(0);
+            pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+        }
+    }
 
     function showChatPage(chatName, targetid, chatType, icon) {
         console.log("CDoodRootTabbView  showChatPage !!!")
@@ -75,6 +87,14 @@ CPage {
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: 8
+            }
+            Text{
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right:parent.right
+                anchors.rightMargin: 250
+                color:"white"
+                font.pixelSize: 32
+                text:userProfileManager.connectFlag
             }
         }
 

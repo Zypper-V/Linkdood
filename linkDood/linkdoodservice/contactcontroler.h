@@ -31,7 +31,7 @@ signals:
     void contactListChanged(int oper,ContactList contactList);
     //联系人信息更新
     void contactInfoChanged(int oper,Contact user);
-    void contactOnlineChanged(QString id, QString deviceType);
+    void contactOnlineChanged(QString id, QString deviceType,int flag);
 private:
     ContactList sort(const ContactList& contactList);
     //更新联系人信息

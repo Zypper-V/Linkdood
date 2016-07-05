@@ -207,6 +207,12 @@ void LinkDoodClient::onOnlineChanged(QString id, QString deviceType)
     emit contactOnlineChanged(id,deviceType);
 }
 
+void LinkDoodClient::onElsewhereLogin(QString tip)
+{
+     qDebug() << Q_FUNC_INFO<<"zhezhezhezhezhezhe";
+    emit elsewhereLogin(tip);
+}
+
 void LinkDoodClient::getAccountInfo()
 {
     qDebug() << Q_FUNC_INFO;
@@ -484,6 +490,12 @@ void LinkDoodClient::onChangePasswordResult(QString result)
     emit changePasswordResult(result);
 }
 
+void LinkDoodClient::onConnectChanged(QString flag)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit connectChanged(flag);
+}
+
 
 
 void LinkDoodClient::onGetSonOrgsResult(int code, OrgList orglist, OrgUserList orguserlist)
@@ -692,6 +704,10 @@ void LinkDoodClient::initDBusConnect()
                                           this, SLOT(onChangePasswordResult(QString)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "connectChanged",
+                                          this, SLOT(onConnectChanged(QString)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "loginFailed",
                                           this, SLOT(onLoginFailed(QString)));
 
@@ -711,6 +727,10 @@ void LinkDoodClient::initDBusConnect()
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "loginResultObserver",
                                           this, SLOT(onLoginResultObserver(int,QString)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "elsewhereLogin",
+                                          this, SLOT(onElsewhereLogin(QString)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "getLoginHistoryResult",

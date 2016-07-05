@@ -5,6 +5,7 @@
 #include "IAuthObserver.h"
 #include "linkdoodtypes.h"
 #include "LoginInfo.hpp"
+#include"cnetworkmanager.h"
 
 namespace service {
     class IMClient;
@@ -67,12 +68,14 @@ public:
     void onPasswordRuleChanged(service::ErrorInfo& info, int16 rule);
     void onAvatarChanged(std::string avatar);
 
-protected slots:
+ protected slots:
+    void onNetworkStatusChanged(bool connected, CNetworkManager::NetworkType type);
     //void login(const QString &server, const QString &userId, const QString &password);
  signals:
     void loginSucceeded(void);
     void loginFailed(int code);
     void changePasswordResult(QString result);
+    void connectChanged(QString flag);
 
     void loginoutRelust(bool succeeded);
     //登录成功自动推送
@@ -82,11 +85,13 @@ protected slots:
     //推送用户信息
     void accountInfoChanged(Contact user);
 private:
+    void initConnects();
     void _getLoginHistory(std::vector<service::LoginInfo> list);
     void _loginResult(service::ErrorInfo& info,int64 userId);
     void _updateAccountInfo(service::ErrorInfo& info);
 private:
    std::shared_ptr<service::User> mpUserInfo;
+   CNetworkManager* m_net;
 };
 
 #endif // AUTHCONTROLER_H

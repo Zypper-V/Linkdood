@@ -19,6 +19,7 @@ class CDoodSessionListItem : public QObject
     Q_PROPERTY(QString lastMsg READ lastMsg WRITE setLastMsg NOTIFY lastMsgChanged)
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
 
+
 public:
     explicit CDoodSessionListItem(QObject *parent = 0);
 
@@ -56,6 +57,7 @@ public:
     QString setThumbAvatar(const QString &data);
 
 
+
 signals:
     void idChanged();
     void nameChanged();
@@ -68,6 +70,7 @@ signals:
     void msgTimeChanged();
     void lastMsgChanged();
     void thumbAvatarChanged();
+
 
 public slots:
 

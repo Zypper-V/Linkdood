@@ -112,7 +112,7 @@ void ContactControler::onOnlineChanged(OnlineState &status)
         else if(status.deviceType == 2)
             device = "[手机]";
     }
-    emit contactOnlineChanged(QString::number(status.userID), device);
+    emit contactOnlineChanged(QString::number(status.userID), device,status.flag);
 }
 
 ContactList ContactControler::sort(const ContactList &contactList)
