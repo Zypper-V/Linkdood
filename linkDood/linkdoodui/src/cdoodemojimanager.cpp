@@ -37,10 +37,11 @@ void CDoodEmojiManager::initEmojiExplainMap()
 }
 
 CDoodEmojiManager::CDoodEmojiManager(LinkDoodClient *client, int type, QObject *parent) :
-    CDoodListModel(parent), m_pClient(client), mType(type)
+    CDoodListModel(parent), m_pClient(client)/*, mType(type)*/
 {
     qRegisterMetaType<CDoodEmojiManager*>();
     clearData();
+    mType = type;
     if(type == 1)
     {
         qDebug() << Q_FUNC_INFO <<"init dy..........";
@@ -93,6 +94,7 @@ void CDoodEmojiManager::loadEmoji(QString path)
             item->setPath(facePath);
             if(mType == 1)
             {
+                qDebug() << "emojiName:" << faceName << "emojiExplain:" << mEmojiExplain[faceName];
                 item->setExplain(mEmojiExplain[faceName]);
             }
             insertItem(itemCount(),item);

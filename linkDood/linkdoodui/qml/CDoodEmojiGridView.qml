@@ -1,5 +1,5 @@
 import QtQuick 2.0
-
+import com.syberos.basewidgets 2.0
 
 Rectangle{
     id: root
@@ -9,6 +9,11 @@ Rectangle{
     property int rows: 4
     property int itemsPerPage: columns*rows
     property variant flow: GridView.TopToBottom
+
+    CLine{
+        id:line
+        anchors.top:parent.top
+    }
 
     GridView{
         id: grid
