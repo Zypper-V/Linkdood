@@ -2,7 +2,9 @@
 
 CDoodEmojiItem::CDoodEmojiItem(QObject *parent) : QObject(parent)
 {
-
+    mName = "";
+    mPath = "";
+    mExplain = "";
 }
 
 QString CDoodEmojiItem::name() const
@@ -31,4 +33,18 @@ QString CDoodEmojiItem::setPath(const QString &data)
     mPath = data;
     emit pathChanged();
     return mPath;
+}
+
+QString CDoodEmojiItem::explain() const
+{
+    return mExplain;
+}
+
+QString CDoodEmojiItem::setExplain(const QString &data)
+{
+    if(mExplain == data)
+        return data;
+    mExplain = data;
+    emit explainChanged();
+    return mExplain;
 }
