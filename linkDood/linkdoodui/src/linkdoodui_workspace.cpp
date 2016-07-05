@@ -70,6 +70,10 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     if (!m_pEmojiManager.data()) {
         qDebug() << Q_FUNC_INFO << "CDoodEmojiManager init error !!!";
     }
+    m_pDyEmojiManager = QSharedPointer<CDoodEmojiManager>(new CDoodEmojiManager(m_pClient.data(), 1));
+    if (!m_pDyEmojiManager.data()) {
+        qDebug() << Q_FUNC_INFO << "CDoodEmojiManager dynomic init error !!!";
+    }
 
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), qApp, SLOT(quit()));
@@ -82,6 +86,7 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     m_view->engine()->rootContext()->setContextProperty("orgManager", m_pOrgManager.data());
     m_view->engine()->rootContext()->setContextProperty("userProfileManager", m_pUserProfileManager.data());
     m_view->engine()->rootContext()->setContextProperty("userEmojiManager", m_pEmojiManager.data());
+    m_view->engine()->rootContext()->setContextProperty("userDyEmojiManager", m_pDyEmojiManager.data());
 
     m_view->setSource(QUrl("qrc:/qml/main.qml"));
     m_view->showFullScreen();

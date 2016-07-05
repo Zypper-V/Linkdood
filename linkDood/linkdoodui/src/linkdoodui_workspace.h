@@ -52,6 +52,7 @@ private:
     QSharedPointer<CDoodEnterpriseManager> m_pEnterPriseManager;
     QSharedPointer<CDoodOrgManager> m_pOrgManager;
     QSharedPointer<CDoodEmojiManager> m_pEmojiManager;
+    QSharedPointer<CDoodEmojiManager> m_pDyEmojiManager;
     QSharedPointer<LinkDoodClient> m_pClient;
     QSharedPointer<CDoodUserProfileManager> m_pUserProfileManager;
 
