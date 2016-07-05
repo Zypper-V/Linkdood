@@ -3,8 +3,7 @@
 
 #include <QDir>
 
-CDoodEmojiManager::CDoodEmojiManager(LinkDoodClient *client, int type, QObject *parent) :
-    CDoodListModel(parent), m_pClient(client), mType(type)
+void CDoodEmojiManager::initEmojiExplainMap()
 {
     mEmojiExplain["Dynamic_Expression_01"] = BAOBAO_DYNAMIC;
     mEmojiExplain["Dynamic_Expression_02"] = CENGCENG_DYNAMIC;
@@ -35,10 +34,15 @@ CDoodEmojiManager::CDoodEmojiManager(LinkDoodClient *client, int type, QObject *
     mEmojiExplain["Dynamic_Expression_27"] = YALISHANDA_DYNAMIC;
     mEmojiExplain["Dynamic_Expression_28"] = ZAN_DYNAMIC;
     mEmojiExplain["Dynamic_Expression_29"] = GUZHANG_DYNAMIC;
+}
 
+CDoodEmojiManager::CDoodEmojiManager(LinkDoodClient *client, int type, QObject *parent) :
+    CDoodListModel(parent), m_pClient(client), mType(type)
+{
     qRegisterMetaType<CDoodEmojiManager*>();
     if(type == 1)
     {
+        initEmojiExplainMap();
         loadEmoji(":/res/smilies/dynamic_expression");
     }
     else
@@ -48,9 +52,12 @@ CDoodEmojiManager::CDoodEmojiManager(LinkDoodClient *client, int type, QObject *
     }
 }
 
-void CDoodEmojiManager::onBtnItemClicked(QString index)
+void CDoodEmojiManager::itemClicked(QString path)
 {
-    emit signalEmojiChanged(mEmojiListMap[index]->path());
+    QString emojiPath = "<img src=\""+path+"\" height=\"36\" width=\"36\""+"/>";
+
+    qDebug() << Q_FUNC_INFO << "8888888888888888:" << emojiPath;
+    emit signalEmojiChanged(emojiPath);
 }
 
 void CDoodEmojiManager::loadEmoji(QString path)

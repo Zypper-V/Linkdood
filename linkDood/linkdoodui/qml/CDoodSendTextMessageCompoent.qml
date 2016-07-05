@@ -1,5 +1,5 @@
-import QtQuick 2.0
 import com.syberos.basewidgets 2.0
+import QtQuick 2.3
 
 Component {
     id: sendTextMessage
@@ -87,18 +87,21 @@ Component {
                 }
             }
 
-            CEmojiLinkText {
+            TextEdit{
                 id: textMessage
                 anchors.right: parent.right
                 anchors.rightMargin: 30
                 anchors.top: parent.top
                 anchors.topMargin: 25
+
                 wrapMode: Text.WrapAnywhere
-                lineHeight: 1.15
+                textFormat:TextEdit.RichText
+                readOnly:true
+                verticalAlignment: TextEdit.AlignVCenter
 
                 color:"#333333"
                 font.pixelSize: 28
-                realText: model.modelData.body
+                text: model.modelData.body
 
                 visible: true
 

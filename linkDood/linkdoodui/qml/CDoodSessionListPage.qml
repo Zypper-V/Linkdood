@@ -167,7 +167,7 @@ Item {
                                     elide: Text.ElideRight
                                     text: model.modelData.name
                                 }
-                                Text {
+                                TextEdit {
                                     id: contentText
 
                                     anchors.left: headPortraitImage.right
@@ -177,8 +177,13 @@ Item {
                                     anchors.top: nameText.bottom
                                     anchors.topMargin: 24
 
+                                    wrapMode: Text.WrapAnywhere
+                                    textFormat:TextEdit.RichText
+                                    readOnly:true
+                                    verticalAlignment: TextEdit.AlignVCenter
+
                                     font.pixelSize: 24
-                                    height: 40
+                                    height: 60
                                     clip: true
                                     color: "#777777"
                                     text: model.modelData.lastMsg

@@ -11,9 +11,7 @@ class CDoodEmojiManager : public CDoodListModel
     Q_OBJECT
 public:
     CDoodEmojiManager(LinkDoodClient *client = 0, int type = 0, QObject *parent = 0);
-
-public slots:
-    void onBtnItemClicked(QString index);
+    Q_INVOKABLE void itemClicked(QString path);
 
 signals:
     void signalEmojiChanged(QString path);
@@ -25,6 +23,7 @@ private:
     LinkDoodClient *m_pClient;
     QMap<QString, QString>         mEmojiExplain;
     QMap<QString, CDoodEmojiItem*> mEmojiListMap;
+    void initEmojiExplainMap();
 };
 
 #define		BAOBAO_DYNAMIC          QString::fromLocal8Bit("抱抱")

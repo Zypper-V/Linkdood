@@ -109,7 +109,8 @@ CPage {
 
         if(inputTextArea.plainText().replace(/(\s)|(\r\n)|(\r)|(\n)/g, "") !== "") {
             console.log("dood === sendMsg !!!!")
-            chatManager.sendText(inputTextArea.plainText())
+            chatManager.sendText(inputTextArea.text)
+            chatListView.positionViewAtEnd();
         }
         inputTextArea.text = ""
     }
@@ -360,6 +361,7 @@ CPage {
                     maximumLength: 500
                     textMargin: 12
                     wrapMode: TextEdit.Wrap
+                    textFormat:TextEdit.RichText
                     inputMethodHintExtensions: {
                         var args = {};
                         args["enterKeyText"] = "send"
@@ -373,7 +375,7 @@ CPage {
                             btnEmotion.isKeyboard = true
 
                         } else {
-                            btnEmotion.isKeyboard = false
+                            //btnEmotion.isKeyboard = false
                         }
                     }
 
@@ -461,6 +463,14 @@ CPage {
                 }
                 return gInputContext.softwareInputPanelRect.height;
             }
+        }
+    }
+
+    Connections{
+        target: userEmojiManager
+        onSignalEmojiChanged:{
+            console.log("44444444:"+path)
+            inputTextArea.insert(inputTextArea.cursorPosition,path);
         }
     }
 }

@@ -59,8 +59,9 @@ CTabView{
     }
     CTab {
         id:gifTab
-
+        CDoodEmojiGridView{
+            anchors.fill: parent
+        }
         property url imgSource: "qrc:/res/smilies/instruct/aoman.png"
-        title: "2"
     }
 }

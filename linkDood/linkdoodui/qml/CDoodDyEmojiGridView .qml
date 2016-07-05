@@ -5,7 +5,7 @@ Rectangle{
     id: root
     color: "white"
 
-    property int columns: 8
+    property int columns: root.width/70
     property int rows: 4
     property int itemsPerPage: columns*rows
     property variant flow: GridView.TopToBottom
@@ -17,7 +17,7 @@ Rectangle{
         height: parent.height
         anchors.fill: parent
 
-        model: userEmojiManager
+        model: userDyEmojiManager
         cellHeight: grid.height/rows
         cellWidth: grid.width/columns
         clip: true
@@ -55,9 +55,9 @@ Rectangle{
                 BorderImage {
                     id: img
                     source: model.modelData.path
-                    width: 36
-                    height: 36
-                    anchors.centerIn: parent
+                    width: 40
+                    height: width
+                    anchors.fill: parent
                 }
             }
             MouseArea{
@@ -67,7 +67,7 @@ Rectangle{
                 onClicked: {
                     grid.forceActiveFocus();
                     grid.currentIndex = index;
-                    userEmojiManager.itemClicked(model.modelData.path);
+                    userDyEmojiManager.onBtnItemClicked(""+index);
                     console.log("ddddddddddddddddd:"+root.width +"h:"+root.height)
                 }
             }
