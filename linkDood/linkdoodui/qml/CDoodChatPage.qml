@@ -451,7 +451,7 @@ CPage {
             CDoodEmojiTabView{
                 id: background
                 anchors.fill: parent
-                width:parent.width
+                //width:parent.width
             }
             function setHieght(){
 

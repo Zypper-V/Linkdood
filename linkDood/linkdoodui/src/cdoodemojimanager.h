@@ -9,7 +9,7 @@ class CDoodEmojiManager : public CDoodListModel
 {
     Q_OBJECT
 public:
-    CDoodEmojiManager();
+    CDoodEmojiManager(LinkDoodClient *client = 0, QObject *parent = 0);
     Q_INVOKABLE void GetEmojiPic();
     Q_INVOKABLE void GetUserDefEmojiPic();
 

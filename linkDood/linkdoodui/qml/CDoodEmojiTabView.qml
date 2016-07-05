@@ -4,6 +4,8 @@ import com.syberos.basewidgets 2.0
 CTabView{
     id:root
 
+    anchors.fill: parent
+    tabPosition : Qt.BottomEdge
     tabBar: Rectangle {
 
         height: 70
@@ -22,6 +24,7 @@ CTabView{
                     id: tabviewStyle
                     height: 70
                     width: height
+                    opacity: 0.5
                     color:index === root.currentIndex? "#777777" : "white"
                     Image {
                         id: img
@@ -42,12 +45,17 @@ CTabView{
                 }
             }
         }
+        CLine{
+            anchors.top:parent.top
+        }
     }
     CTab {
         id:basicTab
 
         property url imgSource: "qrc:/res/smilies/instruct/weixiao.png"
-        title: "1"
+        CDoodEmojiGridView{
+            anchors.fill: parent
+        }
     }
     CTab {
         id:gifTab

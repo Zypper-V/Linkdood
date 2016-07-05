@@ -3,40 +3,46 @@
 
 #include <QDir>
 
-CDoodEmojiManager::CDoodEmojiManager()
+CDoodEmojiManager::CDoodEmojiManager(LinkDoodClient *client, QObject *parent) :
+    CDoodListModel(parent), m_pClient(client)
 {
-
+    qRegisterMetaType<CDoodEmojiManager*>();
+    GetEmojiPic();
 }
 
 void CDoodEmojiManager::GetEmojiPic()
 {
-    GetUserDefEmojiPic();
+    //GetUserDefEmojiPic();
 
     QDir faceDir;
-    faceDir.setPath("ui/image/smilies/emoji_face");
+    faceDir.setPath(":/res/smilies/emoji_face/");
 
 
     QFileInfoList faceFileInfoList = faceDir.entryInfoList(QDir::Files, QDir::Name);
     QString faceName="";
     QString facePath="";
-    CDoodEmojiItem item;
 
+    qDebug() << Q_FUNC_INFO <<"77777777777:"<< faceFileInfoList.size();
     for (int i = 0; i < faceFileInfoList.size(); i++)
     {
-        facePath = faceFileInfoList.at(i).absoluteFilePath();
-        if (!facePath.isEmpty())
-        {
-            facePath = "file:///" + facePath;
-        }
+        facePath = "qrc"+faceFileInfoList.at(i).absoluteFilePath();
+
         faceName = faceFileInfoList.at(i).baseName();
 
         if (emojiListMap.contains(faceName))
         {
-            item.setName(faceName);
-            item.setPath(facePath);
+            CDoodEmojiItem* item = (CDoodEmojiItem*)emojiListMap.value(faceName);
+            item->setName(faceName);
+            item->setPath(facePath);
+        }else{
 
-            emojiListMap[faceName] = &item;
+            CDoodEmojiItem* item = new CDoodEmojiItem(this);
+            item->setName(faceName);
+            item->setPath(facePath);
+            insertItem(itemCount(),item);
+            emojiListMap[faceName] = item;
         }
+        qDebug() << Q_FUNC_INFO << "name" <<faceName <<"path:" <<facePath;
     }
 }
 

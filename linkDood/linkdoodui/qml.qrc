@@ -27,5 +27,6 @@
         <file>qml/CDoodActivateAccountPage.qml</file>
         <file>qml/CDoodChangePasswordPage.qml</file>
         <file>qml/CDoodEmojiTabView.qml</file>
+        <file>qml/CDoodEmojiGridView.qml</file>
     </qresource>
 </RCC>

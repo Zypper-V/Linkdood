@@ -9,6 +9,7 @@
 #include "cdoodenterprisemanager.h"
 #include "cdoodorgmanager.h"
 #include "cdooduserprofilemanager.h"
+#include "cdoodemojimanager.h"
 
 #include <QQmlContext>
 #include <QUrl>
@@ -65,6 +66,11 @@ linkdoodui_Workspace::linkdoodui_Workspace()
         qDebug() << Q_FUNC_INFO << "m_pUserProfileManager init error !!!";
     }
 
+    m_pEmojiManager = QSharedPointer<CDoodEmojiManager>(new CDoodEmojiManager(m_pClient.data()));
+    if (!m_pEmojiManager.data()) {
+        qDebug() << Q_FUNC_INFO << "CDoodEmojiManager init error !!!";
+    }
+
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), qApp, SLOT(quit()));
     m_view->engine()->rootContext()->setContextProperty("loginManager", m_pLoginManager.data());
@@ -75,6 +81,7 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     m_view->engine()->rootContext()->setContextProperty("enterpriseManager", m_pEnterPriseManager.data());
     m_view->engine()->rootContext()->setContextProperty("orgManager", m_pOrgManager.data());
     m_view->engine()->rootContext()->setContextProperty("userProfileManager", m_pUserProfileManager.data());
+    m_view->engine()->rootContext()->setContextProperty("userEmojiManager", m_pEmojiManager.data());
 
     m_view->setSource(QUrl("qrc:/qml/main.qml"));
     m_view->showFullScreen();
