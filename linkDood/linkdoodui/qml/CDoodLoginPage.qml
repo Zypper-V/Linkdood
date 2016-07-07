@@ -344,7 +344,7 @@ CPage {
                 placeholderText:os.i18n.ctr(qsTr("请输入密码"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-                text: "111111"
+                text: ""
             }
 
             CButton {
