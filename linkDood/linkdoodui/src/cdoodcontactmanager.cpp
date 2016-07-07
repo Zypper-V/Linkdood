@@ -27,12 +27,14 @@ void CDoodContactManager::clearChatList()
     QList<CDoodContactItem*>  itemList = contactListMap.values();
     for(int i= 0;i< itemList.size();i++){
         removeItem(itemList.value(i));
+        delete itemList.value(i);
     }
     contactListMap.clear();
 
     itemList = starContactListMap.values();
     for(int i= 0;i< itemList.size();i++){
         removeItem(itemList.value(i));
+        delete itemList.value(i);
     }
     starContactListMap.clear();
 }
@@ -106,6 +108,7 @@ void CDoodContactManager::modifyContact(Contact user)
     if(item != NULL && user.isStar == 2){
         removeItem(indexOf(item));
         starContactListMap.remove(user.id);
+        delete item;
     }else if(item == NULL && user.isStar == 1){
 
         CDoodContactItem* starItem = new CDoodContactItem(this);
@@ -130,11 +133,13 @@ void CDoodContactManager::removeContact(Contact user)
     if(item != NULL){
         removeItem(indexOf(item));
         starContactListMap.remove(user.id);
+        delete item;
     }
     item = contactListMap.value(user.id,NULL);
     if(item != NULL){
         removeItem(indexOf(item));
         contactListMap.remove(user.id);
+        delete item;
     }
 }
 

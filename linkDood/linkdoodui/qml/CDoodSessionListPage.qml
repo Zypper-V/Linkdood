@@ -53,26 +53,31 @@ Item {
                     id: delegateRoot
                     anchors.fill: parent
 
-                    //                drag.target: cellItem
-                    //                drag.axis: Drag.XAndYAxis
-
-                    //                onPressAndHold: {
-                    //                    delegateRoot.drag.target = cellItem
-                    //                }
-
+                    onPositionChanged: {
+                        if(!delegateRoot.pressed){
+                            background.color="#FFFFFF";
+                        }
+                    }
+                    onPressed: background.color="#CDCDCD"
+                    onReleased: background.color="#FFFFFF"
                     onClicked: {
                         delegateRoot.toInitState();
                         sessionListView.unsetSelectedItem();
                         sessionListManager.clickChatItem(model.modelData.id);
-                        chatManager.setName(model.modelData.name);
-                        chatManager.setId(model.modelData.id);
                         model.modelData.unReadCount="";
                         myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
-                        myChatPage.chatName = model.modelData.name
-                        myChatPage.targetid = model.modelData.id
-                        myChatPage.chatType = model.modelData.chatType
-                        myChatPage.icon = model.modelData.thumbAvatar
-                        myChatPage.initMessage();
+                        if(!(chatManager.id === model.modelData.id)){
+                            chatManager.setName(model.modelData.name);
+                            chatManager.setId(model.modelData.id);
+                            myChatPage.chatName = model.modelData.name
+                            myChatPage.targetid = model.modelData.id
+                            myChatPage.chatType = model.modelData.chatType
+                            myChatPage.icon = model.modelData.thumbAvatar
+                            myChatPage.initMessage();
+                        }else{
+                            chatManager.getUnReadMessages();
+                        }
+
                         pageStack.push(myChatPage);
                     }
 
@@ -86,7 +91,6 @@ Item {
 
                         Rectangle {
                             anchors.fill: parent
-                            anchors.margins: 1
 
                             color: "red"
                             Text{
@@ -119,19 +123,11 @@ Item {
                             height: cellItem.height
 
                             Rectangle {
-                                id : mousePressBackgroud
-                                anchors.fill: parent
-                                visible: false
-                                color: "#cdcdcd"
-                            }
-                            Rectangle {
                                 id : background
 
                                 anchors.fill: parent
                                 anchors.topMargin: 1
                                 anchors.bottomMargin: 3
-                                anchors.leftMargin: 2
-                                anchors.rightMargin:  2
 
                                 CDoodHeaderImage {
                                     id: headPortraitImage

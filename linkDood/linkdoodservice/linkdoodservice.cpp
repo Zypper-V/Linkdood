@@ -86,9 +86,9 @@ LinkDoodService::LinkDoodService(QObject *parent) :
 
     //如果已经是登录状态主动拉取一次联系人
     int code= getAppLoginStatus();
-    qDebug() << "restart 88888888888888888:" << code;
     if(code == 1){
-        //TODO
+        //非正常启动，跳转到登录界面
+        setAppLoginStatus(0);
         emit serviceRestart();
     }
 }
@@ -101,26 +101,6 @@ void LinkDoodService::login(const QString &server,
     if(m_pAuth != NULL){
         m_pAuth->login(server,userId,password);
     }
-//    QString user("0086");
-
-//    QByteArray ba = userId.toLatin1();
-//    const char *s = ba.data();
-//    while(*s && *s>='0' && *s<='9') s++;
-//    bool isNum = *s ? false:true;
-
-//    if(isNum && !userId.startsWith("0086"))
-//    {
-//        user = user+userId;
-//    }else
-//    {
-//       user = userId;
-//    }
-//    qDebug() << Q_FUNC_INFO << server << userId << password;
-//    m_pIMClient->getAuth()->login(user.toStdString(),
-//                                  password.toStdString(),
-//                                  server.toStdString(),
-//                                  std::bind(&LinkDoodService::onLoginResult,this,std::placeholders::_1,std::placeholders::_2));
-    // emit loginSucceeded();
 }
 
 void LinkDoodService::changepassword(QString oldpsw, QString newpsw)
@@ -512,10 +492,10 @@ void LinkDoodService::onChatMessageNotice(Msg msg)
     emit chatMessageNotice(msg);
 }
 
-void LinkDoodService::onChatSendMessageResult(bool code, int64 sendTime, int64 msgId)
+void LinkDoodService::onChatSendMessageResult(bool code, int64 sendTime, QString msgId)
 {
     qDebug() << Q_FUNC_INFO ;
-    emit sendMessageResult(code,QString::number(sendTime),QString::number(msgId));
+    emit sendMessageResult(code,QString::number(sendTime),msgId);
 }
 
 void LinkDoodService::onChatGetMessagesResult(bool code, int64 sessionId, MsgList msgList)
@@ -668,8 +648,8 @@ void LinkDoodService::initConnects()
                      SLOT(onChatAvatarChanged(int64,QString)));
     QObject::connect(m_pChatObserver.get(),SIGNAL(offlineMsgNoticeBack(IMOfflineMsgList)),this,
                      SLOT(onChatOfflineMsgNotice(IMOfflineMsgList)));
-    QObject::connect(m_pChatObserver.get(),SIGNAL(sendMessageBack(bool,int64,int64)),this,
-                     SLOT(onChatSendMessageResult(bool,int64,int64)));
+    QObject::connect(m_pChatObserver.get(),SIGNAL(sendMessageBack(bool,int64,QString)),this,
+                     SLOT(onChatSendMessageResult(bool,int64,QString)));
     QObject::connect(m_pChatObserver.get(),SIGNAL(getMessagesBack(bool,int64,MsgList)),this,
                      SLOT(onChatGetMessagesResult(bool,int64,MsgList)));
     QObject::connect(m_pChatObserver.get(),SIGNAL(removeChatBack(bool)),this,

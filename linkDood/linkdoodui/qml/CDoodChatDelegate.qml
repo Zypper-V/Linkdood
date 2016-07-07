@@ -20,17 +20,22 @@ CEditListViewDelegate {
     property Component sendTextMsgObj:  CDoodSendTextMessageCompoent{}
     property Component receiveTextMsgObj:  CDoodReceiveTextMessageCompoent{}
 
+    property Component sendDyEmojiMsgObj:CDoodSendDynamicExpressionMessageCompoent{}
+    property Component receiveDyEmojiMsgObj:CDoodReceiveDynamicExpressionMessageCompoent{}
+
     function loaderComponent () {
         if(model.modelData.msgType === "2") {
-            console.log("model.modelData.targetId", model.modelData.targetId)
-            console.log("model.modelData.fromId", model.modelData.fromId)
-
-            console.log("chatPage.myID", chatPage.myID)
-
             if(model.modelData.fromId === loginManager.userId) {
                 return chatDelegateRoot.sendTextMsgObj
             } else {
                 return chatDelegateRoot.receiveTextMsgObj
+            }
+        }
+        if(model.modelData.msgType === "19"){
+            if(model.modelData.fromId === loginManager.userId) {
+                return chatDelegateRoot.sendDyEmojiMsgObj
+            } else {
+                return chatDelegateRoot.receiveDyEmojiMsgObj
             }
         }
     }

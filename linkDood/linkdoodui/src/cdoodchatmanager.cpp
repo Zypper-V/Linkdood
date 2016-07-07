@@ -1,6 +1,5 @@
 #include "cdoodchatmanager.h"
 #include "cdoodchatitem.h"
-
 #include <QDebug>
 
 void CDoodChatManager::initConnect()
@@ -10,7 +9,7 @@ void CDoodChatManager::initConnect()
             SLOT(onChatAvatarChanged(int64,QString)));
     connect(m_pClient,SIGNAL(offlineMsgNotice(IMOfflineMsgList)),this,
             SLOT(onChatOfflineMsgNotice(IMOfflineMsgList)));
-   connect(m_pClient,SIGNAL(chatMessageNotice(Msg)),this,
+    connect(m_pClient,SIGNAL(chatMessageNotice(Msg)),this,
             SLOT(onChatMessageNotice(Msg)));
     connect(m_pClient,SIGNAL(sendMessageResult(bool,QString,QString)),this,
             SLOT(onChatSendMessageResult(bool,QString,QString)));
@@ -21,19 +20,19 @@ void CDoodChatManager::initConnect()
     connect(m_pClient,SIGNAL(deleteMessagesResult(int)),this,
             SLOT(onChatDeleteMessagesResult(int)));
     connect(m_pClient,SIGNAL(uploadAvatarResult(QString,QString,int)),this,
-        SLOT(onChatAvatarChanged(QString,QString,int)));
+            SLOT(onUploadAvatarResult(QString,QString,int)));
     connect(m_pClient,SIGNAL(uploadFileResult(QString,QString,int)),this,
-        SLOT(onChatUploadFile(QString,QString,int)));
+            SLOT(onChatUploadFile(QString,QString,int)));
     connect(m_pClient,SIGNAL(fileProgressResult(int,int,QString)),this,
-        SLOT(onChatFileProgress(int,int,QString)));
+            SLOT(onChatFileProgress(int,int,QString)));
     connect(m_pClient,SIGNAL(downloadFileResult(int,QString,QString)),this,
-        SLOT(onChatDownloadFile(int,QString,QString)));
+            SLOT(onChatDownloadFile(int,QString,QString)));
     connect(m_pClient,SIGNAL(uploadImageResult(QString,QString,QString,int)),this,
-        SLOT(onChatupLoadImage(QString,QString,QString,int)));
+            SLOT(onChatupLoadImage(QString,QString,QString,int)));
     connect(m_pClient,SIGNAL(downloadImageResult(int,QString,QString)),this,
-        SLOT(onChatDownloadImage(int,QString,QString)));
+            SLOT(onChatDownloadImage(int,QString,QString)));
     connect(m_pClient,SIGNAL(getFileListResult(int,FileInfoList)),this,
-        SLOT(onChatGetFileList(int,FileInfoList)));
+            SLOT(onChatGetFileList(int,FileInfoList)));
 
 
     /*    connect(m_pClient,SIGNAL(),this,
@@ -66,13 +65,13 @@ void CDoodChatManager::analyticalMessage(MsgList list)
                 pChatItem->setName(m_pClient->userName());
             }
 
-//            if(i == 0) {
-//                pChatItem->setShowTime(true);
-//            } else {
-//                if(i - 1 >= 0) {
-//                    pChatItem->setShowTime(checkTimeIsShow(p->lastMessageTime,pChatItem->sendTime()));
-//                }
-//            }
+            //            if(i == 0) {
+            //                pChatItem->setShowTime(true);
+            //            } else {
+            //                if(i - 1 >= 0) {
+            //                    pChatItem->setShowTime(checkTimeIsShow(p->lastMessageTime,pChatItem->sendTime()));
+            //                }
+            //            }
 
             msglist.append(pChatItem);
             m_oChatMap[list.at(i).msgid] = pChatItem;
@@ -110,7 +109,7 @@ void CDoodChatManager::analyticalMessage(MsgList list)
     m_sBeginMsgId = list.at(0).msgid;
 }
 
-void CDoodChatManager::addItemToListViewModel(Msg msg)
+void CDoodChatManager::addItemToListViewModel(Msg msg,QString textMsgContent)
 {
     qDebug() << Q_FUNC_INFO;
     if(!m_oChatMap.contains(msg.msgid)) {
@@ -126,6 +125,8 @@ void CDoodChatManager::addItemToListViewModel(Msg msg)
         pChatItem->setTime(QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss"));
         pChatItem->setBody(msg.body);
         pChatItem->setName(msg.name);
+        pChatItem->setLoading(true);
+        pChatItem->setTextMsgContent(textMsgContent);
         m_oLastMessageTime = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
         addItem(pChatItem);
         m_oChatMap[msg.msgid] = pChatItem;
@@ -148,29 +149,98 @@ CDoodChatManager::~CDoodChatManager()
     exitChat();
 }
 
-void CDoodChatManager::sendText(QString text)
+void CDoodChatManager::sendText(QString targetText ,QString oriText)
 {
-    qDebug() << Q_FUNC_INFO << "send Text:" << text<<"dd:"<<m_sTargetid;
     Msg msgText;
-    msgText.body = text;
-    msgText.msgtype = "2";
+    msgText.body = oriText;
+    msgText.msgtype = QString::number(MSG_TYPE_TEXT);
     msgText.targetid = m_sTargetid;
     msgText.fromid = m_pClient->UserId();
     msgText.name = m_pClient->userName();
-    qDebug() << Q_FUNC_INFO << "name:" <<  msgText.name <<"id:" << m_pClient->UserId();
     QDateTime time;
     msgText.time = time.currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-    // todo
     msgText.msgid = m_pClient->createMsgId();
 
-    qDebug() << Q_FUNC_INFO << "msg.msgid = " << msgText.msgid;
-    qDebug() << Q_FUNC_INFO << "msg.body = " << msgText.body;
-    qDebug() << Q_FUNC_INFO << "msg.msgtype = " << msgText.msgtype;
-    qDebug() << Q_FUNC_INFO << "msg.targetid = " << msgText.targetid;
-    qDebug() << Q_FUNC_INFO << "msg.fromid = " << msgText.fromid;
-    qDebug() << Q_FUNC_INFO << "msg.time = " << msgText.time;
-
+    qDebug() << Q_FUNC_INFO <<"send message:"<< msgText.msgid;
+    addItemToListViewModel(msgText,targetText);
+    msgText.body = targetText;
     sendMessage(msgText);
+}
+
+void CDoodChatManager::sendText(QQuickTextDocument *item,QString oriText)
+{
+    QTextDocument* textDocu = item->textDocument();
+    QString newLineStr = "";    //区分html和普通文本换行
+    if (textDocu->toHtml().contains("<!DOCTYPE HTML PUBLIC"))
+    {
+        newLineStr = "\n";
+    }
+    else
+    {
+        newLineStr = "\n";
+    }
+    QTextBlock block = textDocu->begin();
+    QString tempStr = "";
+    QString textContent = "";
+    QString imgPath = "";
+    QTextImageFormat imageFormat;
+    for (int index = 0; index < textDocu->blockCount(); index++)
+    {
+        imgPath = "";
+        tempStr = "";
+        block = textDocu->findBlockByNumber(index);
+        QTextBlock::iterator itBlock = block.begin();
+        for (; !(itBlock.atEnd()); itBlock++)
+        {
+            imgPath = "";
+            tempStr = "";
+
+            QTextFragment currentFragment = itBlock.fragment();
+            tempStr = currentFragment.text();
+            if (currentFragment.isValid() && currentFragment.charFormat().isImageFormat() && (!tempStr.isSimpleText() && (1 == tempStr.size())))
+            {
+                //处理图片
+                imageFormat = currentFragment.charFormat().toImageFormat();
+                imgPath = imageFormat.name();
+                if (imgPath.contains("qrc:/"))
+                {
+                    //是表情，直接嵌入到文本中
+                    textContent = textContent +EMOJI_IMAGE+ imgPath+EMOJI_IMAGE;
+                    continue;
+                }
+            }
+            textContent = textContent + tempStr;
+        }
+        textContent = textContent + newLineStr;
+    }
+
+    textContent = textContent.trimmed();
+    sendText(textContent,oriText);
+    qDebug() << Q_FUNC_INFO << "qqqqqqqqqqqq:" << textContent;
+}
+
+void CDoodChatManager::resendMessage(QString msgId)
+{
+    qDebug() << Q_FUNC_INFO;
+    CDoodChatItem *pChatItem = m_oChatMap.value(msgId);
+    if(pChatItem != NULL && pChatItem->msgType()== QString::number(MSG_TYPE_TEXT)){
+
+        pChatItem->setLoading(true);
+        pChatItem->setStatus(true);
+
+        Msg msgText;
+        msgText.body = pChatItem->textMsgContent();
+        msgText.msgtype = QString::number(MSG_TYPE_TEXT);
+        msgText.targetid = pChatItem->targetId();
+        msgText.fromid =pChatItem->fromId();
+        msgText.name = pChatItem->name();
+        QDateTime time;
+        msgText.time = time.currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        msgText.msgid = pChatItem->msgId();
+
+        qDebug() << Q_FUNC_INFO <<"send message:"<< msgText.msgid;
+        sendMessage(msgText);
+    }
 }
 
 void CDoodChatManager::sendMessage(Msg msg)
@@ -179,20 +249,37 @@ void CDoodChatManager::sendMessage(Msg msg)
     m_pClient->sendMessage(msg);
     msg.fromid = m_pClient->UserId();
     msg.name = m_pClient->userName();
-    qDebug() <<Q_FUNC_INFO<<"sfsdgsdfgfdshfsdhsrhsfhfh:"<<msg.fromid << ":" << msg.targetid;
-    addItemToListViewModel(msg);
+}
+
+void CDoodChatManager::sendDyEmojiMsg(QString path)
+{
+     qDebug() << Q_FUNC_INFO;
+     Msg msg;
+     msg.body = path;
+     msg.msgtype = QString::number(MEDIA_MSG_DYNAMIC_EMOJI);
+     msg.targetid = m_sTargetid;
+     msg.fromid = m_pClient->UserId();
+     msg.name = m_pClient->userName();
+     QDateTime time;
+     msg.time = time.currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+     msg.msgid = m_pClient->createMsgId();
+
+     addItemToListViewModel(msg);
+     //TODO
+     msg.body = path;
+     sendMessage(msg);
 }
 
 void CDoodChatManager::getMessages(QString targetid, int count)
 {
-     qDebug() << Q_FUNC_INFO;
-     m_pClient->getMessages(targetid,m_sBeginMsgId,count,0);
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->getMessages(targetid,m_sBeginMsgId,count,0);
 }
 
 void CDoodChatManager::removeChat(QString targetid)
 {
-     qDebug() << Q_FUNC_INFO;
-     m_pClient->removeChat(targetid);
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->removeChat(targetid);
 }
 
 void CDoodChatManager::setMessageRead(QString targetid)
@@ -203,8 +290,8 @@ void CDoodChatManager::setMessageRead(QString targetid)
 
 void CDoodChatManager::getUnReadMessages()
 {
-     qDebug() << Q_FUNC_INFO;
-     m_pClient->getUnReadMessages();
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->getUnReadMessages();
 }
 
 void CDoodChatManager::deleteMessage(QString targetid, QStringList msgs)
@@ -318,7 +405,7 @@ void CDoodChatManager::downloadImage(QString url, QString property)
 bool CDoodChatManager::decryptFile(QString encryptkey, QString srcpath, QString destpath)
 {
     qDebug() << Q_FUNC_INFO;
-     return m_pClient->decryptFile(encryptkey, srcpath, destpath);
+    return m_pClient->decryptFile(encryptkey, srcpath, destpath);
 }
 
 void CDoodChatManager::getFileList(int64 targetid, int64 fileid, int count, int flag)
@@ -328,10 +415,10 @@ void CDoodChatManager::getFileList(int64 targetid, int64 fileid, int count, int 
 }
 
 
-void CDoodChatManager::onChatAvatarChanged(int64 id, QString avatar,int code)
+void CDoodChatManager::onChatAvatarChanged(int64 id, QString avatar)
 {
     qDebug() << Q_FUNC_INFO;
-   // emit chatAvatarChanged(id,avatar);
+    // emit chatAvatarChanged(id,avatar);
 }
 
 void CDoodChatManager::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
@@ -357,8 +444,20 @@ void CDoodChatManager::onChatMessageNotice(Msg msg)
 
 void CDoodChatManager::onChatSendMessageResult(bool code, QString sendTime, QString msgId)
 {
-    qDebug() << Q_FUNC_INFO;
-//    emit sendMessageResult(code,sendTime,msgId);
+   QStringList list = msgId.split(":");
+   QString curMsgId= list[0],localId= list[1];
+   CDoodChatItem* item = m_oChatMap.value(localId);
+   if(item != NULL){
+        item->setLoading(false);
+        item->setStatus(code);
+
+        //将缓冲中map中id更新服务端的msgid
+        if(curMsgId != localId){
+            item->setMsgId(curMsgId);
+            m_oChatMap.remove(localId);
+            m_oChatMap.insert(curMsgId,item);
+        }
+   }
 }
 
 void CDoodChatManager::onChatGetMessagesResult(bool code, QString sessionId, MsgList msgList)
@@ -374,7 +473,7 @@ void CDoodChatManager::onChatGetMessagesResult(bool code, QString sessionId, Msg
 void CDoodChatManager::onChatRemoveChatResult(bool code)
 {
     qDebug() << Q_FUNC_INFO;
-//    emit removeChatResult(code);
+    //    emit removeChatResult(code);
 }
 
 void CDoodChatManager::onChatDeleteMessagesResult(int code)
@@ -415,4 +514,9 @@ void CDoodChatManager::onChatDownloadImage(int code, QString localpath, QString 
 void CDoodChatManager::onChatGetFileList(int code, FileInfoList files)
 {
     qDebug() << Q_FUNC_INFO;
+}
+
+void CDoodChatManager::onUploadAvatarResult(QString orgijson, QString thumbjson, int code)
+{
+
 }

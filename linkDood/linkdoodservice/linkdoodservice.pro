@@ -73,7 +73,8 @@ HEADERS += linkdoodservice_workspace.h \
     sysmsgcontroler.h \
     enterprisecontroler.h \
     linkdoodservicethread.h \
-    linkdood_sdk/include/utils/IDRangeJuge.hpp
+    linkdood_sdk/include/utils/IDRangeJuge.hpp \
+    emojiexplain.h
 
 SOURCES += main.cpp \
 	   linkdoodservice_workspace.cpp \
@@ -83,7 +84,8 @@ SOURCES += main.cpp \
     chatcontroler.cpp \
     sysmsgcontroler.cpp \
     enterprisecontorler.cpp \
-    linkdoodservicethread.cpp
+    linkdoodservicethread.cpp \
+    emojiexplain.cpp
 
 target.path = $$INSTALL_DIR/bin
 

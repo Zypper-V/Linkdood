@@ -109,7 +109,7 @@ CPage {
 
         if(inputTextArea.plainText().replace(/(\s)|(\r\n)|(\r)|(\n)/g, "") !== "") {
             console.log("dood === sendMsg !!!!")
-            chatManager.sendText(inputTextArea.text)
+            chatManager.sendText(inputTextArea.textDocument,inputTextArea.plainText());
             chatListView.positionViewAtEnd();
         }
         inputTextArea.text = ""
@@ -232,6 +232,7 @@ CPage {
                     // todo
                     chatManager.getMessages(chatPage.targetid, 20)
                 }
+                btnEmotion.isKeyboard = true;
             }
 
             footer: Item {
@@ -300,6 +301,7 @@ CPage {
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 property bool isKeyboard: true
+                visible: false
                 onClicked: {
 
                     console.log("123xxxxxxxxxxxxxxx:"+isKeyboard)
@@ -469,8 +471,14 @@ CPage {
     Connections{
         target: userEmojiManager
         onSignalEmojiChanged:{
-            console.log("44444444:"+path)
             inputTextArea.insert(inputTextArea.cursorPosition,path);
+        }
+    }
+    Connections{
+        target: userDyEmojiManager
+        onSignalEmojiChanged:{
+            chatManager.sendDyEmojiMsg(path);
+            chatListView.positionViewAtEnd();
         }
     }
 }

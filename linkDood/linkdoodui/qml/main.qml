@@ -59,4 +59,10 @@ CPageStackWindow {
             pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
         }
     }
+    Connections{
+        target: loginManager
+        onServiceRestart:{
+            pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+        }
+    }
 }

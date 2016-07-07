@@ -57,10 +57,12 @@ CDoodEmojiManager::CDoodEmojiManager(LinkDoodClient *client, int type, QObject *
 
 void CDoodEmojiManager::itemClicked(QString path)
 {
-    QString emojiPath = "<img src=\""+path+"\" height=\"36\" width=\"36\""+"/>";
-
-    qDebug() << Q_FUNC_INFO << "8888888888888888:" << emojiPath;
-    emit signalEmojiChanged(emojiPath);
+    if(mType==1){
+        emit signalEmojiChanged(path);
+    }else{
+        QString emojiPath = "<img src=\""+path+"\" height=\"36\" width=\"36\""+"/>";
+        emit signalEmojiChanged(emojiPath);
+    }
 }
 
 void CDoodEmojiManager::loadEmoji(QString path)
@@ -72,7 +74,6 @@ void CDoodEmojiManager::loadEmoji(QString path)
     QString faceName="";
     QString facePath="";
 
-    qDebug() << Q_FUNC_INFO <<"77777777777:"<< faceFileInfoList.size();
     for (int i = 0; i < faceFileInfoList.size(); i++)
     {
         facePath = "qrc"+faceFileInfoList.at(i).absoluteFilePath();
@@ -94,13 +95,11 @@ void CDoodEmojiManager::loadEmoji(QString path)
             item->setPath(facePath);
             if(mType == 1)
             {
-                qDebug() << "emojiName:" << faceName << "emojiExplain:" << mEmojiExplain[faceName];
                 item->setExplain(mEmojiExplain[faceName]);
             }
             insertItem(itemCount(),item);
             mEmojiListMap[faceName] = item;
         }
-        qDebug() << Q_FUNC_INFO << "name" <<faceName <<"path:" <<facePath;
     }
 }
 

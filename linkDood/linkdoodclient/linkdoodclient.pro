@@ -12,13 +12,16 @@ DEFINES += EIMCLIENT_LIBRARY
 
 SOURCES += \
     linkdoodclient.cpp \
-    linkdoodtypes.cpp
+    linkdoodtypes.cpp \
+    common.cpp
 
 HEADERS +=\
     linkdoodclient.h \
     linkdoodclient_global.h \
     linkdoodconst.h \
-    linkdoodtypes.h
+    linkdoodtypes.h \
+    linkdoodtypedef.h \
+    common.h
 
 target.path = $$INSTALL_DIR/libs/
 

@@ -179,7 +179,7 @@ signals:
    //会话列表(通知栏)新消息更新通知
    void sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString);
    //发送消息返回
-   void sendMessageBack(bool code,int64 sendTime,int64 msgId);
+   void sendMessageBack(bool code,int64 sendTime,QString msgId);
    //获取消息结果返回
    void getMessagesBack(bool code,int64 sessionId,MsgList msgList);
    //移除会话结果返回
@@ -218,7 +218,7 @@ private:
     * @brief onSendMesage
     * @description: 发送消息结果回调
     ************************************/
-    void _sendMesage(service::ErrorInfo&, int64/*发送时间*/,int64/*消息ID*/);
+    void _sendMesage(service::ErrorInfo&, int64/*发送时间*/,int64/*消息ID*/,QString localId);
     /************************************
     * @brief onGetMesage
     * @description: 获取消息结果回调

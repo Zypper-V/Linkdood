@@ -21,8 +21,6 @@ Rectangle{
         width: parent.width
         height: parent.height-2*line.height-20
         anchors.verticalCenter: parent.verticalCenter
-//        anchors.fill: parent
-//        anchors.topMargin: line.height+5
 
         model: userDyEmojiManager
         cellHeight: grid.height/rows
@@ -38,7 +36,6 @@ Rectangle{
             if(flow === GridView.TopToBottom){
                 _centerPageAnimationHorizontal.restart();
                 grid.currentIndex = ((grid.width*Math.round(grid.contentX/grid.width))/grid.width)*itemsPerPage;
-            console.log("move end:"+grid.currentIndex)
             }
         }
         NumberAnimation { id: _centerPageAnimationHorizontal; target: grid; property: "contentX"; to: (grid.width*Math.round(grid.contentX/grid.width)); duration: 250 }
@@ -71,12 +68,7 @@ Rectangle{
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
                 Text{
-//                    text: qsTr(model.modelData.explain)
                     text:model.modelData.explain
-                    onTextChanged: {
-                        console.log("explain:"+model.modelData.explain)
-                    }
-
                     font.pixelSize: 24
                     color: "#333333"
                     anchors.top: img.bottom
@@ -91,9 +83,7 @@ Rectangle{
                 onClicked: {
                     grid.forceActiveFocus();
                     grid.currentIndex = index;
-                    console.log("ddddddddddddddddd:"+_item.width +"h:"+_item.height)
-                    //userDyEmojiManager.onBtnItemClicked(""+index);
-                   // console.log("ddddddddddddddddd:"+dyRoot.width +"h:"+dyRoot.height)
+                    userDyEmojiManager.itemClicked(model.modelData.path);
                 }
             }
         }

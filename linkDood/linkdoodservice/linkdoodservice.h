@@ -318,7 +318,7 @@ protected slots:
     //监听新消息通知
     void onChatMessageNotice(Msg msg);
     //发送消息返回
-    void onChatSendMessageResult(bool code,int64 sendTime,int64 msgId);
+    void onChatSendMessageResult(bool code,int64 sendTime,QString msgId);
     //获取消息结果返回
     void onChatGetMessagesResult(bool code,int64 sessionId,MsgList msgList);
     //移除会话结果返回

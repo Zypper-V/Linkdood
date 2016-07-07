@@ -8,16 +8,25 @@
 
 
 #define int64 long long
+//表情匹配符
+#define EMOJI_IMAGE   "<4f072095e2574b66aa0c6c09acfb3f3e>"
+//#define EMOJI_REG       "(\\[4f072095e2574b66aa0c6c09acfb3f3e\\](.*?)\\[4f072095e2574b66aa0c6c09acfb3f3e\\])"
 
 enum MSG_TYPE{
-MSG_TYPE_HTML = 1, //网页类型
-MSG_TYPE_TEXT,//文本类型
-MSG_TYPE_AUDIO,//音视频类型
-MSG_TYPE_POSITION,//位置类型
-MSG_TYPE_IMG,//图片类型
-MSG_TYPE_FILE,//文件类型
-MSG_TYPE_CARD,//名片类型
-MSG_TYPE_TIP//提示类型
+    MSG_TYPE_HTML = 1, //网页类型
+    MSG_TYPE_TEXT,//文本类型
+    MSG_TYPE_AUDIO,//音视频类型
+    MSG_TYPE_POSITION,//位置类型
+    MSG_TYPE_IMG,//图片类型
+    MSG_TYPE_FILE,//文件类型
+    MSG_TYPE_CARD,//名片类型
+    MSG_TYPE_TIP,//提示类型
+    MEDIA_MSG_MULTIMSG = 13,//组合消息
+    MEDIA_MSG_VIDEO = 14,	//视频消息
+    MEDIA_MSG_REVOKE = 18,	//撤回消息
+    MEDIA_MSG_DYNAMIC_EMOJI = 19,//动态表情
+    MEDIA_MSG_RED_PARKET = 88,	//红包
+    MEDIA_MSG_SUPER = 0xFF
 };
 
 #define APP_DATA_PATH "/data/data/com.vrv.linkDood/"

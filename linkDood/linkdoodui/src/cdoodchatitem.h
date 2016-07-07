@@ -20,13 +20,17 @@ class CDoodChatItem : public QObject
     Q_PROPERTY(QString body READ body WRITE setBody NOTIFY bodyChanged)
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
     Q_PROPERTY(QString tar_thumbAvatar READ tar_thumbAvatar WRITE setTar_thumbAvatar NOTIFY tar_thumbAvatarChanged)
-
-
-
-
+    Q_PROPERTY(bool loading READ loading WRITE setLoading NOTIFY loadingChanged)
+    Q_PROPERTY(bool status READ status WRITE setStatus NOTIFY statusChanged)
 public:
 
     explicit CDoodChatItem(QObject *parent = 0);
+
+    bool loading() const;
+    bool setLoading(const bool &data);
+
+    bool status() const;
+    bool setStatus(const bool &data);
 
     QString name() const;
     QString setName(const QString &data);
@@ -61,7 +65,8 @@ public:
     QString body() const;
     QString setBody(const QString &data);
 
-
+    QString textMsgContent();
+    void    setTextMsgContent(QString&data);
 signals:
     void thumbAvatarChanged();
     void tar_thumbAvatarChanged();
@@ -74,8 +79,8 @@ signals:
     void timeChanged();
     void bodyChanged();
     void nameChanged();
-
-
+    void loadingChanged();
+    void statusChanged();
 private:
     QString mName;
     QString mThumbAvatar;
@@ -88,6 +93,9 @@ private:
     QString mToId;// 发送者 ID
     QDateTime mTime;// 发送时间
     QString mBody;// 消息内容
+    QString mTextMsg;//文本消息解析后内容
+    bool    mLoading;//true消息正在加载或发送中
+    bool    mSatus;//true消息加载或发送成功
 };
 
 #endif // CDOODCHATITEM_H

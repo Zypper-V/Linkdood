@@ -29,5 +29,7 @@
         <file>qml/CDoodEmojiGridView.qml</file>
         <file>qml/CDoodDyEmojiGridView.qml</file>
         <file>qml/CDoodEmojiTabView.qml</file>
+        <file>qml/CDoodSendDynamicExpressionMessageCompoent.qml</file>
+        <file>qml/CDoodReceiveDynamicExpressionMessageCompoent.qml</file>
     </qresource>
 </RCC>

@@ -664,7 +664,7 @@ void LinkDoodClient::initDBusConnect()
                                           this, SLOT(onChatMessageNotice(Msg)));
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "sendMessageResult",
-                                          this, SLOT(onChatSendMessageResult(bool,int64,int64)));
+                                          this, SLOT(onChatSendMessageResult(bool,QString,QString)));
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "getMessagesResult",
                                           this, SLOT(onChatGetMessagesResult(bool,QString,MsgList)));

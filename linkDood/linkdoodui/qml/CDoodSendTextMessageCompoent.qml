@@ -119,7 +119,7 @@ Component {
             anchors.verticalCenter: textMessageBg.verticalCenter
 
             asynchronous:  true
-            sourceComponent: null
+            sourceComponent: sendFailedImageComponent
         }
 
         Component {
@@ -130,11 +130,12 @@ Component {
                 sourceSize: Qt.size(50, 50)
                 source: "qrc:/res/sendfailed.png"
                 asynchronous: true
-
+                visible: !model.modelData.status
                 MouseArea {
                     anchors.fill: parent
                     onPressed: {
                         console.log("zhangp to resend !!!")
+                        chatManager.resendMessage(model.modelData.msgId);
                     }
                 }
             }
@@ -147,7 +148,7 @@ Component {
             anchors.verticalCenter: textMessageBg.verticalCenter
 
             asynchronous: false
-            sourceComponent: null
+            sourceComponent: sendTextMessageLoadingComponent
         }
 
         Component {
@@ -159,6 +160,7 @@ Component {
                 text:""
                 spacing:28
                 fontSize:26
+                visible:model.modelData.loading
             }
         }
 

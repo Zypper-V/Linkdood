@@ -31,6 +31,7 @@ void CDoodSessionListManager::clearChatList()
     QList<CDoodSessionListItem*>  itemList = sessionListMap.values();
     for(int i= 0;i< itemList.size();i++){
         removeItem(itemList.value(i));
+        delete itemList.value(i);
     }
     sessionListMap.clear();
     mUnreadCount = 0;
@@ -87,6 +88,7 @@ void CDoodSessionListManager::removeChatItem(QString id)
         m_pClient->removeChat(id);
         sessionListMap.remove(id);
         setUnreadCount(-tmpItem->unReadCount().toInt());
+        delete tmpItem;
     }
 }
 

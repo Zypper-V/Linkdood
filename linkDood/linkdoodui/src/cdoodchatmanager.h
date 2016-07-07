@@ -2,6 +2,15 @@
 #define CDOODCHATMANAGER_H
 
 #include <QObject>
+#include <QMimeData>
+#include <QDebug>
+#include <QUrl>
+#include <QFileInfo>
+#include <QDir>
+#include <QDateTime>
+#include <QTextBlock>
+#include <QTextFormat>
+#include <QQuickTextDocument>
 
 #include "cdoodlistmodel.h"
 #include "linkdoodclient.h"
@@ -20,8 +29,13 @@ public:
     ~CDoodChatManager();
 
     //发送消息
-    Q_INVOKABLE void sendText(QString text);
-    Q_INVOKABLE void sendMessage(Msg msg);
+     Q_INVOKABLE void sendText(QQuickTextDocument* item,QString oriText);
+     Q_INVOKABLE void resendMessage(QString msgId);
+    void sendText(QString text,QString oriText);
+    void sendMessage(Msg msg);
+    //发送动态表情
+    Q_INVOKABLE void sendDyEmojiMsg(QString path);
+
     //获取消息
     Q_INVOKABLE void getMessages(QString targetid, int count);
 
@@ -30,7 +44,7 @@ public:
     //设置消息已读
     Q_INVOKABLE void setMessageRead(QString targetid);
     //获取未读消息列表
-    void getUnReadMessages(void);
+    Q_INVOKABLE void getUnReadMessages(void);
     //删除消息
     void deleteMessage(QString targetid, QStringList msgs);
 
@@ -90,7 +104,7 @@ signals:
 
 private slots:
     //会话列表头像更新
-    void onChatAvatarChanged(int64 id,QString avatar,int code);
+    void onChatAvatarChanged(int64 id,QString avatar);
     //监听离线消息通知
     void onChatOfflineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
@@ -118,13 +132,13 @@ private slots:
     void onChatDownloadImage(int code, QString localpath, QString tagetid);
     //获取文件列表返回
     void onChatGetFileList(int code, FileInfoList files);
-
+    void onUploadAvatarResult(QString orgijson, QString thumbjson, int code);
 private:
     void initConnect();
 
     void analyticalMessage(MsgList list);
 
-    void addItemToListViewModel(Msg msg);
+    void addItemToListViewModel(Msg msg,QString textMsgContent="");
 
 private:
     QString mId;

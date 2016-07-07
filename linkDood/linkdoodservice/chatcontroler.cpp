@@ -18,6 +18,8 @@
 #include "ISearchService.h"
 #include "IContactService.h"
 #include "IFileService.h"
+#include "linkdoodtypedef.h"
+#include "emojiexplain.h"
 
 #include<QSettings>
 
@@ -84,25 +86,25 @@ void ChatControler::getUnReadMessages()
 
 void ChatControler::sendMessage(Msg &imMsg)
 {
-    qDebug() << Q_FUNC_INFO << "msg:" << imMsg.body << "TargetId:" << imMsg.targetid;
-
     QDateTime dateTime = QDateTime::fromString(imMsg.time,"yyyy-MM-dd hh:mm:ss");
-    qDebug() << "dddddddddddd:"<< imMsg.time;
     QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
 
     emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,time,imMsg.name,imMsg.thumb_avatar,"0");
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
-        service::MsgText msg = QmsgtextTomsgtext(imMsg);
-        qDebug() << Q_FUNC_INFO << "cccc:" << msg.time;
-        qDebug() << Q_FUNC_INFO << "sssssssssssss123:" << msg.msgtype;
-//        msg.msgtype=2;
 
+        std::string src=imMsg.body.toStdString(),target("");
+        //qDebug() <<Q_FUNC_INFO <<"a66666666666666";
+        EmojiExplain::EmojiParseTo(src,target);
+       // qDebug() <<Q_FUNC_INFO <<"b66666666666666";
+        //qDebug() <<Q_FUNC_INFO <<"66666666666666:"<<src.c_str()<< "target:"<<target.c_str();
+
+        service::MsgText msg = QmsgtextTomsgtext(imMsg);
         service::IMClient::getClient()->getChat()->sendMessage(msg,
                      std::bind(&ChatControler::_sendMesage,this,
                                std::placeholders::_1,
                                std::placeholders::_2,
-                               std::placeholders::_3));
+                               std::placeholders::_3,imMsg.msgid));
     }
 }
 
@@ -337,13 +339,13 @@ void ChatControler::_removeChat(service::ErrorInfo &info)
 
 }
 
-void ChatControler::_sendMesage(service::ErrorInfo &info, int64 sendTime, int64 msgId)
+void ChatControler::_sendMesage(service::ErrorInfo &info, int64 sendTime, int64 msgId,QString localId)
 {
-    qDebug() << Q_FUNC_INFO;
+    QString resultId =QString::number(msgId)+":"+ localId;
     if(!info.code()){
-        emit sendMessageBack(true,sendTime,msgId);
+        emit sendMessageBack(true,sendTime,resultId);
     }else{
-        emit sendMessageBack(false,sendTime,msgId);
+        emit sendMessageBack(false,sendTime,resultId);
     }
 }
 

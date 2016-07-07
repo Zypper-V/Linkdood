@@ -2,7 +2,39 @@
 
 CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
 {
+    mLoading = false;
+    mSatus = true;
+    mTextMsg = "";
+}
 
+bool CDoodChatItem::loading() const
+{
+    return mLoading;
+}
+
+bool CDoodChatItem::setLoading(const bool &data)
+{
+    if(mLoading == data) {
+        return data;
+    }
+    mLoading = data;
+    emit loadingChanged();
+    return mLoading;
+}
+
+bool CDoodChatItem::status() const
+{
+    return mSatus;
+}
+
+bool CDoodChatItem::setStatus(const bool &data)
+{
+    if(mSatus == data) {
+        return data;
+    }
+    mSatus = data;
+    emit statusChanged();
+    return mSatus;
 }
 
 QString CDoodChatItem::name() const
@@ -169,6 +201,16 @@ QString CDoodChatItem::setBody(const QString &data)
     mBody = data;
     emit bodyChanged();
     return mBody;
+}
+
+QString CDoodChatItem::textMsgContent()
+{
+    return mTextMsg;
+}
+
+void CDoodChatItem::setTextMsgContent(QString &data)
+{
+    mTextMsg = data;
 }
 
 
