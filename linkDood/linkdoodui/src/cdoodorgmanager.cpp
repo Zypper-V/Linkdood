@@ -4,10 +4,10 @@
 
 CDoodOrgManager::CDoodOrgManager(QObject *parent) : CDoodListModel(parent)
 {
-    CDoodOrgItem *item = new CDoodOrgItem(this);
-    item->setId("1");
-    item->setName("北信源");
-    addItem(item);
+//   CDoodOrgItem *item = new CDoodOrgItem(this);
+//    item->setId("1");
+//    item->setName("北信源");
+//    addItem(item);
 }
 
 void CDoodOrgManager::addOrg(QString id, const QString &name)

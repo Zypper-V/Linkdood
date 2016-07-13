@@ -89,7 +89,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 45
             //            color:"black"
-            text:qsTr("成员")
+            text:qsTr("")
             font.pixelSize: 26
         }
     }
