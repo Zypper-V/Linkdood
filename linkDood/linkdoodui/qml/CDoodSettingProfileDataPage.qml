@@ -68,7 +68,7 @@ CPage {
                     leftText: qsTr("头像")
                     height: 120
                     radius: 4
-                    editable:true
+                    editable:false
                     rightImg: userProfileManager.thumbAvatar
                     anchors.top: parent.top
                     onClicked: {

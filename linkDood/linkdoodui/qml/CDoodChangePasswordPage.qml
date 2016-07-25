@@ -73,6 +73,15 @@ CPage {
                 width:parent.width
                 height: 86
                 color:"#003658"
+                IconButton{
+                    id:btnBack
+                    anchors.left: parent.left
+                    anchors.leftMargin: 30
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: {
+                        pageStack.pop();
+                    }
+                }
                 Text{
                     id:titleText
 
