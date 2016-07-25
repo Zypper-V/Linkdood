@@ -48,7 +48,6 @@ Item {
                 width: parent.width/*gScreenInfo.platformWidth*/
                 height: 125
                 property int visualIndex: DelegateModel.itemsIndex
-
                 SlideDelegate {
                     id: delegateRoot
                     anchors.fill: parent
@@ -60,25 +59,33 @@ Item {
                     }
                     onPressed: background.color="#CDCDCD"
                     onReleased: background.color="#FFFFFF"
+                    onCanceled: background.color="#FFFFFF"
                     onClicked: {
+
+                        var unreadCount = parseInt(model.modelData.unReadCount, 10);
+
                         delegateRoot.toInitState();
                         sessionListView.unsetSelectedItem();
                         sessionListManager.clickChatItem(model.modelData.id);
                         model.modelData.unReadCount="";
-                        myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
-                        if(!(chatManager.id === model.modelData.id)){
-                            chatManager.setName(model.modelData.name);
-                            chatManager.setId(model.modelData.id);
-                            myChatPage.chatName = model.modelData.name
-                            myChatPage.targetid = model.modelData.id
-                            myChatPage.chatType = model.modelData.chatType
-                            myChatPage.icon = model.modelData.thumbAvatar
-                            myChatPage.initMessage();
-                        }else{
-                            chatManager.getUnReadMessages();
+                        if(model.modelData.chatType !== "-5"){
+
+                            myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
+                            if(unreadCount>0){
+                                chatManager.switchToChatPage(model.modelData.id,model.modelData.name,model.modelData.chatType,model.modelData.lastMsgid,unreadCount,model.modelData.thumbAvatar);
+                            }else{
+                                chatManager.switchToChatPage(model.modelData.id,model.modelData.name,model.modelData.chatType,0,model.modelData.thumbAvatar);
+                                chatManager.entryChat(model.modelData.id);
+                            }
+                            console.log("123avater:"+model.modelData.thumbAvatar)
+
+                        }else{//系统消息
+                            sessionListManager.entrySysMsgPage();
+                            sysmsgManager.getSysMessages();
+                            myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodSysMessagePage.qml"),"CDoodSysMessagePage");
+                            pageStack.push(myChatPage);
                         }
 
-                        pageStack.push(myChatPage);
                     }
 
                     onSlideFinished: {
@@ -104,7 +111,9 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                sessionListManager.removeChatItem(model.modelData.id);
+                                var targetId = model.modelData.id;
+                                sessionListManager.removeChatItem(targetId);
+                                chatManager.removeChat(targetId);
                             }
                         }
                     }
@@ -123,6 +132,12 @@ Item {
                             height: cellItem.height
 
                             Rectangle {
+                                id : mousePressBackgroud
+                                anchors.fill: parent
+                                visible: false
+                                color: "white"
+                            }
+                            Rectangle {
                                 id : background
 
                                 anchors.fill: parent
@@ -139,8 +154,7 @@ Item {
                                     height: 90
                                     radius: 6
                                     name:""
-                                    headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                                    iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
+                                    iconSource: setIcon(model.modelData.chatType,model.modelData.thumbAvatar)
 
                                 }
 
@@ -181,6 +195,8 @@ Item {
                                     font.pixelSize: 24
                                     height: 60
                                     clip: true
+                                    width:parent.width - 100
+
                                     color: "#777777"
                                     text: model.modelData.lastMsg
                                 }
@@ -205,16 +221,22 @@ Item {
                                     anchors.bottomMargin: 10
                                     anchors.right: parent.right
                                     anchors.rightMargin:40
-                                    width: 33
-                                    height: 33
-                                    radius: 16.5
-                                    visible: model.modelData.unReadCount==="" ? false : true
+                                    width: model.modelData.unReadCount==="99+"?38:36
+                                    height: model.modelData.unReadCount==="99+"?38:36
+                                    radius: model.modelData.unReadCount==="99+"?19:18
+                                    visible: setUnread()
                                     color:"red"
                                     Text{
-                                        font.pixelSize: 26
+                                        font.pixelSize: model.modelData.unReadCount==="99+"?20:24
                                         anchors.centerIn: parent
                                         color:"white"
                                         text:model.modelData.unReadCount
+                                    }
+                                    function setUnread(){
+                                        if( model.modelData.unReadCount==="" ||  model.modelData.unReadCount==="0"){
+                                            return false;
+                                        }
+                                        return true;
                                     }
                                 }
                             }
@@ -223,7 +245,7 @@ Item {
                         CLine {
                             width: parent.width
                             anchors.left: parent.left
-//                            anchors.leftMargin: 150
+                            //                            anchors.leftMargin: 150
                             anchors.right: parent.right
                             anchors.bottom: parent.bottom
                             z: parent.z+2

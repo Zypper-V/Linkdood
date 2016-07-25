@@ -27,7 +27,7 @@ public:
     QString setId(const QString &data);
 
     QString name() const;
-    QString setName(const QString &data);
+    Q_INVOKABLE QString setName(const QString &data);
 
     QString msgType() const;
     QString setMsgType(const QString &data);

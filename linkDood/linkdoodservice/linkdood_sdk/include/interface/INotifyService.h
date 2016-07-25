@@ -6,12 +6,14 @@ class IContactObserver;
 class IGroupObserver;
 class IChatObserver;
 class ISysMsgObserver;
+class IEnterpriseObserver;
 
-typedef IAuthObserver* AuthObserverPtr;
-typedef IContactObserver* ContactObserverPtr;
-typedef IGroupObserver* GroupObserverPtr;
-typedef IChatObserver* ChatObserverPtr;
-typedef ISysMsgObserver* SysMsgObserverPtr;
+typedef IAuthObserver*			AuthObserverPtr;
+typedef IContactObserver*		ContactObserverPtr;
+typedef IGroupObserver*			GroupObserverPtr;
+typedef IChatObserver*			ChatObserverPtr;
+typedef ISysMsgObserver*		SysMsgObserverPtr;
+typedef IEnterpriseObserver*	EnterpriseObserverPtr;
 
 namespace service {
 	namespace sdk { class SdkChannel; }
@@ -97,6 +99,19 @@ namespace service {
 		************************************************************************/
 		virtual void removeSysMsgObserver(SysMsgObserverPtr observer) = 0;
 
+		/************************************************************************
+		* @brief setEnterpriseObserver
+		* @description: 设置企业监听对象
+		* @param[in] observer 传入监听对象实例
+		************************************************************************/
+		virtual void setEnterpriseObserver(EnterpriseObserverPtr observer) = 0;
+
+		/************************************************************************
+		* @brief removeEnterpriseObserver
+		* @description: 移除企业监听对象
+		* @param[in] observer 传入监听对象实例
+		************************************************************************/
+		virtual void removeEnterpriseObserver(EnterpriseObserverPtr observer) = 0;
 	};
 	std::shared_ptr<INotifyService> getNotifyInstance(void);
 }

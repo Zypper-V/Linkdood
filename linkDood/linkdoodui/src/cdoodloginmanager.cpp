@@ -4,11 +4,12 @@
 #include <QDebug>
 
 CDoodLoginManager::CDoodLoginManager(LinkDoodClient *client, QObject *parent) :
-    CDoodListModel(parent), m_pClient(client)
+    CDoodListModel(parent), m_pClient(client),mLoginCount(0),mNVerifyImgCount(0)
 {
     qDebug() << Q_FUNC_INFO;
     qRegisterMetaType<CDoodLoginManager*>();
     initConnect();
+
 }
 
 CDoodLoginManager::~CDoodLoginManager()
@@ -37,9 +38,23 @@ void CDoodLoginManager::login(const QString &server,
                               const QString &password)
 {
     qDebug() << Q_FUNC_INFO << server << userId << password;
-    m_pClient->login(server, userId, password);
+    if(mLoginCount>5){
+        emit loginFailed("输入错误次数过多,请输入验证码");
+        getVerifyImg(userId,"");
+    }
+    else{
+         m_pClient->login(server, userId, password);
+    }
+
+
     //    m_pClient->installPath();
     //getLoginHistory();
+}
+
+void CDoodLoginManager::getVerifyImg(QString userid, QString code)
+{
+    qDebug() << Q_FUNC_INFO<<userid<<code<<"ssssssssssssssssss";
+    m_pClient->getVerifyImg(userid,code);
 }
 
 int CDoodLoginManager::getAppLoginStatus()
@@ -82,6 +97,32 @@ QString CDoodLoginManager::getLoginService()
     QString fileName = "/data/data/com.vrv.linkDood/config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
     return settings.value("Service","").toString();
+}
+
+QString CDoodLoginManager::verifyImg()
+{
+    qDebug() << Q_FUNC_INFO;
+    return mVerifyImg;
+}
+
+void CDoodLoginManager::setVerifyImg(QString verifyImg)
+{
+    qDebug() << Q_FUNC_INFO;
+    mVerifyImg=verifyImg;
+    emit verifyImgChanged();
+}
+
+int CDoodLoginManager::nVerifyImgCount()
+{
+    qDebug() << Q_FUNC_INFO;
+    return mNVerifyImgCount;
+}
+
+void CDoodLoginManager::setNVerifyImgCount(int count)
+{
+    qDebug() << Q_FUNC_INFO;
+    mNVerifyImgCount=count;
+    emit nVerifyImgCountChanged();
 }
 
 bool CDoodLoginManager::checkFirstWordIsSpace(const QString &text)
@@ -182,14 +223,32 @@ bool CDoodLoginManager::setWindowFocus(const bool &windowFocus)
 void CDoodLoginManager::onLoginSucceeded()
 {
     qDebug() << Q_FUNC_INFO;
+    mLoginCount=0;
     emit loginSucceeded();
     setAppLoginStatus(1);
+}
+
+void CDoodLoginManager::onGetVerifyImgResult(QString code, QString img)
+{
+    qDebug() << Q_FUNC_INFO<<code<<img<<"sssssss";
+    if(code=="0"){
+        emit getVerifyImgResult("验证成功,请重新登录");
+    }
+    if(code=="103")
+    {
+       emit getVerifyImgResult("验证码输入错误,请重新输入");
+    }
+    setNVerifyImgCount(++mNVerifyImgCount);
+    setVerifyImg(img);
 }
 
 void CDoodLoginManager::onLoginFailed(QString err)
 {
     qDebug() << Q_FUNC_INFO << "login err:" << err;
-    emit loginFailed(err);
+    if(err=="帐号密码不匹配"){
+        mLoginCount++;
+    }
+  emit loginFailed(err);
 }
 
 void CDoodLoginManager::onLoginoutRelust(bool loginout)
@@ -229,6 +288,7 @@ void CDoodLoginManager::onServiceRestart()
 void CDoodLoginManager::initConnect()
 {
     connect(m_pClient, SIGNAL(elsewhereLogin(QString)), this, SLOT(onElsewhereLogin(QString)));
+    connect(m_pClient, SIGNAL(getVerifyImgResult(QString,QString)), this, SLOT(onGetVerifyImgResult(QString,QString)));
     connect(m_pClient, SIGNAL(changePasswordResult(QString)), this, SLOT(onChangePasswordResult(QString)));
     connect(m_pClient, SIGNAL(loginoutRelust(bool)), this, SLOT(onLoginoutRelust(bool)));
     connect(m_pClient, SIGNAL(loginSucceeded()), this, SLOT(onLoginSucceeded()));

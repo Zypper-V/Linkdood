@@ -27,6 +27,8 @@ class CDoodLoginManager : public CDoodListModel
 {
     Q_OBJECT
     Q_PROPERTY(int loginStatus READ loginStatus)
+    Q_PROPERTY(int nVerifyImgCount READ nVerifyImgCount WRITE setNVerifyImgCount NOTIFY nVerifyImgCountChanged)
+    Q_PROPERTY(QString verifyImg READ verifyImg WRITE setVerifyImg NOTIFY verifyImgChanged)
     Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
     Q_PROPERTY(bool windowFocus READ windowFocus WRITE setWindowFocus NOTIFY windowFocusChanged)
 public:
@@ -38,6 +40,8 @@ public:
     Q_INVOKABLE void login(const QString &server,
                            const QString &userId,
                            const QString &password);
+    Q_INVOKABLE void getVerifyImg( QString userid,
+                            QString code);
 
     // 从配置文件读取登录状态
     Q_INVOKABLE int getAppLoginStatus();
@@ -49,7 +53,13 @@ public:
     Q_INVOKABLE QString getLoginPhone();
     Q_INVOKABLE QString getLoginService();
 
-    //用户信息UserId
+    //用户信息UserId    
+    Q_INVOKABLE QString verifyImg();
+    Q_INVOKABLE void setVerifyImg(QString verifyImg);
+
+    Q_INVOKABLE int nVerifyImgCount();
+    Q_INVOKABLE void setNVerifyImgCount(int count);
+
     Q_INVOKABLE QString userId();
     Q_INVOKABLE void setUserId(QString userId);
 
@@ -64,6 +74,7 @@ public:
     Q_INVOKABLE int loginStatus();
 signals:
     void loginStatusChanged();
+    void getVerifyImgResult(QString result);
     void loginSucceeded();
     void loginFailed(QString err);
     void loginoutRelust(bool loginout);
@@ -75,12 +86,15 @@ signals:
     void loginResultObserver(int code,QString userID);
     void windowFocusChanged();
     void userIdChanged();
+    void verifyImgChanged();
+    void nVerifyImgCountChanged();
 
     //servie重启信号
     void serviceRestart();
 private slots:
     void onElsewhereLogin(QString tip);
     void onLoginSucceeded();
+    void onGetVerifyImgResult(QString code,QString img);
     void onLoginFailed(QString err);
     void onLoginoutRelust(bool loginout);
     void onChangePasswordResult(QString result);
@@ -93,7 +107,9 @@ private slots:
     void onServiceRestart();
 private:
     void initConnect();
-
+    int mLoginCount;
+    int mNVerifyImgCount;
+    QString mVerifyImg;
     QString mUserId;
     bool m_bWindowFocus;
     LinkDoodClient *m_pClient;

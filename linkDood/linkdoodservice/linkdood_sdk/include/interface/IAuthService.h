@@ -179,6 +179,21 @@ namespace service {
 			int type, std::function<void(ErrorInfo&, UserSetting&)> await) = 0;
 
 		/************************************************************************
+		* @brief setPrivateSetting
+		* @description: 设置隐私设置
+		* @param[in] PrivateSetting 传入设置的隐私设置项
+		* @param[inout] await 传入接收调用结果的回调函数
+		************************************************************************/
+		virtual void setPrivateSetting(PrivateSetting ps, std::function<void(int code)> await) = 0;
+
+		/************************************************************************
+		* @brief getPrivateSetting
+		* @description: 获取隐私设置
+		* @param[inout] await 传入接收调用结果的回调函数
+		************************************************************************/
+		virtual void getPrivateSetting(std::function<void(int, PrivateSetting&)> await) = 0;
+
+		/************************************************************************
 		* @brief getClientKey
 		* @description: 获取CLIENTKEY
 		************************************************************************/

@@ -54,6 +54,9 @@ CPageStackWindow {
             sessionListManager.getChatList();
             contactManager.getContactList();
             userProfileManager.getAccountInfo();
+            groupManager.getGroupList();
+            enterpriseManager.setFarOrg();
+            orgManager.resetOrgList();
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
         }else{
             pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);

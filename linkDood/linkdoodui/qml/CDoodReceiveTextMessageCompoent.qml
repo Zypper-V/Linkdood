@@ -64,7 +64,8 @@ Component {
                 radius: 6
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
+                iconSource: setIcon("1", model.modelData.contactThumbAvatar)
+//                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
                 MouseArea {
                     anchors.fill: parent
@@ -84,11 +85,23 @@ Component {
             }
         }
 
+        Text{
+            id:userName
+
+            font.pixelSize: 26
+            text:model.modelData.name
+            color:"#333333"
+
+            anchors.left: receiveTextMsgHeadImageViewLoader.right
+            anchors.top: receiveTextMsgHeadImageViewLoader.top
+            anchors.leftMargin: 10
+        }
         BorderImage {
             id: textMessageBg
             anchors.left: receiveTextMsgHeadImageViewLoader.right
             anchors.leftMargin: 10
-            anchors.top: receiveTextMsgHeadImageViewLoader.top
+            anchors.top: userName.bottom
+            anchors.topMargin: 10
 
             property var textMessageWidth: textMessage.width + 55
             property var textMessageHeight: textMessage.height + 40

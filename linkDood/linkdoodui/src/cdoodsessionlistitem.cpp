@@ -2,7 +2,7 @@
 
 CDoodSessionListItem::CDoodSessionListItem(QObject *parent) : QObject(parent)
 {
-
+    mUnReadCount = "0";
 }
 
 QString CDoodSessionListItem::id() const
@@ -162,11 +162,10 @@ QString CDoodSessionListItem::thumbAvatar() const
 
 QString CDoodSessionListItem::setThumbAvatar(const QString &data)
 {
-    if(mThumbAvatar == data) {
-        return data;
+    if(data != "") {
+        mThumbAvatar = data;
+        emit thumbAvatarChanged();
     }
-    mThumbAvatar = data;
-    emit thumbAvatarChanged();
     return mThumbAvatar;
 }
 

@@ -8,6 +8,7 @@
 #include "INotifyService.h"
 #include "Contact.h"
 #include "IDRangeJuge.hpp"
+#include "ISearchService.h"
 
 ContactControler::ContactControler(QObject *parent):QObject(parent)
 {
@@ -37,7 +38,7 @@ void ContactControler::updateContactInfo(QString userId, QString operStar, QStri
         user.__set_remark(remark.toStdString());
     }
     service::IMClient::getClient()->getContact()->updateContactInfo(user,
-                      std::bind(&ContactControler::_updateContactInfo,this,std::placeholders::_1));
+                                                                    std::bind(&ContactControler::_updateContactInfo,this,std::placeholders::_1));
 }
 
 void ContactControler::init()
@@ -48,54 +49,88 @@ void ContactControler::init()
 
 void ContactControler::onListChanged(int operType, std::vector<service::Contact> &users)
 {
-    qDebug() << Q_FUNC_INFO << "oper:" << operType << "222222222222222contactSize:" << users.size();
+
     ContactList contacts;
     for(auto i: users){
-       Contact user;
+        Contact user;
+        qDebug()<< Q_FUNC_INFO<<"name:"<<i.name.c_str()<<"team:"<<i.team<<"pingyin:"<<QString::fromStdString(i.pinyin);
+        user.avatar = QString::fromStdString(i.avatar);
 
-       user.avatar = QString::fromStdString(i.avatar);
-       user.name  = QString::fromStdString(i.name);
-       user.extends  = QString::fromStdString(i.extends);
-       user.id  = QString::number(i.id);
-       user.isStar  = i.isStar;
-       user.isVip  = i.isVip;
-       user.pinyin  = QString::fromStdString(i.pinyin);
-       user.remark  = QString::fromStdString(i.remark);
-       user.server  = QString::fromStdString(i.server);
-       user.thumbAvatar  = QString::fromStdString(i.thumb_avatar);
-       user.timeZone  = i.time_zone;
-       user.gender = genderConvert(i.gender);
-      if(!IS_MSG_APP(i.id))
-      {
-         contacts.push_back(user);
-      }
+        user.extends  = QString::fromStdString(i.extends);
+        user.id  = QString::number(i.id);
+        user.isStar  = i.isStar;
+        user.isVip  = i.isVip;
+        user.pinyin  = QString::fromStdString(i.pinyin);
+        user.remark  = QString::fromStdString(i.remark);
+        if(user.remark != ""){
+            user.name  = user.remark;
+        }else{
+            user.name  = QString::fromStdString(i.name);
+        }
+        user.server  = QString::fromStdString(i.server);
+        user.thumbAvatar  = QString::fromStdString(i.thumb_avatar);
+        user.timeZone  = i.time_zone;
+        user.gender = genderConvert(i.gender);
+        user.team   = i.team;
+        if(!IS_MSG_APP(i.id))
+        {
+            contacts.push_back(user);
+        }
     }
-    emit contactListChanged(operType,contacts);
+    emit contactListChanged(operType,sort(contacts));
 }
 
 void ContactControler::onAvatarChanged(int64 userid, std::string avatar)
 {
     qDebug() << Q_FUNC_INFO;
+    if(avatar.size() == 0)
+        return;
+    emit chatAvatarChanged(QString::number(userid), QString::fromStdString(avatar));
 }
+
 
 void ContactControler::onContactInfoChanged(int operType, service::User &users)
 {
     service::Contact& contact = dynamic_cast<service::Contact&>(users);
-    qDebug() << Q_FUNC_INFO << "operType:" << operType<< "name:"<< contact.name.c_str() << "isStar:"<<contact.isStar;
+    qDebug() << Q_FUNC_INFO << "team:" << contact.team<< "name:"<< contact.name.c_str() << "isStar:"<<contact.isStar;
     Contact user;
 
-    user.isStar = contact.isStar;
-    user.extends = QString::fromStdString(contact.extends);
-    user.gender = genderConvert(contact.gender);
     user.id = QString::number(contact.id);
-    user.isVip = contact.isVip;
-    user.name  = QString::fromStdString(contact.name);
-    user.pinyin  = QString::fromStdString(contact.pinyin);
-    user.remark  = QString::fromStdString(contact.remark);
-    user.server  = QString::fromStdString(contact.server);
-    user.thumbAvatar  = QString::fromStdString(contact.thumb_avatar);
-    user.timeZone     = contact.time_zone;
+    user.name = QString::fromStdString(contact.name);
+    if(contact.__isset.isStar){
+        user.isStar = contact.isStar;
+    }
 
+    if(contact.__isset.isVip){
+        user.isVip = contact.isVip;
+    }
+    if(contact.__isset.remark && contact.remark !=""){
+        user.remark  = QString::fromStdString(contact.remark);
+        user.name  = user.remark;
+    }
+    if(contact.__isset.pinyin){
+        user.pinyin  = QString::fromStdString(contact.pinyin);
+    }
+
+    if(contact.__isset.server){
+        user.server  = QString::fromStdString(contact.server);
+    }
+
+    if(contact.__isset.team){
+        user.team  = contact.team;
+    }
+    if(contact._user_isset.extends){
+        user.extends = QString::fromStdString(contact.extends);
+    }
+    if(contact._user_isset.gender){
+        user.gender = genderConvert(contact.gender);
+    }
+    if(contact._user_isset.thumb_avatar){
+        user.thumbAvatar  = QString::fromStdString(contact.thumb_avatar);
+    }
+    if(contact._user_isset.time_zone){
+        user.timeZone     = contact.time_zone;
+    }
     qDebug() << Q_FUNC_INFO << "end ssssssssssssssssssssssoperType:" << operType<< "name:"<< contact.name.c_str() << "isStar:"<<contact.isStar;
     emit contactInfoChanged(operType,user);
 }
@@ -115,30 +150,45 @@ void ContactControler::onOnlineChanged(OnlineState &status)
     emit contactOnlineChanged(QString::number(status.userID), device,status.flag);
 }
 
+void ContactControler::searchFromNet(QString &key)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getSearch()->searchFromNet(key.toStdString(),std::bind(&ContactControler::_searchFromNet,this,std::placeholders::_1,std::placeholders::_2));
+}
+
+void ContactControler::searchFromLocal(QString &key)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getSearch()->searchFromLocal(key.toStdString(),std::bind(&ContactControler::_searchFromLocal,this,std::placeholders::_1,std::placeholders::_2));
+}
+
+void ContactControler::addContact(QString userid, QString remark, QString info)
+{
+    qDebug() << Q_FUNC_INFO << "uuuuuuuuuuuuuuuuuuuuuususerid:" << userid;
+    service::IMClient::getClient()->getContact()->addContact(userid.toLongLong(), remark.toStdString(), info.toStdString(), std::bind(&ContactControler::_addContact,this,std::placeholders::_1));
+}
+
+void ContactControler::removeContact(QString userid)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getContact()->removeContact(userid.toLongLong(), std::bind(&ContactControler::_removeContact, this, std::placeholders::_1));
+}
+
 ContactList ContactControler::sort(const ContactList &contactList)
 {
-    //
-    ContactList starList;
-    ContactList otherList;
     ContactList list;
+    ContactList unTeamList;
 
     for(auto item:contactList){
-        if(item.isStar == 1){
-            starList.insert(starList.size(),item);
+        if(item.team == 35){
+            unTeamList.insert(list.size(),item);
         }else{
-            otherList.insert(otherList.size(),item);
+            list.insert(list.size(),item);
         }
     }
-
-    qSort(starList.begin(),starList.end(),CmpByTeam);
-    qSort(otherList.begin(),otherList.end(),CmpByTeam);
-
-    for(auto item:starList){
-        list.insert(list.size(),item);
-    }
-
-    for(auto item:otherList){
-        list.insert(list.size(),item);
+    qSort(list.begin(),list.end(),CmpByTeam);
+    for(auto item:unTeamList){
+        list.push_back(item);
     }
     return list;
 }
@@ -146,11 +196,88 @@ ContactList ContactControler::sort(const ContactList &contactList)
 void ContactControler::_updateContactInfo(service::ErrorInfo &info)
 {
     qDebug() << Q_FUNC_INFO << "44444444444444444444444444444";
+    emit updateContactInfoBack(info.code());
+}
+
+void ContactControler::_searchFromNet(service::ErrorInfo info, SearchResult res)
+{
+    qDebug() << Q_FUNC_INFO;
+    ContactList user;
+    ContactList group;
+    Contact contact;
+    for(int i = 0; i < res.users.size(); i++)
+    {
+        contact.gender = QString::number(res.users[i].gender);
+        contact.timeZone = res.users[i].time_zone;
+        contact.id = QString::number(res.users[i].id);
+        contact.name = QString::fromStdString(res.users[i].name);
+        contact.avatar = QString::fromStdString(res.users[i].avatar);
+        contact.extends = QString::fromStdString(res.users[i].extends);
+        contact.thumbAvatar = QString::fromStdString(res.users[i].thumb_avatar);
+        user.push_back(contact);
+    }
+    for(int i = 0; i < res.groups.size(); i++)
+    {
+        contact.gender = QString::number(res.groups[i].gender);
+        contact.timeZone = res.groups[i].time_zone;
+        contact.id = QString::number(res.groups[i].id);
+        contact.name = QString::fromStdString(res.groups[i].name);
+        contact.avatar = QString::fromStdString(res.groups[i].avatar);
+        contact.extends = QString::fromStdString(res.groups[i].extends);
+        contact.thumbAvatar = QString::fromStdString(res.groups[i].thumb_avatar);
+        group.push_back(contact);
+    }
+    emit searchFromNetBack(info.code(), user, group);
+}
+
+void ContactControler::_searchFromLocal(service::ErrorInfo info, SearchResult res)
+{
+    qDebug() << Q_FUNC_INFO;
+    ContactList user;
+    ContactList group;
+    Contact contact;
+    for(int i = 0; i < res.users.size(); i++)
+    {
+        contact.gender = QString::number(res.users[i].gender);
+        contact.timeZone = res.users[i].time_zone;
+        contact.id = QString::number(res.users[i].id);
+        contact.name = QString::fromStdString(res.users[i].name);
+        contact.avatar = QString::fromStdString(res.users[i].avatar);
+        contact.extends = QString::fromStdString(res.users[i].extends);
+        contact.thumbAvatar = QString::fromStdString(res.users[i].thumb_avatar);
+        user.push_back(contact);
+    }
+    for(int i = 0; i < res.groups.size(); i++)
+    {
+        contact.gender = QString::number(res.groups[i].gender);
+        contact.timeZone = res.groups[i].time_zone;
+        contact.id = QString::number(res.groups[i].id);
+        contact.name = QString::fromStdString(res.groups[i].name);
+        contact.avatar = QString::fromStdString(res.groups[i].avatar);
+        contact.extends = QString::fromStdString(res.groups[i].extends);
+        contact.thumbAvatar = QString::fromStdString(res.groups[i].thumb_avatar);
+        group.push_back(contact);
+    }
+    emit searchFromLocalBack(info.code(), user, group);
+}
+
+void ContactControler::_addContact(service::ErrorInfo info)
+{
+    qDebug()<<Q_FUNC_INFO<<"code:"<<info.code();
+    emit addContactBack(info.code());
+}
+
+void ContactControler::_removeContact(service::ErrorInfo info)
+{
+    emit removeContactBack(info.code());
 }
 
 bool CmpByTeam(const Contact first, const Contact second)
 {
-    return  first.pinyin.at(0).toUpper() <= second.pinyin.at(0).toUpper();
+    if(first.team == 35){
+        return false;
+    }
+    return  first.team <= second.team;
 }
 
 

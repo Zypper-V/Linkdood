@@ -42,6 +42,19 @@ void AuthControler::login(const QString &server, const QString &userId, const QS
                                                      std::bind(&AuthControler::_loginResult,this,std::placeholders::_1,std::placeholders::_2));
 }
 
+void AuthControler::getVerifyImg(QString userid, QString code)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getAuth()->verifyImgCode(userid.toStdString(),code.toStdString(),
+                                                             std::bind(&AuthControler::_getVerifyImg,this,std::placeholders::_1,std::placeholders::_2));
+}
+
+void AuthControler::_getVerifyImg(service::ErrorInfo info, std::string img)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit getVerifyImgResult(QString::number(info.code()),QString::fromStdString(img));
+}
+
 void AuthControler::changepassword(QString oldpsw, QString newpsw)
 {
     qDebug() << Q_FUNC_INFO;
@@ -126,7 +139,7 @@ void AuthControler::getAccountInfo()
 void AuthControler::updateAccountInfo(Contact user)
 {
     qDebug() << Q_FUNC_INFO << "ssssssssssssss:" << user.name;
-    service::User item;
+    service::Account item;
     if(user.avatar != ""){
         item.__set_avatar(user.avatar.toStdString());
     }
@@ -134,7 +147,7 @@ void AuthControler::updateAccountInfo(Contact user)
         item.__set_thumb_avatar(user.thumbAvatar.toStdString());
     }
     if(user.name != ""){
-        item.__set_avatar(user.name.toStdString());
+        item.__set_name(user.name.toStdString());
     }
     item.__set_id(user.id.toLongLong());
 
@@ -149,6 +162,10 @@ void AuthControler::updateAccountInfo(Contact user)
             item.__set_gender(2);
         }
     }
+    if(user.nick_id != ""){
+        item.__set_nick_id(user.nick_id.toStdString());
+    }
+
     qDebug() << Q_FUNC_INFO << "end:" << user.name;
 
     service::IMClient::getClient()->getAuth()->updateAccountInfo(item,std::bind(&AuthControler::_updateAccountInfo,this,std::placeholders::_1));
@@ -254,7 +271,9 @@ void AuthControler::onPasswordRuleChanged(service::ErrorInfo& info, int16 rule)
 
 void AuthControler::onAvatarChanged(std::string avatar)
 {
-
+    if(!avatar.empty()){
+        emit anthAvatarChanged(QString::fromStdString(avatar));
+    }
 }
 
 void AuthControler::onNetworkStatusChanged(bool connected, CNetworkManager::NetworkType type)

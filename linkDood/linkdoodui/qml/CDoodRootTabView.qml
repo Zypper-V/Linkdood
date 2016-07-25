@@ -25,7 +25,7 @@ CPage {
 
         onSendShowChatPage: {
             console.log("CDoodRootTabbView  onSendShowChatPage !!!")
-            showChatPage(chatName, targetid, chatType, icon)
+            showChatPage(chatName, targetid, chatType, "")
             tabView.currentIndex = 0;
         }
     }
@@ -55,7 +55,7 @@ CPage {
                            chatType: chatType,
                            icon: icon
                        });
-        component.initMessage();
+ //      chatManager.updateUnreadMsg();
     }
 
     contentAreaItem: Item {
@@ -71,7 +71,7 @@ CPage {
 
                 color: "white"
                 text:qsTr("天工圆圆")
-                font.pixelSize: 36
+                font.pixelSize: 28
 
                 anchors.left: parent.left
                 anchors.leftMargin: 21
@@ -81,20 +81,47 @@ CPage {
             Text{
                 color: "white"
                 text:"["+userProfileManager.name+"]"
-                font.pixelSize: 20
+                font.pixelSize: 16
 
                 anchors.left: logo.right
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.verticalCenterOffset: 8
+                anchors.verticalCenterOffset: 5
             }
             Text{
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right:parent.right
-                anchors.rightMargin: 250
+                anchors.rightMargin: 240
                 color:"white"
-                font.pixelSize: 32
+                font.pixelSize: 28
                 text:userProfileManager.connectFlag
+            }
+            IconButton{
+                id:btnSearchContacts
+                pressedIcon:"qrc:/res/main_title_seek_button_press.png"
+                normalIcon:"qrc:/res/main_title_seek_button.png"
+                anchors.right: btnAddContacts.left
+                anchors.rightMargin: 30
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: {
+                    searchContactpage.show();
+//                    pageStack.push(Qt.resolvedUrl("qrc:/qml/CDoodLocalSearchPage.qml"));
+                }
+            }
+            CDoodLocalSearchPage{
+                id:searchContactpage
+            }
+
+            IconButton{
+                id:btnAddContacts
+                pressedIcon:"qrc:/res/main_title_tool_button_press.png"
+                normalIcon:"qrc:/res/main_title_tool_button.png"
+                anchors.right: parent.right
+                anchors.rightMargin: 40
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: {
+                    addContactMenu.show();
+                }
             }
         }
 
@@ -171,5 +198,71 @@ CPage {
 
     Component.onCompleted: {
 
+    }
+    CDoodPopWndLayer{
+        id:addContactMenu
+
+        isLayoutParentCenter:false
+        contentItemBackGroundColor:"transparent"
+        contentItem:Rectangle{
+            color:"#003953"
+            width:300
+            height: 180
+            radius: 10
+
+            anchors.top: parent.top
+            anchors.topMargin: 140
+            anchors.right: parent.right
+            anchors.rightMargin: 5
+
+            IconButton{
+                id:startChatItem
+
+                bNormalBtn:true
+                width:parent.width
+                height: (parent.height - line.height)/2
+                normalIcon:"qrc:/res/iv_main_tool_bt01_2.png"
+                text:qsTr("发起群聊")
+
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                onClicked: {
+                    //TODO
+                    groupManager.setIsCreateGroup(true);
+                    pageStack.push(Qt.resolvedUrl("CDoodGroupAddMemberPage.qml"));
+                }
+            }
+            CLine{
+                id:line
+                anchors.top: startChatItem.bottom
+                width:parent.width - 4
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+            IconButton{
+                id:addContactItem
+
+                bNormalBtn:true
+                width:parent.width
+                height: (parent.height - line.height)/2
+                normalIcon:"qrc:/res/iv_main_tool_bt02_2.png"
+                text:qsTr("添加联系人/群")
+
+                anchors.top: line.bottom
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                onClicked: {
+                    //TODO
+                     addContactMenu.hide();
+                     pageStack.push(Qt.resolvedUrl("CDoodAddContactPage.qml"));
+                }
+            }
+        }
+        onOutAreaClicked:{
+            addContactMenu.hide();
+        }
+        onBackKeyReleased: {
+            addContactMenu.hide();
+        }
     }
 }

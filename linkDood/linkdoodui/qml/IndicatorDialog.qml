@@ -7,6 +7,9 @@ CDoodPopWndLayer{
     property int    messageTextPixelSize: 26
     property string messageText: ""
 
+    z:2000
+    contentItemBackGroundColor: "black"
+    contentItemBackGroundOpacity: 0.73
     contentItem:Rectangle{
 
         color: "white"

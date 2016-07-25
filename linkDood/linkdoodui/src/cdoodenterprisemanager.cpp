@@ -6,53 +6,50 @@
 CDoodEnterpriseManager::CDoodEnterpriseManager(LinkDoodClient *client, QObject *parent) :
     CDoodListModel(parent), m_pClient(client)
 {
-//    qDebug() << Q_FUNC_INFO;
-//    qRegisterMetaType<CDoodEnterpriseManager*>();
-//    initConnect();
-//    CDoodContactItem *item1 = new CDoodContactItem(this);
-//    item1->setId("2");
-//    item1->setName("北信源南京分公司");
-//    item1->setIsOrg(true);
-//    addItem(item1);
-//    CDoodContactItem *item2 = new CDoodContactItem(this);
-//    item2->setId("3");
-//    item2->setName("北信源西安研发中心");
-//    item2->setIsOrg(true);
-//    addItem(item2);
+    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<"haohaohaohaohaohaohaoa";
+    qRegisterMetaType<CDoodEnterpriseManager*>();
+    initConnect();
+    isFarOrg=1;
 }
 CDoodEnterpriseManager::~CDoodEnterpriseManager()
 {
 
 }
 
+bool CDoodEnterpriseManager::isOrg() const
+{
+    return mIsOrg;
+}
+
+bool CDoodEnterpriseManager::setIsOrg(const bool &data)
+{
+    if(mIsOrg==data){
+        return data;
+    }
+    mIsOrg=data;
+    emit isOrgChanged();
+    return mIsOrg;
+}
+
+void CDoodEnterpriseManager::setFarOrg()
+{
+    reset();
+    setIsOrg(false);
+    isFarOrg=1;
+}
+
+void CDoodEnterpriseManager::getFarOrgs()
+{
+    reset();
+    if(isFarOrg==1){
+        m_pClient->getSonOrgs("0");
+    }
+}
+
 void CDoodEnterpriseManager::getSonOrgs(QString orgid)
 {
-//    qDebug() << Q_FUNC_INFO << "wawawawawawawaw";
-//    reset();
-//    if(orgid == "1") {
-//        CDoodContactItem *item1 = new CDoodContactItem(this);
-//        item1->setId("2");
-//        item1->setName("北信源南京分公司");
-//        item1->setIsOrg(true);
-//        addItem(item1);
-//        CDoodContactItem *item2 = new CDoodContactItem(this);
-//        item2->setId("3");
-//        item2->setName("北信源西安研发中心");
-//        item2->setIsOrg(true);
-//        addItem(item2);
-//    } else if(orgid == "2" || orgid == "3") {
-//        CDoodContactItem *item1 = new CDoodContactItem(this);
-//        item1->setId("4");
-//        item1->setName("研发部");
-//        item1->setIsOrg(true);
-//        addItem(item1);
-//        CDoodContactItem *item2 = new CDoodContactItem(this);
-//        item2->setId("5");
-//        item2->setName("销售部");
-//        item2->setIsOrg(true);
-//        addItem(item2);
-//    }
-//    m_pClient->getSonOrgs(orgid);
+    m_pClient->getSonOrgs(orgid);
 }
 void CDoodEnterpriseManager::getOnlineStates(QStringList& userid)
 {
@@ -66,12 +63,36 @@ void CDoodEnterpriseManager::getOrgUserInfo(QString userid)
 }
 
 
-void CDoodEnterpriseManager::onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist)
+void CDoodEnterpriseManager::onGetSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist)
 {
-     qDebug() << Q_FUNC_INFO <<"hahahahahaahhha" << orglist[0].name;
-
-
-    emit getSonOrgsResult(code,orglist,orguserlist);
+    qDebug() << Q_FUNC_INFO <<"hahahahahaahhha" << orglist.size();
+    if(code==0){
+        reset();
+        if(isFarOrg==1){
+            if(orglist.size()!=0){
+                isFarOrg=0;
+                setIsOrg(true);
+                emit getFarOrgResult(orglist[0].id,orglist[0].name);
+            }
+        }
+        else{
+            for(size_t i=0;i<orguserlist.size();++i){
+                CDoodEnterPriseItem *item = new CDoodEnterPriseItem(this);
+                item->setId(orguserlist[i].id);
+                item->setName(orguserlist[i].name);
+                item->setGender(orguserlist[i].gender);
+                item->setThumbAvatar("qrc:/res/moren_icon.png");
+                addItem(item);
+            }
+            for(size_t i=0;i<orglist.size();++i){
+                CDoodEnterPriseItem *item = new CDoodEnterPriseItem(this);
+                item->setId(orglist[i].id);
+                item->setName(orglist[i].name);
+                item->setThumbAvatar("qrc:/res/collectivel_icon.png");
+                addItem(item);
+            }
+        }
+    }
 }
 
 void CDoodEnterpriseManager::onGetOnlineStatesResult(QOnlineStateList onlinestatelist)
@@ -86,9 +107,16 @@ void CDoodEnterpriseManager::onGetorgUserInfoResult(int code,OrgUser& orguser)
     emit getOrgUserInfoResult(code,orguser);
 }
 
+void CDoodEnterpriseManager::onText()
+{
+    qDebug() << Q_FUNC_INFO;
+}
+
 void CDoodEnterpriseManager::initConnect()
 {
-    connect(m_pClient, SIGNAL(getSonOrgsResult(int,OrgList,OrgUserList)), this, SLOT(onGetSonOrgsResult(int, OrgList,OrgUserList)));
-    connect(m_pClient, SIGNAL(getOnlineStatesResult(QOnlineStateList)), this, SLOT(onGetOnlineStatesResult(QOnlineStateList)));
-    connect(m_pClient, SIGNAL(getOrgUserInfoResult(int,OrgUser)), this, SLOT(onGetorgUserInfoResult(int,OrgUser)));
+    qDebug() << Q_FUNC_INFO<<"haohaohaohaohaohaohaoaho111";
+    connect(m_pClient, SIGNAL(getSonOrgsResult(int,OrgList,OrgUserList)),this,SLOT(onGetSonOrgsResult(int,OrgList,OrgUserList)));
+    connect(m_pClient, SIGNAL(getOnlineStatesResult(QOnlineStateList)),this,SLOT(onGetOnlineStatesResult(QOnlineStateList)));
+    connect(m_pClient, SIGNAL(getOrgUserInfoResult(int,OrgUser)),this,SLOT(onGetorgUserInfoResult(int,OrgUser)));
+    connect(m_pClient, SIGNAL(text()),this,SLOT(onText()));
 }

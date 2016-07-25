@@ -12,6 +12,24 @@ Item {
     property int radius: root.width / 2
     readonly property bool isDefaultImageShow: defaultImage.visible
 
+
+    function setIcon(type,source){
+        console.log("CDoodHeaderImage.qml 111111111111111111111111111111111:" + "  type:" + type + "   source:" + source)
+        if(source !=="" && sessionListManager.checkFileExists(source))
+            return "file:// "+source;
+        if(type === "-5"){
+            return "qrc:/res/verf_box.png";
+        }
+        else if(type === "1")
+            return "qrc:/res/moren_icon.png";
+        else if(type === "2")
+            return "qrc:/res/group_icon.png";
+        else if(type === "6")
+            return "qrc:/res/icon_pc.png";
+        else
+            return "qrc:/res/moren_icon.png";
+    }
+
     Rectangle {
         id: defaultImage
         anchors.fill: parent
@@ -57,20 +75,16 @@ Item {
             sourceSize: Qt.size(src.width,src.height)
             asynchronous: true
             cache: true
-            source: sessionListManager.checkFileExists(iconSource) ? iconSource : "qrc:/res/headerDefault.png"
+            source:iconSource
 
             onStatusChanged: {
                 if (src.status === Image.Error || src.status === Image.Null) {
                     roundImage.visible = false
                     defaultImage.visible = true
+                    console.log("headImage.qml00000000000000000000000000000000");
                 } else if (src.status === Image.Ready) {
-                    if (sessionListManager.checkFileExists(iconSource)) {
-                        roundImage.visible = true
-                        defaultImage.visible = false
-                    } else {
-                        roundImage.visible = false
-                        defaultImage.visible = true
-                    }
+                    roundImage.visible = true
+                    defaultImage.visible = false
                 }
             }
         }

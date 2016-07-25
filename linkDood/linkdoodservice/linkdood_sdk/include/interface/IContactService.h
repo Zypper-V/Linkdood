@@ -87,7 +87,14 @@ namespace service{
 		virtual void getContactInfo(
 			const int64 userid, std::function<void(ErrorInfo&, User&)> await) = 0;
 
-
+		/************************************************************************
+		* @brief getContactExtendInfo
+		* @description: 获取联系人扩展信息
+		* @param[in] userid 传入联系人id
+		* @param[in] await  传入接收结果回调
+		************************************************************************/
+		virtual void getContactExtendInfo(
+			const int64 userid, std::function<void(ErrorInfo&, User&)> await) = 0;
 	};
 
 	std::shared_ptr<IContactService> getContactInstance(void);

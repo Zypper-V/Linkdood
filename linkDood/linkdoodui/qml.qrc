@@ -31,5 +31,29 @@
         <file>qml/CDoodEmojiTabView.qml</file>
         <file>qml/CDoodSendDynamicExpressionMessageCompoent.qml</file>
         <file>qml/CDoodReceiveDynamicExpressionMessageCompoent.qml</file>
+        <file>qml/CDoodAddContactPage.qml</file>
+        <file>qml/CDoodSearchContactPage.qml</file>
+        <file>qml/CDoodToolPanelGridView.qml</file>
+        <file>qml/CDoodSendPicturetMessageCompoent.qml</file>
+        <file>qml/CDoodReceivePictureMessageCompoent.qml</file>
+        <file>qml/CDoodSelectLocalImagePage.qml</file>
+        <file>qml/CDoodSelectLocalFilePage.qml</file>
+        <file>qml/CDoodGroupListPage.qml</file>
+        <file>qml/CDoodVerifyImgPage.qml</file>
+        <file>qml/CDoodFriendVerificationPage.qml</file>
+        <file>qml/CDoodReceiveFileMessageCompoent.qml</file>
+        <file>qml/CDoodSendFileMessageCompoent.qml</file>
+        <file>qml/CDoodSysMessagePage.qml</file>
+        <file>qml/CDoodViewImage.qml</file>
+        <file>qml/CDoodMemberListPage.qml</file>
+        <file>qml/CDoodLocalSearchPage.qml</file>
+        <file>qml/CDoodGroupAddMemberPage.qml</file>
+        <file>qml/CDoodGroupSetPage.qml</file>
+        <file>qml/CDoodAddGroupPage.qml</file>
+        <file>qml/CDoodLocalSearchPage.qml</file>
+        <file>qml/CDoodTipMessageCompoent.qml</file>
+        <file>qml/CDoodFileViewPage.qml</file>
+        <file>qml/CDoodViewLocalImagePage.qml</file>
+        <file>qml/CDoodHeaderImageCropPage.qml</file>
     </qresource>
 </RCC>

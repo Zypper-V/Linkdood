@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include <iostream>
+#include <QString>
 
 using namespace std;
 
@@ -18,6 +19,7 @@ public:
 
     //字符表情编码转换成16进制
     static string Emoji2Hex(std::string emoji);
+    static QString dealTime(qint64 msgtime, int type);
 };
 
 #endif // COMMON_H

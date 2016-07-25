@@ -1,7 +1,8 @@
 #include "common.h"
 
 #include <cstring>
-
+#include <QDateTime>
+#include <QtMath>
 Common::Common()
 {
 
@@ -64,4 +65,56 @@ string Common::Emoji2Hex(string emoji)
         hex += phex[i];
     }
     return hex;
+}
+
+QString Common::dealTime(qint64 msgtime, int type)
+{
+    QString strDateTime("");
+    QDateTime msgDateTime;
+    int distance = 0;
+    if (!msgtime)
+    {
+        return strDateTime;
+    }
+    msgDateTime.setMSecsSinceEpoch(msgtime);
+    distance = msgDateTime.daysTo(QDateTime::currentDateTime());
+    //今天
+    if (qFabs(distance) <= 0)
+    {
+        strDateTime = msgDateTime.toString("HH:mm");
+    }
+    //昨天
+    else if (qFabs(distance) <= 1)
+    {
+        if ( 1 == type)
+        {
+            strDateTime = "昨天";
+        }
+        else {
+            strDateTime = "昨天" + QString::fromLocal8Bit(" ") + msgDateTime.toString("HH:mm");
+        }
+
+    }
+    //前天
+    else if (qFabs(distance) <= 2)
+    {
+        if (1 == type)
+        {
+            strDateTime = "前天";
+        }
+        else {
+            strDateTime = "前天" + QString::fromLocal8Bit(" ") + msgDateTime.toString("HH:mm");
+        }
+    }
+    else
+    {
+        if (1 == type)
+        {
+            strDateTime = msgDateTime.toString("MM月dd日");
+        }
+        else {
+            strDateTime = msgDateTime.toString("MM月dd日") +QString::fromLocal8Bit(" ")+msgDateTime.toString("HH:mm");
+        }
+    }
+    return strDateTime;
 }

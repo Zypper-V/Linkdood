@@ -9,6 +9,7 @@ Rectangle {
     anchors.right: parent.right
     color: "white"
 
+    signal tabClick()
     /*! TabBar所在的TabView，必须赋值 */
     property var tabView: null
 
@@ -120,6 +121,7 @@ Rectangle {
 
                     onClicked: {
                         tabView.currentIndex = index;
+                        emit: tabClick();
                     }
                 }
             }

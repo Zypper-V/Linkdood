@@ -7,8 +7,9 @@
 linkdoodservice_Workspace::linkdoodservice_Workspace()
     : CWorkspace()
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<"lixinnnnnnnnnnnnnssnnsnsnssn";
     LinkDoodService::createService();
+
 }
 
 void linkdoodservice_Workspace::onLaunchComplete(Option option, const QStringList& params)

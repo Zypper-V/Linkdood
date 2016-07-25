@@ -42,7 +42,7 @@ namespace service{
 		* @param[in] await  传入接收结果回调
 		************************************************************************/
 		virtual void uploadFile(
-			std::string path, std::string property, std::function<void(int64 tagetid, std::string jasoninfo, int code)> await, std::function<void(int32 extra_req, int32 process, std::string info)> pro) = 0;
+			std::string path, std::string property, std::function<void(int64 tagetid, int64 operid, std::string jasoninfo, int code)> await, std::function<void(int32 extra_req, int32 process, std::string info)> pro) = 0;
 
 		/************************************************************************
 		* @brief downloadFile
@@ -64,7 +64,7 @@ namespace service{
 		* @param[in] await  传入接收结果回调
 		************************************************************************/
 		virtual void uploadImage(
-			std::string thumbimg, std::string srcimg, std::string property, std::function<void(int64 tagetid, std::string orgijson, std::string thumbjson, int code)> await) = 0;
+			std::string thumbimg, std::string srcimg, std::string property, std::function<void(int64 tagetid, std::string orgijson, std::string thumbjson, int code)> await,std::function<void(int64)> pro = nullptr) = 0;
 
 		/************************************************************************
 		* @brief downloadImage

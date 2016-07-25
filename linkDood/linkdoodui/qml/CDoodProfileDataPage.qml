@@ -147,7 +147,7 @@ Rectangle{
                 onReleased: changepsw.color = "white"
                 onClicked: {
                     pageStack.push(Qt.resolvedUrl("CDoodChangePasswordPage.qml"));
-                    console.log("sdddddddddddddddddddddddddddd")
+//                    console.log("sdddddddddddddddddddddddddddd")
                 }
             }
         }

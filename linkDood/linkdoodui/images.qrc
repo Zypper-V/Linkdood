@@ -34,5 +34,42 @@
         <file>res/unselected.png</file>
         <file>res/chatting_biaoqing_btn.png</file>
         <file>res/chatting_setmode_keyboard_btn.png</file>
+        <file>res/group_icon.png</file>
+        <file>res/chat_tool_photo_press.png</file>
+        <file>res/chat_tool_photo_normal.png</file>
+        <file>res/chat_tool_file_press.png</file>
+        <file>res/chat_tool_file_normal.png</file>
+        <file>res/chatting_setmode_collapse_btn.png</file>
+        <file>res/chatting_setmode_biaoqing_btn.png</file>
+        <file>res/main_title_tool_button_press.png</file>
+        <file>res/main_title_tool_button.png</file>
+        <file>res/iv_main_tool_bt02_2.png</file>
+        <file>res/iv_main_tool_bt01_2.png</file>
+        <file>res/pictures_selected.png</file>
+        <file>res/picture_unselected.png</file>
+        <file>res/verf_box.png</file>
+        <file>res/group_select_cbox_press.png</file>
+        <file>res/group_select_cbox_normal.png</file>
+        <file>res/fileformat_icon.png</file>
+        <file>res/group_info_icon.png</file>
+        <file>res/group_info_icon_press.png</file>
+        <file>res/main_title_seek_button_press.png</file>
+        <file>res/main_title_seek_button.png</file>
+        <file>res/icon_pc.png</file>
+        <file>res/fileformat_aiff.png</file>
+        <file>res/fileformat_apk.png</file>
+        <file>res/fileformat_asf.png</file>
+        <file>res/fileformat_bat.png</file>
+        <file>res/fileformat_dll.png</file>
+        <file>res/fileformat_doc.png</file>
+        <file>res/fileformat_excel.png</file>
+        <file>res/fileformat_exe.png</file>
+        <file>res/fileformat_html.png</file>
+        <file>res/fileformat_pdf.png</file>
+        <file>res/fileformat_pic.png</file>
+        <file>res/fileformat_ppt.png</file>
+        <file>res/fileformat_rar.png</file>
+        <file>res/fileformat_txt.png</file>
+        <file>res/collectivel_icon.png</file>
     </qresource>
 </RCC>

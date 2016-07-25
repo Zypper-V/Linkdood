@@ -21,18 +21,20 @@ CPage {
     Connections {
         target: loginManager
 
-//        onInputRootTabView: {
-//            console.log("onInputRootTabView !!!!")
-//            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
-//        }
+        //        onInputRootTabView: {
+        //            console.log("onInputRootTabView !!!!")
+        //            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+        //        }
 
         onLoginSucceeded: {
             console.log("onLoginSuccess !!!!")
             loadingDialog.hide();
             sessionListManager.getChatList();
+            enterpriseManager.setFarOrg();
+            orgManager.resetOrgList();
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
 
-//            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
+            //            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
         }
         onLoginResultObserver:{
             console.log("onLoginResultObserver !!!!");
@@ -45,7 +47,11 @@ CPage {
             gToast.requestToast(err,"","");
             if(err==="首次登录，请激活帐号")
             {
-               pageStack.replace(Qt.resolvedUrl("CDoodActivateAccountPage.qml"), "", true);
+                pageStack.replace(Qt.resolvedUrl("CDoodActivateAccountPage.qml"), "", true);
+            }
+            if(err==="输入错误次数过多,请输入验证码")
+            {
+                pageStack.replace(Qt.resolvedUrl("CDoodVerifyImgPage.qml"), "", true);
             }
         }
     }
@@ -113,53 +119,53 @@ CPage {
                 color: "#ffffff"
             }
 
-//            Item {
-//                id: moreBtnRoot
-//                anchors.top: logoInlogonImage.bottom
-//                anchors.topMargin: 28
-//                anchors.right: parent.right
+            //            Item {
+            //                id: moreBtnRoot
+            //                anchors.top: logoInlogonImage.bottom
+            //                anchors.topMargin: 28
+            //                anchors.right: parent.right
 
-//                height: 120
-//                visible: true
-//                width:  91
+            //                height: 120
+            //                visible: true
+            //                width:  91
 
-//                Image {
-//                    id: moreBtn
-//                    anchors.centerIn: parent
-//                    smooth: true
-//                    sourceSize: Qt.size(31, 20)
-//                    source: "qrc:/res/more.png"
-//                    asynchronous: true
-//                }
+            //                Image {
+            //                    id: moreBtn
+            //                    anchors.centerIn: parent
+            //                    smooth: true
+            //                    sourceSize: Qt.size(31, 20)
+            //                    source: "qrc:/res/more.png"
+            //                    asynchronous: true
+            //                }
 
-//                Behavior on opacity {
-//                    NumberAnimation { duration: 200 }
-//                }
+            //                Behavior on opacity {
+            //                    NumberAnimation { duration: 200 }
+            //                }
 
-//                MouseArea {
-//                    anchors.fill: parent
+            //                MouseArea {
+            //                    anchors.fill: parent
 
-//                    onPressed: {
-//                        moreBtnRoot.opacity = 0.3
-//                    }
+            //                    onPressed: {
+            //                        moreBtnRoot.opacity = 0.3
+            //                    }
 
-//                    onReleased: {
-//                        moreBtnRoot.opacity = 1
+            //                    onReleased: {
+            //                        moreBtnRoot.opacity = 1
 
-//                        if(loginPage.state !== "show")
-//                            loginPage.state = "show"
-//                        else
-//                            loginPage.state = "hidden"
-//                    }
+            //                        if(loginPage.state !== "show")
+            //                            loginPage.state = "show"
+            //                        else
+            //                            loginPage.state = "hidden"
+            //                    }
 
-//                    onCanceled: {
-//                        moreBtnRoot.opacity = 1
-//                    }
-//                }
-//            }
+            //                    onCanceled: {
+            //                        moreBtnRoot.opacity = 1
+            //                    }
+            //                }
+            //            }
 
             Text{
-               id:conTip
+                id:conTip
 
                 anchors{
                     left:inputBackGround.left
@@ -183,7 +189,7 @@ CPage {
                 textLeftMargin: 50
                 clip: true
 
-//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+                //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
                 placeholderText:os.i18n.ctr(qsTr("请输入国家"))
@@ -206,7 +212,7 @@ CPage {
                 z: parent.z+2
             }
             Text{
-               id:srvTip
+                id:srvTip
 
                 anchors{
                     left:inputBackGround.left
@@ -230,7 +236,7 @@ CPage {
                 textLeftMargin: 50
                 clip: true
 
-//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+                //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
                 placeholderText:os.i18n.ctr(qsTr("请输入服务器"))
@@ -253,7 +259,7 @@ CPage {
                 z: parent.z+2
             }
             Text{
-               id:userTip
+                id:userTip
 
                 anchors{
                     left:inputBackGround.left
@@ -277,7 +283,7 @@ CPage {
                 textLeftMargin: 50
                 clip: true
 
-//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+                //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
                 placeholderText:os.i18n.ctr(qsTr("请输入手机号"))
@@ -299,21 +305,21 @@ CPage {
                 anchors.left:inputBackGround.left
                 z: parent.z+2
             }
-//            Rectangle{
-//                anchors.top: userLineEdit.bottom
-//                anchors.left: inputBackGround.left
-//                height: passWordEdit.height
-//                width: inputBackGround.width
-//                MouseArea {
-//                    anchors.fill: parent
-//                    onClicked: {
-//                        passWordEdit.focus = true;
-//                    }
-//                }
-//            }
+            //            Rectangle{
+            //                anchors.top: userLineEdit.bottom
+            //                anchors.left: inputBackGround.left
+            //                height: passWordEdit.height
+            //                width: inputBackGround.width
+            //                MouseArea {
+            //                    anchors.fill: parent
+            //                    onClicked: {
+            //                        passWordEdit.focus = true;
+            //                    }
+            //                }
+            //            }
 
             Text{
-               id:srvPwd
+                id:srvPwd
 
                 anchors{
                     left:inputBackGround.left
@@ -338,13 +344,13 @@ CPage {
                 textLeftMargin: 50
                 clip: true
 
-//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+                //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
                 placeholderText:os.i18n.ctr(qsTr("请输入密码"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-                text: ""
+                text: "111111"
             }
 
             CButton {
@@ -387,7 +393,7 @@ CPage {
                         loadingDialog.show();
                         loginManager.setLoginPhone(userLineEdit.text);
                         loginManager.setLoginService(srvLineEdit.text);
-                        loginManager.login(srvLineEdit.text, "0086"+userLineEdit.text, passWordEdit.text);
+                        loginManager.login(srvLineEdit.text, "0086"+userLineEdit.text+":1", passWordEdit.text);
                     }
                 }
 
@@ -410,10 +416,10 @@ CPage {
                     color:"#f2f2f2"
                     radius: 10
                 }
-                 onClicked: {
-                     var tll = Qt.openUrlExternally("http://www.baidu.com");
-                     console.log("sssss",tll);
-                 }
+                onClicked: {
+                    var tll = Qt.openUrlExternally("http://www.baidu.com");
+                    console.log("sssss",tll);
+                }
             }
             CButton{
                 id:maillogin
@@ -430,17 +436,17 @@ CPage {
                     color:"#f2f2f2"
                     radius: 10
                 }
-                 onClicked: {
-                      pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
-                 }
+                onClicked: {
+                    pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
+                }
             }
 
             CIndicatorDialog {
                 id:loadingDialog
-    //            indicatorDirection: Qt.Horizontal
+                //            indicatorDirection: Qt.Horizontal
                 messageText: os.i18n.ctr(qsTr("正在登录中...")) // qsTr("正在登录中...")
             }
 
         }
-   }
+    }
 }

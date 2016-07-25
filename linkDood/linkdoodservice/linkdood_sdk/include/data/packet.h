@@ -82,4 +82,25 @@ struct OfflineMsg
 	std::shared_ptr<service::Msg> msg;
 };
 
+struct UpdateInfo {
+	UpdateInfo(void) :force(0), url(""), version(""), md5(""){}
+	int force;							//	1强制升级 0建议升级
+	std::string url;					//	更新包链接
+	std::string version;				//	升级版本 V0.2.2
+	std::string md5;					//  md5值
+	std::vector<std::string> info;		//	升级信息
+	std::vector<std::string> vip;		//	升级用户列表
+};
+
+struct PrivateSetting{
+	PrivateSetting(void) :allow_phone(1), allow_email(1), allow_birthday(1),verifytype(0),vip_noticetype(0),
+	at_noticetype(0),global_noticetype(0){}
+	int allow_birthday;		//	生日可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1
+	int allow_phone;		//	电话可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1
+	int allow_email;		//	邮箱可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1
+	int verifytype;			//	验证方式 1：需要验证信息,2:不允许任何人添加,3:允许任何人添加，默认1
+	int vip_noticetype;		//	V标消息通知类型 1:表示始终有声音提醒，2：表示始终无声音提醒 3:不始终提醒，默认1
+	int at_noticetype;		//	@相关人提醒模式 1:表示始终有声音提醒，2：表示始终无声音提醒 3:不始终提醒，默认1
+	int global_noticetype;	//	全局消息通知 1:通知详情，2：通知源，隐藏内容 3:完全隐藏，默认2
+};
 

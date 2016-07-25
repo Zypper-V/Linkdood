@@ -84,7 +84,7 @@ CPage {
                     leftMargin:36
                 }
                 name:""
-                iconSource: "qrc:/res/headerDefault.png"
+                iconSource: setIcon("1",userdataManager.thumbAvatar)
             }
             CLine {
                 width: parent.width
@@ -211,12 +211,13 @@ CPage {
             id:sendmessage
 
             anchors.top:userdata.bottom
-            anchors.topMargin: 147
+            anchors.topMargin: 140
             anchors.horizontalCenter: parent.horizontalCenter
 
             width: parent.width - 40
             height: 90
             opacity : pressed ? 1: 0.7
+            visible: userdataManager.isFriend
             text:os.i18n.ctr(qsTr("发消息"))
             textColor:  "#ffffff"
             pixelSize:34
@@ -226,11 +227,37 @@ CPage {
                 radius: 10
             }
             onClicked: {
-                chatManager.showChatPage(userdataManager.name, userdataManager.id,
-                                         "1", userdataManager.thumbAvatar)
+                chatManager.switchToChatPage(userdataManager.id,userdataManager.name,"1",0,userdataManager.thumbAvatar);
             }
         }
+        CButton{
+            id:addBuddy
 
+            visible: !userdataManager.isFriend
+            anchors.top:userdata.bottom
+            anchors.topMargin: 140
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            width: parent.width - 40
+            height: 90
+            opacity : pressed ? 1: 0.7
+            text:os.i18n.ctr(qsTr("添加好友"))
+            textColor:  "#ffffff"
+            pixelSize:34
+            backgroundComponent: Rectangle {
+                anchors.fill: parent
+                color:"#32c2fe"
+                radius: 10
+            }
+            onClicked: {
+                //TODO
+                friendVericationManager.setName(userdataManager.name);
+                friendVericationManager.setThumbAvatar(userdataManager.thumbAvatar);
+                friendVericationManager.setMyName(userProfileManager.name);
+                friendVericationManager.setId(userdataManager.id);
+                pageStack.push(Qt.resolvedUrl("CDoodFriendVerificationPage.qml"));
+
+            }
+        }
     }
-
 }

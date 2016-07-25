@@ -40,10 +40,22 @@ HEADERS += src/linkdoodui_workspace.h \
     src/cdoodorgmanager.h \
     src/cdooduserprofilemanager.h \
     src/cdoodemojimanager.h \
-    src/cdoodemojiitem.h
+    src/cdoodemojiitem.h \
+    src/cdoodaddcontactmanager.h \
+    src/cdoodgroupmanager.h \
+    src/cdoodgroupitem.h \
+    src/cdoodfriendverificationmanager.h \
+    src/cdoodsysmsgmanager.h \
+    src/cdoodsysmsgitem.h\
+    src/cdoodmembermanager.h \
+    src/cdoodmemberitem.h \
+    src/cdoodlocalsearchmanager.h \
+    src/cdoodchatmanagermodel.h \
+    src/cdoodfileviewmanager.h \
+    src/cdoodenterpriseitem.h
 
 SOURCES += src/main.cpp \
-		   src/linkdoodui_workspace.cpp \
+    src/linkdoodui_workspace.cpp \
     src/cdoodlistmodel.cpp \
     src/cdoodloginmanager.cpp \
     src/cdoodsessionlistmanager.cpp \
@@ -59,7 +71,20 @@ SOURCES += src/main.cpp \
     src/cdoodorgmanager.cpp \
     src/cdooduserprofilemanager.cpp \
     src/cdoodemojimanager.cpp \
-    src/cdoodemojiitem.cpp
+    src/cdoodemojiitem.cpp \
+    src/cdoodaddcontactmanager.cpp \
+    src/cdoodgroupmanager.cpp \
+    src/cdoodgroupitem.cpp \
+    src/cdoodfriendverificationmanager.cpp \
+    src/cdoodsysmsgmanager.cpp \
+    src/cdoodsysmsgitem.cpp\
+    src/cdoodmembermanager.cpp \
+    src/cdoodmemberitem.cpp \
+    src/cdoodlocalsearchmanager.cpp \
+    src/cdoodchatmanagermodel.cpp \
+    src/cdoodfileviewmanager.cpp \
+    src/cdoodenterpriseitem.cpp
+
 OTHER_FILES += qml/*.qml
 
 target.path = $$INSTALL_DIR/bin
@@ -86,4 +111,13 @@ DISTFILES += \
     qml/CDoodProfileDataPage.qml \
     qml/CDoodMailLoginPage.qml \
     qml/CDoodActivateAccountPage.qml \
-    qml/CDoodChangePasswordPage.qml
+    qml/CDoodChangePasswordPage.qml \
+    qml/CDoodAddContactPage.qml \
+    qml/CDoodSearchContactPage.qml\
+    qml/CDoodVerifyImgPage.qml \
+    qml/CDoodGroupListPage.qml \
+    qml/CDoodFriendVerificationPage.qml \
+    qml/cdoodMemberListPage.qml \
+    qml/CDoodGroupAddMemberPage.qml \
+    qml/CDoodGroupSetPage.qml \
+    qml/CDoodAddGroupPage.qml

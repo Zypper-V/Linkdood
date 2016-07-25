@@ -4,6 +4,7 @@
 #include "../data/ErrorInfo.hpp"
 #include "../data/packet.h"
 #include "../data/SDKTypes.h"
+#include "../data/Note.h"
 
 #include <functional>
 #include <memory>
@@ -89,6 +90,41 @@ namespace service {
 		* @param[in] await     传入接收结果回调
 		************************************************************************/
 		virtual void searchMessage(std::string key, MsgSearchProperty& property, std::function<void(ErrorInfo&, std::vector<MsgSearchResult>&)> await) = 0;
+
+		/************************************************************************
+		* @brief addNote
+		* @description: 添加收藏
+		* @param[in] note  传入收藏信息
+		* @param[in] await 传入接收结果回调
+		************************************************************************/
+		virtual void addNote(Note&note,std::function<void(ErrorInfo&)>await)=0;
+
+		/************************************************************************
+		* @brief deleteNote
+		* @description: 删除收藏
+		* @param[in] notes  传入要删除的收藏信息id列表
+		* @param[in] await  传入接收结果回调
+		************************************************************************/
+		virtual void deleteNote(std::vector<int64> notes, std::function<void(ErrorInfo&)>await) = 0;
+
+
+		/************************************************************************
+		* @brief getNoteList
+		* @description: 获取收藏列表
+		* @param[in] beginid    起始消息ID offsetflag = 0 beginid = 0时，代表从最大的消息Id进行查找
+		* @param[in] count      查询的条数
+		* @param[in] offsetflag 偏移标志 0.消息Id由大到小偏移 1.消息Id由小到大偏移
+		* @param[in] await		传入接收结果回调
+		************************************************************************/
+		virtual void getNoteList(int64 beginid, int32 count, int8 offsetflag, std::function<void(ErrorInfo&,std::vector<Note>&)>await)=0;
+
+		/************************************************************************
+		* @brief editNote
+		* @description: 编辑收藏信息
+		* @param[in] note		传入收藏信息
+		* @param[in] await		传入接收结果回调
+		************************************************************************/
+		virtual void editNote(Note&note, std::function<void(ErrorInfo&)>await) = 0;
 	};
 
 	std::shared_ptr<IChatService> getChatInstance(void);

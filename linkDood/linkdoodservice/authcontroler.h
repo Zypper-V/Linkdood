@@ -21,6 +21,8 @@ public:
                const QString &userId,
                const QString &password);
     //
+    void getVerifyImg( QString userid,QString code);
+    void _getVerifyImg(service::ErrorInfo info,std::string img);
     void changepassword(QString oldpsw,QString newpsw);
     void _changepassword(service::ErrorInfo& info);
     void logout();
@@ -75,8 +77,9 @@ public:
     void loginSucceeded(void);
     void loginFailed(int code);
     void changePasswordResult(QString result);
+    void getVerifyImgResult(QString code,QString img);
     void connectChanged(QString flag);
-
+    void anthAvatarChanged(QString avatar);
     void loginoutRelust(bool succeeded);
     //登录成功自动推送
     void loginResultObserver(int code,QString userID);

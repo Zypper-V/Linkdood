@@ -64,7 +64,8 @@ Component {
                 radius: 6
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
+                iconSource: setIcon("1", model.modelData.contactThumbAvatar)
+//                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
                 MouseArea {
                     anchors.fill: parent

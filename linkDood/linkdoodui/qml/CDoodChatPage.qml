@@ -11,6 +11,8 @@ CPage {
     property bool loadDataFlag:false
     //    signal prepareFinished()
 
+    property Component emojiPanelObj:CDoodEmojiTabView{}
+    property Component moreToolPanelObj:CDoodToolPanelGridView{}
     Timer{
         id:loadDataCheckTimer
         running: false
@@ -59,10 +61,24 @@ CPage {
             }
         }
     }
+    Connections {
+        target: groupManager
+        onGetGroupInfoResult: {
+            groupManager.getMemberList(groupManager.id);
+            pageStack.push(Qt.resolvedUrl("CDoodGroupSetPage.qml"));
 
+        }
+    }
+    Connections{
+        target: chatManager
+        onNewMessageNotice:{
+            chatListView.positionViewAtEnd();
+        }
+    }
     Keys.onReleased: {
         if (event.key === Qt.Key_Back || event.key === Qt.Key_Escape) {
             btnEmotion.isKeyboard = true;
+            btnTool.isPressed = false
         }
 
         if(event.key === Qt.Key_Return)
@@ -91,8 +107,8 @@ CPage {
             inputTextArea.focus = false
             chatManager.exitChat()
         } else if (status === CPageStatus.Show) {
-            console.log("chatListView.positionViewAtEnd()")
             chatListView.positionViewAtEnd()
+            chatManager.entryChat(chatPage.targetid)
         }
     }
 
@@ -120,10 +136,10 @@ CPage {
         //        chatPage.loadDataFlag = true;
 
         inputTextArea.text = ""
-        chatManager.deleteMessageListItem()
-        chatManager.initChatState()
+        //chatManager.deleteMessageListItem()
+        //chatManager.initChatState()
         chatManager.entryChat(chatPage.targetid)
-        chatManager.getMessages(chatPage.targetid, 20)
+        //chatManager.getMessages(chatPage.targetid, 20)
     }
 
     WallClock {
@@ -153,17 +169,33 @@ CPage {
                 anchors.verticalCenter: parent.verticalCenter
                 onClicked: {
                     btnEmotion.isKeyboard = true;
+                    btnTool.isPressed = false;
                     pageStack.pop();
                 }
             }
             Text{
-                text:chatPage.chatName
+                text:chatManagerModel.name
                 color:"white"
                 font.pixelSize: 36
+                width:360
+                elide: Text.ElideMiddle
 
-                anchors.left: btnBack.right
-                anchors.leftMargin: 50
+                anchors.centerIn: parent
+            }
+            IconButton{
+                id:btnGroupInfo
+
+                pressedIcon:"qrc:/res/group_info_icon_press.png"
+                normalIcon: "qrc:/res/group_info_icon.png"
+                iconImag.sourceSize: Qt.size(60,60)
+                visible:chatListView.model.chatType ==="2"
                 anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.rightMargin:40
+                onClicked:{
+                    groupManager.getGroupInfo(chatPage.targetid);
+                    //TODO
+                }
             }
         }
         CEditListView {
@@ -178,10 +210,16 @@ CPage {
             property variant selectDeleteIndexList
             property bool ifSessionListAtEnd: true
 
+            spacing: 20
             clip: true
-            model: chatManager
+            model: chatManagerModel
             flickDeceleration: 3000
             cacheBuffer: chatListView.height * 2
+            onModelChanged:{
+                console.log("chat model changed")
+                //chatManager.updateUnreadMsg()
+            }
+
             delegate: CDoodChatDelegate {
                 Component.onCompleted: {
                     if(chatPage.loadDataFlag)
@@ -230,9 +268,10 @@ CPage {
                 if(!moving && chatListScrollbbar.y >=0 && chatListScrollbbar.y < chatPage.getMessageHeight * 4) {
                     chatPage.bNeedViewToEnd = false
                     // todo
-                    chatManager.getMessages(chatPage.targetid, 20)
+                    //chatManager.getMessages(chatPage.targetid, 20,"0")
                 }
                 btnEmotion.isKeyboard = true;
+                btnTool.isPressed = false;
             }
 
             footer: Item {
@@ -301,33 +340,45 @@ CPage {
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 property bool isKeyboard: true
-                visible: false
                 onClicked: {
-
-                    console.log("123xxxxxxxxxxxxxxx:"+isKeyboard)
+                    btnTool.isPressed = false;
                     if(isKeyboard){
 
                         isKeyboard = false;
                         inputTextArea.focus = false;
-                        //btnEmotion.backgroundIconSource = "qrc:/res/chatting_setmode_keyboard_btn.png";
                     }else{
                         isKeyboard = true;
                         inputTextArea.focus = true;
-                        //btnEmotion.backgroundIconSource = "qrc:/res/chatting_biaoqing_btn.png";
                     }
                 }
             }
+            CToolButton{
+                id:btnTool
 
+                backgroundIconSource:isPressed ? "qrc:/res/chatting_setmode_collapse_btn.png" :"qrc:/res/chatting_setmode_biaoqing_btn.png"
+                anchors.left: btnEmotion.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+                property bool isPressed: false
+                onClicked: {
+                    btnEmotion.isKeyboard = true;
+                    if(isPressed){
+                        isPressed = false;
+                        inputTextArea.focus = true;
+                    }else{
+                        console.log("qqqqqqqqqqq:"+btnTool.isPressed)
+                        isPressed = true;
+                        inputTextArea.focus = false;
+                    }
+                }
+            }
             // 输入文字信息
             Item {
                 id: inputMessageRoot
 
                 anchors.centerIn: parent
-                anchors.horizontalCenterOffset: -30
-                //anchors.left: parent.left
-                //anchors.leftMargin: 30
-                //anchors.verticalCenter: parent.verticalCenter
-                width: 460
+                anchors.horizontalCenterOffset:40
+                width: 420
                 height: inputTextArea.contentHeight < 70 ? 70 : inputTextArea.contentHeight > 218 ? 218 : inputTextArea.contentHeight
 
                 visible: true
@@ -374,10 +425,8 @@ CPage {
                         console.log("zhangp onFocusChanged = ", focus)
                         if(focus) {
                             inputTextArea.cursorPosition = inputTextArea.length
-                            btnEmotion.isKeyboard = true
-
-                        } else {
-                            //btnEmotion.isKeyboard = false
+                            btnEmotion.isKeyboard = true;
+                            btnTool.isPressed = false;
                         }
                     }
 
@@ -409,9 +458,9 @@ CPage {
                 id:rectSendButtunBk
 
                 anchors.left: inputMessageRoot.right
-                anchors.leftMargin: 20
+                anchors.leftMargin: 10
                 anchors.verticalCenter: inputMessageRoot.verticalCenter
-                width:100
+                width:80
                 height:inputMessageRoot.height
                 radius: 10
                 color:"#ffffff"
@@ -446,21 +495,31 @@ CPage {
             anchors.bottom: parent.bottom
 
             width: parent.width
-            visible: !btnEmotion.isKeyboard
+            visible: !btnEmotion.isKeyboard ||btnTool.isPressed
             height: setHieght()
 
             Behavior on height {
                 NumberAnimation { duration: 150 }
             }
-            CDoodEmojiTabView{
-                id: background
+            Loader{
+                id:loadItemTool
+
+                sourceComponent:moreToolPanelObj
+                visible: btnTool.isPressed
                 anchors.fill: parent
-                //width:parent.width
+            }
+
+            Loader{
+                id:loadEmojiPanel
+
+                visible: !btnEmotion.isKeyboard
+                sourceComponent:emojiPanelObj
+                anchors.fill: parent
             }
             function setHieght(){
 
                 console.log("softwareInputPanelRect:"+gInputContext.softwareInputPanelRect.height)
-                if(!btnEmotion.isKeyboard){
+                if(!btnEmotion.isKeyboard || btnTool.isPressed){
                     return 480;
                 }
                 return gInputContext.softwareInputPanelRect.height;

@@ -26,8 +26,9 @@ INCLUDEPATH += ../linkdoodclient
 
 LIBS += -L$$PWD/linkdood_sdk
 LIBS += -L../linkdoodclient
+LIBS += -L$$PWD/linkdood_sdk/sdkplugins
 
-LIBS += -lcurl -limsdkapi -limswift -llogicMgr -lservice -llinkdoodclient
+LIBS += -lcurl  -lservice -llinkdoodclient
 
 QMAKE_LFLAGS += -Wl,-rpath=$$LIB_DIR -Wl,-Bsymbolic
 
@@ -74,7 +75,10 @@ HEADERS += linkdoodservice_workspace.h \
     enterprisecontroler.h \
     linkdoodservicethread.h \
     linkdood_sdk/include/utils/IDRangeJuge.hpp \
-    emojiexplain.h
+    groupcontroler.h\
+    emojiexplain.h \
+    EncryptKey.h \
+    linkdood_sdk/include/interface/IEnterpriseObserver.h
 
 SOURCES += main.cpp \
 	   linkdoodservice_workspace.cpp \
@@ -85,14 +89,16 @@ SOURCES += main.cpp \
     sysmsgcontroler.cpp \
     enterprisecontorler.cpp \
     linkdoodservicethread.cpp \
-    emojiexplain.cpp
+    groupcontroler.cpp\
+    emojiexplain.cpp \
+    EncryptKey.cpp
 
 target.path = $$INSTALL_DIR/bin
 
 sdklibs.files += $$PWD/linkdood_sdk/libcurl.so
 sdklibs.files += $$PWD/linkdood_sdk/libimsdkapi.so
-sdklibs.files += $$PWD/linkdood_sdk/libimswift.so
-sdklibs.files += $$PWD/linkdood_sdk/liblogicMgr.so
+#sdklibs.files += $$PWD/linkdood_sdk/libimswift.so
+#sdklibs.files += $$PWD/linkdood_sdk/liblogicMgr.so
 sdklibs.files += $$PWD/linkdood_sdk/libservice.so
 sdklibs.files += $$PWD/linkdood_sdk/libservice.so.1
 
@@ -101,4 +107,7 @@ sdklibs.path = $$INSTALL_DIR/libs/
 sdkcrt.files += $$PWD/linkdood_sdk/linkdood.crt
 sdkcrt.path = $$INSTALL_DIR/crt/
 
-INSTALLS += target sdklibs sdkcrt
+sdkplugins.files +=$$PWD/linkdood_sdk/sdkplugins/liblddplugin.so
+sdkplugins.path = $$INSTALL_DIR/libs/sdkplugins/
+
+INSTALLS += target sdklibs sdkcrt sdkplugins

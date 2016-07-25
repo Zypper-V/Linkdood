@@ -5,6 +5,51 @@ CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
     mLoading = false;
     mSatus = true;
     mTextMsg = "";
+    mProgress = 0;
+    mFileSize = 0;
+    mLocalId = "";
+
+    mName = "";
+    mThumbAvatar = "";
+    mTar_thumbAvatar ="";
+    mMsgType = "";
+    mActiveType = "";
+    mMsgId = "";
+    mTargetId ="";
+    mFromId = "";
+    mToId = "";
+    mBody ="";
+
+}
+
+long long CDoodChatItem::fileSize() const
+{
+    return mFileSize;
+}
+
+long long CDoodChatItem::setFileSize(const long long data)
+{
+    if(mFileSize == data) {
+        return data;
+    }
+    mFileSize = data;
+    emit fileSizeChanged();
+    return mFileSize;
+}
+
+int CDoodChatItem::progress() const
+{
+    return mProgress;
+}
+
+int CDoodChatItem::setProgress(const int &data)
+{
+    if(mProgress == data) {
+        return data;
+    }
+    mProgress = data;
+    emit progressChanged();
+    return mProgress;
 }
 
 bool CDoodChatItem::loading() const
@@ -203,14 +248,67 @@ QString CDoodChatItem::setBody(const QString &data)
     return mBody;
 }
 
-QString CDoodChatItem::textMsgContent()
+QString CDoodChatItem::localId() const
+{
+    return mLocalId;
+}
+
+QString CDoodChatItem::setLocalId(const QString &data)
+{
+    if(mLocalId == data) {
+        return data;
+    }
+    mLocalId = data;
+    emit bodyChanged();
+    return mLocalId;
+}
+
+QString CDoodChatItem::textMsg()
 {
     return mTextMsg;
 }
 
-void CDoodChatItem::setTextMsgContent(QString &data)
+QString CDoodChatItem::setTextMsg(const QString &data)
 {
+    if(mTextMsg == data)
+        return data;
     mTextMsg = data;
+    emit textMsgChanged();
+    return mTextMsg;
+}
+
+QString CDoodChatItem::filePath()
+{
+    return mFilePath;
+}
+
+QString CDoodChatItem::setFilePath(const QString &data)
+{
+    if(data!="" && data!=mFilePath){
+        mFilePath = data;
+        emit filePathChanged();
+    }
+    return mFilePath;
+}
+
+QString CDoodChatItem::contactThumbAvatar()
+{
+    return mContactThumbAvatar;
+}
+
+QString CDoodChatItem::setContactThumbAvatar(const QString &data)
+{
+    if("" == data){
+        return mContactThumbAvatar;
+    }
+    mContactThumbAvatar = data;
+    emit contactThumbAvatarChanged();
+    return mContactThumbAvatar;
+}
+
+void CDoodChatItem::setIsMyselft(bool isMyselft)
+{
+    mIsMyselft = isMyselft;
 }
 
 

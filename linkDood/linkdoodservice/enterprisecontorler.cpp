@@ -14,6 +14,12 @@ EnterpriseControler::~EnterpriseControler()
 {
 }
 
+void EnterpriseControler::onUpdateRootFinished()
+{
+    qDebug() << Q_FUNC_INFO<<"shujugengxinwancheng";
+    getSonOrgs("0");
+}
+
 
 
 
@@ -21,17 +27,14 @@ void EnterpriseControler::getSonOrgs(QString orgid)
 {
     qDebug() << Q_FUNC_INFO<<orgid;
     int64 org_id;
-    std::stringstream str(orgid.toStdString());
-    str >> org_id;
-    qDebug() << Q_FUNC_INFO<< orgid;
-    int64 i=0;
-    service::IMClient::getClient()->getEnterprise()->getSonOrgs(i,
+    org_id=orgid.toLongLong();
+    service::IMClient::getClient()->getEnterprise()->getSonOrgs(org_id,
         std::bind(&EnterpriseControler::_getSonOrgs,this,std::placeholders::_1,
         std::placeholders::_2,std::placeholders::_3));
 }
 void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers)
 {
-    qDebug() << Q_FUNC_INFO<<info.code()<<orgs.size();
+    qDebug() << Q_FUNC_INFO<<"pspspspspspspsppspspspspspspspsp"<<orgs.size()<<orgusers.size();
     OrgList orgList;
     OrgUserList orgUserList;
     for(auto org:orgs){
@@ -40,6 +43,16 @@ void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<servi
     for(auto orgUser:orgusers){
         orgUserList.insert(orgUserList.size(),orguserToQorguser(orgUser));
     }
+//    for(size_t i=0;i<orgUserList.size()-1;++i){
+//        for(size_t j=i+1;j<orgUserList.size();++j){
+//            OrgUser temp;
+//            if(orgUserList[i].order_num.toInt()>orgUserList[j].order_num.toInt()){
+//                temp=orgUserList[i];
+//                orgUserList[i]=orgUserList[j];
+//                orgUserList[j]=temp;
+//            }
+//        }
+//    }
     emit getSonOrgsResult(info.code(),orgList,orgUserList);
 }
 
@@ -127,16 +140,27 @@ OrgUser EnterpriseControler::orguserToQorguser(service::OrgUser orguser)
     Qorguser.role_id      =QString::number(orguser.role_id);
     Qorguser.neworg_id    =QString::number(orguser.org_id);
     Qorguser.id           =QString::number(orguser.id);
-    Qorguser.gender       =QString::number(orguser.gender);
+    if(orguser.gender==0){
+        Qorguser.gender="保密";
+    }
+    if(orguser.gender==1){
+        Qorguser.gender="男";
+    }
+    if(orguser.gender==2){
+        Qorguser.gender="女";
+    }
     Qorguser.timeZone     =QString::number(orguser.time_zone);
     Qorguser.avatar       =QString::fromStdString(orguser.avatar);
     Qorguser.thumbAvatar  =QString::fromStdString(orguser.thumb_avatar);
     Qorguser.name         =QString::fromStdString(orguser.name);
+    qDebug() << Q_FUNC_INFO<<"sdaaaaaaaa:"<<Qorguser.name;
     Qorguser.extends      =QString::fromStdString(orguser.extends);
     Qorguser.duty         =QString::fromStdString(orguser.duty);
     Qorguser.email        =QString::fromStdString(orguser.email);
     Qorguser.phone        =QString::fromStdString(orguser.phone);
     Qorguser.orgname      =QString::fromStdString(orguser.orgname);
     Qorguser.pinyin       =QString::fromStdString(orguser.pinyin);
+    qDebug() << Q_FUNC_INFO<<"sdaaaaaaaa:"<<Qorguser.pinyin;
+    qDebug() << Q_FUNC_INFO<<"sdaaaaaaaa:"<<Qorguser.gender;
     return Qorguser;
 }

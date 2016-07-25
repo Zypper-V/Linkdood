@@ -15,12 +15,13 @@ namespace service {
 		MSG_TYPE_IMG,
 		MSG_TYPE_FILE,
 		MSG_TYPE_CARD,
-		MSG_TYPE_TIP
+		MSG_TYPE_TIP,
+		MSG_TYPE_DYNEXPRESSION=19,
 	};
 	class Msg {
 	public:
 		Msg(void) :msgtype(0), msgid(0), targetid(0), fromid(0), toid(0), 
-			localid(0), active_type(0), related_msgid(0),time(0){}
+			localid(0), active_type(0), related_msgid(0),time(0),sourceid(0){}
 		virtual ~Msg(void){}
 		virtual void inti(void){}
 		bool operator == (const Msg & rhs)const{
@@ -48,6 +49,8 @@ namespace service {
 				return false;
 			if (time != rhs.time)
 				return false;
+			if (sourceid != rhs.sourceid)
+				return false;
 			return true;
 		}
 	public:
@@ -60,6 +63,7 @@ namespace service {
 		int64 localid;  //本地ID
 		int64 related_msgid; //关联消息ID
 		int64 time;    //发送时间
+		int64 sourceid;	//会话来源ID
 		std::string body;//消息内容
 		std::vector<int64> related_users;//秘聊时相关的用户ID
 		std::vector<int64> limit_range; //@人员列表
@@ -67,7 +71,7 @@ namespace service {
 
 	class MsgText : public Msg {
 	public:
-		MsgText(void){}
+		MsgText(void){ msgtype = MSG_TYPE_TEXT; }
 		void inti(void){}
 		bool operator == (const MsgText& rhs)const {
 			if (msg_properties != rhs.msg_properties)
@@ -80,7 +84,7 @@ namespace service {
 
 	class MsgFile : public Msg {
 	public:
-		MsgFile(void){}
+		MsgFile(void){ msgtype = MSG_TYPE_FILE; }
 		void init(void){}
 		bool operator == (const MsgFile& rhs)const{
 			if (states != rhs.states)
@@ -114,7 +118,7 @@ namespace service {
 
 	class MsgImg : public Msg {
 	public:
-		MsgImg(){}
+		MsgImg(){ msgtype = MSG_TYPE_IMG; }
 		void init(void){}
 		bool operator == (const MsgImg& rhs)const{
 			if (width != rhs.width)
@@ -141,6 +145,19 @@ namespace service {
 		std::string main_url;  //大图URL
 		std::string encrypt_key;//加密KEY
 		std::string file_name;   //文件名
+	};
+
+	class MsgDynExpression : public Msg {
+	public:
+		MsgDynExpression(){ msgtype = MSG_TYPE_DYNEXPRESSION; }
+		void init(void){}
+		bool operator == (const MsgText& rhs)const {
+			if (msg_properties != rhs.msg_properties)
+				return false;
+			return true;
+		}
+	public:
+		std::string msg_properties;
 	};
 
 	typedef std::shared_ptr<Msg> MsgPtr;

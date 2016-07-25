@@ -9,10 +9,9 @@ Rectangle{
     property string rigthText: ""
     property bool showLine:true
     property bool editable:false
-    
     signal clicked()
 
-    radius: 0
+    radius: 10
     height: 100
     color: "white"
 
@@ -38,8 +37,9 @@ Rectangle{
         width: 90
         height: 90
         radius: 10
+        visible: rightImg !=""
         headerColor: "transparent"
-        iconSource: comp.rightImg
+        iconSource: setIcon("1",comp.rightImg)
         anchors{
             right: arrowTip.left
             rightMargin: 20
@@ -50,7 +50,7 @@ Rectangle{
         id:rigthText
         
         text:comp.rigthText
-        font.pixelSize: 32
+        font.pixelSize: 26
 
         anchors{
             right: arrowTip.left
@@ -72,11 +72,15 @@ Rectangle{
     CLine{
         visible: comp.showLine
         anchors.bottom: parent.bottom
-        color:"#777777"
+//        color:"#777777"
+        anchors.left:parent.left
+       anchors.right: parent.right
+       anchors.leftMargin: 30
+       anchors.rightMargin: 30
     }
     MouseArea{
         anchors.fill: parent
-        onPressed: parent.color = "#7c9dd9"
+        onPressed: parent.color = "#cdcdcd"
         onReleased: parent.color = "white"
         onClicked: {
             emit: comp.clicked();

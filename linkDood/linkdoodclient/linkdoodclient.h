@@ -27,18 +27,47 @@ public:
 
 signals:
     void loginSucceeded();
+    void getVerifyImgResult(QString,QString);
     void changePasswordResult(QString);
     void connectChanged(QString);
     void chatListChanged(const Chat_UIList& chats);
     void loginFailed(QString err);
     void contactListChanged(int oper,ContactList contacts);
     void loginoutRelust(bool loginout);
+    void anthAvatarChanged(QString avatar);
+    //系统消息推送
+    void sysMessageNotice(IMSysMsg sysMsg);
+    void getSysMessagesResult(int code, IMSysMsgList sysMsgList);
 
     //获取组织返回
     void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
     void getOnlineStatesResult(QOnlineStateList onlinestatelist);
     void getOrgUserInfoResult(int code,OrgUser orguser);
+    void text();
 
+    void groupListChanged(GroupList);
+    void groupAvatarChanged(QString groupid,QString avatar);
+    void memberAvatarChanged(QString userid,QString avatar);
+    void groupInfoChanged(QString operType,Group group);
+    void groupLeaderChanged(QString userid,QString user_name,QString groupid,QString group_name);
+    void memberInfoChanged(QString groupid,Member member);
+    void memberListChanged(QString operType,QString groupid,MemberList members);
+    void createGroupResult(QString result);
+    void addGroupResult(QString result);
+    void removeGroupResult(QString result);
+    void transferGroupResult(QString result);
+    void setGroupSetResult(QString result);
+    void setGroupInfoResult(QString result);
+    void getGroupSetResult(QString result,QString verify_type,QString is_allow);
+    void getGroupInfoResult(QString result,Group group);
+    void inviteMemberResult(QString result);
+    void removeMemberResult(QString result);
+    void setMemberInfoResult(QString result);
+    void getMemberInfoResult(QString result,Member member);
+    void getMemberListResult(QString result,MemberList memberList);
+    void getGroupFileListResult(FileInfoList fileInfoList);
+    void deleteGroupFileResilt(QString result);
+    void getGroupMemberListReslut(int code, QString id, MemberList list);
     //servie重启信号
     void serviceRestart();
 
@@ -49,7 +78,7 @@ signals:
     void elsewhereLogin(QString tip);
 
     //会话列表头像更新
-    void chatAvatarChanged(int64 id,QString avatar);
+    void chatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
     void offlineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
@@ -76,7 +105,8 @@ signals:
     //上传文件返回
     void uploadFileResult(QString tagetid, QString jasoninfo, int code);
     //文件进度返回
-    void fileProgressResult(int extra_req, int process, QString info);
+    void fileProgressResult(int extra_req, int process, QString info,QString localId,QString targetId);
+
     //下载文件返回
     void downloadFileResult(int code, QString localpath, QString tagetid);
     //上传图片返回
@@ -85,6 +115,20 @@ signals:
     void downloadImageResult(int code, QString jasoninfo, QString tagetid);
     //获取文件列表返回
     void getFileListResult(int code, FileInfoList fileList);
+    //获取联发系人返回
+    void getUserInfoResult(int code, Contact contact);
+    //从网络获取联系人返回
+    void searchFromNetResult(int code, ContactList user, ContactList group);
+    //从网络获取联系人返回
+    void searchFromLocalResult(int code, ContactList user, ContactList group);
+    //更新联系人信息返回
+    void updateContactInfoResult(int code);
+    //添加联系人返回
+    void addContactResult(int code);
+    //删除联系人返回
+    int removeContactResult(int code);
+
+
 
 public slots:
     QString installPath();
@@ -105,15 +149,12 @@ public slots:
     void login(const QString &server,
                const QString &userId,
                const QString &password);
+    void getVerifyImg( QString userid,QString code);
     void changepassword(QString oldpsw,QString newpsw);
-    //用户信息
-    void getUserInfo(QString& userId,
-                     QString& name,
-                     QString& avater);
     //用户信息UserId
     QString UserId();
     QString userName();
-
+    QString userType(QString userId);
     //更新联系人信息
      void updateContactInfo(QString userId,QString operStar,QString remark="");
      //改变联系人状态
@@ -150,44 +191,105 @@ public slots:
     //上传头像
     void uploadAvatar(QString path);
     //上传文件
-    void uploadFile(QString path, QString property);
+    void uploadAndSendFileMsg(Msg msg);
     //下载文件
-    void downloadFile(QString path, QString url, QString property);
+    void downloadFile(QString path, QString url, QString json,QString localId,QString targetId);
     //上传照片
-    void uploadImage(QString thumbimg, QString srcimg, QString property);
+    void uploadAndSendImageMsg(Msg);
     //下载图片
     void downloadImage(QString url, QString property);
     //解密文件
     bool decryptFile(QString encryptkey, QString srcpath, QString destpath);
     //获取文件列表
     void getFileList(int64 targetid, int64 fileid, int count, int flag);
+    //用户信息
+    void getUserInfo(QString userId);
+    //从网络获取联系人
+    void searchFromNet(QString key);
+    //从本地获取联系人
+    void searchFromLocal(QString key);
+    //添加联系人
+    void addContact(QString userid, QString remark, QString info);
+    //删除联系人
+    void removeContact(QString userid);
+
 
     /*****************start Enterprise**************************/
    void getSonOrgs(QString orgid);
    void getOnlineStates(QStringList& userid);
    void getOrgUserInfo(QString userid);
    /*****************end Enterprise**************************/
+
+   void createGroup(QString level, QString name, MemberList memberList);
+   void addGroup(QString groupid, QString verify_info);
+   void removeGroup(QString type, QString groupid);
+   void transferGroup(QString groupid, QString userid);
+   void setGroupSet(QString groupid, QString verify_type, QString is_allow);
+   void setGroupInfo(Group group);
+   void getGroupSet(QString groupid);
+   void getGroupInfo(QString groupid);
+   void inviteMember(QString groupid,MemberList memberList);
+   void removeMember(QString groupid, QString userid);
+   void setMemberInfo(Member member);
+   void getMemberInfo(QString groupid,QString userid);
+   void getMemberList(QString groupid);
+   void getGroupList();
+   void getGroupFileList(QString groupid);
+   void deleteGroupFile(QStringList fileIdList);
+
+   void getSysMessages(int type,int count,QString msgid,int flag);
+   void setSysMessagRead(int type, QString msg);
+   void response(IMSysMsgRespInfo info);
+
 private slots:
     void onLoginoutRelust(bool loginout);
     void onLoginSucceeded();
+    void onGetVerifyImgResult(QString code,QString img);
     void onChatListChanged(const Chat_UIList& chats);
     void onContactListChanged(int oper,ContactList contacts);
     void onLoginFailed(QString err);
     void onChangePasswordResult(QString result);
     void onConnectChanged(QString flag);
+    void onAnthAvatarChanged(QString avatar);
+    //系统消息推送
+    void onSysMessageNotice(IMSysMsg sysMsg);
+    void onGetSysMessages(int code, IMSysMsgList sysMsgList);
 
     //获取组织返回
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
     void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
     void onGetorgUserInfoResult(int code,OrgUser orguser);
 
+    void onGroupListChanged(GroupList groupList);
+    void onGroupAvatarChanged(QString groupid,QString avatar);
+    void onMemberAvatarChanged(QString userid,QString avatar);
+    void onGroupInfoChanged(QString operType,Group group);
+    void onGroupLeaderChanged(QString userid,QString user_name,QString groupid,QString group_name);
+    void onMemberInfoChanged(QString groupid,Member member);
+    void onMemberListChanged(QString operType,QString groupid,MemberList memberList);
+    void onCreateGroupResult(QString result);
+    void onAddGroupResult(QString result);
+    void onRemoveGroupResult(QString result);
+    void onTransferGroupResult(QString result);
+    void onSetGroupSetResult(QString result);
+    void onSetGroupInfoResult(QString result);
+    void onGetGroupSetResult(QString result,QString verify_type,QString is_allow);
+    void onGetGroupInfoResult(QString result,Group group);
+    void onInviteMemberResult(QString result);
+    void onRemoveMemberResult(QString result);
+    void onSetMemberInfoResult(QString result);
+    void onGetMemberInfoResult(QString result,Member member);
+    void onGetMemberListResult(QString result,MemberList memberList);
+    void onGetGroupFileListResult(FileInfoList fileInfoList);
+    void onDeleteGroupFileResult(QString result);
+    void onGetGroupMemberListReslut(int code, QString id, MemberList list);
     //servie重启信号
     void onServiceRestart();
     //联系人信息更新
     void onContactInfoChanged(int oper,Contact user);
 
     //会话列表头像更新
-    void onChatAvatarChanged(int64 id,QString avatar);
+    void onChatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
     void onChatOfflineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
@@ -213,15 +315,29 @@ private slots:
     //上传文件返回
     void onChatUploadFile(int64 tagetid, QString jasoninfo, int code);
     //文件进度
-    void onChatFileProgress(int extra_req, int process, QString info);
+    void onChatFileProgress(int extra_req, int process, QString info,QString localId,QString targetId);
+
     //下载文件返回
-    void onChatDownloadFile(int code, QString localpath, int64 tagetid);
+    void onChatDownloadFile(int code, QString localpath, QString tagetid);
     //上传图片返回
     void onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
     void onChatDownloadImage(int code, QString localpath, int64 tagetid);
     //获取文件列表返回
-    void onChatGetFileList(int code, std::vector<MsgFileInfo> files);
+    void onChatGetFileList(int code, FileInfoList fileList);
+    //获取用户信息返回
+    void onGetUserInfo(int code, Contact contact);
+    //从网络获取联系人返回
+    void onSearchFromNetResult(int code, ContactList user, ContactList group);
+    //从网络获取联系人返回
+    void onSearchFromLocalResult(int code, ContactList user, ContactList group);
+    //更新联系人信息返回
+    void onUpdateContactInfoResult(int code);
+    //添加联系人返回
+    void onAddContactResult(int code);
+    //删除联系人返回
+    void onRemoveContactResult(int code);
+
 private:
     void initDBusConnect();
 };

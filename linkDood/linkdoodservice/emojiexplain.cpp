@@ -6,6 +6,10 @@
 
 using namespace std;
 
+QMap<QString, QString> EmojiExplain::m_EmojiDynamicExplain;
+QMap<QString, QString> EmojiExplain::m_EmojiFace;
+QMap<QString, QString> EmojiExplain::m_EmojiInstruct;
+bool EmojiExplain::isInit = false;
 EmojiExplain::EmojiExplain()
 {
     init();
@@ -13,75 +17,80 @@ EmojiExplain::EmojiExplain()
 
 void EmojiExplain::EmojiParseFrom(string src, string &target)
 {
+    if(!isInit){
+        init();
+        isInit = true;
+    }
+    QString source = QString::fromStdString(src);
+    for(auto iter= m_EmojiFace.begin(); iter != m_EmojiFace.end();++iter){
+        QString  code = iter.value();
+        QString  path = "qrc:/res/smilies/emoji_face/"+iter.key()+".png";
+        QString emojiPath = "<img src=\""+path+"\" height=\"36\" width=\"36\""+"/>";
+        source.replace(code,emojiPath);
+    }
 
+    for(auto iter= m_EmojiInstruct.begin(); iter != m_EmojiInstruct.end();++iter){
+        QString  code = iter.key();
+        QString  path = "qrc:/res/smilies/instruct/"+iter.value()+".png";
+        QString emojiPath = "<img src=\""+path+"\" height=\"36\" width=\"36\""+"/>";
+        source.replace(code,emojiPath);
+    }
+    target = source.toStdString();
 }
 
 void EmojiExplain::EmojiParseTo(string src, string &target)
 {
-    qDebug() << Q_FUNC_INFO;
-    smatch strMatch;
-    char buff[] = EMOJI_REG;
-    qDebug() << Q_FUNC_INFO <<"11111111111111111111111111";
-    std::regex  reg(EMOJI_REG,std::regex_constants::extended);
-    qDebug() << Q_FUNC_INFO <<"11111111111144411111111111111";
-    string emojiName = "";
-    string emojiPath = "";
-    string emojiAllPath = "";
-    string destStr = "";
 
-    qDebug() << Q_FUNC_INFO <<"src:"<<src.c_str();
-    bool ret = regex_search(src, strMatch, reg);
-    qDebug() << Q_FUNC_INFO <<"ret:"<<ret;
-    while(regex_search(src, strMatch, reg))
-    {
-        emojiPath = emojiAllPath = strMatch[1];
-        qDebug() << Q_FUNC_INFO << "emojiPath:"<<emojiPath.c_str();
-        int emojiAllPathLen = emojiAllPath.size();
-        if(emojiAllPathLen == 0)
-            continue;
-        int emojiNameLen = 0;
-        int count = 0;
-
-        int pos = emojiAllPath.rfind("/");
-        std::string fileName = emojiAllPath.substr(pos);
-        fileName = fileName.substr(0,fileName.length()-4);
-        qDebug() << Q_FUNC_INFO << "fileName:"<<fileName.c_str();
-
-//        for(int j = emojiAllPathLen - 1; j > 0; j--)
-//        {
-//            if(emojiPath[j] == '/')
-//            {
-//                if(count == 0)
-//                {
-//                    count++;
-//                    emojiNameLen = emojiAllPathLen - j;
-//                    emojiName.assign(emojiAllPath, j, emojiNameLen);
-//                    continue;
-//                }
-//                emojiPath.assign(emojiAllPath, j, emojiAllPathLen - j -emojiNameLen);
-//                break;
-//            }
-//        }
-        if(emojiPath.find("smilies/emoji_face")>0)
-        {
-             destStr = Common::Hex2Emoji(emojiName);
-             //	替换字符串
-             regex_replace(src, reg, destStr);
-            continue;
-        }
-        else if(emojiPath == "smilies/dynamic_expression")
-        {
-
-            continue;
-        }
-        else if(emojiPath == "smilies/instruct")
-        {
-
-            continue;
-        }
-
+    if(!isInit){
+        init();
+        isInit = true;
     }
-    target = src;
+    std::string msg = src;
+    int len = strlen(EMOJI_IMAGE);
+    std::size_t posFirst;
+    while((posFirst = msg.find(EMOJI_IMAGE))!= std::string::npos){
+        if(std::string::npos != posFirst){
+            int nBeg = posFirst+len,nEnd=0;
+
+            std::string tmp = msg.substr(nBeg);
+            std::size_t posSec = tmp.find(EMOJI_IMAGE);
+
+            std::string path = msg.substr(nBeg,posSec);
+            QString tmpPath= QString::fromStdString(path);
+            std::string name= path.substr(path.rfind("/")+1,path.rfind(".")-path.rfind("/")-1);
+            if(tmpPath.contains("smilies/emoji_face")){
+                name = Common::Hex2Emoji(name);
+            }
+            if(tmpPath.contains("smilies/instruct")){
+                name = m_EmojiInstruct.key(QString::fromStdString(name)).toStdString();
+            }
+            std::string prev = msg.substr(0,posFirst);
+            nEnd=nBeg+posSec+len;
+            std::string end = msg.substr(nEnd);
+            msg = prev+name+end;
+        }
+    }
+    target = msg;
+}
+
+void EmojiExplain::dyEmojiParseFrom(QString src, QString &target, QString &explain)
+{
+    qDebug()<<Q_FUNC_INFO <<"dyddddd:"<<src;
+    src.remove("[");
+    src.remove("]");
+    src.remove(".gif");
+
+    explain = "["+m_EmojiDynamicExplain[src]+"]";
+    target = "qrc:/res/smilies/dynamic_expression/"+src+".gif";
+}
+
+void EmojiExplain::dyEmojiParseTo(QString src, QString &target, QString &explain)
+{
+    QString value = m_EmojiDynamicExplain.value(src,"");
+    if(value != ""){
+        explain = "["+value+"]";
+    }
+    target = src+".gif";
 }
 
 void EmojiExplain::init()
@@ -1048,7 +1057,7 @@ void EmojiExplain::init()
     m_EmojiFace["f09f9abc"] = "";
     m_EmojiFace["f09f9abd"] = "";
     m_EmojiFace["f09f9abe"] = "";
-    m_EmojiFace["f09f9b80"] = "";
+    m_EmojiFace["f09f9b]80"] = "";
     m_EmojiFace["f09f9cb8"] = "";
 
     m_EmojiInstruct["[微笑]"] = "weixiao";
@@ -1086,4 +1095,9 @@ void EmojiExplain::init()
     m_EmojiInstruct["[左哼哼]"] = "zuohengheng";
     m_EmojiInstruct["[右哼哼]"] = "youhengheng";
     m_EmojiInstruct["[不高兴]"] = "bugaoxing";
+
+    QList<QString>  list = m_EmojiFace.keys();
+    for(auto item:list){
+        m_EmojiFace[item] = QString::fromStdString(Common::Hex2Emoji(item.toStdString()));
+    }
 }

@@ -22,6 +22,7 @@
 
 #include "cdoodlistmodel.h"
 #include "linkdoodclient.h"
+#include "linkdoodui_workspace.h"
 
 class CDoodSessionListItem;
 
@@ -49,6 +50,9 @@ public:
 
     Q_INVOKABLE void clickChatItem(QString id);
 
+    Q_INVOKABLE void entrySysMsgPage();
+    Q_INVOKABLE void exitSysMsgPage();
+
     int  unreadCount()const;
     //count 负数：未读数减少
     void setUnreadCount(int count);
@@ -58,7 +62,10 @@ signals:
     void chatListChanged(const Chat_UIList& chats);
 
 private slots:
+    void onAvatarChanged(QString targetId,QString avatar);
     void onChatListChanged(const Chat_UIList& chats);
+    void onGetUserInfo(int code, Contact contact);
+    void onGetGroupInfo(QString code, Group group);
     //会话列表(通知栏)新消息更新通知
     void onSessionMessageNotice(QString targetId,
                                 QString msgId,
@@ -69,13 +76,19 @@ private slots:
                                 QString unreadmsg);
     //监听离线消息通知
     void onOfflineMsgNotice(IMOfflineMsgList msgList);
+
+    //系统消息推送
+    void onSysMessageNotice(IMSysMsg sysMsg);
+
 private:
     void initConnect();
 
 private:
     LinkDoodClient *m_pClient;
-    int mUnreadCount;
+    int  mUnreadCount;
+    bool mIsSysMsgPage;
     QMap<QString, CDoodSessionListItem*> sessionListMap;
-
+    linkdoodui_Workspace* m_pUiManager;
+    QString updateItemInfor(QString targetId,QString name,  QString avater);
 };
 #endif // CDOODSESSIONLISTMANAGER_H

@@ -8,6 +8,7 @@
 #include <SyberosGuiCache>
 #include <cgui_application.h>
 #include <cworkspace.h>
+#include "cdoodchatmanagermodel.h"
 
 #include <QScopedPointer>
 
@@ -23,6 +24,13 @@ class CDoodEnterpriseManager;
 class CDoodOrgManager;
 class CDoodUserProfileManager;
 class CDoodEmojiManager;
+class CDoodAddContactManager;
+class CDoodGroupManager;
+class CDoodMemberManager;
+class CDoodFriendVerificationManager;
+class CDoodSysMsgManager;
+class CDoodLocalSearchManager;
+class CDoodFileViewManager;
 
 class linkdoodui_Workspace : public CWorkspace
 {
@@ -38,11 +46,13 @@ public:
     void onLaunchComplete(Option option, const QStringList& params);
 
     void openByUrl(const QUrl& url);
-
+    void getGroupInfoFromList(QString groupId,QString&name,QString&avatar);
+    void getContactInforFromList(QString id,QString& name,QString& avater);
 private:
     void showLinkDood(const QString &id, const QString &pwd);
     void setActiveWindow();
-
+protected slots:
+    void onChatPageChanged();
 private:
     QSharedPointer<CDoodLoginManager> m_pLoginManager;
     QSharedPointer<CDoodSessionListManager> m_pSessionListManager;
@@ -53,9 +63,17 @@ private:
     QSharedPointer<CDoodOrgManager> m_pOrgManager;
     QSharedPointer<CDoodEmojiManager> m_pEmojiManager;
     QSharedPointer<CDoodEmojiManager> m_pDyEmojiManager;
+    QSharedPointer<CDoodGroupManager> m_pGroupManager;
+    QSharedPointer<CDoodMemberManager> m_pMemberManager;
     QSharedPointer<LinkDoodClient> m_pClient;
     QSharedPointer<CDoodUserProfileManager> m_pUserProfileManager;
+    QSharedPointer<CDoodAddContactManager> m_pAddContactManager;
+    QSharedPointer<CDoodFriendVerificationManager> m_pFriendVerificationManager;
+    QSharedPointer<CDoodSysMsgManager> m_pSysmsgManager;
+    QSharedPointer<CDoodLocalSearchManager> m_pLocalSearchManager;
+    QSharedPointer<CDoodFileViewManager> m_pFileViewManager;
 
+    CDoodChatManagerModel* m_pChatModel;
 };
 
 

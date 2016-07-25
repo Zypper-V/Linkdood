@@ -21,6 +21,9 @@ class CDoodContactItem : public QObject
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
     Q_PROPERTY(QString sectionKey READ sectionKey WRITE setSection NOTIFY sectionChanged)
     Q_PROPERTY(QString onlineStatus READ onlineStatus WRITE setOnlineStatus NOTIFY onlineStatusChanged)
+    Q_PROPERTY(QString extend READ extend WRITE setExtend NOTIFY extendChanged)
+    Q_PROPERTY(QString userOrGroup READ userOrGroup WRITE setUserOrGroup NOTIFY userOrGroupChanged)
+    Q_PROPERTY(QString isChoose READ isChoose WRITE setIsChoose NOTIFY isChooseChanged)
 
 
 public:
@@ -64,9 +67,17 @@ public:
     QString onlineStatus() const;
     QString setOnlineStatus(const QString &onlineStatus);
 
+    QString extend() const;
+    QString setExtend(const QString &ext);
+
+    QString userOrGroup() const;
+    QString setUserOrGroup(const QString &data);
     bool isOrg() const;
     bool setIsOrg(bool isOrg);
 
+    QString isChoose() const;
+    QString setIsChoose(const QString &data);
+    QString clearIsChoose(const QString &data);
 signals:
     void idChanged();
     void nameChanged();
@@ -82,6 +93,9 @@ signals:
     void isOrgChanged();
     void sectionChanged();
     void onlineStatusChanged();
+    void extendChanged();
+    void userOrGroupChanged();
+    void isChooseChanged();
 public slots:
 
 private:
@@ -98,7 +112,10 @@ private:
     QString mServer;
     QString mSection;
     QString mOnlineStatus;
+    QString mExtend;
+    QString mUserOrGroup;
     bool mIsOrg;
+    QString mIsChoose;
 
 };
 #endif // CDOODCONTACTITEM_H

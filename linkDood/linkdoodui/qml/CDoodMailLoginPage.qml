@@ -274,7 +274,7 @@ CPage {
                         gToast.requestToast("密码不能为空","","");
                     } else {
                         loadingDialog.show();
-                        loginManager.login(srvLineEdit.text, userLineEdit.text, passWordEdit.text);
+                        loginManager.login(srvLineEdit.text+":7", userLineEdit.text, passWordEdit.text);
                     }
                 }
 

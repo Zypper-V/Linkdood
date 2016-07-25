@@ -14,11 +14,10 @@ QString CDoodContactItem::id() const
 
 QString CDoodContactItem::setId(const QString &data)
 {
-    if(mId == data) {
-        return data;
+    if(data != "" && mId != data){
+        mId = data;
+        emit idChanged();
     }
-    mId = data;
-    emit idChanged();
     return mId;
 }
 
@@ -29,10 +28,9 @@ QString CDoodContactItem::name() const
 
 QString CDoodContactItem::setName(const QString &data)
 {
-    if(mName == data) {
-        return data;
+    if(data != "" && mName != data){
+        mName = data;
     }
-    mName = data;
     emit nameChanged();
     return mName;
 }
@@ -44,46 +42,69 @@ QString CDoodContactItem::thumbAvatar() const
 
 QString CDoodContactItem::setThumbAvatar(const QString &data)
 {
-    if(mThumbAvatar == data) {
-        return data;
+    if(data != "" && mThumbAvatar != data){
+        mThumbAvatar = data;
     }
-    mThumbAvatar = data;
     emit thumbAvatarChanged();
     return mThumbAvatar;
 }
 
 QString CDoodContactItem::sectionKey() const
 {
-    qDebug() << Q_FUNC_INFO<<"fdgdddddddddddddddddddddddd";
     return mSection;
 }
 
-QString CDoodContactItem::setSection(const QString &section)
+QString CDoodContactItem::setSection(const QString &data)
 {
-    if(mSection == section) {
-        return section;
+    if(data != "" && mSection != data){
+        mSection = data;
+        emit sectionChanged();
     }
-    mSection = section;
-    emit sectionChanged();
-    qDebug() << Q_FUNC_INFO;
     return mSection;
 }
 
 QString CDoodContactItem::onlineStatus() const
 {
-    qDebug() << Q_FUNC_INFO<<"7777777777777:"<< mOnlineStatus;
     return mOnlineStatus;
 }
 
-QString CDoodContactItem::setOnlineStatus(const QString &onlineStatus)
+QString CDoodContactItem::setOnlineStatus(const QString &data)
 {
-    if(mOnlineStatus == onlineStatus) {
-        return onlineStatus;
+    if(data != "" && mOnlineStatus != data){
+        mOnlineStatus = data;
+        emit onlineStatusChanged();
     }
-    mOnlineStatus = onlineStatus;
-    emit onlineStatusChanged();
-    qDebug() << Q_FUNC_INFO;
     return mOnlineStatus;
+}
+
+QString CDoodContactItem::extend() const
+{
+    qDebug() << Q_FUNC_INFO;
+    return mExtend;
+}
+
+QString CDoodContactItem::setExtend(const QString &data)
+{
+    if(data != "" && mExtend != data){
+        mExtend = data;
+        emit extendChanged();
+    }
+    return mExtend;
+}
+
+QString CDoodContactItem::userOrGroup() const
+{
+    return mUserOrGroup;
+}
+
+QString CDoodContactItem::setUserOrGroup(const QString &data)
+{
+    if(mUserOrGroup == data)
+        return data;
+    mUserOrGroup = data;
+    emit userOrGroupChanged();
+    qDebug() << Q_FUNC_INFO;
+    return mUserOrGroup;
 }
 
 bool CDoodContactItem::isOrg() const
@@ -99,6 +120,26 @@ bool CDoodContactItem::setIsOrg(bool isOrg)
     mIsOrg = isOrg;
     emit isOrgChanged();
     return mIsOrg;
+}
+
+QString CDoodContactItem::isChoose() const
+{
+    return mIsChoose;
+}
+
+QString CDoodContactItem::setIsChoose(const QString &data)
+{
+    if(mIsChoose==data){
+        return data;
+    }
+    mIsChoose=data;
+    emit isChooseChanged();
+    return mIsChoose;
+}
+
+QString CDoodContactItem::clearIsChoose(const QString &data)
+{
+    mIsChoose=data;
 }
 
 QString CDoodContactItem::gender() const
@@ -154,11 +195,10 @@ QString CDoodContactItem::isStar() const
 
 QString CDoodContactItem::setIsStar(const QString &data)
 {
-    if(mIsStar == data) {
-        return data;
+    if(data != "" && mIsStar != data){
+        mIsStar = data;
+        emit isStarChanged();
     }
-    mIsStar = data;
-    emit isStarChanged();
     return mIsStar;
 }
 
@@ -169,11 +209,10 @@ QString CDoodContactItem::isVip() const
 
 QString CDoodContactItem::setIsVip(const QString &data)
 {
-    if(mIsVip == data) {
-        return data;
+    if(data != "" && mIsVip != data){
+        mIsVip = data;
+        emit isVipChanged();
     }
-    mIsVip = data;
-    emit isVipChanged();
     return mIsVip;
 }
 
@@ -184,11 +223,10 @@ QString CDoodContactItem::pinYin() const
 
 QString CDoodContactItem::setPinYin(const QString &data)
 {
-    if(mPinYin == data) {
-        return data;
+    if(data != "" && mPinYin != data){
+        mPinYin = data;
+        emit pinYinChanged();
     }
-    mPinYin = data;
-    emit pinYinChanged();
     return mPinYin;
 }
 
@@ -221,4 +259,5 @@ QString CDoodContactItem::setServer(const QString &data)
     emit serverChanged();
     return mServer;
 }
+
 

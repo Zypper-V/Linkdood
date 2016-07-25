@@ -5,66 +5,6 @@ Item {
     id: contactMainPage
     anchors.fill: parent
 
-//    property Component contactRootPageCompoent: CDoodContactRootPage {
-//        anchors.fill: parent
-//    }
-
-//    property Component cDoodEnterpriseCompoent: CDoodEnterprise {
-//        anchors.fill: parent
-//    }
-
-
-
-//    function showChatPage(chatName, targetid, chatType, icon) {
-//        console.log("CDoodRootTabbView  showChatPage !!!")
-
-//        pageStack.pop(rootTabViewPage, true)
-
-//        var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
-
-//        pageStack.push(component,
-//                       {  chatName : chatName,
-//                           targetid: targetid,
-//                           chatType: chatType,
-//                           icon: icon
-//                       });
-//        component.initMessage();
-//    }
-
-//    Rectangle{
-//        id:contactRootTitleBar
-
-//        anchors.top: parent.top
-//        anchors.left: parent.left
-//        width:parent.width
-//        height: 110
-//        color:"#1c1b21"
-//        Text{
-//            id:titleText
-
-//            anchors.centerIn: parent
-
-//            text:qsTr("天工圆圆")
-//            color:"white"
-//            font.pixelSize: 36
-//        }
-//        Image {
-//            id: login
-
-//            anchors{
-//                verticalCenter:titleText.verticalCenter
-//                right:parent.right
-//                rightMargin: 48
-//            }
-//            source: "qrc:/res/exit.png"
-//            MouseArea{
-//                anchors.fill: parent
-//                onClicked: {
-//                    loginManager.logout();
-//                }
-//            }
-//        }
-//    }
     CTabView {
         id: myTabView
 
@@ -72,6 +12,11 @@ Item {
         anchors.bottom: parent.bottom
         tabBar: CDoodTabViewEnterStyle{
             tabView: myTabView
+            onTabClick: {
+                if(myTabView.currentIndex == 1){
+                    enterpriseManager.getFarOrgs();
+                }
+            }
         }
         CTab {
             title: qsTr("联系人")

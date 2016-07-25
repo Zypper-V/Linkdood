@@ -2,6 +2,7 @@
 
 #include "SDKTypes.h"
 #include <string>
+#include <memory>
 
 namespace service {
 	struct _Usesr__isset {
@@ -90,6 +91,11 @@ namespace service {
 		_Usesr__isset _user_isset;
 	};
 
+	typedef std::shared_ptr<User> UserPtr;
+
 	template<typename T>
 	T& userCast(User& val){ return dynamic_cast<T&>(val); }
+
+	template <typename T>
+	std::shared_ptr<T> userPointerCast(UserPtr val){ return std::dynamic_pointer_cast<T>(val); }
 }

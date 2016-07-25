@@ -29,15 +29,16 @@ Item {
         section.criteria: ViewSection.FullString
         section.delegate: Rectangle {
             width: contactRootPage.width
-            height: 58
-            color: "#e7e7e7"
-
+            height: textSection.text !=="" ? 38 :0
+            color: "#F2F2F2"
             Text {
+                id:textSection
+
                 anchors.left: parent.left
                 anchors.leftMargin: 40
                 anchors.verticalCenter: parent.verticalCenter
-                text: section
-                font.pixelSize: 32
+                text: (section !== "app" ? section:"")
+                font.pixelSize: 26
                 color: "#333333"
                 onTextChanged: {
                     console.log("xxxxxx:"+text)
@@ -49,7 +50,7 @@ Item {
             id:contactListDelegate
 
             width: contactListView.width
-            height: 104
+            height: 100
 
             Timer {
                 id:pressTimer
@@ -60,6 +61,7 @@ Item {
                     if(mouse.bPress && !mouse.bMove){
                         menu.id = model.modelData.id;
                         menu.isStar= model.modelData.isStar;
+                        menu.name  = model.modelData.name;
                         menu.show();
                     }
                     pressTimer.stop();
@@ -70,7 +72,6 @@ Item {
 
                 anchors.fill: parent
 
-                property var pressTime;
                 property bool bPress
                 property bool bMove
                 onPressed: {
@@ -82,11 +83,17 @@ Item {
                         mousePressBackgroud.visible = true
                     }
 
+                    if(model.modelData.id==="2"){
+                        pageStack.push(Qt.resolvedUrl("CDoodGroupListPage.qml"));
+                        return;
+                    }else if(model.modelData.id==="6"){
+                        chatManager.switchToChatPage(loginManager.userId,model.modelData.name,"6",0,"");
+                        return;
+                    }
+
                     bMove  = false;
                     bPress = true;
                     pressTimer.start();
-
-                    pressTime = (new Date()).getTime();
                 }
 
                 onPositionChanged: {
@@ -94,11 +101,12 @@ Item {
                 }
 
                 onReleased: {
-                    var curTime = (new Date()).getTime();
-                    var dx = (curTime - pressTime)/1000;
-
                     background.color = "#ffffff"
                     mousePressBackgroud.visible = false
+
+                    if(model.modelData.id==="2"){
+                        return;
+                    }
                     bPress = false;
                     bMove  = false;
                     if(pressTimer.running){
@@ -107,13 +115,8 @@ Item {
                         userdataManager.setGender(model.modelData.gender);
                         userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
                         userdataManager.setId(model.modelData.id);
+                        userdataManager.setIsFriend(contactManager.isFriend(model.modelData.id));
                         pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
-                    }
-
-                    if(dx<0.5){
-
-                    }else{
-
                     }
                 }
 
@@ -138,8 +141,10 @@ Item {
                 Rectangle {
                     id : background
                     anchors.fill: parent
-                    anchors.topMargin: 1
-                    anchors.bottomMargin: 3
+                    anchors.top:parent.top
+                    anchors.bottom: parent.bottom
+//                    anchors.topMargin: 1
+//                    anchors.bottomMargin: 3
                     anchors.leftMargin: 2
                     anchors.rightMargin:  2
 
@@ -153,8 +158,16 @@ Item {
                         height: 90
                         radius: 6
                         name:""
-                        headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                        iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
+                        iconSource:setIcon(setType(),model.modelData.thumbAvatar)
+                        function setType(){
+                            if(model.modelData.id === "2"){
+                                return "2";
+                            }else if(model.modelData.id === "6"){
+                                return "6";
+                            }
+                            return "1";
+                        }
+
                         Rectangle{
 
                             visible: model.modelData.isStar ==="1"
@@ -172,7 +185,9 @@ Item {
                                 anchors.centerIn: parent
                             }
                             onVisibleChanged: {
-                                indicatorDialog.hide();
+                                if(indicatorDialog !== null){
+                                    indicatorDialog.hide();
+                                }
                             }
                         }
                     }
@@ -182,8 +197,8 @@ Item {
                         anchors.leftMargin: 30
                         anchors.rightMargin: 20
                         anchors.top: headPortraitImage.top
-                        anchors.topMargin: 10
-                        font.pixelSize: 32
+                        anchors.topMargin: model.modelData.sectionKey==="app"?28:10
+                        font.pixelSize: model.modelData.sectionKey==="app"?28:24
                         clip: true
                         color: "#333333"
                         verticalAlignment: Text.AlignVCenter
@@ -231,13 +246,14 @@ Item {
 
         property string isStar
         property string id: ""
-
+        property string name: ""
+        contentItemBackGroundOpacity:0.73
         contentItem:Rectangle{
 
             color: "white"
             radius: 10
             width:489
-            height: 190
+            height: 410
             Text{
                 id:title
 
@@ -259,13 +275,13 @@ Item {
                 id:btnStar
 
                 width:parent.width
+                height: 100
                 leftText: menu.isStar ==="1"?qsTr("取消V标好友") :qsTr("标为V标好友") ;
                 radius: 4
 
                 anchors.top: line.bottom
                 anchors.topMargin: 10
-                anchors.bottom:parent.bottom
-                anchors.bottomMargin: 2
+
                 onClicked: {
                     menu.hide();
 
@@ -278,6 +294,40 @@ Item {
                     indicatorDialog.show();
                 }
             }
+            UserProfileButton{
+                id:btnDel
+
+                width:parent.width
+                height: 100
+                leftText: qsTr("删除好友") ;
+                radius: 4
+
+                anchors.top: btnStar.bottom
+                anchors.topMargin: 10
+                onClicked: {
+                    menu.hide();
+
+                    contactManager.removeContact(menu.id);
+                    indicatorDialog.show();
+                }
+            }
+            UserProfileButton{
+                id:btnRemark
+
+                width:parent.width
+                height:100
+                leftText: qsTr("修改备注") ;
+                radius: 4
+                showLine:false
+
+                anchors.top: btnDel.bottom
+                anchors.topMargin: 10
+                onClicked: {
+                    menu.hide();
+                    inputDialog.setText(menu.name);
+                    inputDialog.show();
+                }
+            }
         }
 
         onBackKeyReleased: {
@@ -287,6 +337,26 @@ Item {
         onOutAreaClicked: {
             console.log("222222222222222222222222222222")
             menu.hide();
+        }
+    }
+    Connections{
+        target: contactManager
+        onRemoveContactResult:{
+            indicatorDialog.hide();
+        }
+        onUpdateContactInfoResult:{
+            indicatorDialog.hide();
+        }
+    }
+
+    CInputDialog{
+        id:inputDialog
+
+        titleText: qsTr("修改备注")
+        messageTextColor:"#777777"
+        onAccepted: {
+            contactManager.updateContactInfo(menu.id,"",inputDialog.text());
+            indicatorDialog.show();
         }
     }
 }

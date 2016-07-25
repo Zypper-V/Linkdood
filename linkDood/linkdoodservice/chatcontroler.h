@@ -118,34 +118,30 @@ public:
     * @param[in] path 传入文件本地路径
     * @param[in] property 传入文件属性
     ************************************************************************/
-    void uploadFile(QString path, QString property);
+    void uploadAndSendFileMsg(Msg msg);
 
-    /************************************************************************
+    /****************************************
     * @brief downloadFile
     * @description: 下载文件
     * @param[in] path 传入下载路径
     * @param[in] url 传入url
-    * @param[in] property 传入文件属性
-    ************************************************************************/
-    void downloadFile(QString path, QString url, QString property);
+    ***************************************/
+    void downloadFile(QString path, QString url, QString json,QString localId,QString targetId);
 
-    /************************************************************************
+    /*******************************
     * @brief uploadImage
     * @description: 上传照片
     * @param[in] thumbimg 传入缩略图
     * @param[in] srcimg 传入原图
     * @param[in] property 传入图片属性
-    ************************************************************************/
-    void uploadImage(QString thumbimg, QString srcimg, QString property);
+    *********************************/
+    void uploadAndSendImageMsg(Msg);
 
-    /************************************************************************
+    /***************************************
     * @brief downloadImage
     * @description: 下载图片
-    * @param[in] url 传入图片url
-    * @param[in] property 传入图片属性
-    * @param[in] await  传入接收结果回调
-    ************************************************************************/
-    void downloadImage(QString url, QString property);
+    ***************************************/
+    void downloadImage(Msg msgImg);
 
     /************************************************************************
     * @brief decryptFile
@@ -166,10 +162,12 @@ public:
     ***********************************************************************/
     void getFileList(int64 targetid, int64 fileid, int count, int flag);
 
+    //获取联系人信息
+    void getUserInfo(QString userid);
 
 signals:
     //监听头像更新
-    void avatarChangedBack(int64 id,QString avatar);
+    void chatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
    void offlineMsgNoticeBack(IMOfflineMsgList msgList);
     //监听新消息通知
@@ -188,20 +186,17 @@ signals:
     void deleteMessagesBack(int code);
 
     //上传头像返回
-    void uploadAvatarBack(std::string orgijson, std::string thumbjson, int code);
-    //上传文件返回
-    void uploadFileBack(int64 tagetid, std::string jasoninfo, int code);
+    void uploadAvatarBack(QString orgijson, QString thumbjson, int code);
     //文件进度返回
-    void fileProgressBack(int32 extra_req, int32 process, std::string info);
+    void fileProgressBack(int extra_req, int process, QString info,QString localId,QString targetId);
+
     //下载文件返回
-    void downloadFileBack(int code, std::string localpath, int64 tagetid);
-    //上传图片返回
-    void uploadImageBack(int64 tagetid, std::string orgijson, std::string thumbjson, int code);
-    //下载图片返回
-    void downloadImageBack(int code,  std::string localpath, int64 tagetid);
+    void downloadFileBack(int code, QString localpath, QString tagetid);
     //获取文件列表返回
     void getFileListBack(int code, FileInfoList fileList);
 
+    //获取联系人信息返回
+    void getUserInfoBack(int code, Contact user);
 
 private:
     //处理时间显示
@@ -218,7 +213,7 @@ private:
     * @brief onSendMesage
     * @description: 发送消息结果回调
     ************************************/
-    void _sendMesage(service::ErrorInfo&, int64/*发送时间*/,int64/*消息ID*/,QString localId);
+    void _sendMesage(service::ErrorInfo&, int64/*发送时间*/,int64/*消息ID*/,QString localId,QString targetId);
     /************************************
     * @brief onGetMesage
     * @description: 获取消息结果回调
@@ -236,23 +231,33 @@ private:
     //上传头像回调
     void _uploadAvatar(std::string orgijson, std::string thumbjson, int code);
     //上传文件回调
-    void _uploadFile(int64 tagetid, std::string jasoninfo, int code);
+    void _uploadFile(int64 tagetid,int64 operId, std::string jasoninfo, int code,Msg fileMsg);
     //文件进度
-    void _fileProgress(int32 extra_req, int32 process, std::string info);
+
+    void _fileProgress(int32 extra_req, int32 process, std::string info,QString localId,QString targetId);
     //下载文件回调
-    void _downloadFile(service::ErrorInfo& info, std::string localpath, int64 tagetid);
+    void _downloadFile(service::ErrorInfo& info, std::string localpath, int64 tagetid, QString fileName, QString encryKey,QString localId);
     //上传图片回调
-    void _uploadImage(int64 tagetid, std::string orgijson, std::string thumbjson, int code);
+    void _uploadImage(int64 tagetid, std::string orgijson, std::string thumbjson, int code,Msg msg);
     //下载图片回调
-    void _downloadImage(service::ErrorInfo& info, std::string localpath, int64 tagetid);
+    void _downloadImage(service::ErrorInfo& info, std::string localpath, int64 tagetid,Msg msgImg);
     //获取文件列表回调
     void _getFileList(service::ErrorInfo& info, std::vector<FileInfo> files);
+    void _getUserInfo(service::ErrorInfo info, service::User user);
 
     Msg msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
     service::MsgText QmsgtextTomsgtext(Msg Qmsgtext);
 
 private:
     QString mSessionTargetID;
+    //处理接收到的图片消息
+    void handleReciveImgMsg(std::shared_ptr<service::Msg> msg);
+    //处理接收到的文件消息
+    void handleReciveFileMsg(std::shared_ptr<service::Msg> msg);
+    //判断文件是否存在
+    bool judgeFileExist(QString urlPath, int msgType);
+    void handleReciveDyEmojiMsg(std::shared_ptr<service::Msg> msg);
+    void handleRecevieTextMsg(std::shared_ptr<service::Msg> msg);
 };
 
 template<typename T>

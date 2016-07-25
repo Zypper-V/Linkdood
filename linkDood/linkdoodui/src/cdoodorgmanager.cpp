@@ -4,10 +4,15 @@
 
 CDoodOrgManager::CDoodOrgManager(QObject *parent) : CDoodListModel(parent)
 {
-//   CDoodOrgItem *item = new CDoodOrgItem(this);
-//    item->setId("1");
-//    item->setName("北信源");
-//    addItem(item);
+    //    CDoodOrgItem *item = new CDoodOrgItem(this);
+    //    item->setId("1");
+    //    item->setName("北信源");
+    //    addItem(item);
+}
+
+void CDoodOrgManager::resetOrgList()
+{
+    reset();
 }
 
 void CDoodOrgManager::addOrg(QString id, const QString &name)
@@ -18,8 +23,13 @@ void CDoodOrgManager::addOrg(QString id, const QString &name)
     item->setId(id);
     item->setName(name);
     addItem(item);
-    qobject_cast<CDoodOrgItem*>(_list->at(_list->count()-2))->setSelect("");
-    qobject_cast<CDoodOrgItem*>(_list->at(_list->count()-1))->setSelect("ss");
+    if(_list->count()>1){
+        qobject_cast<CDoodOrgItem*>(_list->at(_list->count()-2))->setSelect("");
+        qobject_cast<CDoodOrgItem*>(_list->at(_list->count()-1))->setSelect("ss");
+    }
+    if(_list->count()==1){
+        qobject_cast<CDoodOrgItem*>(_list->at(_list->count()-1))->setSelect("ss");
+    }
 }
 
 void CDoodOrgManager::selectOrg(QString id)

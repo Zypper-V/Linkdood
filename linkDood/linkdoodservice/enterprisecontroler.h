@@ -4,14 +4,16 @@
 #endif // ENTERPRISECONTROLER_H
 #include<QObject>
 #include<IEnterpriseService.h>
+#include<IEnterpriseObserver.h>
 #include "linkdoodtypes.h"
-class EnterpriseControler:public QObject
+class EnterpriseControler:public QObject,public IEnterpriseObserver
 {
     Q_OBJECT
 public:
 
     EnterpriseControler(QObject *parent = 0);
     ~EnterpriseControler();
+    void onUpdateRootFinished();
     //调用底层接口并通过回调获取结果
     void getSonOrgs(QString orgid);
     void _getSonOrgs(service::ErrorInfo info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers);

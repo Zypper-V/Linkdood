@@ -3,16 +3,17 @@
 
 namespace service {
 	struct _Contact__isset {
-		_Contact__isset(void):isStar(false),isVip(false),pinyin(false),remark(false),server(false){}
+		_Contact__isset(void):isStar(false),isVip(false),pinyin(false),remark(false),server(false),team(false){}
 		bool isStar;
 		bool isVip;
 		bool pinyin;
 		bool remark;
 		bool server;
+		bool team;
 	};
 	class Contact : public User {
 	public:
-		Contact(void) :isStar(0), isVip(0){}
+		Contact(void) :isStar(0), isVip(0), team(0){}
 		virtual ~Contact(void){}
 		void init(){}
 		void __set_isStar(const int val){
@@ -35,6 +36,10 @@ namespace service {
 			server = val;
 			__isset.server = true;
 		}
+		void __set_team(const int val){
+			team = val;
+			__isset.team = true;
+		}
 		bool operator == (const Contact & rhs)const{
 			if (__isset.isStar != rhs.__isset.isStar)
 				return false;
@@ -56,11 +61,16 @@ namespace service {
 				return false;
 			else if (__isset.server && !(server == rhs.server))
 				return false;
+			if (__isset.team != rhs.__isset.team)
+				return false;
+			else if (__isset.team && !(team == rhs.team))
+				return false;
 			return true;
 		}
 	public:
 		int8 isStar;	       //星标好友：1.星标好友，2.不是星标
 		int8 isVip;            //V标好友： 1.V标好友,  2.不是V标
+		int  team;			   //分组
 		std::string pinyin;	   //名称拼音
 		std::string remark;    //备注
 		std::string server;    //服务器

@@ -4,6 +4,7 @@
 #include <QObject>
 #include "authcontroler.h"
 #include "enterprisecontroler.h"
+#include "groupcontroler.h"
 #include "linkdoodtypes.h"
 #include "MsgUtils.h"
 #include "Msg.h"
@@ -12,6 +13,7 @@
 class CSystemPackageManager;
 class ChatControler;
 class ContactControler;
+class SysMsgControler;
 
 class LinkDoodService : public QObject
 {
@@ -24,11 +26,15 @@ public:
     static LinkDoodService* instance();
 
 signals:
+    //系统消息推送
+    void sysMessageNotice(IMSysMsg sysMsg);
+    void getSysMessageResult(int code, IMSysMsgList sysMsgList);
+    void anthAvatarChanged(QString avatar);
     //servie重启信号
     void serviceRestart();
 
     //会话列表头像更新
-    void chatAvatarChanged(int64 id,QString avatar);
+    void chatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
     void offlineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
@@ -58,7 +64,8 @@ signals:
 
     //推送用户信息
     void accountInfoChanged(Contact user);
-
+    //更新联系人信息
+    void updateContactInfoResult(int code);
     //联系人信息更新
     void contactInfoChanged(int oper,Contact user);
     //联系人状态改变
@@ -68,6 +75,7 @@ signals:
     void loginFailed(QString);
     void loginoutRelust(bool loginout);
     void changePasswordResult(QString);
+    void getVerifyImgResult(QString,QString);
     void connectChanged(QString);
 
     void chatListChanged(const Chat_UIList& chats);
@@ -75,7 +83,6 @@ signals:
     void contactListChanged(int oper,ContactList contacts);
 
     void srvGetContactInfo(service::User&user);
-    void getContactInfo();
 
 
     //上传头像返回
@@ -83,7 +90,7 @@ signals:
     //上传文件返回
     void uploadFileResult(QString tagetid, QString jasoninfo, int code);
     //文件进度返回
-    void fileProgressResult(int32 extra_req, int32 process, QString info);
+    void fileProgressResult(int extra_req, int process, QString info,QString localId,QString targetId);
     //下载文件返回
     void downloadFileResult(int code, QString localpath, QString tagetid);
     //上传图片返回
@@ -92,8 +99,39 @@ signals:
     void downloadImageResult(int code, QString jasoninfo, QString tagetid);
     //获取文件列表返回
     void getFileListResult(int code, FileInfoList fileList);
-
-
+    //获取联系人返回
+    void getUserInfoResult(int code, Contact contact);
+    //从网络查找联系人返回
+    void searchFromNetResult(int code, ContactList user, ContactList group);
+    //从本地查找联系人返回
+    void searchFromLocalResult(int code, ContactList user, ContactList group);
+    //添加联系人返回
+    void addContactResult(int code);
+    //删除联系人返回
+    void removeContactResult(int code);
+    void groupListChanged(GroupList groupList);
+    void groupAvatarChanged(QString groupid,QString avatar);
+    void memberAvatarChanged(QString userid,QString avatar);
+    void groupInfoChanged(QString operType,Group group);
+    void groupLeaderChanged(QString userid,QString user_name,QString groupid,QString group_name);
+    void memberInfoChanged(QString groupid,Member member);
+    void memberListChanged(QString operType,QString groupid,MemberList members);
+    void createGroupResult(QString result);
+    void addGroupResult(QString result);
+    void removeGroupResult(QString result);
+    void transferGroupResult(QString result);
+    void setGroupSetResult(QString result);
+    void setGroupInfoResult(QString result);
+    void getGroupSetResult(QString result,QString verify_type,QString is_allow);
+    void getGroupInfoResult(QString result,Group group);
+    void inviteMemberResult(QString result);
+    void removeMemberResult(QString result);
+    void setMemberInfoResult(QString result);
+    void getMemberInfoResult(QString result,Member member);
+    void getMemberListResult(QString result,MemberList memberList);
+    void getGroupFileListResult(FileInfoList fileInfoList);
+    void deleteGroupFileResult(QString result);
+    void getGroupMemberListReslut(int code,QString id,MemberList list);
 public slots:
 
     /**************************************
@@ -111,7 +149,7 @@ public slots:
     void setAppLoginStatus(const int status);
 
     QString installPath();
-
+    QString userType(QString userId);
     QString dataPath();
 
     // 功能		:	登录
@@ -124,6 +162,7 @@ public slots:
     void login(const QString &server,
                const QString &userId,
                const QString &password);
+    void getVerifyImg( QString userid,QString code);
     void changepassword(QString oldpsw,QString newpsw);
 
     void logout();
@@ -139,6 +178,8 @@ public slots:
     void getContactInfo(QString userId,Msg msg);
     //获取会话列表
     void getContactList();
+    //更新联系人信息
+    void onUpdateContactInfo(int code);
     //改变联系人状态
     void onOnlineChanged(QString id, QString deviceType,int flag);
     //用户信息UserId
@@ -236,25 +277,21 @@ public slots:
     * @param[in] path 传入文件本地路径
     * @param[in] property 传入文件属性
     ************************************************************************/
-    void uploadFile(QString path, QString property);
+    void  uploadAndSendFileMsg(Msg msg);
 
-    /************************************************************************
+    /***************************
     * @brief downloadFile
     * @description: 下载文件
     * @param[in] path 传入下载路径
     * @param[in] url 传入url
-    * @param[in] property 传入文件属性
-    ************************************************************************/
-    void downloadFile(QString path, QString url, QString property);
+    **************************/
+    void downloadFile(QString path, QString url, QString json,QString localId,QString targetId);
 
-    /************************************************************************
+    /********************************************
     * @brief uploadImage
     * @description: 上传照片
-    * @param[in] thumbimg 传入缩略图
-    * @param[in] srcimg 传入原图
-    * @param[in] property 传入图片属性
-    ************************************************************************/
-    void uploadImage(QString thumbimg, QString srcimg, QString property);
+    ********************************************/
+    void uploadAndSendImageMsg(Msg msg);
 
     /************************************************************************
     * @brief downloadImage
@@ -284,15 +321,68 @@ public slots:
     ***********************************************************************/
     void getFileList(int64 targetid, int64 fileid, int count, int flag);
 
+    //获取联系人信息
+    void getUserInfo(QString userid);
+    /************************************************************************
+    * @brief searchFromNet
+    * @description: 从网络进行查找
+    * @param[in] key 传入关键字
+    ************************************************************************/
+    void searchFromNet(QString key);
+    /************************************************************************
+    * @brief searchFromNet
+    * @description: 从本地进行查找
+    * @param[in] key 传入关键字
+    ************************************************************************/
+    void searchFromLocal(QString key);
+    /**
+     * @brief addContact  添加联系人
+     * @param userid      传入联系人ID
+     * @param remark      传入联系人备注，可以为空
+     * @param info        传入验证信息
+     */
+    void addContact(QString userid, QString remark, QString info);
+    /**
+     * @brief removeContact 删除联系人
+     * @param userid       传入联系人ID
+     */
+    void removeContact(QString userid);
+
+    void createGroup(QString level, QString name, MemberList memberList);
+    void addGroup(QString groupid, QString verify_info);
+    void removeGroup(QString type, QString groupid);
+    void transferGroup(QString groupid, QString userid);
+    void setGroupSet(QString groupid, QString verify_type, QString is_allow);
+    void setGroupInfo(Group group);
+    void getGroupSet(QString groupid);
+    void getGroupInfo(QString groupid);
+    void inviteMember(QString groupid,MemberList memberList);
+    void removeMember(QString groupid, QString userid);
+    void setMemberInfo(Member member);
+    void getMemberInfo(QString groupid,QString userid);
+    void getMemberList(QString groupid);
+    void getGroupList();
+    void getGroupFileList(QString groupid);
+    void deleteGroupFile(QStringList fileIdList);
+
+    void getSysMessages(int type,int count,QString msgid,int flag);
+    void setSysMessagRead(int type, QString msg);
+    void response(IMSysMsgRespInfo info);
 
 protected slots:
+
+    //系统消息推送
+    void onSysMessageNotice(IMSysMsg sysMsg);
+    void onGetSysMessages(int code, IMSysMsgList sysMsgList);
+
     //获取子组织返回
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
     void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
     void onGetorgUserInfoResult(int code,OrgUser orguser);
 
-
+    void onAnthAvatarChanged(QString avatar);
     void onChangePasswordResult(QString result);
+    void onGetVerifyImgResult(QString code,QString img);
     void onConnectChanged(QString flag);
 
     //联系人信息更新
@@ -312,7 +402,7 @@ protected slots:
     void onGetContactInfoResult(service::User&user);
 
     //会话列表头像更新
-    void onChatAvatarChanged(int64 id,QString avatar);
+    void onChatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
     void onChatOfflineMsgNotice(IMOfflineMsgList msgList);
     //监听新消息通知
@@ -326,21 +416,32 @@ protected slots:
     //删除消息
     void onChatDeleteMessagesResult(int code);
 
-
     //上传头像返回
     void onChatUploadAvatar(QString orgijson, QString thumbjson, int code);
     //上传文件返回
     void onChatUploadFile(int64 tagetid, QString jasoninfo, int code);
     //文件进度
-    void onChatFileProgress(int32 extra_req, int32 process, QString info);
+    void onChatFileProgress(int extra_req, int process, QString info,QString localId,QString targetId);
+
     //下载文件返回
-    void onChatDownloadFile(service::ErrorInfo& info, QString localpath, int64 tagetid);
+    void onChatDownloadFile(int code, QString localpath, QString tagetid);
     //上传图片返回
     void onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
     void onChatDownloadImage(service::ErrorInfo& info, QString localpath, int64 tagetid);
     //获取文件列表返回
     void onChatGetFileList(service::ErrorInfo& info, std::vector<FileInfo> files);
+    //获取联系人信息返回
+    void onGetUserInfoResult(int code, Contact contact);
+
+    //从网络获取联系人返回
+    void onSearchFromNet(int code, ContactList user, ContactList group);
+    //从本地获取联系人返回
+    void onSearchFromLocal(int code, ContactList user, ContactList group);
+    //添加联系人返回
+    void onAddContact(int code);
+    //删除联系人返回
+    void onRemoveContact(int code);
 
 
 
@@ -358,6 +459,32 @@ protected slots:
                                QString name,
                                QString avater,
                                QString unreadmsg);
+
+
+
+    void onGroupListChanged(GroupList groupList);
+    void onGroupAvatarChanged(QString groupid,QString avatar);
+    void onMemberAvatarChanged(QString userid,QString avatar);
+    void onGroupInfoChanged(QString operType,Group group);
+    void onGroupLeaderChanged(QString userid,QString user_name,QString groupid,QString group_name);
+    void onMemberInfoChanged(QString groupid,Member member);
+    void onMemberListChanged(QString operType,QString groupid,MemberList memberList);
+    void onCreateGroupResult(QString result);
+    void onAddGroupResult(QString result);
+    void onRemoveGroupResult(QString result);
+    void onTransferGroupResult(QString result);
+    void onSetGroupSetResult(QString result);
+    void onSetGroupInfoResult(QString result);
+    void onGetGroupSetResult(QString result,QString verify_type,QString is_allow);
+    void onGetGroupInfoResult(QString result,Group group);
+    void onInviteMemberResult(QString result);
+    void onRemoveMemberResult(QString result);
+    void onSetMemberInfoResult(QString result);
+    void onGetMemberInfoResult(QString result,Member member);
+    void onGetGroupMemberListReslut(int code,QString id,MemberList list);
+    void onGetMemberListResult(QString result,MemberList memberList);
+    void onGetGroupFileListResult(FileInfoList fileInfoList);
+    void onDeleteGroupFileResult(QString result);
 public:
     static LinkDoodService* m_pInstance;
 
@@ -381,10 +508,11 @@ private:
     QString m_userid;
 
     std::shared_ptr<AuthControler>  m_pAuth;
+    std::shared_ptr<SysMsgControler>  m_pSysMsg;
     std::shared_ptr<ChatControler>  m_pChatObserver;
     std::shared_ptr<ContactControler>  m_pContactObserver;
     std::shared_ptr<EnterpriseControler> m_pEnterpriseControler;
-
+    std::shared_ptr<GroupControler> m_pGroupControler;
     std::shared_ptr<service::IMClient> m_pIMClient;
 };
 

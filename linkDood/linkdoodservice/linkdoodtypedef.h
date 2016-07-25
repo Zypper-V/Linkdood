@@ -3,8 +3,8 @@
 #include <QString>
 
 //表情匹配符
-#define EMOJI_IMAGE   "<4f072095e2574b66aa0c6c09acfb3f3e>"
-#define EMOJI_REG       "/(<4f072095e2574b66aa0c6c09acfb3f3e>(.*?)<4f072095e2574b66aa0c6c09acfb3f3e>)/"
+#define EMOJI_IMAGE   "[4f072095e2574b66aa0c6c09acfb3f3e]"
+#define EMOJI_REG       "(\\[4f072095e2574b66aa0c6c09acfb3f3e\\](.*?)\\[4f072095e2574b66aa0c6c09acfb3f3e\\])"
 
 #define		BAOBAO_DYNAMIC          QString::fromLocal8Bit("抱抱")
 #define		CENGCENG_DYNAMIC	    QString::fromLocal8Bit("蹭蹭")

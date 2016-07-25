@@ -68,8 +68,13 @@ CPage {
                     leftText: qsTr("头像")
                     height: 120
                     radius: 4
-                    rightImg: "qrc:/res/headerDefault.png"
+                    editable:true
+                    rightImg: userProfileManager.thumbAvatar
                     anchors.top: parent.top
+                    onClicked: {
+                        var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodViewLocalImagePage.qml"),"CDoodViewLocalImagePage");
+                        pageStack.push(component);
+                    }
                 }
 
                 UserProfileButton{
@@ -97,10 +102,18 @@ CPage {
                     id:btnDD
 
                     leftText: qsTr("圆圆号")
+                    rigthText: userProfileManager.nickId
                     radius: 4
                     showLine:false
+                    editable:userProfileManager.nickId ===""
 
                     anchors.top: btnMap.bottom
+                    onClicked: {
+                        inputDialog.titleText= qsTr("圆圆号");
+                        inputDialog.setText(userProfileManager.nickId);
+                        inputDialog.type = 2;
+                        inputDialog.show();
+                    }
 
                 }
             }
@@ -179,6 +192,10 @@ CPage {
         onAccepted: {
             if(type === 1){
                 userProfileManager.updateAccountInfo(inputDialog.text(),"","");
+            }
+            if(type == 2){
+                //TODO
+                userProfileManager.updateAccountInfo("","","",inputDialog.text());
             }
         }
     }

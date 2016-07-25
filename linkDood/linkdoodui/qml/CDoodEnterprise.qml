@@ -1,6 +1,13 @@
 import QtQuick 2.0
 import com.syberos.basewidgets 2.0
 Item {
+    Connections {
+        target: enterpriseManager
+        onGetFarOrgResult: {
+          enterpriseManager.getSonOrgs(id);
+          orgManager.addOrg(id,name);
+        }
+    }
     id: contactEnterprise
     anchors.fill: parent
 
@@ -87,9 +94,9 @@ Item {
             //            anchors.top: parent.top
             anchors.left:parent.left
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: 45
+            anchors.leftMargin: enterpriseManager.isOrg?45:245
             //            color:"black"
-            text:qsTr("")
+            text:enterpriseManager.isOrg?qsTr("成员"):qsTr("暂未加入任何组织")
             font.pixelSize: 26
         }
     }
@@ -116,7 +123,7 @@ Item {
                 id:contactListDelegate
 
                 width: orgTitleListView.width
-                height: 113
+                height: 100
 
                 MouseArea {
                     anchors.fill: parent
@@ -139,12 +146,23 @@ Item {
 
                         background.color = "white"
                         mousePressBackgroud.visible = false
+                        if(model.modelData.gender===""){
                         console.log(" model.modelData.id: ",model.modelData.id)
                         console.log(" model.modelData.name: ",model.modelData.name)
                         orgManager.addOrg(model.modelData.id, model.modelData.name);
 
                         enterpriseManager.getSonOrgs(model.modelData.id)
-                        //pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
+                        }
+                        else{
+                            background.color = "#F2F2F2"
+                            mousePressBackgroud.visible = false
+                            userdataManager.setName(model.modelData.name);
+                            userdataManager.setGender(model.modelData.gender);
+                            userdataManager.setThumbAvatar("");
+                            userdataManager.setId(model.modelData.id);
+                            userdataManager.setIsFriend("1");
+                            pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
+                        }
                     }
 
                     onCanceled: {
@@ -185,9 +203,7 @@ Item {
                             height: 90
                             radius: 6
                             name:""
-                            headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                            iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
-                            visible: !model.modelData.isOrg
+                            iconSource:model.modelData.thumbAvatar;
                         }
                         Text {
                             id: nameText
@@ -195,8 +211,8 @@ Item {
                             anchors.leftMargin: 30
                             anchors.rightMargin: 20
                             anchors.top: parent.top
-                            anchors.topMargin: 25
-                            font.pixelSize: 32
+                            anchors.topMargin: 20
+                            font.pixelSize: 24
                             height: 33
                             clip: true
                             color: "#333333"
@@ -206,7 +222,7 @@ Item {
                         }
                         CLine {
 //                            width: parent.width
-                            width: 3
+                            width: 1
                             anchors.left: parent.left
                             color:"#cdcdcd"
                             //                        anchors.leftMargin: 150

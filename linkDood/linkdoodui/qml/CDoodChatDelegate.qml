@@ -23,6 +23,14 @@ CEditListViewDelegate {
     property Component sendDyEmojiMsgObj:CDoodSendDynamicExpressionMessageCompoent{}
     property Component receiveDyEmojiMsgObj:CDoodReceiveDynamicExpressionMessageCompoent{}
 
+    property Component sendImageMsgObj:CDoodSendPicturetMessageCompoent{}
+    property Component receiveImageMsgObj:CDoodReceivePictureMessageCompoent{}
+
+    property Component sendFileMsgObj:CDoodSendFileMessageCompoent{}
+    property Component receiveFileMsgObj:CDoodReceiveFileMessageCompoent{}
+    property Component sendTipMsgObj:CDoodTipMessageCompoent{}
+
+
     function loaderComponent () {
         if(model.modelData.msgType === "2") {
             if(model.modelData.fromId === loginManager.userId) {
@@ -30,12 +38,28 @@ CEditListViewDelegate {
             } else {
                 return chatDelegateRoot.receiveTextMsgObj
             }
-        }
-        if(model.modelData.msgType === "19"){
+        }else if(model.modelData.msgType === "19"){
             if(model.modelData.fromId === loginManager.userId) {
                 return chatDelegateRoot.sendDyEmojiMsgObj
             } else {
                 return chatDelegateRoot.receiveDyEmojiMsgObj
+            }
+        }else if(model.modelData.msgType === "5"){
+            if(model.modelData.fromId === loginManager.userId) {
+                return chatDelegateRoot.sendImageMsgObj
+            } else {
+                return chatDelegateRoot.receiveImageMsgObj
+            }
+        }else if(model.modelData.msgType === "8"){
+            return chatDelegateRoot.sendTipMsgObj
+        }else{
+            //TODO
+        }
+        if(model.modelData.msgType === "6"){
+            if(model.modelData.fromId === loginManager.userId) {
+                return chatDelegateRoot.sendFileMsgObj
+            } else {
+                return chatDelegateRoot.receiveFileMsgObj
             }
         }
     }

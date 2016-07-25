@@ -51,6 +51,21 @@ QString CDoodUserDataManage::setThumbAvatar(const QString &data)
     return mThumbAvatar;
 }
 
+bool CDoodUserDataManage::isFriend() const
+{
+    return mIsFriend;
+}
+
+bool CDoodUserDataManage::setIsFriend(const bool &data)
+{
+    if(mIsFriend == data){
+        return data;
+    }
+    mIsFriend = data;
+    emit isFriendChanged();
+    return mIsFriend;
+}
+
 QString CDoodUserDataManage::gender() const
 {
     return mGender;

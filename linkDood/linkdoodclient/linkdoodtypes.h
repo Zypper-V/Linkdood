@@ -9,9 +9,16 @@
 
 #define int64 long long
 //表情匹配符
-#define EMOJI_IMAGE   "<4f072095e2574b66aa0c6c09acfb3f3e>"
-//#define EMOJI_REG       "(\\[4f072095e2574b66aa0c6c09acfb3f3e\\](.*?)\\[4f072095e2574b66aa0c6c09acfb3f3e\\])"
-
+#define EMOJI_IMAGE   "[4f072095e2574b66aa0c6c09acfb3f3e]"
+#define EMOJI_REG       "(\\[4f072095e2574b66aa0c6c09acfb3f3e\\](.*?)\\[4f072095e2574b66aa0c6c09acfb3f3e\\])"
+#define SYSMSG_ID      "-5"
+enum ImageSize{
+    THUMP_PIC_WIDTH   =  400,
+    THUMP_PIC_HEIGHT  =  300,
+    BIG_PIC_WIDTH      =     1920,
+    BIG_PIC_HEIGHT      =    1080
+};
+#define COMPUTER_CHAT 6
 enum MSG_TYPE{
     MSG_TYPE_HTML = 1, //网页类型
     MSG_TYPE_TEXT,//文本类型
@@ -30,6 +37,55 @@ enum MSG_TYPE{
 };
 
 #define APP_DATA_PATH "/data/data/com.vrv.linkDood/"
+
+//IMSysMsgRespInfo
+class IMSysMsgRespInfo
+{
+public:
+    explicit IMSysMsgRespInfo();
+    virtual ~IMSysMsgRespInfo(){}
+    void toIMSysMsgRespInfo(QVariantMap map);
+
+    QString targetid;//目标ID
+    QString msgid;   //消息ID
+    int     msgtype; //消息类型
+    int     opertype;//活动类型
+    QString info;//消息回复内容
+};
+Q_DECLARE_METATYPE(IMSysMsgRespInfo)
+QDBusArgument &operator << (QDBusArgument &argument, const IMSysMsgRespInfo &info);
+const QDBusArgument &operator >> (const QDBusArgument &argument, IMSysMsgRespInfo &info);
+//
+typedef QList<IMSysMsgRespInfo> IMSysMsgRespInfoList;
+Q_DECLARE_METATYPE (IMSysMsgRespInfoList);
+
+//IMSysMsg
+class IMSysMsg
+{
+public:
+    explicit IMSysMsg();
+    virtual ~IMSysMsg(){}
+    void toIMSysMsg(QVariantMap map);
+
+
+    bool    isShowButton;  //是否显示按钮
+    QString msgid;         //消息ID
+    QString targetid;      //目标ID
+    QString time;          //时间
+    QString msgtypeText;   //消息类型
+    QString name;          //消息来源名称
+    QString avatar;        //消息来源头像
+    QString respons;       //响应
+    QString info;          //消息内容
+    QString msgType;
+};
+Q_DECLARE_METATYPE(IMSysMsg)
+QDBusArgument &operator << (QDBusArgument &argument, const IMSysMsg &info);
+const QDBusArgument &operator >> (const QDBusArgument &argument, IMSysMsg &info);
+//
+typedef QList<IMSysMsg> IMSysMsgList;
+Q_DECLARE_METATYPE (IMSysMsgList);
+
 //LoginInfo
 class LoginInfo{
 public:
@@ -73,9 +129,11 @@ public:
     QString msgtype;
     // 消息类型
     QString activeType;// 消息事件属性 1. 阅后即焚 2 有问必答 3 活动
-    QString msgid;
+    QString
+    msgid;
     // 消息 ID
     QString targetid; // 会话者 ID (群或用户等)
+    QString targetName;
     QString fromid;
     // 发送者 ID
     QString toid;
@@ -173,6 +231,8 @@ public:
     QString pinyin;	   //名称拼音
     QString remark;    //备注
     QString server;    //服务器
+    QString nick_id;
+    int     team;
 };
 Q_DECLARE_METATYPE(Contact)
 QDBusArgument &operator << (QDBusArgument &argument, const Contact &contact);
@@ -180,6 +240,66 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Contact &contac
 
 typedef QList<Contact> ContactList;
 Q_DECLARE_METATYPE (ContactList);
+//Group
+class Group{
+public:
+    explicit Group();
+    void toImGroup(QVariantMap map);
+    void init();
+
+public:
+
+    QString timeZone;//时区
+    QString id;//id
+    QString name; //名称
+    QString avatar;//原图图像
+    QString thumbAvatar;//缩略图
+
+    QString level;  //群等级（1,2,3,4)1是临时群，2是普通群
+    QString pinyin;//名称拼音
+    QString server;//服务器
+
+    QString brief;    //群简介
+    QString bulletin; //群公告
+    QString extend;   //群扩展字段
+    QString createrid;//创建者ID
+    QString create_time;     //创建时间
+    QString related_groupid; //关联群ID
+    QString related_entid;   //关联企业ID，存在此ID则属于企业群
+    QString member_nums;       //群成员数量
+};
+Q_DECLARE_METATYPE(Group)
+QDBusArgument &operator << (QDBusArgument &argument, const Group &group);
+const QDBusArgument &operator >> (const QDBusArgument &argument, Group &group);
+
+typedef QList<Group> GroupList;
+Q_DECLARE_METATYPE (GroupList);
+//Member
+class Member{
+public:
+    explicit Member();
+    void toImMember(QVariantMap map);
+    void init();
+
+public:
+
+    QString id;//id
+    QString name; //名称
+    QString gender;//性别:1男2女0保密
+    QString avatar;//原图图像
+    QString thumbAvatar;//缩略图
+
+    QString groupid;     //群id
+    QString team;          //分组
+    QString member_type;  //成员类型：1.普通 2.管理员 3.超级管理员
+    QString remark;//群备注
+};
+Q_DECLARE_METATYPE(Member)
+QDBusArgument &operator << (QDBusArgument &argument, const Member &member);
+const QDBusArgument &operator >> (const QDBusArgument &argument, Member &member);
+
+typedef QList<Member> MemberList;
+Q_DECLARE_METATYPE (MemberList);
 //Org
 class Org{
 public:
@@ -268,6 +388,7 @@ Q_DECLARE_METATYPE (QOnlineStateList);
 class IMOfflineMsg{
 public:
     explicit IMOfflineMsg(/*Msg& m*/);
+    void toImOfflineMsg(QVariantMap map);
     void init();
 
 public:
@@ -278,6 +399,7 @@ public:
     QString targetId;
     QString fromId;
     QString time;
+    QString name;
 };
 Q_DECLARE_METATYPE(IMOfflineMsg)
 QDBusArgument &operator << (QDBusArgument &argument, const IMOfflineMsg &offlineMsg);
@@ -314,7 +436,7 @@ inline int genderConvert(QString sex){
     }
     return 0;
 }
-
+//MsgFileInfo
 class MsgFileInfo{
 public:
     explicit MsgFileInfo();
@@ -323,9 +445,10 @@ public:
 
     QString fileid;                 //文件ID
     QString userid;                 //发送者ID
+    QString username;               //发送者名称
     QString targetid;               //目标ID,可以是群,也可以是用户
-    int64 size;                     //文件大小
-    int64 time;                     //上传时间
+    QString size;                   //文件大小
+    QString time;                   //上传时间
     QString path;                   //本地路径
     QString name;                   //文件名
     QString url;                    //文件url
@@ -333,11 +456,12 @@ public:
 };
 
 Q_DECLARE_METATYPE(MsgFileInfo)
-QDBusArgument &operator << (QDBusArgument &argument, const MsgFileInfo &contact);
-const QDBusArgument &operator >> (const QDBusArgument &argument, MsgFileInfo &contact);
+QDBusArgument &operator << (QDBusArgument &argument, const MsgFileInfo &fileInfo);
+const QDBusArgument &operator >> (const QDBusArgument &argument, MsgFileInfo &fileInfo);
 
 typedef QList<MsgFileInfo> FileInfoList;
 Q_DECLARE_METATYPE (FileInfoList);
+
 inline void registerDoodDataTypes() {
     qDebug() << Q_FUNC_INFO;
     qDBusRegisterMetaType<Msg>();
@@ -355,6 +479,18 @@ inline void registerDoodDataTypes() {
     qDBusRegisterMetaType<ContactList>();
     qRegisterMetaType<ContactList>("ContactList");
 
+    qDBusRegisterMetaType<Group>();
+    qDBusRegisterMetaType<GroupList>();
+    qRegisterMetaType<GroupList>("GroupList");
+
+    qDBusRegisterMetaType<MsgFileInfo>();
+    qDBusRegisterMetaType<FileInfoList>();
+    qRegisterMetaType<FileInfoList>("FileInfoList");
+
+    qDBusRegisterMetaType<Member>();
+    qDBusRegisterMetaType<MemberList>();
+    qRegisterMetaType<MemberList>("MemberList");
+
     qDBusRegisterMetaType<IMOfflineMsg>();
     qDBusRegisterMetaType<IMOfflineMsgList>();
     qRegisterMetaType<IMOfflineMsgList>("IMOfflineMsgList");
@@ -370,8 +506,13 @@ inline void registerDoodDataTypes() {
     qDBusRegisterMetaType<OrgUser>();
     qDBusRegisterMetaType<OrgUserList>();
     qRegisterMetaType<OrgUserList>("OrgUserList");
+    qDBusRegisterMetaType<IMSysMsg>();
+    qDBusRegisterMetaType<IMSysMsgList>();
+    qRegisterMetaType<IMSysMsgList>("IMSysMsgList");
 
-
+    qDBusRegisterMetaType<IMSysMsgRespInfo>();
+    qDBusRegisterMetaType<IMSysMsgRespInfoList>();
+    qRegisterMetaType<IMSysMsgRespInfoList>("IMSysMsgRespInfoList");
 }
 #endif // LINKDOODTYPES_H
 

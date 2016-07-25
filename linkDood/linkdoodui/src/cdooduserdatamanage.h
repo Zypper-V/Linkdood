@@ -10,6 +10,7 @@ class CDoodUserDataManage : public QObject
     Q_PROPERTY(QString gender READ gender WRITE setGender NOTIFY genderChanged)
     Q_PROPERTY(QString avatar READ avatar WRITE setAvatar NOTIFY avatarChanged)
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
+    Q_PROPERTY(bool isFriend READ isFriend WRITE setIsFriend NOTIFY isFriendChanged)
 
 public:
     explicit CDoodUserDataManage(QObject *parent = 0);
@@ -31,12 +32,17 @@ public:
     QString thumbAvatar() const;
     Q_INVOKABLE QString setThumbAvatar(const QString &data);
 
+    bool isFriend() const;
+    Q_INVOKABLE bool setIsFriend(const bool &data);
+
 signals:
     void idChanged();
     void nameChanged();
     void genderChanged();
     void avatarChanged();
     void thumbAvatarChanged();
+    void isFriendChanged();
+
 public slots:
 
 private:
@@ -45,5 +51,6 @@ private:
     QString mThumbAvatar;
     QString mGender;
     QString mAvatar;
+    bool mIsFriend;
 };
 #endif // CDOODCONTACTITEM_H
