@@ -32,9 +32,16 @@ void CDoodChatManagerModel::updateGroupMems(MemberList list)
     emit nameChanged();
 }
 
+int CDoodChatManagerModel::msgCount()
+{
+    return m_pChatMap.size();
+}
+
 void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgContent)
 {
-    qDebug() << Q_FUNC_INFO<<"msgType:"<<msg.msgtype << "  msg.thumb_avatar:" << msg.thumb_avatar;
+    if(msg.localid == "" ||msg.localid == "0"){
+        msg.localid = msg.msgid;
+    }
     if(!m_pChatMap.contains(msg.localid)) {
 
         QDateTime msgDate = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
@@ -104,7 +111,7 @@ void CDoodChatManagerModel::clearList()
     while (i != m_pChatMap.constEnd()) {
         removeItem(m_pChatMap[i.key()]);
         delete m_pChatMap[i.key()];
-        m_pChatMap[i.key()] = 0;
+        m_pChatMap.remove(i.key());
         ++i;
     }
     m_pChatMap.clear();

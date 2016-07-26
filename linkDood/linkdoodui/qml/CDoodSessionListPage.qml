@@ -67,11 +67,11 @@ Item {
                         delegateRoot.toInitState();
                         sessionListView.unsetSelectedItem();
                         sessionListManager.clickChatItem(model.modelData.id);
-                        model.modelData.unReadCount="";
                         if(model.modelData.chatType !== "-5"){
 
-                            myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
                             if(unreadCount>0){
+
+                                console.log("sdgfsdfgsdgasfsasfsf:"+unreadCount)
                                 chatManager.switchToChatPage(model.modelData.id,model.modelData.name,model.modelData.chatType,model.modelData.lastMsgid,unreadCount,model.modelData.thumbAvatar);
                             }else{
                                 chatManager.switchToChatPage(model.modelData.id,model.modelData.name,model.modelData.chatType,0,model.modelData.thumbAvatar);
@@ -177,7 +177,7 @@ Item {
                                     elide: Text.ElideRight
                                     text: model.modelData.name
                                 }
-                                TextEdit {
+                                CLabel{
                                     id: contentText
 
                                     anchors.left: headPortraitImage.right
@@ -187,16 +187,11 @@ Item {
                                     anchors.top: nameText.bottom
                                     anchors.topMargin: 24
 
-                                    wrapMode: Text.WrapAnywhere
-                                    textFormat:TextEdit.RichText
-                                    readOnly:true
-                                    verticalAlignment: TextEdit.AlignVCenter
-
                                     font.pixelSize: 24
                                     height: 60
                                     clip: true
-                                    width:parent.width - 100
-
+                                    width:460
+                                    elide: Text.ElideRight
                                     color: "#777777"
                                     text: model.modelData.lastMsg
                                 }

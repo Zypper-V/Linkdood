@@ -22,6 +22,7 @@ void EmojiExplain::EmojiParseFrom(string src, string &target)
         isInit = true;
     }
     QString source = QString::fromStdString(src);
+    qDebug()<<Q_FUNC_INFO<<"src:"<<source;
     for(auto iter= m_EmojiFace.begin(); iter != m_EmojiFace.end();++iter){
         QString  code = iter.value();
         QString  path = "qrc:/res/smilies/emoji_face/"+iter.key()+".png";
@@ -36,6 +37,7 @@ void EmojiExplain::EmojiParseFrom(string src, string &target)
         source.replace(code,emojiPath);
     }
     target = source.toStdString();
+    qDebug()<<Q_FUNC_INFO<<"target:"<<source;
 }
 
 void EmojiExplain::EmojiParseTo(string src, string &target)
@@ -75,6 +77,10 @@ void EmojiExplain::EmojiParseTo(string src, string &target)
 
 void EmojiExplain::dyEmojiParseFrom(QString src, QString &target, QString &explain)
 {
+    if(!isInit){
+        init();
+        isInit = true;
+    }
     qDebug()<<Q_FUNC_INFO <<"dyddddd:"<<src;
     src.remove("[");
     src.remove("]");
@@ -82,15 +88,21 @@ void EmojiExplain::dyEmojiParseFrom(QString src, QString &target, QString &expla
 
     explain = "["+m_EmojiDynamicExplain[src]+"]";
     target = "qrc:/res/smilies/dynamic_expression/"+src+".gif";
+    qDebug()<<Q_FUNC_INFO<<"src:"<<src<<":"<<explain<<":"<<target;
 }
 
 void EmojiExplain::dyEmojiParseTo(QString src, QString &target, QString &explain)
 {
+    if(!isInit){
+        init();
+        isInit = true;
+    }
     QString value = m_EmojiDynamicExplain.value(src,"");
     if(value != ""){
         explain = "["+value+"]";
     }
     target = src+".gif";
+        qDebug()<<Q_FUNC_INFO<<"src:"<<src<<":"<<explain<<":"<<target;
 }
 
 void EmojiExplain::init()

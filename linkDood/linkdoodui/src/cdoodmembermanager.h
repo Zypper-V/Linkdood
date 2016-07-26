@@ -28,7 +28,7 @@ public:
     QString my_Type()const;
     Q_INVOKABLE QString   setMy_Type(const QString data);
 
-
+    Q_INVOKABLE bool isMyself(QString id);
     Q_INVOKABLE void judgeTip(QString hisType);
     Q_INVOKABLE void removeMember(QString groupid,QString memberid);
     Q_INVOKABLE void setMemberInfo(QString memberid,QString groupid,QString operate,QString remark);

@@ -1,4 +1,4 @@
-#include<chatcontroler.h>
+﻿#include<chatcontroler.h>
 #include<iostream>
 #include<QDebug>
 #include<QDateTime>
@@ -268,16 +268,10 @@ void ChatControler::handleReciveImgMsg(std::shared_ptr<service::Msg> msg)
             QString srcPath = appDataPath +"image/"+ fileName;
             QString outPath = (appDataPath +"cache/"+ fileName);
             bool ret = service::IMClient::getClient()->getFile()->decryptFile(msgImg->encrypt_key,srcPath.toStdString(),outPath.toStdString());
-            qDebug()<<Q_FUNC_INFO<<"decryptFile:"<<outPath<<":ret:"<<ret;
+
             if(ret){
                 imMsg.thumb_url = outPath;
-                //                QString sessionId("");
-                //                if(!getCurrentSessionId(sessionId)){
-                //                    qDebug() << Q_FUNC_INFO <<"22222222222222:"<<sessionId;
-                //                    emit chatMessageNotice(imMsg);
-                //                }
-                emit chatMessageNotice(imMsg);
-                getContactInfo(imMsg.fromid,imMsg);
+                sendSessionMsg(imMsg);
             }
         }
     }else{
@@ -310,8 +304,7 @@ void ChatControler::handleReciveFileMsg(std::shared_ptr<service::Msg> msg)
     imMsg.f_url = QString::fromStdString(msgFile->url);
     imMsg.filename = QString::fromStdString(msgFile->file_name);
     imMsg.body = "[文件]";
-    emit chatMessageNotice(imMsg);
-    getContactInfo(imMsg.fromid,imMsg);
+    sendSessionMsg(imMsg);
 }
 
 void ChatControler::handleReciveDyEmojiMsg(std::shared_ptr<service::Msg> msg)
@@ -329,10 +322,30 @@ void ChatControler::handleReciveDyEmojiMsg(std::shared_ptr<service::Msg> msg)
     std::string msgBody = utils::MsgUtils::getText(msg->body);
     EmojiExplain::dyEmojiParseFrom(QString::fromStdString(msgBody),target,explian);
     imMsg.body = target;
-    emit chatMessageNotice(imMsg);
+    imMsg.filename = explian;
+    qDebug()<<Q_FUNC_INFO<<"exp:"<<imMsg.filename;
+    sendSessionMsg(imMsg);
+}
 
-    imMsg.body = explian;
-    getContactInfo(imMsg.fromid,imMsg);
+void ChatControler::sendSessionMsg(Msg imMsg)
+{
+    QString sessionId("");
+    getCurrentSessionId(sessionId);
+    QString isUnread = "0";
+    QDateTime dateTime = QDateTime::fromString(imMsg.time,"yyyy-MM-dd hh:mm:ss");
+    QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
+
+    qDebug()<<Q_FUNC_INFO<<"session:"<<sessionId<<"tagertId:"<<imMsg.targetid;
+    if(sessionId == imMsg.targetid){
+        emit chatMessageNotice(imMsg);
+    }else{
+        isUnread = "1";
+    }
+    if(imMsg.msgtype == QString::number(MEDIA_MSG_DYNAMIC_EMOJI)){
+        imMsg.body = imMsg.filename;
+    }
+    qDebug()<<Q_FUNC_INFO<<"session:"<<imMsg.body;
+    emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,time,imMsg.targetName,imMsg.thumb_avatar,isUnread);
 }
 
 void ChatControler::handleRecevieTextMsg(std::shared_ptr<service::Msg> msg)
@@ -346,20 +359,7 @@ void ChatControler::handleRecevieTextMsg(std::shared_ptr<service::Msg> msg)
     std::string target("");
     EmojiExplain::EmojiParseFrom(imMsg.body.toStdString(),target);
     imMsg.body = QString::fromStdString(target);
-    QDateTime dateTime = QDateTime::fromString(imMsg.time,"yyyy-MM-dd hh:mm:ss");
-    QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
-
-    QString sessionId("");
-    getCurrentSessionId(sessionId);
-    QString isUnread = "0";
-    qDebug()<<Q_FUNC_INFO<<"session:"<<sessionId<<"tagertId:"<<imMsg.targetid;
-    if(sessionId == imMsg.targetid){
-        emit chatMessageNotice(imMsg);
-    }else{
-        isUnread = "1";
-    }
-    emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,time,imMsg.targetName,imMsg.thumb_avatar,isUnread);
-    //getContactInfo(imMsg.fromid,imMsg);
+    sendSessionMsg(imMsg);
 }
 
 void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
@@ -617,55 +617,30 @@ void ChatControler::_sendMesage(service::ErrorInfo &info, int64 sendTime, int64 
 
 void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::vector<service::MsgPtr>msgPtr)
 {
-    qDebug() << Q_FUNC_INFO << msgPtr.size();
+    qDebug() << Q_FUNC_INFO << "sgdfgdfgfdj:"<<msgPtr.size();
     MsgList msgList;
     for(auto msg:msgPtr){
-        if(msg->msgtype == 2){
+        if(msg->msgtype == MSG_TYPE_TEXT){
+            qDebug()<<Q_FUNC_INFO<<"xxxxxxxxxxxxxxxxx:"<<msg->body.c_str();
             std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
-            Msg item;
-            item.activeType = QString::number(msgText->active_type);
-            item.body = QString::fromStdString(utils::MsgUtils::getText(msgText->body));
+            Msg imMsg = msgtextToQmsgtext(msgText);
 
-            std::string target("");
-            EmojiExplain::EmojiParseFrom(item.body.toStdString(),target);
-            item.body = QString::fromStdString(target);
+            std::string target(""),src = imMsg.body.toStdString();
+            EmojiExplain::EmojiParseFrom(src,target);
+            imMsg.body = QString::fromStdString(target);
 
-            item.fromid = QString::number(msgText->fromid);
-            item.localid = QString::number(msgText->localid);
-            item.msgid = QString::number(msgText->msgid);
-            item.msgProperties = QString::fromStdString(msgText->msg_properties);
-            item.msgtype = QString::number(msgText->msgtype);
-            item.relatedMsgid = QString::number(msgText->related_msgid);
-            item.targetid = QString::number(msgText->targetid);
-            item.time = QString::number(msgText->time);
-            item.toid = QString::number(msgText->toid);
-            msgList.insert(msgList.size(),item);
+            msgList.push_back(imMsg);
+
         }
         else if(msg->msgtype == MSG_TYPE_IMG)
         {
-            qDebug() << Q_FUNC_INFO << " else if(msg->msgtype == MSG_TYPE_IMG) end  msg->msgtype:" << msg->msgtype;
-            //            std::shared_ptr<service::MsgImg> msgImg = std::dynamic_pointer_cast<service::MsgImg>(msg);
-            //            Msg item;
-            //            item.fromid = QString::number(msgImg->fromid);
-            //            item.localid = QString::number(msgImg->localid);
-            //            item.msgid = QString::number(msgImg->msgid);
-            //            item.msgtype = QString::number(msgImg->msgtype);
-            //            item.relatedMsgid = QString::number(msgImg->related_msgid);
-            //            item.targetid = QString::number(msgImg->targetid);
-            //            item.time = QString::number(msgImg->time);
-            //            item.toid = QString::number(msgImg->toid);
-
-            //            QString path = APP_DATA_PATH + LinkDoodService::instance()->UserId() + "/cache/";
-            //            item.i_width = QString::number(msgImg->width);
-            //            item.i_height = QString::number(msgImg->height);
-            //            item.encrypt_user = QString::number(msgImg->encrypt_user);
-            //            item.thumb_avatar = path + QString::fromStdString(msgImg->thumb_url);
-            //            item.main_url = path + QString::fromStdString(msgImg->main_url);
-            //            item.encrypt_key = QString::fromStdString(msgImg->encrypt_key);
-            //            item.filename = QString::fromStdString(msgImg->file_name);
-            //            msgList.insert(msgList.size(),item);
-
             handleReciveImgMsg(msg);
+        }else if(msg->msgtype == MEDIA_MSG_DYNAMIC_EMOJI){
+
+            Msg imMsg;
+            handleHistoryDyEmjiMsg(imMsg,msg);
+            qDebug()<<Q_FUNC_INFO<<"dy:"<<imMsg.body;
+            msgList.push_back(imMsg);
         }
     }
     if(!info.code()){
@@ -673,6 +648,25 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
     }else{
         emit getMessagesBack(true,targetId,msgList);
     }
+}
+
+void ChatControler::handleHistoryDyEmjiMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg){
+    std::shared_ptr<service::MsgDynExpression> msgDyEmoji = std::dynamic_pointer_cast<service::MsgDynExpression>(msg);
+    imMsg.msgid = QString::number(msg->msgid);
+    imMsg.msgtype = QString::number(MEDIA_MSG_DYNAMIC_EMOJI);
+    imMsg.fromid = QString::number(msg->fromid);
+    imMsg.toid   = QString::number(msg->toid);
+    imMsg.targetid = QString::number(msg->targetid);
+    imMsg.activeType = QString::number(msg->active_type);
+
+    QString explian(""),target("");
+    std::string msgBody = utils::MsgUtils::getText(msg->body);
+    if(msgBody == ""){
+        msgBody = msg->body;
+    }
+    qDebug()<<Q_FUNC_INFO<<"hist:"<<msg->body.c_str();
+    EmojiExplain::dyEmojiParseFrom(QString::fromStdString(msgBody),target,explian);
+    imMsg.body = target;
 }
 
 void ChatControler::_deleteMessage(service::ErrorInfo &info)
@@ -775,12 +769,8 @@ void ChatControler::_downloadImage(service::ErrorInfo &info, std::string localpa
             qDebug()<<Q_FUNC_INFO<<"decryptFile:"<<outPath<<":ret:"<<ret;
             if(ret){
                 msgImg.thumb_url = outPath;
-                QString sessionId("");
-                if(!getCurrentSessionId(sessionId)){
-                    qDebug() << Q_FUNC_INFO <<"22222222222222:"<<sessionId;
-                    emit chatMessageNotice(msgImg);
-                }
-                getContactInfo(msgImg.fromid,msgImg);
+                msgImg.body = "[图片]";
+                sendSessionMsg(msgImg);
             }
         }
     }
@@ -834,7 +824,12 @@ Msg ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
     Qmsgtext.localid      =QString::number(msgtext->localid);
     Qmsgtext.time         =QDateTime::fromMSecsSinceEpoch(msgtext->time).toString("yyyy-MM-dd hh:mm:ss");
     Qmsgtext.msgProperties=QString::fromStdString(msgtext->msg_properties);
+
     Qmsgtext.body         =QString::fromStdString(utils::MsgUtils::getText(msgtext->body));
+    if(Qmsgtext.body == ""){
+        Qmsgtext.body = QString::fromStdString(msgtext->body);
+    }
+    qDebug()<<Q_FUNC_INFO<<"msg body:"<<Qmsgtext.body;
     return Qmsgtext;
 }
 

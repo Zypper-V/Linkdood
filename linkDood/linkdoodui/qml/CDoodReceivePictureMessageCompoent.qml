@@ -18,7 +18,7 @@ Component {
             anchors.top: parent.top
             anchors.left: pictrueMessageBg.left
             asynchronous: false
-            sourceComponent: null
+            sourceComponent: textNameRootComponent
         }
 
         Component {

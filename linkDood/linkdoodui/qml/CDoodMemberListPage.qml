@@ -103,6 +103,11 @@ CPage {
                                 if(memberManager.isTip==="1"){
                                 menu.show();
                                 }
+                                if(memberManager.isMyself(model.modelData.id)){
+                                    menu1.id=model.modelData.id;
+                                    menu1.groupid=model.modelData.groupid;
+                                    menu1.show();
+                                }
                             }
                             pressTimer.stop();
                         }
@@ -137,6 +142,14 @@ CPage {
 //                                userdataManager.setId(model.modelData.id);
 //                                userdataManager.setIsFriend(contactManager.isFriend(model.modelData.id));
 //                                pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
+                                if(!memberManager.isMyself(model.modelData.id)){
+                                userdataManager.setName(model.modelData.name);
+                                userdataManager.setGender(model.modelData.gender);
+                                userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
+                                userdataManager.setId(model.modelData.id);
+                                userdataManager.setIsFriend("1");
+                                pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
+                                }
                             }
                             //pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
                         }
@@ -264,8 +277,9 @@ CPage {
                 onClicked: {
                     menu.hide();
 
-                    contactManager.removeContact(menu.id);
-                    indicatorDialog.show();
+                    inputDialog.id=menu.id;
+                    inputDialog.groupid=menu.groupid;
+                    inputDialog.show();
                 }
             }
             UserProfileButton{
@@ -311,14 +325,71 @@ CPage {
             menu.hide();
         }
     }
+    CDoodPopWndLayer{
+        id:menu1
+        property string id: ""
+        property string groupid: ""
+        contentItemBackGroundOpacity:0.73
+        contentItem:Rectangle{
+
+            color: "white"
+            radius: 10
+            width:489
+            height: 190
+            Text{
+                id:title1
+
+                text:qsTr("提示")
+                font.pixelSize: 36
+                color:"#333333"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 20
+            }
+            CLine{
+                id:line1
+
+                anchors.top:title1.bottom
+                anchors.topMargin: 10
+                height: 2
+            }
+            UserProfileButton{
+                id:btntran1
+
+                width:parent.width
+                height: 100
+                leftText: qsTr("修改群名片")
+                radius: 4
+
+                anchors.top: line1.bottom
+                anchors.topMargin: 10
+                showLine:false
+                onClicked: {
+                    menu1.hide();
+
+                    inputDialog.id=menu1.id;
+                    inputDialog.groupid=menu1.groupid;
+                    inputDialog.show();
+                }
+            }
+        }
+        onBackKeyReleased: {
+            console.log("11111111111111111111111111111111111")
+            menu1.hide();
+        }
+        onOutAreaClicked: {
+            console.log("222222222222222222222222222222")
+            menu1.hide();
+        }
+    }
     CInputDialog{
         id:inputDialog
-
+        property string id: ""
+        property string groupid: ""
         titleText: qsTr("修改群名片")
         messageTextColor:"#777777"
         onAccepted: {
-//            contactManager.updateContactInfo(menu.id,"",inputDialog.text());
-//            indicatorDialog.show();
+            memberManager.setMemberInfo(inputDialog.groupid,inputDialog.id,"修改备注",inputDialog.text());
         }
     }
 }

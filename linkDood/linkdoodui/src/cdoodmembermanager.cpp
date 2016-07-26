@@ -55,6 +55,14 @@ QString CDoodMemberManager::setMy_Type(const QString data)
     return mMy_Type;
 }
 
+bool CDoodMemberManager::isMyself(QString id)
+{
+    if(id==mMy_Id){
+        return true;
+    }
+    return false;
+}
+
 void CDoodMemberManager::judgeTip(QString hisType)
 {
     qDebug() << Q_FUNC_INFO<<mMy_Type<<"sssssssss"<<hisType;

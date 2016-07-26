@@ -7,6 +7,7 @@ CEditListViewDelegate {
     width: parent.width
     height: sessionTimeBgLoader.height + messageLoader.height + marginValue + messageTopMarginValue + bottomMarginValue
 
+    property bool  isSender: model.modelData.fromId === loginManager.userId
     property int marginValue: chatDelegateRoot.showMsgTime ? 10 :0
     property int messageTopMarginValue: 11
     property int leftRightMarginValue: 40

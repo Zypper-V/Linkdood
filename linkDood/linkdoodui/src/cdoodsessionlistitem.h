@@ -23,6 +23,9 @@ class CDoodSessionListItem : public QObject
 public:
     explicit CDoodSessionListItem(QObject *parent = 0);
 
+    void setUnreadMsgCOunt(int count);
+    int  unReadMsgCount();
+
     QString id() const;
     QString setId(const QString &data);
 
@@ -86,5 +89,6 @@ private:
     QString mMsgTime;
     QString mLastMsg;
     QString mThumbAvatar;
+    int     mUnreadMsgCount;
 };
 #endif // CDOODSESSIONLISTITEM_H

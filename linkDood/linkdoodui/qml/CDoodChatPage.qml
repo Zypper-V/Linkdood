@@ -227,6 +227,9 @@ CPage {
                         loadDataCheckTimer.restart()
                     }
                 }
+                onIsSenderChanged: {
+                    chatListView.spacing = !isSender ?20:40
+                }
             }
 
             Rectangle {

@@ -3,6 +3,17 @@
 CDoodSessionListItem::CDoodSessionListItem(QObject *parent) : QObject(parent)
 {
     mUnReadCount = "0";
+    mUnreadMsgCount = 0;
+}
+
+void CDoodSessionListItem::setUnreadMsgCOunt(int count)
+{
+    mUnreadMsgCount = count;
+}
+
+int CDoodSessionListItem::unReadMsgCount()
+{
+    return mUnreadMsgCount;
 }
 
 QString CDoodSessionListItem::id() const

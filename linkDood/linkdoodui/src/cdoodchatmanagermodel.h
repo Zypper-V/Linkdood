@@ -32,6 +32,7 @@ public:
 
     void updateGroupMems(MemberList list);
 
+    int msgCount();
     void addItemToListViewModel(Msg msg,QString textMsgContent="");
     void modifyItemToListViewModel(Msg msg,bool isLoading=false,int progress=0);
     void clearList();

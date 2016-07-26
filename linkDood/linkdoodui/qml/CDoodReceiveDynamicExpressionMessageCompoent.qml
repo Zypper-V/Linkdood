@@ -13,10 +13,10 @@ Component {
 
         Loader {
             id: textNameRootLoader
-            anchors.top: parent.top
+            anchors.top: receiveTextMsgHeadImageViewLoader.top
             anchors.left: textMessageBg.left
             asynchronous: false
-            sourceComponent: null
+            sourceComponent: textNameRootComponent
         }
 
         Component {

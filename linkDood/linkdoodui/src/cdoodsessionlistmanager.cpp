@@ -86,7 +86,9 @@ void CDoodSessionListManager::removeChatItem(QString id)
         removeItem(tmpItem);
         m_pClient->removeChat(id);
         sessionListMap.remove(id);
-        setUnreadCount(-tmpItem->unReadCount().toInt());
+        if(tmpItem->unReadMsgCount()>0){
+            setUnreadCount(-tmpItem->unReadMsgCount());
+        }
         delete tmpItem;
     }
 }
@@ -94,10 +96,12 @@ void CDoodSessionListManager::removeChatItem(QString id)
 void CDoodSessionListManager::clickChatItem(QString id)
 {
     CDoodSessionListItem *tmpItem  = sessionListMap.value(id);
-    qDebug() <<Q_FUNC_INFO << "item unCount:"<<tmpItem->unReadCount().toInt();
     if(tmpItem != NULL){
-        setUnreadCount(-tmpItem->unReadCount().toInt());
-        tmpItem->setUnReadCount(0);
+        tmpItem->setUnReadCount("0");
+        if(tmpItem->unReadMsgCount()>0){
+            setUnreadCount(-tmpItem->unReadMsgCount());
+            tmpItem->setUnreadMsgCOunt(0);
+        }
         qDebug() <<Q_FUNC_INFO << "total:"<<mUnreadCount;
     }
 }
@@ -160,6 +164,7 @@ void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
                 else{
                     tmpItem->setUnReadCount("99+");
                 }
+                tmpItem->setUnreadMsgCOunt(historysession.unread_count);
                 setUnreadCount(historysession.unread_count);
             }
             tmpItem->setThumbAvatar(historysession.thumb_avatar);
@@ -276,6 +281,7 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
                 else{
                     item->setUnReadCount(QString::number(count));
                 }
+                item->setUnreadMsgCOunt(count);
                 int index = indexOf(item);
                 if(index>0 && index <itemCount()){
                     item = (CDoodSessionListItem*)takeItemAt(index);
@@ -297,6 +303,7 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
         if(unreadmsg=="1"){
             tmpItem->setUnReadCount("1");
             setUnreadCount(1);
+            tmpItem->setUnreadMsgCOunt(1);
         }
         tmpItem->setLastMsgid(msgId);
         addItemBegin(tmpItem);
@@ -331,6 +338,7 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
                 else
                     count=offMsg.count;
                 item->setUnReadCount(QString::number(count));
+                item->setUnreadMsgCOunt(count);
                 int index = indexOf(item);
                 if(index>0 && index <itemCount())
                 {
@@ -354,6 +362,7 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
             {
                 tmpItem->setUnReadCount(QString::number(offMsg.count));
                 setUnreadCount(offMsg.count);
+                tmpItem->setUnreadMsgCOunt(offMsg.count);
             }
             tmpItem->setLastMsgid(offMsg.msgId);
             addItemBegin(tmpItem);
@@ -378,6 +387,7 @@ void CDoodSessionListManager::onSysMessageNotice(IMSysMsg sysMsg)
         if(!mIsSysMsgPage){
             item->setUnReadCount("1");
             setUnreadCount(1);
+            item->setUnreadMsgCOunt(1);
         }
         removeItem(item);
         addItemBegin(item);
@@ -394,6 +404,7 @@ void CDoodSessionListManager::onSysMessageNotice(IMSysMsg sysMsg)
         if(!mIsSysMsgPage){
             item->setUnReadCount("1");
             setUnreadCount(1);
+            item->setUnreadMsgCOunt(1);
         }
 
         addItemBegin(item);

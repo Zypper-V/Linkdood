@@ -226,6 +226,9 @@ void linkdoodui_Workspace::onChatPageChanged()
         m_pChatModel = m_pChatManager->chatModel();
 
     }
+
+   QVariant property =  m_view->engine()->rootContext()->contextProperty("chatManagerModel");
+
     m_view->engine()->rootContext()->setContextProperty("chatManagerModel", m_pChatManager->chatModel());
 }
 

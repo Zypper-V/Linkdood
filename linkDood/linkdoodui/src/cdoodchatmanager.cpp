@@ -39,11 +39,11 @@ void CDoodChatManager::initConnect()
             SLOT(onAccountInfoChanged(Contact)));
     connect(m_pClient,SIGNAL(anthAvatarChanged(QString)),this,
             SLOT(onAnthAvatarChanged(QString)));
-        connect(m_pClient,SIGNAL(contactInfoChanged(int,Contact)),this,
+    connect(m_pClient,SIGNAL(contactInfoChanged(int,Contact)),this,
             SLOT(onContactInfoChanged(int,Contact)));
-            connect(m_pClient,SIGNAL(getGroupMemberListReslut(int,QString,MemberList)),this,
-                SLOT(onGetGroupMemberListReslut(int,QString,MemberList)));
-            /*    connect(m_pClient,SIGNAL(),this,
+    connect(m_pClient,SIGNAL(getGroupMemberListReslut(int,QString,MemberList)),this,
+            SLOT(onGetGroupMemberListReslut(int,QString,MemberList)));
+    /*    connect(m_pClient,SIGNAL(),this,
                     SLOT())*/;
 }
 void CDoodChatManager::setFileFormat()
@@ -91,8 +91,12 @@ void CDoodChatManager::switchToChatPage(QString targetId, QString name,QString c
     qDebug() << Q_FUNC_INFO<<"targetId:"<<targetId<<"chatType:"<<chatType <<"name:"<<name<<"lastId:"<<lastMsgId;
     if(mChatModel != NULL && mChatModel->id() == targetId){
         if(unReadCount != 0){
-            //mChatModel->updateUnreadMsg(lastMsgId,unReadCount);
-            getMessages(m_sTargetid,unReadCount,lastMsgId,0);
+            if(mChatModel->msgCount()==0){
+                getMessages(m_sTargetid,unReadCount+20,lastMsgId,0);
+            }else{
+                getMessages(m_sTargetid,unReadCount,lastMsgId,0);
+            }
+
         }
         mChatModel->setId(targetId);
         mChatModel->setName(name);
@@ -125,8 +129,11 @@ void CDoodChatManager::switchToChatPage(QString targetId, QString name,QString c
             }
         }
         if(unReadCount != 0){
-            //mChatModel->updateUnreadMsg(lastMsgId,unReadCount);
-            getMessages(m_sTargetid,unReadCount,lastMsgId,0);
+            if(mChatModel->msgCount()==0){
+                getMessages(m_sTargetid,unReadCount+20,lastMsgId,0);
+            }else{
+                getMessages(m_sTargetid,unReadCount,lastMsgId,0);
+            }
         }
         if(mChatModel != NULL){
             mChatModel->setId(targetId);
@@ -687,7 +694,7 @@ void CDoodChatManager::onChatMessageNotice(Msg msg)
     }
     updateMsgToListView(msg);
 
-    emit newMessageNotice();
+   // emit newMessageNotice();
 }
 
 void CDoodChatManager::onChatSendMessageResult(bool code, QString sendTime, QString msgId)

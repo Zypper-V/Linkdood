@@ -258,6 +258,8 @@ private:
     bool judgeFileExist(QString urlPath, int msgType);
     void handleReciveDyEmojiMsg(std::shared_ptr<service::Msg> msg);
     void handleRecevieTextMsg(std::shared_ptr<service::Msg> msg);
+    void sendSessionMsg(Msg imMsg);
+    void handleHistoryDyEmjiMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
 };
 
 template<typename T>
