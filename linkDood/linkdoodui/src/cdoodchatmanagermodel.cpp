@@ -28,6 +28,7 @@ void CDoodChatManagerModel::updateGroupMems(MemberList list)
             mem.thumbAvatar = QString::fromStdString(APP_DATA_PATH)+"public/head/"+mem.thumbAvatar;
         }
         mGroupMemList.push_back(mem);
+
     }
     emit nameChanged();
 }

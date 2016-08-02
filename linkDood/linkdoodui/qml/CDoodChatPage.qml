@@ -114,6 +114,7 @@ CPage {
         } else if (status === CPageStatus.Show) {
             chatListView.positionViewAtEnd()
             chatManager.entryChat(chatPage.targetid)
+            chatManager.showUiFinished();
         }
     }
 

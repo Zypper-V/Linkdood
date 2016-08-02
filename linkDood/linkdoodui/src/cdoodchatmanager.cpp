@@ -19,8 +19,8 @@ void CDoodChatManager::initConnect()
             SLOT(onChatRemoveChatResult(bool)));
     connect(m_pClient,SIGNAL(deleteMessagesResult(int)),this,
             SLOT(onChatDeleteMessagesResult(int)));
-    connect(m_pClient,SIGNAL(uploadAvatarResult(QString,QString,int)),this,
-            SLOT(onUploadAvatarResult(QString,QString,int)));
+//    connect(m_pClient,SIGNAL(uploadAvatarResult(QString,QString,int)),this,
+//            SLOT(onUploadAvatarResult(QString,QString,int)));
     connect(m_pClient,SIGNAL(uploadFileResult(QString,QString,int)),this,
             SLOT(onChatUploadFile(QString,QString,int)));
     connect(m_pClient,SIGNAL(fileProgressResult(int,int,QString,QString,QString)),this,
@@ -121,8 +121,9 @@ void CDoodChatManager::switchToChatPage(QString targetId, QString name, QString 
 
     if(chatType == "2" && mChatModel->groupMemsCount() == 0){
         m_pClient->getMemberList(targetId);
+    }else{
+        emit chatPageChanged();
     }
-    emit chatPageChanged();
 }
 
 //void CDoodChatManager::switchToChatPage(QString targetId, QString name,QString chatType,QString lastMsgId,int unReadCount,QString icon)
@@ -796,6 +797,7 @@ void CDoodChatManager::onGetGroupMemberListReslut(int code, QString id, MemberLi
     if(item != NULL){
         item->updateGroupMems(list);
     }
+    emit chatPageChanged();
 }
 
 void CDoodChatManager::onAccountInfoChanged(Contact user)

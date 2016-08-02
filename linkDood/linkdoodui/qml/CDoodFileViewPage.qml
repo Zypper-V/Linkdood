@@ -75,7 +75,7 @@ CPage {
                 anchors.fill: parent
                 onClicked: {
                     if(fileViewManager.status === 3){
-                        //fileViewManager.openFile();
+                        fileViewManager.openFile();
                         console.log("file:"+fileViewManager.path)
                          fileOpen.open("file://" + fileViewManager.path, CMIMEDialogTool.Open,"image/jpg")
                     }else if(fileViewManager.status === 1){
