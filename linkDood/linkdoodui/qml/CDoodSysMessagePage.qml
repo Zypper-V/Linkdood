@@ -157,6 +157,8 @@ CPage {
 
                                 anchors.left: headPortraitImage.right
                                 anchors.leftMargin: 20
+                                anchors.right: parent.right
+                                elide: Text.ElideRight
                                 anchors.top: headPortraitImage.top
                                 anchors.topMargin: 10
                             }
@@ -165,9 +167,11 @@ CPage {
                                 text:model.modelData.info
                                 font.pixelSize: 26
                                 color:"#777777"
+                                elide: Text.ElideRight
 
                                 anchors.left: headPortraitImage.right
                                 anchors.leftMargin: 20
+                                anchors.right: parent.right
                                 anchors.top: msgUserName.bottom
                                 anchors.topMargin: 10
                             }

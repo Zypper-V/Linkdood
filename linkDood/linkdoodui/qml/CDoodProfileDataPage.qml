@@ -75,7 +75,7 @@ Rectangle{
                 Text{
                     id:userDD
 
-                    text:qsTr("圆圆号：")
+                    text:qsTr("圆圆号：")+userProfileManager.nickId
                     font.pixelSize: 26
                     anchors{
                         bottom: parent.bottom
@@ -95,7 +95,7 @@ Rectangle{
                     }
                 }
             }
-            onPressed: rectBackground.color = "#7c9dd9"
+            onPressed: rectBackground.color = "#cdcdcd"
             onReleased: rectBackground.color = "white"
 
             onClicked: {
@@ -104,16 +104,16 @@ Rectangle{
             }
         }
 
-        Rectangle{
-            color:"transparent"
-            height: 150
-            width:parent.width
-        }
+        //        Rectangle{
+        //            color:"transparent"
+        //            height: 150
+        //            width:parent.width
+        //        }
 
         Text{
             id:changepswTip
 
-            text:qsTr("修改密码")
+            text:qsTr("操作")
             color:tipTextClr
             font.pixelSize: 34
             anchors{
@@ -133,21 +133,103 @@ Rectangle{
             Text{
                 text:qsTr("修改密码")
                 font.pixelSize: 34
-                color:"red"
-                anchors.centerIn: parent
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: settingIcon.right
+                anchors.leftMargin: 25
             }
 
             anchors.left: parent.left
             anchors.leftMargin: 20
             anchors.right: parent.right
             anchors.rightMargin:20
+            Image {
+                id: settingIcon
+                source: "qrc:/res/personal_setting.png"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 30
+            }
+
+            Image {
+                id: settingArrow
+                source: "qrc:/res/arrow_icon.png"
+                anchors{
+                    right: parent.right
+                    rightMargin: 20
+                    verticalCenter: parent.verticalCenter
+                }
+            }
             MouseArea{
                 anchors.fill: parent
-                onPressed: changepsw.color = "#7c9dd9"
+                onPressed: changepsw.color = "#cdcdcd"
                 onReleased: changepsw.color = "white"
                 onClicked: {
                     pageStack.push(Qt.resolvedUrl("CDoodChangePasswordPage.qml"));
-//                    console.log("sdddddddddddddddddddddddddddd")
+                    console.log("setting clicked")
+                }
+            }
+        }
+        Rectangle{
+            id: friendVeri
+
+            border.width: 1
+            border.color: "#777777"
+            radius: 10
+            color:"white"
+            height: 100
+
+            Text{
+                text:qsTr("好友验证")
+                font.pixelSize: 34
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: verifyIcon.right
+                anchors.leftMargin: 25
+            }
+            Text {
+                id: verifyMethodText
+                text: verify()
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: verifyArrow.left
+                anchors.rightMargin: 30
+                font.pixelSize: 26
+                function verify(){
+                    if(userProfileManager.verifytype === 1)
+                        return "需要验证信息";
+                    else if(userProfileManager.verifytype === 2)
+                        return "不允许任何人添加";
+                    else if(userProfileManager.verifytype === 3)
+                        return "允许任何人添加";
+                }
+            }
+
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.right: parent.right
+            anchors.rightMargin:20
+            Image {
+                id: verifyIcon
+                source: "qrc:/res/personal_setting.png"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 30
+            }
+
+            Image {
+                id: verifyArrow
+                source: "qrc:/res/arrow_icon.png"
+                anchors{
+                    right: parent.right
+                    rightMargin: 20
+                    verticalCenter: parent.verticalCenter
+                }
+            }
+            MouseArea{
+                anchors.fill: parent
+                onPressed: friendVeri.color = "#cdcdcd"
+                onReleased: friendVeri.color = "white"
+                onClicked: {
+                    sexListDialog.select(sexListDialog.initSelect(),true);
+                    sexListDialog.show();
                 }
             }
         }
@@ -184,7 +266,7 @@ Rectangle{
             anchors.rightMargin:20
             MouseArea{
                 anchors.fill: parent
-                onPressed: btnLoginout.color = "#7c9dd9"
+                onPressed: btnLoginout.color = "#cdcdcd"
                 onReleased: btnLoginout.color = "white"
                 onClicked: {
                     alertDialog.show();
@@ -218,17 +300,55 @@ Rectangle{
             loadingDialog.hide();
             if(loginout){
 
-                contactManager.clearChatList();
-                sessionListManager.clearChatList();
-                loginManager.setAppLoginStatus(0);
-                pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
-            }else{
-                contactManager.clearChatList();
-                sessionListManager.clearChatList();
-                loginManager.setAppLoginStatus(0);
-                pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
-                //TODO
-            }
+                resetUiModelData();
+                pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
+            }//else{
+            //                contactManager.clearChatList();
+            //                sessionListManager.clearChatList();
+            //                loginManager.setAppLoginStatus(0);
+            //                enterpriseManager.setFarOrg();
+            //                orgManager.resetOrgList();
+            //                pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
+            //                //TODO
+            //            }
         }
+    }
+
+    CListDialog{
+        id: sexListDialog
+
+        property  int  currentIndex: 0
+        titleText: qsTr("验证方式")
+        onDelegateItemTriggered:{
+            console.log("xxxxxxxxx:"+model[index]);
+            userProfileManager.setPrivateSettingVerify(index+1);
+            sexListDialog.currentIndex = index;
+        }
+        Component.onCompleted: {
+            model = [qsTr("需要验证信息"),qsTr("不允许任何人添加"),qsTr("允许任何人添加")]
+        }
+        function initSelect(){
+
+            return userProfileManager.verifytype-1;
+        }
+    }
+
+    //    Connections{
+    //        target:userProfileManager
+    //        onSetPrivateSettingResult:{
+    //            if(code === 0){
+
+    //            }
+    //        }
+    //    }
+
+    function resetUiModelData(){
+        contactManager.clearChatList();
+        sessionListManager.clearChatList();
+        loginManager.setAppLoginStatus(0);
+        enterpriseManager.setFarOrg();
+        orgManager.resetOrgList();
+        chatManager.clearList()
+        userProfileManager.clearData();
     }
 }

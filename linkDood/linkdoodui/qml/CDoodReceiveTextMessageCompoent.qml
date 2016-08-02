@@ -3,13 +3,18 @@ import com.syberos.basewidgets 2.0
 
 Component {
     id: receiveTextMessage
-
     Item {
         id: receiveTextMessageRoot
         x: 0
-
         width: parent.width
         height: textMessageBg.height
+        signal showMenu()
+
+        function copy(){
+            textMessage.selectAll();
+            textMessage.copy();
+            gToast.requestToast("已经复制","","");
+        }
 
         Loader {
             id: textNameRootLoader
@@ -65,23 +70,22 @@ Component {
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                 iconSource: setIcon("1", model.modelData.contactThumbAvatar)
-//                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
-                MouseArea {
-                    anchors.fill: parent
+                //                MouseArea {
+                //                    anchors.fill: parent
 
-                    onClicked: {
-                        console.log("todo show Info Page !!!")
-                        console.log(model.modelData.name)
+                //                    onClicked: {
+                //                        console.log("todo show Info Page !!!")
+                //                        console.log(model.modelData.name)
 
-                        if (chatListView.editing)
-                            return;
-                    }
+                //                        if (chatListView.editing)
+                //                            return;
+                //                    }
 
-                    onPressAndHold: {
-                        console.log("todo @ !!!")
-                    }
-                }
+                //                    onPressAndHold: {
+                //                        console.log("todo @ !!!")
+                //                    }
+                //                }
             }
         }
 
@@ -117,11 +121,37 @@ Component {
 
             source: "qrc:/res/receive/message.png"
 
+            TextEdit{
+                id: textMessage
+                anchors.right: parent.right
+                anchors.rightMargin: 30
+                anchors.top: parent.top
+                anchors.topMargin: 25
+
+                wrapMode: Text.Wrap
+                textFormat: TextEdit.RichText
+                readOnly:true
+                selectionColor: "transparent"
+                selectedTextColor: "#333333"
+                verticalAlignment: TextEdit.AlignVCenter
+
+                color:"#333333"
+                font.pixelSize: 28
+                text: model.modelData.body
+
+                visible: true
+
+                Component.onCompleted: {
+                    if(textMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
+                        textMessage.width = chatDelegateRoot.maxMessageLength
+                }
+            }
+
             MouseArea {
                 anchors.fill: parent
 
-                onPressAndHold: {
-
+                onPressAndHold:{
+                    emit:showMenu();
                 }
 
                 onPressed: {
@@ -136,32 +166,7 @@ Component {
                     textMessageBg.source = "qrc:/res/receive/message.png"
                 }
             }
-
-            TextEdit{
-                id: textMessage
-                anchors.right: parent.right
-                anchors.rightMargin: 30
-                anchors.top: parent.top
-                anchors.topMargin: 25
-
-                wrapMode: Text.WrapAnywhere
-                textFormat:TextEdit.RichText
-                readOnly:true
-                verticalAlignment: TextEdit.AlignVCenter
-
-                color:"#333333"
-                font.pixelSize: 28
-                text: model.modelData.body
-
-                visible: true
-
-                Component.onCompleted: {
-                    if(textMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
-                        textMessage.width = chatDelegateRoot.maxMessageLength
-                }
-            }
         }
-
         Loader {
             id: reciveFailedImageLoader
             anchors.left: textMessageBg.right

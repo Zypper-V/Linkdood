@@ -217,7 +217,7 @@ CPage {
             width: parent.width - 40
             height: 90
             opacity : pressed ? 1: 0.7
-            visible: userdataManager.isFriend
+            visible: userdataManager.isFriend && userdataManager.id != userProfileManager.id
             text:os.i18n.ctr(qsTr("发消息"))
             textColor:  "#ffffff"
             pixelSize:34
@@ -227,6 +227,7 @@ CPage {
                 radius: 10
             }
             onClicked: {
+                console.log("org name:"+userdataManager.name);
                 chatManager.switchToChatPage(userdataManager.id,userdataManager.name,"1",0,userdataManager.thumbAvatar);
             }
         }
@@ -251,12 +252,35 @@ CPage {
             }
             onClicked: {
                 //TODO
+                addContactManager.getVerifyType(userdataManager.id)
+            }
+        }
+    }
+    Connections{
+        target: addContactManager
+        onGetVerifyResult:{
+            if(code !== 0)
+            {
+                gToast.requestToast("获取验证方式失败","","");
+                return;
+            }
+            if(type === 2) //2:不允许任何人添加
+            {
+                gToast.requestToast("不允许任何人添加","","");
+            }
+            else if(type === 1) //1:需要验证信息
+            {
                 friendVericationManager.setName(userdataManager.name);
                 friendVericationManager.setThumbAvatar(userdataManager.thumbAvatar);
                 friendVericationManager.setMyName(userProfileManager.name);
                 friendVericationManager.setId(userdataManager.id);
                 pageStack.push(Qt.resolvedUrl("CDoodFriendVerificationPage.qml"));
-
+            }
+            else if(type === 3) //3:允许任何人添加
+            {
+                 addContactManager.addContact(userdataManager.id,"","");
+                 gToast.requestToast("添加好友成功","","");
+                 pageStack.pop();
             }
         }
     }

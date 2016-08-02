@@ -7,7 +7,7 @@ Component {
     Item {
         id: receivePictrueMessageRoot
         x: 0
-
+        signal showMenu
         width: parent.width
         height: pictrueMessageBg.height
         Loader {
@@ -64,21 +64,21 @@ Component {
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                 iconSource: setIcon("1", model.modelData.contactThumbAvatar)
-                MouseArea {
-                    anchors.fill: parent
+                //                MouseArea {
+                //                    anchors.fill: parent
 
-                    onClicked: {
-                        console.log("todo show Info Page !!!")
-                        console.log(model.modelData.name)
+                //                    onClicked: {
+                //                        console.log("todo show Info Page !!!")
+                //                        console.log(model.modelData.name)
 
-                        if (chatListView.editing)
-                            return;
-                    }
+                //                        if (chatListView.editing)
+                //                            return;
+                //                    }
 
-                    onPressAndHold: {
-                        console.log("todo @ !!!")
-                    }
-                }
+                //                    onPressAndHold: {
+                //                        console.log("todo @ !!!")
+                //                    }
+                //                }
             }
         }
 
@@ -106,7 +106,7 @@ Component {
                 anchors.fill: parent
 
                 onPressAndHold: {
-
+                    emit: showMenu();
                 }
 
                 onPressed: {
@@ -142,21 +142,25 @@ Component {
                 visible: true
 
                 implicitWidth: chatDelegateRoot.maxMessageLength
-                implicitHeight: icon.height+40
+//                implicitHeight: icon.height+40
+                implicitHeight: fileName.height + 40
                 Image{
                     id:icon
                     source: chatManager.judgeFileFromat(model.modelData.textMsg)
 
                     anchors.left: parent.left
                     anchors.leftMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
+//                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.topMargin: 20
                 }
                 Text{
                     id:fileName
 
                     text:model.modelData.textMsg
                     font.pixelSize: 30
-                    height: 40
+                    height: 40 * lineCount
+                    width: parent.width
+                    wrapMode: TextInput.WrapAnywhere
 
                     anchors.top:icon.top
                     anchors.left: icon.right

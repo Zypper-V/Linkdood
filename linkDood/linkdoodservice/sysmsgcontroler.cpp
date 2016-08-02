@@ -21,6 +21,8 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
     sysMsg.name =QString::fromStdString(msg.name);
     sysMsg.avatar = QString::fromStdString(msg.avatar);
     sysMsg.msgType = QString::number(msg.msgtype);
+    sysMsg.operUser = QString::fromStdString(msg.operUser);
+    sysMsg.isread = QString::number(msg.isread);
     if(msg.msgtype == 1)
     {
         sysMsg.msgtypeText = "好友申请";
@@ -29,10 +31,6 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
     else if(msg.msgtype == 2)
     {
         sysMsg.msgtypeText = "好友验证信息";
-//        if(msg.opertype == 1)
-//            sysMsg.respons = "已同意";
-//        else if(msg.opertype == 2)
-//            sysMsg.respons = "已拒绝";
         sysMsg.isShowButton = false;
     }
     else if(msg.msgtype == 3)
@@ -44,20 +42,36 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
     {
         sysMsg.msgtypeText = "群验证信息";
 
-        qDebug()<<Q_FUNC_INFO << "0_____________________________msg.opertype:" << msg.opertype << "  sysMsg.info:" << sysMsg.info;
-        if(msg.opertype == 5)
+        if(msg.opertype == 2)
         {
-            sysMsg.info = sysMsg.name + "被解散";
+            sysMsg.info = sysMsg.operUser + "同意您加入" + sysMsg.name;
+        }
+        else if(msg.opertype == 3)
+        {
+            sysMsg.info = sysMsg.operUser + "拒绝您加入" + sysMsg.name;
+        }
+
+        else if(msg.opertype == 5)
+        {
+            sysMsg.name = sysMsg.targetid;
+            sysMsg.info = sysMsg.operUser + "解散了群" + sysMsg.name;
              qDebug()<<Q_FUNC_INFO << "  sysMsg.info:" << sysMsg.info;
         }
         else if(msg.opertype == 6)
         {
-            sysMsg.info = "您被移出了群 " + sysMsg.name;
+            sysMsg.name = sysMsg.targetid;
+            sysMsg.info = "您被" + sysMsg.operUser + "移出了群" + sysMsg.targetid;
+        }
+        else if(msg.opertype == 7)
+        {
+            if(sysMsg.name.size() == 0)
+                sysMsg.name = sysMsg.targetid;
+            sysMsg.info = sysMsg.operUser + "主动退出了群" +sysMsg.name;
         }
         sysMsg.isShowButton = false;
     }  
 
-    qDebug() << Q_FUNC_INFO << "  msgid:" << sysMsg.msgid << "   targetid:" << sysMsg.targetid << "  time:" << sysMsg.time << "   msgtypeText:" << sysMsg.msgtypeText << "   respons:" << sysMsg.respons << "   name:" << sysMsg.name << "   avatar:" << sysMsg.avatar << "   info:" << sysMsg.info;
+    qDebug() << Q_FUNC_INFO << "  msgid:" << sysMsg.msgid << "   targetid:" << sysMsg.targetid << "  time:" << sysMsg.time << "   msgtypeText:" << sysMsg.msgtypeText << "   respons:" << sysMsg.respons << "   name:" << sysMsg.name << "   avatar:" << sysMsg.avatar  << "operUser:" << sysMsg.operUser << "   info:" << sysMsg.info << "   operUser:" << sysMsg.operUser << "sysMsg.isRead:" << sysMsg.isread;
     emit sysMessageNotice(sysMsg);
 }
 
@@ -107,7 +121,6 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
     IMSysMsg sysMsg;
     for(int i = 0; i < sysmsgs.size(); i++)
     {       
-        qDebug() << "sysmsgs_name:" << sysmsgs[i].name.c_str() << "  operType:" << sysmsgs[i].opertype;
         sysMsg.respons.clear();
         sysMsg.isShowButton = false;
         sysMsg.msgid = QString::number(sysmsgs[i].msgid);
@@ -118,7 +131,10 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
         sysMsg.avatar = QString::fromStdString(sysmsgs[i].avatar);
         sysMsg.msgType = QString::number(sysmsgs[i].msgtype);
         sysMsg.info = QString::fromStdString(sysmsgs[i].info);
+        sysMsg.operUser = QString::fromStdString(sysmsgs[i].operUser);
+        sysMsg.isread = QString::number(sysmsgs[i].isread);
 
+        qDebug() << Q_FUNC_INFO << "msgtype:" << sysmsgs[i].msgtype << "   opertype:" << sysmsgs[i].opertype;
         if(sysmsgs[i].msgtype == 1)
         {
             sysMsg.msgtypeText = "好友申请";
@@ -152,19 +168,35 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
         else
         {
             sysMsg.msgtypeText = "群验证信息";
-            if(sysmsgs[i].opertype == 5)
+            if(sysmsgs[i].opertype == 2)
             {
-                sysMsg.info = QString::fromStdString(sysmsgs[i].name) + "被解散";
+                sysMsg.info = sysMsg.operUser + "同意您加入" + sysMsg.name;
+            }
+            else if(sysmsgs[i].opertype == 3)
+            {
+                sysMsg.info = sysMsg.operUser + "拒绝您加入" + sysMsg.name;
+            }
+            else if(sysmsgs[i].opertype == 5)
+            {
+                sysMsg.name = sysMsg.targetid;
+                sysMsg.info = sysMsg.operUser + "解散了群" + sysMsg.targetid;
                  qDebug()<<Q_FUNC_INFO << "  sysMsg.info:" << sysMsg.info;
             }
             else if(sysmsgs[i].opertype == 6)
             {
-                sysMsg.info = "您被移出了群 " + QString::fromStdString(sysmsgs[i].name);
+                sysMsg.name = sysMsg.targetid;
+                sysMsg.info = "您被" + sysMsg.operUser + "移出了群" + sysMsg.targetid;
+            }
+            else if(sysmsgs[i].opertype == 7)
+            {
+                if(sysMsg.name.size() == 0)
+                    sysMsg.name = sysMsg.targetid;
+                sysMsg.info = sysMsg.operUser + "主动退出了群" +sysMsg.name;
             }
         }
 
 
-        qDebug() << "  msgid:" << sysMsg.msgid << "   targetid:" << sysMsg.targetid << "  time:" << sysMsg.time << "   msgtypeText:" << sysMsg.msgtypeText << "   respons:" << sysMsg.respons << "   name:" << sysMsg.name << "   avatar:" << sysMsg.avatar << "   info:" << sysMsg.info;
+        qDebug() << "  msgid:" << sysMsg.msgid << "   targetid:" << sysMsg.targetid << "  time:" << sysMsg.time << "   msgtypeText:" << sysMsg.msgtypeText << "   respons:" << sysMsg.respons << "   name:" << sysMsg.name << "   avatar:" << sysMsg.avatar << "  operUser:" << sysMsg.operUser << "   info:" << sysMsg.info;
         msgList.push_back(sysMsg);
     }
     emit getSysMessagesReult(info.code(), msgList);

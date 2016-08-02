@@ -39,6 +39,7 @@ private slots:
 private:
     bool mIsOrg;
     void initConnect();
+    int  indexOfSection(QString section);
     QMap<QString, CDoodEnterPriseItem*> enterListMap;
     LinkDoodClient *m_pClient;
     int isFarOrg;

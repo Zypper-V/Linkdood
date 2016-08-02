@@ -9,7 +9,7 @@ Component {
 
         width: chatListView.editing ? chatListView.width - 100 : chatListView.width
         height: pictrueMessageBg.height
-
+        signal showMenu()
         property int sendEditMessageModel: 0
         property var myChatPage
         Loader {
@@ -31,19 +31,19 @@ Component {
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                 iconSource: setIcon("1", model.modelData.contactThumbAvatar)
-//                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
+                //                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
-                MouseArea {
-                    anchors.fill: parent
+                //                MouseArea {
+                //                    anchors.fill: parent
 
-                    onClicked: {
-                        console.log("todo show MyInfo Pagesssssssssss !!!")
-                        console.log(model.modelData.name)
-                        console.log(model.modelData.fromId)
-                        if (chatListView.editing)
-                            return;
-                    }
-                }
+                //                    onClicked: {
+                //                        console.log("todo show MyInfo Pagesssssssssss !!!")
+                //                        console.log(model.modelData.name)
+                //                        console.log(model.modelData.fromId)
+                //                        if (chatListView.editing)
+                //                            return;
+                //                    }
+                //                }
             }
         }
 
@@ -72,6 +72,7 @@ Component {
 
                 onPressAndHold: {
                     sendpictrueMessageRoot.sendEditMessageModel = 1
+                    emit: showMenu();
                 }
 
                 onPressed: {
@@ -97,13 +98,18 @@ Component {
             Image{
                 id: pictrueMessage
 
+                property bool bChange:model.modelData.isImageChange
                 anchors.right: parent.right
                 anchors.rightMargin: 30
                 anchors.top: parent.top
                 anchors.topMargin: 25
                 source: model.modelData.body
                 visible: true
-
+                asynchronous:true
+                onBChangeChanged: {
+                    width = bChange?width+1:width-1;
+                    console.log("imag:"+width)
+                }
                 Component.onCompleted: {
                     if(pictrueMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
                         pictrueMessage.width = chatDelegateRoot.maxMessageLength
@@ -133,7 +139,7 @@ Component {
                 MouseArea {
                     anchors.fill: parent
                     onPressed: {
-                        console.log("zhangp to resend !!!")
+                        console.log("zhangp to resend 1111111111111111111111111111111!!!")
                         chatManager.resendMessage(model.modelData.msgId);
                     }
                 }

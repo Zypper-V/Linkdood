@@ -32,7 +32,7 @@ CPage {
             loadingDialog.hide();
             if(result==="修改成功")
             {
-                pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+                pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
             }
         }
     }

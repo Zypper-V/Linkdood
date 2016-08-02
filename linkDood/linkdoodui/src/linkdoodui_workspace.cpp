@@ -17,6 +17,7 @@
 #include "cdoodsysmsgmanager.h"
 #include "cdoodlocalsearchmanager.h"
 #include "cdoodfileviewmanager.h"
+#include "cdoodcontactitem.h"
 
 #include <QQmlContext>
 #include <QUrl>
@@ -29,7 +30,7 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     : CWorkspace()
 {
     qmlRegisterType<CDoodListModel>("CDoodListModel", 1, 0, "CDoodListModel");
-
+    qRegisterMetaType<QList<QString> >("QList<QString>");
     m_pClient = QSharedPointer<LinkDoodClient>(new LinkDoodClient());
     if (!m_pClient.data()) {
         qDebug() << Q_FUNC_INFO << "m_pClient init error !!!";
@@ -116,8 +117,9 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     }
 
 
-    QObject::connect(m_pChatManager.data(),SIGNAL(ChatPageChanged()),this,SLOT(onChatPageChanged()));
-
+    QObject::connect(m_pChatManager.data(),SIGNAL(chatPageChanged()),this,SLOT(onChatPageChanged()));
+    QObject::connect(m_pGroupManager.data(),SIGNAL(transMessageSelectContactList(QList<QString>,QString)),this,SLOT(onTransMessageSelectContactList(QList<QString>,QString)));
+QObject::connect(m_pGroupManager.data(),SIGNAL(groupRemoveOrExitResult(QString)),this,SLOT(onGroupRemoveOrExitResult(QString)));
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), qApp, SLOT(quit()));
     m_view->engine()->rootContext()->setContextProperty("loginManager", m_pLoginManager.data());
@@ -222,13 +224,40 @@ void linkdoodui_Workspace::setActiveWindow()
 void linkdoodui_Workspace::onChatPageChanged()
 {
     qDebug() << Q_FUNC_INFO;
-    if(!m_pChatManager.isNull()){
-        m_pChatModel = m_pChatManager->chatModel();
-
-    }
-
-   QVariant property =  m_view->engine()->rootContext()->contextProperty("chatManagerModel");
-
     m_view->engine()->rootContext()->setContextProperty("chatManagerModel", m_pChatManager->chatModel());
+    if(!m_pChatManager.isNull()){
+        m_pChatManager->startPushChatPage();
+    }
+}
+
+void linkdoodui_Workspace::onTransMessageSelectContactList(QList<QString> list,QString localId)
+{
+    qDebug()<<Q_FUNC_INFO;
+    QString targetName(""),th("");
+    if(!m_pChatManager.isNull()){
+        for(int i = 0;i<list.size();++i){
+            if(!m_pContactManager.isNull()){
+                CDoodContactItem* item = m_pContactManager->itemById(list.at(i));
+                if(item != NULL){
+                    targetName = item->name();
+                    th = item->thumbAvatar();
+                }
+            }
+            m_pChatManager->transforMessage(list.at(i),targetName,th,localId);
+        }
+    }
+    if(!m_pContactManager.isNull()){
+        m_pContactManager->clearMember();
+    }
+}
+
+void linkdoodui_Workspace::onGroupRemoveOrExitResult(QString groupId)
+{
+    if(!m_pSessionListManager.isNull()){
+        m_pSessionListManager->removeChatItem(groupId);
+    }
+    if(!m_pChatManager.isNull()){
+        m_pChatManager->removeChat(groupId);
+    }
 }
 

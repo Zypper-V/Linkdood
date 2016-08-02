@@ -11,7 +11,7 @@ Component {
 
         width: parent.width
         height: pictrueMessageBg.height
-
+        signal showMenu()
         property var myChatPage
         Loader {
             id: textNameRootLoader
@@ -67,14 +67,14 @@ Component {
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                 iconSource: setIcon("1", model.modelData.contactThumbAvatar)
-//                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
+                //                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
-                MouseArea {
-                    anchors.fill: parent
-                    onPressAndHold: {
-                        console.log("todo @ !!!")
-                    }
-                }
+                //                MouseArea {
+                //                    anchors.fill: parent
+                //                    onPressAndHold: {
+                //                        console.log("todo @ !!!")
+                //                    }
+                //                }
             }
         }
 
@@ -102,7 +102,7 @@ Component {
                 anchors.fill: parent
 
                 onPressAndHold: {
-
+                    emit: showMenu();
                 }
 
                 onPressed: {
@@ -129,13 +129,19 @@ Component {
 
             Image{
                 id: pictrueMessage
+                property bool bChange:model.modelData.isImageChange
                 anchors.right: parent.right
                 anchors.rightMargin: 30
                 anchors.top: parent.top
                 anchors.topMargin: 25
                 source: model.modelData.body
-
+                asynchronous:true
                 visible: true
+                onBChangeChanged: {
+                    width = bChange?width+1:width-1;
+                    console.log("imag:"+width)
+                }
+
                 Component.onCompleted: {
                     if(pictrueMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
                         pictrueMessage.width = chatDelegateRoot.maxMessageLength

@@ -118,3 +118,4 @@ QString Common::dealTime(qint64 msgtime, int type)
     }
     return strDateTime;
 }
+

@@ -31,10 +31,13 @@ public:
     Q_INVOKABLE void selectMember(QString id);
 
     Q_INVOKABLE void clearMember();
+
+    CDoodContactItem* itemById(QString id);
 signals:
     void contactListChanged(int oper,ContactList contacts);
     void updateContactInfoResult(int code);
     void removeContactResult(int code);
+    void addContactReslut(QString userId);
 private slots:
     void onAvatarChanged(QString userid, QString avatar);
     void onContactListChanged(int oper,ContactList contacts);

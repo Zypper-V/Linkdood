@@ -12,6 +12,12 @@ CPage {
             gScreenInfo.setStatusBarStyle("black")
         }
     }
+    Connections {
+        target: memberManager
+        onWordsOutOfLimited:{
+            gToast.requestToast("字符数超过限制,请重新设置","","");
+        }
+    }
     contentAreaItem:Item {
         anchors.fill :parent
         Rectangle {
@@ -35,7 +41,7 @@ CPage {
                 anchors.leftMargin: 30
                 anchors.verticalCenter: parent.verticalCenter
                 onClicked: {
-                    memberManager.clearMemberList();
+//                    memberManager.clearMemberList();
                     pageStack.pop();
                 }
             }
@@ -98,7 +104,7 @@ CPage {
                             if(mousea.bPress && !mousea.bMove){
                                 menu.id = model.modelData.id;
                                 menu.member_type= model.modelData.member_type;
-                                menu.name  = model.modelData.name;
+                                menu.name  = model.modelData.remark;
                                 menu.groupid=model.modelData.groupid;
                                 if(memberManager.isTip==="1"){
                                 menu.show();
@@ -106,6 +112,7 @@ CPage {
                                 if(memberManager.isMyself(model.modelData.id)){
                                     menu1.id=model.modelData.id;
                                     menu1.groupid=model.modelData.groupid;
+                                    menu1.name=model.modelData.remark;
                                     menu1.show();
                                 }
                             }
@@ -193,7 +200,7 @@ CPage {
                                 color: "#333333"
                                 verticalAlignment: Text.AlignVCenter
                                 elide: Text.ElideRight
-                                text: model.modelData.remark
+                                text: model.modelData.remark==="#"?model.modelData.name:model.modelData.remark
                             }
                             CLine {
     //                            width: parent.width
@@ -279,6 +286,7 @@ CPage {
 
                     inputDialog.id=menu.id;
                     inputDialog.groupid=menu.groupid;
+                    inputDialog.setText(menu.name);
                     inputDialog.show();
                 }
             }
@@ -329,6 +337,7 @@ CPage {
         id:menu1
         property string id: ""
         property string groupid: ""
+        property string name: ""
         contentItemBackGroundOpacity:0.73
         contentItem:Rectangle{
 
@@ -369,6 +378,7 @@ CPage {
 
                     inputDialog.id=menu1.id;
                     inputDialog.groupid=menu1.groupid;
+                    inputDialog.setText(menu1.name);
                     inputDialog.show();
                 }
             }

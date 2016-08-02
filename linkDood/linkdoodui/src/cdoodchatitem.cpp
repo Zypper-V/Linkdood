@@ -1,11 +1,12 @@
 #include "cdoodchatitem.h"
+#include "common.h"
 
 CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
 {
     mLoading = false;
     mSatus = true;
     mTextMsg = "";
-    mProgress = 0;
+    mProgress = 10;
     mFileSize = 0;
     mLocalId = "";
 
@@ -19,6 +20,9 @@ CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
     mFromId = "";
     mToId = "";
     mBody ="";
+    mShowTime = false;
+    mEnkey = mEnkeyUser=mFileUrl=mImageMainUrl=mImageThumbUrl="";
+    mIsImageChange = true;
 
 }
 
@@ -35,6 +39,25 @@ long long CDoodChatItem::setFileSize(const long long data)
     mFileSize = data;
     emit fileSizeChanged();
     return mFileSize;
+}
+
+QString CDoodChatItem::timeText()
+{
+    QString time = Common::dealTime(mTime.toMSecsSinceEpoch(),2);
+    return time;
+}
+
+void CDoodChatItem::setShowTime(bool show)
+{
+    if(show != mShowTime){
+        mShowTime = show;
+        emit showTimeChanged();
+    }
+}
+
+bool CDoodChatItem::showTime()
+{
+    return mShowTime;
 }
 
 int CDoodChatItem::progress() const
@@ -82,8 +105,16 @@ bool CDoodChatItem::setStatus(const bool &data)
     return mSatus;
 }
 
+bool CDoodChatItem::isImageChange()
+{
+    return mIsImageChange;
+}
+
 QString CDoodChatItem::name() const
 {
+    if(mName ==""){
+        return mFromId;
+    }
     return mName;
 }
 
@@ -240,11 +271,14 @@ QString CDoodChatItem::body() const
 
 QString CDoodChatItem::setBody(const QString &data)
 {
-    if(mBody == data) {
-        return data;
+    if(data!= "" && mBody != data){
+        mBody = data;
+        emit bodyChanged();
+        if(msgType() == "5"){
+            mIsImageChange = !mIsImageChange;
+            emit isImageChangeChanged();
+        }
     }
-    mBody = data;
-    emit bodyChanged();
     return mBody;
 }
 

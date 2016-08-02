@@ -9,6 +9,7 @@
 #include "Contact.h"
 #include "IDRangeJuge.hpp"
 #include "ISearchService.h"
+#include "linkdoodservice.h"
 
 ContactControler::ContactControler(QObject *parent):QObject(parent)
 {
@@ -174,6 +175,12 @@ void ContactControler::removeContact(QString userid)
     service::IMClient::getClient()->getContact()->removeContact(userid.toLongLong(), std::bind(&ContactControler::_removeContact, this, std::placeholders::_1));
 }
 
+void ContactControler::getVerifyType(QString userid)
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getContact()->getVerifyType(userid.toLongLong(), std::bind(&ContactControler::_getVerifyType, this, std::placeholders::_1, std::placeholders::_2));
+}
+
 ContactList ContactControler::sort(const ContactList &contactList)
 {
     ContactList list;
@@ -207,9 +214,14 @@ void ContactControler::_searchFromNet(service::ErrorInfo info, SearchResult res)
     Contact contact;
     for(int i = 0; i < res.users.size(); i++)
     {
-        contact.gender = QString::number(res.users[i].gender);
-        contact.timeZone = res.users[i].time_zone;
         contact.id = QString::number(res.users[i].id);
+        if(LinkDoodService::instance()->UserId() == contact.id)
+        {
+            continue;    //搜索到自己不在界面显示
+        }
+        contact.gender = QString::number(res.users[i].gender);
+        qDebug() << Q_FUNC_INFO << "LinkDoodService::instance()->UserId():" << LinkDoodService::instance()->UserId() << "userid:" << contact.id << "   gender:" << contact.gender;
+        contact.timeZone = res.users[i].time_zone; 
         contact.name = QString::fromStdString(res.users[i].name);
         contact.avatar = QString::fromStdString(res.users[i].avatar);
         contact.extends = QString::fromStdString(res.users[i].extends);
@@ -270,6 +282,12 @@ void ContactControler::_addContact(service::ErrorInfo info)
 void ContactControler::_removeContact(service::ErrorInfo info)
 {
     emit removeContactBack(info.code());
+}
+
+void ContactControler::_getVerifyType(service::ErrorInfo info, ContactVerifyType verify)
+{
+    qDebug()<<Q_FUNC_INFO<<"code:"<<info.code() << "verify.userid:" << verify.userid <<"  verify.type:" << verify.type;
+    emit getVerifyTypeBack(info.code(), QString::number(verify.userid), verify.type);
 }
 
 bool CmpByTeam(const Contact first, const Contact second)

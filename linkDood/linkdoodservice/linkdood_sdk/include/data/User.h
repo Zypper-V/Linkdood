@@ -7,7 +7,8 @@
 namespace service {
 	struct _Usesr__isset {
 		_Usesr__isset(void) :gender(false), time_zone(false),
-		id(false), name(false), avatar(false), thumb_avatar(false),extends(false){}
+		id(false), name(false), avatar(false), thumb_avatar(false),extends(false),
+		phone(false),email(false){}
 		bool gender;
 		bool time_zone;
 		bool id;
@@ -15,6 +16,8 @@ namespace service {
 		bool avatar;
 		bool thumb_avatar;
 		bool extends;
+		bool phone;
+		bool email;
 	};
 	class User {
 	public:
@@ -49,6 +52,14 @@ namespace service {
 			extends = val;
 			_user_isset.extends = true;
 		}
+		void __set_email(const std::string& val){
+			email = val;
+			_user_isset.email = true;
+		}
+		void __set_phone(const std::string& val){
+			phone = val;
+			_user_isset.phone = true;
+		}
 		bool operator == (const User & rhs)const {
 			if (_user_isset.avatar != rhs._user_isset.avatar)
 				return false;
@@ -78,6 +89,14 @@ namespace service {
 				return false;
 			else if (_user_isset.extends && !(extends == rhs.extends))
 				return false;
+			if (_user_isset.email != rhs._user_isset.email)
+				return false;
+			else if (_user_isset.email && !(email == rhs.email))
+				return false;
+			if (_user_isset.phone != rhs._user_isset.phone)
+				return false;
+			else if (_user_isset.phone && !(phone == rhs.phone))
+				return false;
 			return true;
 		}
 	public:
@@ -87,6 +106,8 @@ namespace service {
 		std::string name; //Ãû³Æ
 		std::string avatar;//Ô­Í¼Í¼Ïñ
 		std::string extends;//À©Õ¹×Ö¶Î
+		std::string phone;
+		std::string email;
 		std::string thumb_avatar;//ËõÂÔÍ¼
 		_Usesr__isset _user_isset;
 	};

@@ -7,6 +7,14 @@ Component {
     Item {
         id: sendTextMessageRoot
 
+        signal showMenu()
+
+        function copy(){
+            textMessage.selectAll();
+            textMessage.copy();
+            gToast.requestToast("已经复制","","");
+            console.log("copy text:"+ textMessage.text+":"+textMessage.canPaste)
+        }
         width: chatListView.editing ? chatListView.width - 100 : chatListView.width
         height: textMessageBg.height
 
@@ -31,19 +39,18 @@ Component {
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                 iconSource:setIcon("1", model.modelData.contactThumbAvatar)
-//                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
-                MouseArea {
-                    anchors.fill: parent
+                //                MouseArea {
+                //                    anchors.fill: parent
 
-                    onClicked: {
-                        console.log("todo show MyInfo Pagesssssssssss !!!")
-                        console.log(model.modelData.name)
-                        console.log(model.modelData.fromId)
-                        if (chatListView.editing)
-                            return;
-                    }
-                }
+                //                    onClicked: {
+                //                        console.log("todo show MyInfo Pagesssssssssss !!!")
+                //                        console.log(model.modelData.name)
+                //                        console.log(model.modelData.fromId)
+                //                        if (chatListView.editing)
+                //                            return;
+                //                    }
+                //                }
             }
         }
 
@@ -67,11 +74,41 @@ Component {
 
             source: "qrc:/res/send/message.png"
 
+            TextEdit{
+                id: textMessage
+                anchors.right: parent.right
+                anchors.rightMargin: 30
+                anchors.top: parent.top
+                anchors.topMargin: 25
+
+                wrapMode: Text.Wrap
+                textFormat: TextEdit.RichText
+                readOnly:true
+                selectionColor: "transparent"
+                selectedTextColor: "#333333"
+                verticalAlignment: TextEdit.AlignVCenter
+
+                color:"#333333"
+                font.pixelSize: 28
+                text: model.modelData.body
+
+                visible: true
+
+                Component.onCompleted: {
+                    if(textMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
+                        textMessage.width = chatDelegateRoot.maxMessageLength
+                }
+                onLinkHovered: {
+                    console.log("onLinkHovered")
+                }
+            }
+
             MouseArea {
                 anchors.fill: parent
 
                 onPressAndHold: {
                     sendTextMessageRoot.sendEditMessageModel = 1
+                    emit: showMenu();
                 }
 
                 onPressed: {
@@ -85,30 +122,6 @@ Component {
 
                 onCanceled: {
                     textMessageBg.source = "qrc:/res/send/message.png"
-                }
-            }
-
-            TextEdit{
-                id: textMessage
-                anchors.right: parent.right
-                anchors.rightMargin: 30
-                anchors.top: parent.top
-                anchors.topMargin: 25
-
-                wrapMode: Text.WrapAnywhere
-                textFormat:TextEdit.RichText
-                readOnly:true
-                verticalAlignment: TextEdit.AlignVCenter
-
-                color:"#333333"
-                font.pixelSize: 28
-                text: model.modelData.body
-
-                visible: true
-
-                Component.onCompleted: {
-                    if(textMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
-                        textMessage.width = chatDelegateRoot.maxMessageLength
                 }
             }
         }

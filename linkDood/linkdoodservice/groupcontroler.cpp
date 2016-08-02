@@ -3,6 +3,8 @@
 #include "IMClient.h"
 #include "INotifyService.h"
 #include "IGroupService.h"
+#include "FileUtils.h"
+#include "IFileService.h"
 #include<groupcontroler.h>
 
 
@@ -106,7 +108,24 @@ void GroupControler::_transferGroup(service::ErrorInfo &info)
 
 void GroupControler::setGroupSet(QString groupid, QString verify_type, QString is_allow)
 {
-    service::IMClient::getClient()->getGroup()->setGroupSet(groupid.toLongLong(),verify_type.toInt(),is_allow.toInt(),
+    int8 verify;
+    int8 allow;
+    if(verify_type=="不允许加群"){
+        verify=1;
+    }
+    else if(verify_type=="需要验证"){
+        verify=2;
+    }
+    else{
+        verify=3;
+    }
+    if(is_allow=="允许邀请"){
+        allow=1;
+    }
+    else{
+        allow=2;
+    }
+    service::IMClient::getClient()->getGroup()->setGroupSet(groupid.toLongLong(),verify,allow,
                                                             std::bind(&GroupControler::_setGroupSet,this,std::placeholders::_1));
 }
 
@@ -164,7 +183,24 @@ void GroupControler::getGroupSet(QString groupid)
 void GroupControler::_getGroupSet(service::ErrorInfo &info, int8 verify_type, int8 is_allow)
 {
     if(info.code()==0){
-        emit getGroupSetResult("获取群设置成功",QString::number(verify_type),QString::number(is_allow));
+        QString verify;
+        QString allow;
+        if(verify_type==3){
+            verify="允许任何人加群";
+        }
+        else if(verify_type==1){
+            verify="不允许加群";
+        }
+        else{
+            verify="需要验证";
+        }
+        if(is_allow==1){
+            allow="允许邀请";
+        }
+        else{
+            allow="不允许邀请";
+        }
+        emit getGroupSetResult("获取群设置成功",verify,allow);
     }
     else{
         emit getGroupSetResult("获取群设置失败","","");
@@ -184,8 +220,9 @@ void GroupControler::_getGroupInfo(service::ErrorInfo &info, service::Group grou
     qDebug() << Q_FUNC_INFO<<"22222222222";
     if(info.code()==0){
         Group gp;
-
-        gp.avatar=QString::fromStdString(group.info.avatar);
+        if(group.info.avatar!=""){
+            gp.avatar="/data/data/com.vrv.linkDood/public/head/"+QString::fromStdString(group.info.avatar);
+        }
         qDebug() << Q_FUNC_INFO<<gp.avatar<<"ssssssssssssssssssssssss";
         gp.createrid=QString::number(group.creater_id);
         QDateTime DateTime;
@@ -197,12 +234,14 @@ void GroupControler::_getGroupInfo(service::ErrorInfo &info, service::Group grou
         gp.name=QString::fromStdString(group.info.name);
         gp.pinyin=QString::fromStdString(group.info.pinyin);
         gp.server=QString::fromStdString(group.info.server);
-        gp.thumbAvatar=QString::fromStdString(group.info.thumb_avatar);
+        if(group.info.thumb_avatar!=""){
+            gp.thumbAvatar="/data/data/com.vrv.linkDood/public/head/"+QString::fromStdString(group.info.thumb_avatar);
+        }
         qDebug() << Q_FUNC_INFO<<"22222222222"<<gp.thumbAvatar<<gp.name;
         gp.timeZone=QString::number(group.info.time_zone);
         gp.brief=QString::fromStdString(group.brief);
-//        gp.bulletin=QString::fromStdString(group.bulletin);
-        qDebug() << Q_FUNC_INFO<<"33333333333"<<gp.brief;
+        gp.bulletin=QString::fromStdString(group.bulletin);
+        qDebug() << Q_FUNC_INFO<<"33333333333"<<gp.brief<<gp.bulletin;
         emit getGroupInfoResult("获取群信息成功",gp);
     }
 }
@@ -337,8 +376,55 @@ void GroupControler::_getMemberList(service::ErrorInfo &info, std::vector<std::s
     qDebug() << Q_FUNC_INFO <<"getliebiaoliebiao"<<members.size();
     MemberList memberList;
     if(info.code()==0){
-        //        qDebug() << Q_FUNC_INFO <<"liebiaoliebiao";
+        if(members.size() >0){
+            for(auto i: members){
+                if(i == NULL){
+                    continue;
+                }
+                Member member;
+                std::shared_ptr<service::Member> mem = std::dynamic_pointer_cast<service::Member>(i);
+                member.avatar=QString::fromStdString(mem->avatar);
+                if(mem->gender==0){
+                    member.gender="保密";
+                }
+                if(mem->gender==1){
+                    member.gender="男";
+                }
+                if(mem->gender==2){
+                    member.gender="女";
+                }
+                member.groupid=QString::number(mem->groupid);
+                member.id=QString::number(mem->id);
+                member.member_type=QString::number(mem->member_type);
+                member.name=QString::fromStdString(mem->name);
+                member.remark=QString::fromStdString(mem->remark);
+                std::string str="";
+                char c=mem->team;
+                char sz[5] = {c};
+                str=sz;
+                if(str[0]<'A'||str[0]>'Z'){
+                    str[0]='#';
+                }
+                member.team=QString::fromStdString(str);
+                if(mem->thumb_avatar!=""){
+                    member.thumbAvatar="/data/data/com.vrv.linkDood/public/head/"+QString::fromStdString(mem->thumb_avatar);
+                }
+                memberList.push_back(member);
+            }
+        }
+
+        emit getMemberListResult("获取成员列表成功",memberList);
+    }
+    else{
+        emit getMemberListResult("获取成员列表失败",memberList);
+    }
+
+    MemberList memberListt;
+    if(members.size()>0){
         for(auto i: members){
+            if(i == NULL){
+                continue;
+            }
             Member member;
             std::shared_ptr<service::Member> mem = std::dynamic_pointer_cast<service::Member>(i);
             member.avatar=QString::fromStdString(mem->avatar);
@@ -353,58 +439,14 @@ void GroupControler::_getMemberList(service::ErrorInfo &info, std::vector<std::s
             }
             member.groupid=QString::number(mem->groupid);
             member.id=QString::number(mem->id);
-            qDebug() << Q_FUNC_INFO<<"chengyuan id:"<<mem->id;
 
             member.member_type=QString::number(mem->member_type);
             member.name=QString::fromStdString(mem->name);
-            qDebug() << Q_FUNC_INFO<<member.name;
             member.remark=QString::fromStdString(mem->remark);
-            qDebug() << Q_FUNC_INFO<<member.remark;
-            std::string str="";
-            char c=mem->team;
-            char sz[5] = {c};
-            str=sz;
-            if(str[0]<'A'||str[0]>'Z'){
-                str[0]='#';
-            }
-            member.team=QString::fromStdString(str);
-            qDebug() << Q_FUNC_INFO<<"edsadasdas:"<<member.team[0];
-            if(mem->thumb_avatar!=""){
-                member.thumbAvatar="/data/data/com.vrv.linkDood/public/head/"+QString::fromStdString(mem->thumb_avatar);
-            }
-            qDebug() << Q_FUNC_INFO<<"wwwwwwwwww";
-            memberList.push_back(member);
-            qDebug() << Q_FUNC_INFO <<"lililili";
+            member.team=QString::number(mem->team);
+            member.thumbAvatar=QString::fromStdString(mem->thumb_avatar);
+            memberListt.push_back(member);
         }
-        emit getMemberListResult("获取成员列表成功",memberList);
-    }
-    else{
-        emit getMemberListResult("获取成员列表失败",memberList);
-    }
-
-    MemberList memberListt;
-    for(auto i: members){
-        Member member;
-        std::shared_ptr<service::Member> mem = std::dynamic_pointer_cast<service::Member>(i);
-        member.avatar=QString::fromStdString(mem->avatar);
-        if(mem->gender==0){
-            member.gender="保密";
-        }
-        if(mem->gender==1){
-            member.gender="男";
-        }
-        if(mem->gender==2){
-            member.gender="女";
-        }
-        member.groupid=QString::number(mem->groupid);
-        member.id=QString::number(mem->id);
-
-        member.member_type=QString::number(mem->member_type);
-        member.name=QString::fromStdString(mem->name);
-        member.remark=QString::fromStdString(mem->remark);
-        member.team=QString::number(mem->team);
-        member.thumbAvatar=QString::fromStdString(mem->thumb_avatar);
-        memberListt.push_back(member);
     }
     emit getGroupMemberListReslut(info.code(),groupId,memberListt);
 }
@@ -459,6 +501,27 @@ void GroupControler::_deleteGroupFile(service::ErrorInfo &info)
     }
     else{
         emit deleteGroupFileResult("删除失败");
+    }
+}
+
+void GroupControler::uploadGroupAvatar(QString path)
+{
+    qDebug() << Q_FUNC_INFO << "path:" << path;
+    service::IMClient::getClient()->getFile()->uploadAvatar(path.toStdString(), std::bind(&GroupControler::_uploadGroupAvatar, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
+
+void GroupControler::_uploadGroupAvatar(std::string orgijson, std::string thumbjson, int code)
+{
+    qDebug() << Q_FUNC_INFO <<code;
+    if(code==0){
+        std::string src = "";
+        std::string thum="";
+        thum =utils::FileUtils::getImgUrl(thumbjson, src);
+        utils::FileUtils::getImgUrl(orgijson, src);
+        emit uploadGroupAvatarResult(QString::fromStdString(thum),QString::fromStdString(src));
+    }
+    else{
+        qDebug() << Q_FUNC_INFO <<code;
     }
 }
 
@@ -524,6 +587,7 @@ void GroupControler::onGroupInfoChanged(int8 operType, service::Group &group)
     gp.pinyin=QString::fromStdString(str);
     gp.thumbAvatar=QString::fromStdString(group.info.thumb_avatar);
     gp.avatar=QString::fromStdString(group.info.avatar);
+    qDebug() << Q_FUNC_INFO<<gp.thumbAvatar;
     gp.brief=QString::fromStdString(group.brief);
     gp.bulletin=QString::fromStdString(group.bulletin);
     gp.level=QString::number(group.info.level);

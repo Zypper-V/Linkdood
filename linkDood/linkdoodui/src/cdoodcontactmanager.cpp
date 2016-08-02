@@ -314,6 +314,7 @@ void CDoodContactManager::onContactInfoChanged(int oper, Contact user)
     switch(oper){
     case 1://add
         addContact(user);
+        emit addContactReslut(user.id);
         break;
     case 2://modify
         modifyContact(user);
@@ -410,5 +411,10 @@ int CDoodContactManager::indexofTeam(QString team)
             }
         }
     }
+}
+
+CDoodContactItem *CDoodContactManager::itemById(QString id)
+{
+    return contactListMap.value(id,NULL);
 }
 

@@ -29,10 +29,12 @@ public:
     ~CDoodChatManager();
 
     Q_INVOKABLE  void switchToChatPage(QString targetId, QString name,QString chatType,QString lastMsgId="",int unReadCount=0,QString icon="");
-    Q_INVOKABLE void updateUnreadMsg();
-
+    Q_INVOKABLE  void showUiFinished();
+    Q_INVOKABLE  void clearList();
     Q_INVOKABLE  CDoodChatManagerModel* chatModel ()const;
     void updateMsgToListView(Msg msg);
+
+    void startPushChatPage();
     //选择图片
     int selectImageCount();
     void setSelectImageCount(int count);
@@ -65,8 +67,8 @@ public:
     //获取未读消息列表
     Q_INVOKABLE void getUnReadMessages(void);
     //删除消息
-    void deleteMessage(QString targetid, QStringList msgs);
-
+    Q_INVOKABLE void deleteMessage(QString targetid, QString msgs);
+    Q_INVOKABLE void transforMessage(QString targetid,QString targetName,QString avatar, QString msgId);
     Q_INVOKABLE void entryChat(const QString &targetid);
     Q_INVOKABLE void exitChat();
     Q_INVOKABLE void downloadFile(QString localId, QString targetId);
@@ -83,6 +85,7 @@ public:
 
     //下载图片
     void downloadImage(QString url, QString property);
+    void downloadHistoryImage(QString url, QString property, QString targetid, QString localid);
     //解密文件
     bool decryptFile(QString encryptkey, QString srcpath, QString destpath);
     //获取文件列表
@@ -102,11 +105,12 @@ signals:
     //移除会话结果返回
     void removeChatResult(bool);
     void getUserInfoResult(int code, Contact contact);
+    void transforMessageBack(int code);
 
     void idChanged();
     void nameChanged();
     void chatTypeChanged();
-    void ChatPageChanged();
+    void chatPageChanged();
 
     void selectImageCountChanged();
     void selectFileCountChanged();
@@ -118,6 +122,7 @@ private slots:
     void onAccountInfoChanged(Contact user);
     void onAnthAvatarChanged(QString avatar);
     void onContactInfoChanged(int oper,Contact user);
+    void onDownloadImage(QString targetId,QString localId,QString url,QString enkey);
     //会话列表头像更新
     void onChatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
@@ -146,9 +151,14 @@ private slots:
     void onChatupLoadImage(QString tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
     void onChatDownloadImage(int code, QString localpath, QString tagetid);
+    void onDownloadHistoryImage(int code, QString localpath, QString targetid, QString localid);
+    void onTransMessageFinishBack(int code,QString info);
+    void onUploadFileBackUrl(QString targetId,QString localId,QString fileUrl,QString enkey);
+    void onUploadImgeBackUrl(QString targetId,QString localId,QString mainUrl,QString thumbUrl,QString enkey);
     //获取文件列表返回
     void onChatGetFileList(int code, FileInfoList files);
     void onGetUserInfo(int code, Contact contact);
+    void onReqestUserInfo(QString userId);
 private:
     void initConnect();
 private:
@@ -160,6 +170,8 @@ private:
     QString mActName;
     QString mActAvatar;
     QString m_sTargetid;
+
+    QString mCurentChatId,mCurentChatType,mCurentChatName;
     //缓存聊天列表
     QMap<QString,CDoodChatManagerModel*> mMsgListModel;
     CDoodChatManagerModel*               mChatModel;

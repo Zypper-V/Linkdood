@@ -11,7 +11,7 @@ Component {
         height: fileMessageBg.height
 
         property int sendEditMessageModel: 0
-
+        signal showMenu()
         Loader {
             id: sendfileMessageHeadImageViewLoader
             anchors.right: parent.right
@@ -33,17 +33,17 @@ Component {
                 iconSource: setIcon("1", model.modelData.contactThumbAvatar)
                 //                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
-                MouseArea {
-                    anchors.fill: parent
+                //                MouseArea {
+                //                    anchors.fill: parent
 
-                    onClicked: {
-                        console.log("todo show MyInfo Pagesssssssssss !!!")
-                        console.log(model.modelData.name)
-                        console.log(model.modelData.fromId)
-                        if (chatListView.editing)
-                            return;
-                    }
-                }
+                //                    onClicked: {
+                //                        console.log("todo show MyInfo Pagesssssssssss !!!")
+                //                        console.log(model.modelData.name)
+                //                        console.log(model.modelData.fromId)
+                //                        if (chatListView.editing)
+                //                            return;
+                //                    }
+                //                }
             }
         }
 
@@ -72,6 +72,7 @@ Component {
 
                 onPressAndHold: {
                     sendfileMessageRoot.sendEditMessageModel = 1
+                    emit: showMenu();
                 }
 
                 onPressed: {
@@ -87,12 +88,23 @@ Component {
                     fileMessageBg.source = "qrc:/res/send/message.png"
                 }
                 onClicked: {
-                    fileViewManager.showFilePage(model.modelData.localId,
-                                                 model.modelData.filePath,
-                                                 "",
-                                                 "",
-                                                 model.modelData.fileSize,
-                                                 "");
+                    if(model.modelData.filePath !== ""){
+                        fileViewManager.showFilePage(model.modelData.localId,
+                                                     model.modelData.filePath,
+                                                     "",
+                                                     "",
+                                                     model.modelData.fileSize,
+                                                     "");
+                    }else{
+
+                        fileViewManager.showFilePage(model.modelData.localId,
+                                                     model.modelData.textMsg,
+                                                     model.modelData.thumbAvatar,
+                                                     model.modelData.body,
+                                                     model.modelData.fileSize,
+                                                     model.modelData.tar_thumbAvatar);
+                    }
+
                     var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodFileViewPage.qml"),"CDoodFileViewPage");
                     pageStack.push(component);
                 }

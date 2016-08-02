@@ -13,7 +13,7 @@ class ChatControler:public QObject,public IChatObserver
 public:
     void init();//初始监听接口
 
-     void getContactInfo(QString userId,Msg msg);
+    void getContactInfo(QString userId,Msg msg);
 
     //进入会话UI
     void entryChat(const QString targetId);
@@ -143,6 +143,8 @@ public:
     ***************************************/
     void downloadImage(Msg msgImg);
 
+    void downloadHistoryImage(QString url, QString property, QString targetid, QString localid);
+
     /************************************************************************
     * @brief decryptFile
     * @description: 解密文件
@@ -169,19 +171,19 @@ signals:
     //监听头像更新
     void chatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
-   void offlineMsgNoticeBack(IMOfflineMsgList msgList);
+    void offlineMsgNoticeBack(IMOfflineMsgList msgList);
     //监听新消息通知
-   void chatMessageNotice(Msg msg);
+    void chatMessageNotice(Msg msg);
     //会话消息
-   void chatListChanged(const Chat_UIList& chats);
-   //会话列表(通知栏)新消息更新通知
-   void sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString);
-   //发送消息返回
-   void sendMessageBack(bool code,int64 sendTime,QString msgId);
-   //获取消息结果返回
-   void getMessagesBack(bool code,int64 sessionId,MsgList msgList);
-   //移除会话结果返回
-   void removeChatBack(bool);
+    void chatListChanged(const Chat_UIList& chats);
+    //会话列表(通知栏)新消息更新通知
+    void sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString);
+    //发送消息返回
+    void sendMessageBack(bool code,int64 sendTime,QString msgId);
+    //获取消息结果返回
+    void getMessagesBack(bool code,int64 sessionId,MsgList msgList);
+    //移除会话结果返回
+    void removeChatBack(bool);
     //删除消息
     void deleteMessagesBack(int code);
 
@@ -197,7 +199,10 @@ signals:
 
     //获取联系人信息返回
     void getUserInfoBack(int code, Contact user);
-
+    void transMessageFinishBack(int code,QString targetId);
+    void downloadHistoryImageResult(int code, QString localpath, QString targetid, QString localid);
+    void uploadFileBackUrl(QString targetId,QString localId,QString fileUrl,QString enkey);
+    void uploadImgeBackUrl(QString targetId,QString localId,QString mainUrl,QString thumbUrl,QString enkey);
 private:
     //处理时间显示
     //type 1 会话列表时间 2聊天界面时间
@@ -214,6 +219,7 @@ private:
     * @description: 发送消息结果回调
     ************************************/
     void _sendMesage(service::ErrorInfo&, int64/*发送时间*/,int64/*消息ID*/,QString localId,QString targetId);
+    void _transMesage(service::ErrorInfo&, int64/*发送时间*/,int64/*消息ID*/,QString targetId);
     /************************************
     * @brief onGetMesage
     * @description: 获取消息结果回调
@@ -241,6 +247,7 @@ private:
     void _uploadImage(int64 tagetid, std::string orgijson, std::string thumbjson, int code,Msg msg);
     //下载图片回调
     void _downloadImage(service::ErrorInfo& info, std::string localpath, int64 tagetid,Msg msgImg);
+    void _downloadHistoryImage(service::ErrorInfo& info, std::string localpath, int64 tid, QString encryptKey, QString tagetid, QString localid);
     //获取文件列表回调
     void _getFileList(service::ErrorInfo& info, std::vector<FileInfo> files);
     void _getUserInfo(service::ErrorInfo info, service::User user);
@@ -250,16 +257,26 @@ private:
 
 private:
     QString mSessionTargetID;
+    void sendSessionMsg(Msg imMsg);
+    void transMessage(Msg imMsg);
+    //判断文件是否存在
+    bool judgeFileExist(QString urlPath, int msgType);
+
     //处理接收到的图片消息
     void handleReciveImgMsg(std::shared_ptr<service::Msg> msg);
     //处理接收到的文件消息
     void handleReciveFileMsg(std::shared_ptr<service::Msg> msg);
-    //判断文件是否存在
-    bool judgeFileExist(QString urlPath, int msgType);
     void handleReciveDyEmojiMsg(std::shared_ptr<service::Msg> msg);
     void handleRecevieTextMsg(std::shared_ptr<service::Msg> msg);
-    void sendSessionMsg(Msg imMsg);
+
+
     void handleHistoryDyEmjiMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
+    void handleHistoryImgMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
+    void handleHistoryFileMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
+
+    //    void handleOfflineDyEmjiMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
+    //    void handleHistoryOfflineImgMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
+    //    void handleOfflineFileMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
 };
 
 template<typename T>

@@ -32,6 +32,9 @@ public:
     void addContact(QString userid, QString remark, QString info);
     //删除联系人
     void removeContact(QString userid);
+    //获取验证方式
+    void getVerifyType(QString userid);
+
 
 signals:
     //transparent onListChanged signal
@@ -45,6 +48,7 @@ signals:
     void updateContactInfoBack(int code);
     void addContactBack(int code);
     void removeContactBack(int code);
+    void getVerifyTypeBack(int code, QString userid, int type);
 private:
     ContactList sort(const ContactList& contactList);
     //更新联系人信息
@@ -53,5 +57,6 @@ private:
     void _searchFromLocal(service::ErrorInfo info, SearchResult res);
     void _addContact(service::ErrorInfo info);
     void _removeContact(service::ErrorInfo info);
+    void _getVerifyType(service::ErrorInfo info, ContactVerifyType verify);
 };
 #endif // CONTACTCONTROLER_H

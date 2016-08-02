@@ -53,6 +53,8 @@ private:
     void setActiveWindow();
 protected slots:
     void onChatPageChanged();
+    void onTransMessageSelectContactList(QList<QString>list,QString localId);
+    void onGroupRemoveOrExitResult(QString groupId);
 private:
     QSharedPointer<CDoodLoginManager> m_pLoginManager;
     QSharedPointer<CDoodSessionListManager> m_pSessionListManager;

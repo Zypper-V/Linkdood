@@ -4,6 +4,17 @@ import com.syberos.basewidgets 2.0
 CPage {
     id: groupAddMemberPage
 
+    property string localId
+
+    states: [
+        State {
+            name: "forwordMsg"
+        },
+        State {
+            name: "groupMng"
+        }
+    ]
+    state: "groupMng"
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
             groupAddMemberPage.statusBarHoldEnabled = true
@@ -57,7 +68,7 @@ CPage {
                 }
             }
             Text{
-                text:qsTr("选择群成员")
+                text:qsTr("选择好友")
                 color:"white"
                 font.pixelSize: 36
                 anchors.centerIn: parent
@@ -74,8 +85,12 @@ CPage {
                     radius: 10
                 }
                 onClicked: {
-
-                    if(groupManager.isCreateGroup){
+                    if(groupAddMemberPage.state == "forwordMsg"){
+                        //TODO
+                        groupManager.transMessage(localId);
+                        pageStack.pop();
+                    }
+                    else if(groupManager.isCreateGroup){
                         //                        inputDialog.titleText= qsTr("输入群名称");
                         //                        inputDialog.show();
                         groupManager.createGroup("");
@@ -149,8 +164,9 @@ CPage {
 
                         onReleased: {
                             background.color = "white"
-                            contactManager.selectMember(model.modelData.id);
+                            //if(groupAddMemberPage.state != "forwordMsg")
                             groupManager.selectmember(model.modelData.id);
+                            contactManager.selectMember(model.modelData.id);
                         }
 
                         onCanceled: {

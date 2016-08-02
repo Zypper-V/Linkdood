@@ -5,7 +5,8 @@ CEditListViewDelegate {
     id:chatDelegateRoot
 
     width: parent.width
-    height: sessionTimeBgLoader.height + messageLoader.height + marginValue + messageTopMarginValue + bottomMarginValue
+    height: sessionTimeBgLoader.height + messageLoader.height + marginValue +
+            messageTopMarginValue + bottomMarginValue + (isSender ? 0 : 40)
 
     property bool  isSender: model.modelData.fromId === loginManager.userId
     property int marginValue: chatDelegateRoot.showMsgTime ? 10 :0
@@ -15,8 +16,8 @@ CEditListViewDelegate {
     property int bottomMarginValue: 11
     property int maxMessageLength: 418
 
-    property string msgSendTime: model.modelData.time
-    property bool showMsgTime:  false
+    property string msgSendTime: model.modelData.timeText
+    property bool showMsgTime:  model.modelData.showTime
 
     property Component sendTextMsgObj:  CDoodSendTextMessageCompoent{}
     property Component receiveTextMsgObj:  CDoodReceiveTextMessageCompoent{}
@@ -51,7 +52,7 @@ CEditListViewDelegate {
             } else {
                 return chatDelegateRoot.receiveImageMsgObj
             }
-        }else if(model.modelData.msgType === "8"){
+        }else if(model.modelData.msgType === "8" ||model.modelData.msgType === "100"){
             return chatDelegateRoot.sendTipMsgObj
         }else{
             //TODO
@@ -113,11 +114,29 @@ CEditListViewDelegate {
                 color:"#ffffff"
                 font.pixelSize: 20
 
-                text: Qt.formatDateTime(chatPage.wallClockCurrentTime, "yyyy") !== Qt.formatDateTime(chatDelegateRoot.msgSendTime, "yyyy") ?
+                text:chatDelegateRoot.msgSendTime /*Qt.formatDateTime(chatPage.wallClockCurrentTime, "yyyy") !== Qt.formatDateTime(chatDelegateRoot.msgSendTime, "yyyy") ?
                           Qt.formatDateTime(chatDelegateRoot.msgSendTime, "yyyy-MM-dd hh:mm") :
                           Qt.formatDateTime(chatPage.wallClockCurrentTime, "MM-dd") !== Qt.formatDateTime(chatDelegateRoot.msgSendTime, "MM-dd") ?
-                              Qt.formatDateTime(chatDelegateRoot.msgSendTime, "MM-dd hh:mm") : Qt.formatDateTime(chatDelegateRoot.msgSendTime, "hh:mm")
+                              Qt.formatDateTime(chatDelegateRoot.msgSendTime, "MM-dd hh:mm") : Qt.formatDateTime(chatDelegateRoot.msgSendTime, "hh:mm")*/
             }
+        }
+    }
+
+    CDoodChatMessageOption{
+        id:msgOptions
+        onInerClicked: {
+            console.log("you select:"+index)
+            if(msgOptions.index == 0){
+                messageLoader.item.copy();
+            }else if(msgOptions.index == 1){
+                chatManager.deleteMessage(chatManagerModel.id,msgOptions.id);
+            }else if(msgOptions.index == 2){
+
+                var compoment = pageStack.getCachedPage(Qt.resolvedUrl("CDoodGroupAddMemberPage.qml"),"CDoodGroupAddMemberPage");
+                 pageStack.push(compoment,{localId:msgOptions.id,state:"forwordMsg"});
+                //chatManager.transforMessage(chatManagerModel.id,msgOptions.id);
+            }
+            msgOptions.hide();
         }
     }
 
@@ -129,8 +148,24 @@ CEditListViewDelegate {
 
         sourceComponent: chatDelegateRoot.loaderComponent()
     }
-
     onEditingChanged: {
 
+    }
+
+    Connections{
+        target: messageLoader.item
+        onShowMenu:{
+            msgOptions.id = model.modelData.localId;
+            msgOptions.index = -1;
+            if(model.modelData.msgType === "2"){
+                console.log("msgOptions.isVisibleCopy:true");
+                msgOptions.isVisibleCopy = true;
+            }else{
+                msgOptions.isVisibleCopy = false;
+                console.log("msgOptions.isVisibleCopy:false");
+            }
+
+            msgOptions.show();
+        }
     }
 }

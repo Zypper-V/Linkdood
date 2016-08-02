@@ -40,6 +40,15 @@ namespace service {
 		virtual void removeChat(int64 targetid, std::function<void(ErrorInfo&)> await) = 0;
 
 		/************************************************************************
+		* @brief setChatTop
+		* @description: 设置会话置顶
+		* @param[in] targetid 传入会话对应的ID，群或者人
+		* @param[in] type	  传入0不置顶 1置顶
+		* @param[in] await  传入接收结果回调
+		************************************************************************/
+		virtual void setChatTop(int64 targetid, int type, std::function<void(int)> await) = 0;
+
+		/************************************************************************
 		* @brief sendMessage
 		* @description: 发送消息
 		* @param[in] msg 传入消息

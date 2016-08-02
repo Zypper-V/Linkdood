@@ -33,7 +33,8 @@ enum MSG_TYPE{
     MEDIA_MSG_REVOKE = 18,	//撤回消息
     MEDIA_MSG_DYNAMIC_EMOJI = 19,//动态表情
     MEDIA_MSG_RED_PARKET = 88,	//红包
-    MEDIA_MSG_SUPER = 0xFF
+    MEDIA_MSG_SUPER = 0xFF,
+    MSG_TYPE_TIME = 100
 };
 
 #define APP_DATA_PATH "/data/data/com.vrv.linkDood/"
@@ -78,6 +79,8 @@ public:
     QString respons;       //响应
     QString info;          //消息内容
     QString msgType;
+    QString operUser;      //操作人名字
+    QString isread;        //是否已读  ０未读，１已读 isRead.
 };
 Q_DECLARE_METATYPE(IMSysMsg)
 QDBusArgument &operator << (QDBusArgument &argument, const IMSysMsg &info);
@@ -158,7 +161,7 @@ public:
     QString i_height;
     QString thumb_url;
     QString main_url;
-
+    bool    isTransMsg;
     // QList<int64> related_users;// 秘聊时相关的用户 ID
     // QList<int64> limit_range; //@ 人员列表
 };
@@ -459,6 +462,22 @@ Q_DECLARE_METATYPE(MsgFileInfo)
 QDBusArgument &operator << (QDBusArgument &argument, const MsgFileInfo &fileInfo);
 const QDBusArgument &operator >> (const QDBusArgument &argument, MsgFileInfo &fileInfo);
 
+class IMPrivateSetting{
+public:
+    IMPrivateSetting() :allow_phone(0), allow_email(0), allow_birthday(0),verifytype(0),vip_noticetype(0),
+    at_noticetype(0),global_noticetype(0){}
+    int allow_birthday;		//	生日可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1
+    int allow_phone;		//	电话可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1
+    int allow_email;		//	邮箱可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1
+    int verifytype;			//	验证方式 1：需要验证信息,2:不允许任何人添加,3:允许任何人添加，默认1
+    int vip_noticetype;		//	V标消息通知类型 1:表示始终有声音提醒，2：表示始终无声音提醒 3:不始终提醒，默认1
+    int at_noticetype;		//	@相关人提醒模式 1:表示始终有声音提醒，2：表示始终无声音提醒 3:不始终提醒，默认1
+    int global_noticetype;	//	全局消息通知 1:通知详情，2：通知源，隐藏内容 3:完全隐藏，默认2
+};
+Q_DECLARE_METATYPE(IMPrivateSetting)
+QDBusArgument &operator << (QDBusArgument &argument, const IMPrivateSetting &priset);
+const QDBusArgument &operator >> (const QDBusArgument &argument, IMPrivateSetting &priset);
+
 typedef QList<MsgFileInfo> FileInfoList;
 Q_DECLARE_METATYPE (FileInfoList);
 
@@ -513,6 +532,9 @@ inline void registerDoodDataTypes() {
     qDBusRegisterMetaType<IMSysMsgRespInfo>();
     qDBusRegisterMetaType<IMSysMsgRespInfoList>();
     qRegisterMetaType<IMSysMsgRespInfoList>("IMSysMsgRespInfoList");
+
+    qDBusRegisterMetaType<IMPrivateSetting>();
+    qRegisterMetaType<IMPrivateSetting>("IMPrivateSetting");
 }
 #endif // LINKDOODTYPES_H
 

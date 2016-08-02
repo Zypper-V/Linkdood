@@ -42,16 +42,26 @@ void AuthControler::login(const QString &server, const QString &userId, const QS
                                                      std::bind(&AuthControler::_loginResult,this,std::placeholders::_1,std::placeholders::_2));
 }
 
+void AuthControler::autoLogin(QString userid, QString service)
+{
+    qDebug() << Q_FUNC_INFO<<userid<<service;
+    int64 id=userid.toLongLong();
+    std::string ser=service.toStdString();
+
+    int64 code=service::IMClient::getClient()->getAuth()->login(id,ser,std::bind(&AuthControler::_loginResult,this,std::placeholders::_1,std::placeholders::_2));
+    qDebug() << Q_FUNC_INFO<<"sssssssssssssssssssssssssssssss:"<<code;
+}
+
 void AuthControler::getVerifyImg(QString userid, QString code)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<userid<<code;
     service::IMClient::getClient()->getAuth()->verifyImgCode(userid.toStdString(),code.toStdString(),
                                                              std::bind(&AuthControler::_getVerifyImg,this,std::placeholders::_1,std::placeholders::_2));
 }
 
 void AuthControler::_getVerifyImg(service::ErrorInfo info, std::string img)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<info.code()<<img.c_str();
     emit getVerifyImgResult(QString::number(info.code()),QString::fromStdString(img));
 }
 
@@ -125,10 +135,10 @@ void AuthControler::getLoginHistory()
 
 void AuthControler::setLoginInfo(int flag, QString userid, QString username, QString avatar)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<userid;
     service::IMClient::getClient()->getAuth()->setLoginInfo(
-                flag,userid.toLongLong(),username.toStdString(),
-                avatar.toStdString());
+                flag,userid.toLongLong(),"",
+                avatar.toStdString(),username.toStdString());
 }
 
 void AuthControler::getAccountInfo()
@@ -211,7 +221,7 @@ void AuthControler::onDBUpdateFinished(int val)
 void AuthControler::onLogoutChanged(service::ErrorInfo& info)
 {
     qDebug() << Q_FUNC_INFO << "code:" << info.code();
-    if(info.code() == 0)
+    if(info.code() == 0 ||info.code() == 1304)
     {
         emit loginoutRelust(true);
     }else
@@ -223,7 +233,7 @@ void AuthControler::onLogoutChanged(service::ErrorInfo& info)
 void AuthControler::onAccountInfoChanged(service::User& info)
 {
     qDebug() << Q_FUNC_INFO;
-    qDebug()<<"name:"<<info.name.c_str()<<"sex:"<<info.gender;
+
     mpUserInfo->__set_avatar(info.avatar);
     mpUserInfo->__set_gender(info.gender);
     mpUserInfo->__set_extends(info.extends);
@@ -232,30 +242,42 @@ void AuthControler::onAccountInfoChanged(service::User& info)
     mpUserInfo->__set_thumb_avatar(info.thumb_avatar);
     mpUserInfo->__set_time_zone(info.time_zone);
 
-    qDebug() << Q_FUNC_INFO << "sfsdfsfdg:" << QString::fromStdString(info.name);
     QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
     settings.setValue("myName",QString::fromStdString(info.name));
     settings.setValue("myId",QString::number(info.id));
     emit loginResultObserver(0,QString::number(info.id));
-
     //推送用户信息
+    service::Account& account = dynamic_cast<service::Account&>(info);
     Contact user;
-    user.timeZone = info.time_zone;
-    if(info.gender == 0){
-        user.gender = "保密";
+    qDebug()<<Q_FUNC_INFO<<"name:"<<account.name.c_str()<<"gender:"<<account.gender<<"phone:"<<account.phone.c_str()<<"link_id:"<<account.nick_id.c_str();
+    if(account.__isset.nick_id){
+        user.nick_id = QString::fromStdString(account.nick_id);
+        qDebug()<<Q_FUNC_INFO<<"ssssssssssssssssssssss1";
     }
-    if(info.gender == 1){
-        user.gender = "男";
+
+    if(account.__isset.email){
+        //user.email = QString::fromStdString(account.email);
     }
-    if(info.gender == 2){
-        user.gender = "女";
+    if(account._user_isset.avatar){
+        user.avatar = QString::fromStdString(account.avatar);
+        qDebug()<<Q_FUNC_INFO<<"ssssssssssssssssssssss1";
+    }
+    if(account._user_isset.thumb_avatar){
+        user.thumbAvatar = QString::fromStdString(account.thumb_avatar);
+        qDebug()<<Q_FUNC_INFO<<"ssssssssssssssssssssss2";
+    }
+
+    if(account._user_isset.name){
+        user.name = QString::fromStdString(account.name);
+        qDebug()<<Q_FUNC_INFO<<"ssssssssssssssssssssss3";
+    }
+
+    if(account._user_isset.gender){
+        user.gender = genderConvert(account.gender);
+        qDebug()<<Q_FUNC_INFO<<"ssssssssssssssssssssss4";
     }
     user.id = QString::number(info.id);
-    user.name = QString::fromStdString(info.name);
-    user.extends = QString::fromStdString(info.extends);
-    user.thumbAvatar = QString::fromStdString(info.thumb_avatar);
-    user.avatar = QString::fromStdString(info.avatar);
     emit accountInfoChanged(user);
 }
 
@@ -271,9 +293,31 @@ void AuthControler::onPasswordRuleChanged(service::ErrorInfo& info, int16 rule)
 
 void AuthControler::onAvatarChanged(std::string avatar)
 {
+    qDebug() << Q_FUNC_INFO << "avatar:" << avatar.c_str();
     if(!avatar.empty()){
         emit anthAvatarChanged(QString::fromStdString(avatar));
     }
+}
+
+void AuthControler::setPrivateSetting(IMPrivateSetting imps)
+{
+    qDebug() << Q_FUNC_INFO;
+    PrivateSetting ps;
+    ps.allow_birthday = imps.allow_birthday;
+    ps.allow_phone = imps.allow_phone;
+    ps.allow_email = imps.allow_email;
+    ps.verifytype = imps.verifytype;
+    ps.vip_noticetype = imps.vip_noticetype;
+    ps.at_noticetype = imps.at_noticetype;
+    ps.global_noticetype = imps.global_noticetype;
+
+    service::IMClient::getClient()->getAuth()->setPrivateSetting(ps, std::bind(&AuthControler::onSetPrivateSetting, this, std::placeholders::_1));
+}
+
+void AuthControler::getPrivateSetting()
+{
+    qDebug() << Q_FUNC_INFO;
+    service::IMClient::getClient()->getAuth()->getPrivateSetting(std::bind(&AuthControler::onGetPrivateSetting, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void AuthControler::onNetworkStatusChanged(bool connected, CNetworkManager::NetworkType type)
@@ -286,6 +330,27 @@ void AuthControler::onNetworkStatusChanged(bool connected, CNetworkManager::Netw
         emit connectChanged("网络连接中...");
     }
 
+}
+
+void AuthControler::onSetPrivateSetting(int code)
+{
+    qDebug() << Q_FUNC_INFO << "code:" << code;
+    emit setPrivateSettingResult(code);
+}
+
+void AuthControler::onGetPrivateSetting(int code, PrivateSetting ps)
+{
+    qDebug() << Q_FUNC_INFO << "code:" << code;
+    IMPrivateSetting imps;
+    imps.allow_birthday = ps.allow_birthday;
+    imps.allow_phone = ps.allow_phone;
+    imps.allow_email = ps.allow_email;
+    imps.verifytype = ps.verifytype;
+    imps.vip_noticetype = ps.vip_noticetype;
+    imps.at_noticetype = ps.at_noticetype;
+    imps.global_noticetype = ps.global_noticetype;
+
+    emit getPrivateSettingResult(code, imps);
 }
 
 void AuthControler::initConnects()
@@ -316,6 +381,7 @@ void AuthControler::_getLoginHistory(std::vector<service::LoginInfo> list)
         loginItem.lastLoginTime = item.last_login_time;
 
         historyList.insert(historyList.size(),loginItem);
+        qDebug() << Q_FUNC_INFO<<loginItem.userId<<loginItem.name<<loginItem.server;
     }
     emit getLoginHistoryResult(historyList);
 }
@@ -331,8 +397,7 @@ void AuthControler::_loginResult(service::ErrorInfo &info, long long userId)
         QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
         QSettings settings(fileName, QSettings::IniFormat);
         settings.setValue("myId",QString::number(userId));
-
-        emit loginSucceeded();
+        emit loginSucceeded(QString::number(userId));
     }
     else
     {

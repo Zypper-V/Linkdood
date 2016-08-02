@@ -9,6 +9,7 @@ Item{
     property var   contentItemBackGroundOpacity: 0.73
     signal backKeyReleased()
     signal outAreaClicked()
+    signal inerClicked()
 
     property Item contentItem: null
 

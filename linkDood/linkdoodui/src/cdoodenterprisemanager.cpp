@@ -34,6 +34,7 @@ bool CDoodEnterpriseManager::setIsOrg(const bool &data)
 
 void CDoodEnterpriseManager::setFarOrg()
 {
+    qDebug() << Q_FUNC_INFO;
     reset();
     setIsOrg(false);
     isFarOrg=1;
@@ -41,8 +42,9 @@ void CDoodEnterpriseManager::setFarOrg()
 
 void CDoodEnterpriseManager::getFarOrgs()
 {
-    reset();
+    qDebug() << Q_FUNC_INFO;
     if(isFarOrg==1){
+        reset();
         m_pClient->getSonOrgs("0");
     }
 }
@@ -74,6 +76,9 @@ void CDoodEnterpriseManager::onGetSonOrgsResult(int code,OrgList orglist,OrgUser
                 setIsOrg(true);
                 emit getFarOrgResult(orglist[0].id,orglist[0].name);
             }
+            else{
+                setIsOrg(false);
+            }
         }
         else{
             for(size_t i=0;i<orguserlist.size();++i){
@@ -81,6 +86,7 @@ void CDoodEnterpriseManager::onGetSonOrgsResult(int code,OrgList orglist,OrgUser
                 item->setId(orguserlist[i].id);
                 item->setName(orguserlist[i].name);
                 item->setGender(orguserlist[i].gender);
+                item->setOrder_num(orguserlist[i].order_num);
                 item->setThumbAvatar("qrc:/res/moren_icon.png");
                 addItem(item);
             }
@@ -93,6 +99,7 @@ void CDoodEnterpriseManager::onGetSonOrgsResult(int code,OrgList orglist,OrgUser
             }
         }
     }
+    emit getSonOrgsResult(code,orglist,orguserlist);
 }
 
 void CDoodEnterpriseManager::onGetOnlineStatesResult(QOnlineStateList onlinestatelist)
@@ -119,4 +126,9 @@ void CDoodEnterpriseManager::initConnect()
     connect(m_pClient, SIGNAL(getOnlineStatesResult(QOnlineStateList)),this,SLOT(onGetOnlineStatesResult(QOnlineStateList)));
     connect(m_pClient, SIGNAL(getOrgUserInfoResult(int,OrgUser)),this,SLOT(onGetorgUserInfoResult(int,OrgUser)));
     connect(m_pClient, SIGNAL(text()),this,SLOT(onText()));
+}
+
+int CDoodEnterpriseManager::indexOfSection(QString section)
+{
+
 }

@@ -45,6 +45,7 @@ signals:
     void isTipChanged();
     void my_TypeChanged();
     void getMemberListResult(QString result);
+    void wordsOutOfLimited();
 
 private:
 

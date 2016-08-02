@@ -89,6 +89,9 @@ void Msg::toImMassage(QVariantMap map)
             targetName = iter.value().toString();
         }
 
+        if(iter.key() == "isTransMsg"){
+            isTransMsg = iter.value().toBool();
+        }
         if (iter.key() == "related_users") {
             // related_users.clear();
             // related_users.append(iter.value());
@@ -104,6 +107,7 @@ void Msg::init()
 {
     body = QString();// 消息内容
     targetName = "";
+    isTransMsg = false;
 }
 
 QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
@@ -114,7 +118,7 @@ QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
              << msg.localid << msg.relatedMsgid << msg.time << msg.body
              <<msg.encrypt_key<<msg.encrypt_user<<msg.filename<<msg.f_id
             <<msg.f_path<<msg.f_size<<msg.f_state<<msg.f_url<<msg.i_height
-           <<msg.i_width<<msg.main_url<<msg.thumb_url<< msg.msgProperties<<msg.targetName;
+           <<msg.i_width<<msg.main_url<<msg.thumb_url<< msg.msgProperties<<msg.targetName<<msg.isTransMsg;
     argument.endStructure();
     return argument;
 }
@@ -127,7 +131,7 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Msg &msg)
             >> msg.localid >> msg.relatedMsgid >> msg.time >> msg.body
             >>msg.encrypt_key>>msg.encrypt_user>>msg.filename>>msg.f_id
             >>msg.f_path>>msg.f_size>>msg.f_state>>msg.f_url>>msg.i_height
-            >>msg.i_width>>msg.main_url>>msg.thumb_url>> msg.msgProperties>>msg.targetName;
+            >>msg.i_width>>msg.main_url>>msg.thumb_url>> msg.msgProperties>>msg.targetName>>msg.isTransMsg;
     argument.endStructure();
     return argument;
 }
@@ -193,7 +197,6 @@ void Chat_UI::toImChat(QVariantMap map)
         if(iter.key() == "id"){
             id = iter.value().toString();
         }
-
     }
 }
 
@@ -900,7 +903,7 @@ QDBusArgument &operator << (QDBusArgument &argument, const LoginInfo &info)
 
     argument << info.account << info.areaNum << info.isAutoLogin
              << info.isRemberPass << info.lastLoginTime << info.name
-             << info.server << info.status << info.userIcon;
+             << info.server << info.status << info.userIcon<<info.userId;
     argument.endStructure();
     return argument;
 }
@@ -910,7 +913,7 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, LoginInfo &info
     argument.beginStructure();
     argument >> info.account >> info.areaNum >> info.isAutoLogin
             >> info.isRemberPass >> info.lastLoginTime >> info.name
-            >> info.server >> info.status >> info.userIcon;
+            >> info.server >> info.status >> info.userIcon >>info.userId;
     argument.endStructure();
     return argument;
 }
@@ -1084,7 +1087,7 @@ void IMSysMsg::toIMSysMsg(QVariantMap map)
 QDBusArgument &operator <<(QDBusArgument &argument, const IMSysMsg &info)
 {
     argument.beginStructure();
-    argument << info.isShowButton << info.msgid << info.targetid << info.time << info.msgtypeText << info.name << info.avatar << info.respons << info.info << info.msgType;
+    argument << info.isShowButton << info.msgid << info.targetid << info.time << info.msgtypeText << info.name << info.avatar << info.respons << info.info << info.msgType << info.operUser << info.isread;
     argument.endStructure();
     return argument;
 }
@@ -1092,8 +1095,23 @@ QDBusArgument &operator <<(QDBusArgument &argument, const IMSysMsg &info)
 const QDBusArgument &operator >>(const QDBusArgument &argument, IMSysMsg &info)
 {
     argument.beginStructure();
-    argument >> info.isShowButton >> info.msgid >>info.targetid >> info.time >> info.msgtypeText >> info.name >> info.avatar >> info.respons >> info.info  >> info.msgType;
+    argument >> info.isShowButton >> info.msgid >>info.targetid >> info.time >> info.msgtypeText >> info.name >> info.avatar >> info.respons >> info.info  >> info.msgType >> info.operUser >> info.isread;
     argument.endStructure();
     return argument;
 }
 
+QDBusArgument &operator <<(QDBusArgument &argument, const IMPrivateSetting &priset)
+{
+    argument.beginStructure();
+    argument << priset.allow_birthday << priset.allow_phone << priset.allow_email << priset.verifytype << priset.vip_noticetype << priset.at_noticetype << priset.global_noticetype;
+    argument.endStructure();
+    return argument;
+}
+
+const QDBusArgument &operator >>(const QDBusArgument &argument, IMPrivateSetting &priset)
+{
+    argument.beginStructure();
+    argument >> priset.allow_birthday >> priset.allow_phone >> priset.allow_email >> priset.verifytype >> priset.vip_noticetype >> priset.at_noticetype >> priset.global_noticetype;
+    argument.endStructure();
+    return argument;
+}

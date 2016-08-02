@@ -50,22 +50,24 @@ CPageStackWindow {
     Component.onCompleted: {
         var code = loginManager.loginStatus;
         console.log("sfdsgsdfgsfdg:"+code);
-        if(code === 1){
-            sessionListManager.getChatList();
-            contactManager.getContactList();
-            userProfileManager.getAccountInfo();
-            groupManager.getGroupList();
-            enterpriseManager.setFarOrg();
-            orgManager.resetOrgList();
-            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
-        }else{
-            pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
-        }
+//        if(code === 1){
+//            sessionListManager.getChatList();
+//            contactManager.getContactList();
+//            userProfileManager.getAccountInfo();
+//            groupManager.getGroupList();
+//            enterpriseManager.setFarOrg();
+//            orgManager.resetOrgList();
+//            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+//        }else{
+            loginManager.getLoginHistory();
+            pageStack.replace(Qt.resolvedUrl("CDoodWelcomePage.qml"), "", true);
+//        }
     }
     Connections{
         target: loginManager
         onServiceRestart:{
-            pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+            loginManager.getLoginHistory();
+            pageStack.replace(Qt.resolvedUrl("CDoodWelcomePage.qml"), "", true);
         }
     }
 }

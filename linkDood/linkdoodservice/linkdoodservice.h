@@ -84,7 +84,7 @@ signals:
 
     void srvGetContactInfo(service::User&user);
 
-
+    void transMessageFinishBack(int code,QString targetId);
     //上传头像返回
     void uploadAvatarResult(QString orgijson, QString thumbjson, int code);
     //上传文件返回
@@ -97,6 +97,7 @@ signals:
     void uploadImageResult(QString tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
     void downloadImageResult(int code, QString jasoninfo, QString tagetid);
+    void downloadHistoryImageResult(int code, QString localpath, QString targetid, QString localid);
     //获取文件列表返回
     void getFileListResult(int code, FileInfoList fileList);
     //获取联系人返回
@@ -109,6 +110,12 @@ signals:
     void addContactResult(int code);
     //删除联系人返回
     void removeContactResult(int code);
+    //获取验证方式
+    void getVerifyTypeResult(int code, QString userid, int type);
+
+    void uploadFileBackUrl(QString targetId,QString localId,QString fileUrl,QString enkey);
+    void uploadImgeBackUrl(QString targetId,QString localId,QString mainUrl,QString thumbUrl,QString enkey);
+
     void groupListChanged(GroupList groupList);
     void groupAvatarChanged(QString groupid,QString avatar);
     void memberAvatarChanged(QString userid,QString avatar);
@@ -132,6 +139,11 @@ signals:
     void getGroupFileListResult(FileInfoList fileInfoList);
     void deleteGroupFileResult(QString result);
     void getGroupMemberListReslut(int code,QString id,MemberList list);
+    void uploadGroupAvatarResult(QString thum_url,QString src_url);
+
+    void setPrivateSettingResult(int code);
+    void getPrivateSettingResult(int code, IMPrivateSetting ps);
+
 public slots:
 
     /**************************************
@@ -162,6 +174,7 @@ public slots:
     void login(const QString &server,
                const QString &userId,
                const QString &password);
+    void autoLogin(QString id,QString service);
     void getVerifyImg( QString userid,QString code);
     void changepassword(QString oldpsw,QString newpsw);
 
@@ -172,7 +185,7 @@ public slots:
     QString createMsgId();
 
     //更新联系人信息
-     void updateContactInfo(QString userId,QString operStar,QString remark="");
+    void updateContactInfo(QString userId,QString operStar,QString remark="");
 
     //用户信息
     void getContactInfo(QString userId,Msg msg);
@@ -242,7 +255,7 @@ public slots:
 
     /*****************end chat****************************/
 
-     /*****************start Enterprise**************************/
+    /*****************start Enterprise**************************/
     void getSonOrgs(QString orgid);
     void getOnlineStates(QStringList& userid);
     void getOrgUserInfo(QString userid);
@@ -302,6 +315,8 @@ public slots:
     ************************************************************************/
     void downloadImage(QString url, QString property);
 
+    void downloadHistoryImage(QString url, QString property, QString targetid, QString localid);
+
     /************************************************************************
     * @brief decryptFile
     * @description: 解密文件
@@ -347,6 +362,7 @@ public slots:
      * @param userid       传入联系人ID
      */
     void removeContact(QString userid);
+    void getVerifyType(QString userid);
 
     void createGroup(QString level, QString name, MemberList memberList);
     void addGroup(QString groupid, QString verify_info);
@@ -364,10 +380,14 @@ public slots:
     void getGroupList();
     void getGroupFileList(QString groupid);
     void deleteGroupFile(QStringList fileIdList);
+    void uploadGroupAvatar(QString path);
 
     void getSysMessages(int type,int count,QString msgid,int flag);
     void setSysMessagRead(int type, QString msg);
     void response(IMSysMsgRespInfo info);
+
+    void setPrivateSetting(IMPrivateSetting ps);
+    void getPrivateSetting();
 
 protected slots:
 
@@ -393,7 +413,7 @@ protected slots:
     //会话列表更新
     void onChatListChanged(Chat_UIList chats);
     //登录成功返回
-    void onLoginSucceeded();
+    void onLoginSucceeded(QString userid);
     //登录失败返回
     void onLoginFailed(int code);
     //退出登录结果返回
@@ -429,6 +449,7 @@ protected slots:
     void onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
     void onChatDownloadImage(service::ErrorInfo& info, QString localpath, int64 tagetid);
+    void onDownloadHistoryImage(int code, QString localpath, QString targetid, QString localid);
     //获取文件列表返回
     void onChatGetFileList(service::ErrorInfo& info, std::vector<FileInfo> files);
     //获取联系人信息返回
@@ -442,9 +463,12 @@ protected slots:
     void onAddContact(int code);
     //删除联系人返回
     void onRemoveContact(int code);
+    void onGetVerifyType(int code, QString userid, int type);
 
 
-
+    void onUploadFileBackUrl(QString targetId,QString localId,QString fileUrl,QString enkey);
+    void onUploadImgeBackUrl(QString targetId,QString localId,QString mainUrl,QString thumbUrl,QString enkey);
+    void onTransMessageFinishBack(int code,QString targetId);
     //获取登录历史记录
     void onGetLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
@@ -453,12 +477,12 @@ protected slots:
     void onAccountInfoChanged(Contact user);
     //会话列表(通知栏)新消息更新通知
     void onSessionMessageNotice(QString targetId,
-                               QString msgId,
-                               QString lastMsg,
-                               QString time,
-                               QString name,
-                               QString avater,
-                               QString unreadmsg);
+                                QString msgId,
+                                QString lastMsg,
+                                QString time,
+                                QString name,
+                                QString avater,
+                                QString unreadmsg);
 
 
 
@@ -485,6 +509,12 @@ protected slots:
     void onGetMemberListResult(QString result,MemberList memberList);
     void onGetGroupFileListResult(FileInfoList fileInfoList);
     void onDeleteGroupFileResult(QString result);
+    void onUploadGroupAvatarResult(QString thum_url,QString src_url);
+
+    void onSetPrivateSetting(int code);
+    void onGetPrivateSetting(int code, IMPrivateSetting ps);
+
+
 public:
     static LinkDoodService* m_pInstance;
 

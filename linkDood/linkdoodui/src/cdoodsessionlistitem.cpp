@@ -33,6 +33,9 @@ QString CDoodSessionListItem::setId(const QString &data)
 
 QString CDoodSessionListItem::name() const
 {
+    if(mName ==""){
+        return mId;
+    }
     return mName;
 }
 

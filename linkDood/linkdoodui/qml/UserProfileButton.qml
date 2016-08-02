@@ -9,6 +9,7 @@ Rectangle{
     property string rigthText: ""
     property bool showLine:true
     property bool editable:false
+    property int  rightTextMaxLen: 460
     signal clicked()
 
     radius: 10
@@ -50,12 +51,32 @@ Rectangle{
         id:rigthText
         
         text:comp.rigthText
-        font.pixelSize: 26
+        font.pixelSize: 22
+        width:300
+        elide: Text.ElideRight
+        clip:true
+        maximumLineCount: 1
+        horizontalAlignment:Text.AlignRight
+        onTextChanged: {
+            console.log("text changed:"+text);
+            rigthText.width = setWidth();
+        }
 
         anchors{
             right: arrowTip.left
             rightMargin: 20
             verticalCenter: parent.verticalCenter
+        }
+        function setWidth(){
+            var tmp = rigthText.contentWidth+10;
+            console.log("len:"+tmp);
+            if(tmp>rightTextMaxLen){
+                return rightTextMaxLen;
+            }else if(tmp <300){
+                return 300;
+            }else{
+                return tmp;
+            }
         }
     }
     Image {

@@ -16,7 +16,7 @@ QString CDoodEmojiItem::name() const
 
 QString CDoodEmojiItem::setName(const QString &data)
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
     if(mName == data)
         return data;
     mName = data;
@@ -32,7 +32,7 @@ QString CDoodEmojiItem::path() const
 
 QString CDoodEmojiItem::setPath(const QString &data)
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
     if(mPath == data)
         return data;
     mPath = data;
@@ -48,7 +48,7 @@ QString CDoodEmojiItem::explain() const
 
 QString CDoodEmojiItem::setExplain(const QString &data)
 {
-    qDebug() << Q_FUNC_INFO;
+//    qDebug() << Q_FUNC_INFO;
     if(mExplain == data)
         return data;
     mExplain = data;

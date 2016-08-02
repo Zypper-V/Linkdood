@@ -354,6 +354,7 @@ Item {
 
         titleText: qsTr("修改备注")
         messageTextColor:"#777777"
+        maximumLength:20
         onAccepted: {
             contactManager.updateContactInfo(menu.id,"",inputDialog.text());
             indicatorDialog.show();

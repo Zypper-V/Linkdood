@@ -102,13 +102,17 @@ CPage {
                     id:btnDD
 
                     leftText: qsTr("圆圆号")
-                    rigthText: userProfileManager.nickId
+                    rigthText: userProfileManager.nickId !== ""?userProfileManager.nickId:qsTr("请设置圆圆号");
                     radius: 4
                     showLine:false
                     editable:userProfileManager.nickId ===""
 
                     anchors.top: btnMap.bottom
                     onClicked: {
+                        if(userProfileManager.nickId !==""){
+                            return ;
+                        }
+
                         inputDialog.titleText= qsTr("圆圆号");
                         inputDialog.setText(userProfileManager.nickId);
                         inputDialog.type = 2;
@@ -189,6 +193,7 @@ CPage {
 
         property int  type
         messageTextColor:"#777777"
+        maximumLength: 12
         onAccepted: {
             if(type === 1){
                 userProfileManager.updateAccountInfo(inputDialog.text(),"","");

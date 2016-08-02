@@ -69,7 +69,7 @@ CPage {
 
                 textColor:"#787777"
                 font.pixelSize: 30
-                placeholderText:os.i18n.ctr(qsTr("豆豆号/手机号/邮箱号"))
+                placeholderText:os.i18n.ctr(qsTr("圆圆号/手机号"))
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
 
                 MouseArea{

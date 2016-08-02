@@ -28,7 +28,9 @@ class CDoodChatItem : public QObject
     Q_PROPERTY(QString textMsg READ textMsg WRITE setTextMsg NOTIFY textMsgChanged)
     Q_PROPERTY(long long fileSize READ fileSize WRITE setFileSize NOTIFY fileSizeChanged)
     Q_PROPERTY(QString contactThumbAvatar READ contactThumbAvatar WRITE setContactThumbAvatar NOTIFY contactThumbAvatarChanged)
-
+    Q_PROPERTY(bool showTime READ showTime WRITE setShowTime NOTIFY showTimeChanged)
+    Q_PROPERTY(QString timeText READ timeText NOTIFY timeTextChanged /*WRITE setTimeText NOTIFY timeTextChanged*/)
+    Q_PROPERTY(bool isImageChange READ isImageChange NOTIFY isImageChangeChanged)
 
 public:
 
@@ -36,6 +38,13 @@ public:
 
     long long fileSize() const;
     long long setFileSize(const long long data);
+
+//    void setTimeText(QString& data);
+    QString timeText();
+
+
+    void setShowTime(bool show);
+    bool showTime();
 
     int progress() const;
     int setProgress(const int &data);
@@ -46,6 +55,7 @@ public:
     bool status() const;
     bool setStatus(const bool &data);
 
+    bool isImageChange();
     QString name() const;
     QString setName(const QString &data);
 
@@ -112,6 +122,9 @@ signals:
     void textMsgChanged();    
     void contactThumbAvatarChanged();
     void filePathChanged();
+    void showTimeChanged();
+    void timeTextChanged();
+    void isImageChangeChanged();
 private:
     QString mName;
     QString mThumbAvatar;    //为位图片时表示图片缩略图地址，为文件时表示文件下载地址
@@ -133,6 +146,10 @@ private:
     QString mLocalId;
     QString mContactThumbAvatar;
     QString mFilePath;
+    bool    mShowTime;
+    bool    mIsImageChange;
+   public:
+    QString mEnkey,mEnkeyUser,mFileUrl,mImageMainUrl,mImageThumbUrl;
 };
 
 #endif // CDOODCHATITEM_H

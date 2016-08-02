@@ -17,12 +17,16 @@ class CDoodGroupManager: public CDoodListModel
     Q_PROPERTY(QString createrId READ createrId WRITE setCreaterId NOTIFY createrIdChanged)
     Q_PROPERTY(QString brief READ brief WRITE setBrief NOTIFY briefChanged)
     Q_PROPERTY(QString bulletin READ bulletin WRITE setBulletin NOTIFY bulletinChanged)
+    Q_PROPERTY(QString verify_type READ verify_type WRITE setVerify_type NOTIFY verify_typeChanged)
+    Q_PROPERTY(QString is_allow READ is_allow WRITE setIs_allow NOTIFY is_allowChanged)
     Q_PROPERTY(bool isGroupLeader READ isGroupLeader WRITE setIsGroupLeader NOTIFY isGroupLeaderChanged)
     Q_PROPERTY(bool isCreateGroup READ isCreateGroup WRITE setIsCreateGroup NOTIFY isCreateGroupChanged)
 
 public:
     explicit CDoodGroupManager(LinkDoodClient *client = 0, QObject *parent = 0);
     void getGroupInfoFromList(QString groupId,QString&name,QString&avatar);
+    Member getMemberItemById(QString id);
+
     QString id() const;
     Q_INVOKABLE QString setId(const QString &data);
 
@@ -41,6 +45,13 @@ public:
     QString bulletin() const;
     Q_INVOKABLE QString setBulletin(const QString &data);
 
+    QString verify_type() const;
+    Q_INVOKABLE QString setVerify_type(const QString &data);
+
+    QString is_allow() const;
+    Q_INVOKABLE QString setIs_allow(const QString &data);
+
+
     bool isGroupLeader() const;
     Q_INVOKABLE bool setIsGroupLeader(const bool &data);
 
@@ -57,12 +68,19 @@ public:
     Q_INVOKABLE void inviteMember();
     Q_INVOKABLE void addGroup(QString groupid);
     Q_INVOKABLE void getGroupList();
+    Q_INVOKABLE void setGroupInfo(int type,QString remark);
+    Q_INVOKABLE void getGroupSet(QString groupid);
+    Q_INVOKABLE void setGroupSet(int type,QString remark);
+    Q_INVOKABLE void uploadGroupAvatar(QString path);
 
-   Q_INVOKABLE void getGroupFileList(QString groupid);
-   Q_INVOKABLE void transferGroup(QString groupid,QString userid);
+    Q_INVOKABLE void transMessage(QString localId);
+
+    Q_INVOKABLE void getGroupFileList(QString groupid);
+    Q_INVOKABLE void transferGroup(QString groupid,QString userid);
 
     QString getMyId();
 private slots:
+    void onSetGroupInfoResult(QString result);
     void onCreateGroupResult(QString);
     void onGroupListChanged(GroupList groupList);
     void onGetGroupInfoResult(QString result,Group group);
@@ -72,6 +90,10 @@ private slots:
     void onInviteMemberResult(QString result);
     void onAddGroupResult(QString result);
     void onGetGroupFileListResult(FileInfoList fileInfoList);
+    void onSetGroupSetResult(QString result);
+    void onGetGroupSetResult(QString result,QString verify_type,QString is_allow);
+    void onUploadGroupAvatarResult(QString thum_url,QString src_url);
+    void onGroupAvatarChanged(QString id,QString avatar);
 signals:
     void idChanged();
     void nameChanged();
@@ -79,6 +101,8 @@ signals:
     void createrIdChanged();
     void briefChanged();
     void bulletinChanged();
+    void verify_typeChanged();
+    void is_allowChanged();
     void isGroupLeaderChanged();
     void isCreateGroupChanged();
 
@@ -88,6 +112,10 @@ signals:
     void getGroupFileListResult();
     void inviteMemberResult(QString result);
     void addGroupResult(QString result);
+    void transMessageSelectContactList(QList<QString>list,QString localId);
+    void uploadGroupAvatarResult();
+    void wordsOutOfLimited();
+    void groupRemoveOrExitResult(QString groupId);
 private:
     QString mId;
     QString mName;
@@ -95,6 +123,12 @@ private:
     QString mCreaterId;
     QString mBrief;
     QString mButtletin;
+    QString mVerify_type;
+    QString mIs_allow;
+    QString mTemp_verify;
+    QString mTemp_allow;
+    int mType;
+    QString mTemp;
     bool mIsGroupLeader;
     bool mIsCreateGroup;
     int mGetGroupInfo;

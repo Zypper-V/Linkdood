@@ -12,7 +12,7 @@ CPage {
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
             mailloginPage.statusBarHoldEnabled = true
-            gScreenInfo.setStatusBar(loginPage.statusBarHoldEnabled)
+            gScreenInfo.setStatusBar(mailloginPage.statusBarHoldEnabled)
             mailloginPage.statusBarHoldItemColor = "#edf0f0"
             gScreenInfo.setStatusBarStyle("black")
         }
@@ -21,15 +21,16 @@ CPage {
     Connections {
         target: loginManager
 
-//        onInputRootTabView: {
-//            console.log("onInputRootTabView !!!!")
-//            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+//        onAutoLogin: {
+//            loadingDialog.show();
 //        }
 
         onLoginSucceeded: {
             console.log("onLoginSuccess !!!!")
             loadingDialog.hide();
             sessionListManager.getChatList();
+            enterpriseManager.setFarOrg();
+            orgManager.resetOrgList();
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
 
 //            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
@@ -43,6 +44,14 @@ CPage {
             console.log("onLoginFailed !!!!")
             loadingDialog.hide();
             gToast.requestToast(err,"","");
+            if(err==="首次登录，请激活帐号")
+            {
+                pageStack.replace(Qt.resolvedUrl("CDoodActivateAccountPage.qml"), "", true);
+            }
+            if(err==="输入错误次数过多,请输入验证码")
+            {
+                pageStack.replace(Qt.resolvedUrl("CDoodVerifyImgPage.qml"), "", true);
+            }
         }
     }
 
@@ -87,7 +96,8 @@ CPage {
 
                     anchors.centerIn: parent
 
-                    text:qsTr("邮箱/豆豆号登录")
+          text:qsTr("身份证号登录")
+
                     color:"white"
                     font.pixelSize: 36
                 }
@@ -139,12 +149,13 @@ CPage {
                 placeholderText:os.i18n.ctr(qsTr("请输入服务器"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
+                text: loginManager.getLoginServiceId();
 
                 onTextChanged: {
                     passWordEdit.text = ""
 
-                    if(loginPage.state !== "hidden") {
-                        loginPage.state = "hidden"
+                    if(mailloginPage.state !== "hidden") {
+                        mailloginPage.state = "hidden"
                     }
                 }
             }
@@ -163,7 +174,8 @@ CPage {
                     verticalCenter: userLineEdit.verticalCenter
                 }
                 width:100
-                text:qsTr("邮箱/豆豆号")
+        text:qsTr("身份证号")
+
                 font.pixelSize: 30
             }
 
@@ -182,15 +194,17 @@ CPage {
 //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
-                placeholderText:os.i18n.ctr(qsTr("请输入邮箱/豆豆号"))
+                placeholderText:os.i18n.ctr(qsTr("请输入身份证号"))
+
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
+                text: loginManager.getLoginPhoneId();
 
                 onTextChanged: {
                     passWordEdit.text = ""
 
-                    if(loginPage.state !== "hidden") {
-                        loginPage.state = "hidden"
+                    if(mailloginPage.state !== "hidden") {
+                        mailloginPage.state = "hidden"
                     }
                 }
             }
@@ -274,7 +288,9 @@ CPage {
                         gToast.requestToast("密码不能为空","","");
                     } else {
                         loadingDialog.show();
-                        loginManager.login(srvLineEdit.text+":7", userLineEdit.text, passWordEdit.text);
+                        loginManager.setLoginPhoneId(userLineEdit.text);
+                        loginManager.setLoginServiceId(srvLineEdit.text);
+                        loginManager.login(srvLineEdit.text, userLineEdit.text+":7", passWordEdit.text);
                     }
                 }
 
@@ -284,6 +300,7 @@ CPage {
             }
             CButton{
                 id:forgetpsw
+                visible:false
                 anchors.top: loginButton.bottom
                 anchors.topMargin: 50
                 anchors.rightMargin: 20

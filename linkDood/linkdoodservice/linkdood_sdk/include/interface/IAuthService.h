@@ -77,6 +77,16 @@ namespace service {
 			const std::string& user, const std::string& pwd, const std::string& server, std::function<void(ErrorInfo& err, int64 userid/*用户ID*/)> await)=0;
 		
 		/************************************************************************
+		* @brief login
+		* @description: 自动登录（不用填密码）
+		* @param[in] userid 传入用户ID 
+		* @param[in] server 传入服务器地址，域名或IP均可
+		* @param[inout] await 传入接收调用结果的回调函数
+		* @return:	int64 返回当前执行的操作ID，用于取消该次执行
+		************************************************************************/
+		virtual int64 login(const int64 userid, const std::string& server, std::function<void(ErrorInfo& err, int64 userid/*用户ID*/)> await) = 0;
+		
+		/************************************************************************
 		* @brief logout
 		* @description: 登出
 		************************************************************************/
@@ -104,13 +114,14 @@ namespace service {
 		/************************************************************************
 		* @brief setLoginInfo
 		* @description: 设置登录信息
-		* @param[in] flag 传入登录属性 是否记住密码和是否自动登录的按位或
-		* @param[in] userid 传入用户ID
-		* @param[in] username 传入用户名
-		* @param[in] avatar	  传入用户头像
+		* @param[in] flag    传入登录属性 是否记住密码和是否自动登录的按位或
+		* @param[in] userid  传入用户ID
+		* @param[in] account 传入用户账号
+		* @param[in] avatar	 传入用户头像
+		* @param[in] name    传入用户名称
 		************************************************************************/
 		virtual void setLoginInfo(
-			int flag, int64 userid, std::string username, std::string avatar) = 0;
+			int flag, int64 userid, std::string account, std::string avatar, std::string name) = 0;
 
 		/************************************************************************
 		* @brief getSecUrl

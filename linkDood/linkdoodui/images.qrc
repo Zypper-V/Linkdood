@@ -71,5 +71,11 @@
         <file>res/fileformat_rar.png</file>
         <file>res/fileformat_txt.png</file>
         <file>res/collectivel_icon.png</file>
+        <file>res/personal_setting.png</file>
+        <file>res/picture_send.png</file>
+        <file>res/wlcomepage1.png</file>
+        <file>res/wlcomepage2.png</file>
+        <file>res/welcomepage3.gif</file>
+        <file>res/normal1.png</file>
     </qresource>
 </RCC>

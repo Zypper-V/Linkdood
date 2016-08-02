@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import com.syberos.basewidgets 2.0
-
 CPage {
     id: loginPage
 
@@ -41,8 +40,8 @@ CPage {
             loginManager.setLoginInfo(2,userID,userLineEdit.text,"");
         }
 
-        onLoginFailed: {
-            console.log("onLoginFailed !!!!")
+
+        onLoginFailed: {console.log("onLoginFailed !!!!")
             loadingDialog.hide();
             gToast.requestToast(err,"","");
             if(err==="首次登录，请激活帐号")
@@ -63,7 +62,6 @@ CPage {
             anchors.fill: parent
             color: "#f2f2f2"
         }
-
         Flickable{
             id: filckableInput
             anchors.top: parent.top
@@ -408,6 +406,7 @@ CPage {
                 anchors.right: parent.right
                 height:50
                 width:200
+                visible: false
                 text:os.i18n.ctr(qsTr("忘记密码"))
                 textColor:  "#32c2fe"
                 backgroundComponent: Rectangle {
@@ -418,6 +417,8 @@ CPage {
                 onClicked: {
                     var tll = Qt.openUrlExternally("http://www.baidu.com");
                     console.log("sssss",tll);
+                    //loginManager.openUrl("http://www.baidu.com");
+                    //webview.goForward();
                 }
             }
             CButton{
@@ -428,7 +429,7 @@ CPage {
                 anchors.left: parent.left
                 height:50
                 width:200
-                text:os.i18n.ctr(qsTr("其他方式登录"))
+                text:os.i18n.ctr(qsTr("身份证登录"))
                 textColor:  "#32c2fe"
                 backgroundComponent: Rectangle {
                     anchors.fill: parent

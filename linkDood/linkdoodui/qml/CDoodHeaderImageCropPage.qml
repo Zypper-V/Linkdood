@@ -44,12 +44,25 @@ CPage {
                     font.pixelSize: 36
                     anchors.centerIn: parent
                 }
-                IconButton{
+                Rectangle{
                     id: uploadheader
-                    anchors.right: parent.right
-                    anchors.leftMargin: 30
+                    width:120
+                    height: 60
+                    color: "green"
+                    radius: 10
                     anchors.verticalCenter: parent.verticalCenter
-                    onClicked: {
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+
+                    Text{
+                        text:qsTr("确定")
+                        font.pixelSize: 28
+                        color:"white"
+                        anchors.centerIn: parent
+                    }
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: {
                         if(flick.moving == false &&
                           (thePinchArea.selectedAreaX + thePinchArea.selectedWidth < forSaveCanvas.width) &&
                           (thePinchArea.selectedAreaY + thePinchArea.selectedHeight < forSaveCanvas.height))
@@ -57,9 +70,12 @@ CPage {
                             forSaveCanvas.imagedata = 1
                             forSaveCanvas.requestPaint()
                             source.visible = false
+                            userProfileManager.uploadAvatar(forSaveCanvas.filePath)
+                            pageStack.pop();
                         }
-
+                        }
                     }
+
                 }
             }
             Rectangle{
@@ -77,21 +93,27 @@ CPage {
                     property real preContentX: 0
                     property real preContentY: 0
                     onMovementEnded: {
-//                        thePinchArea.selectedAreaX += (flick.contentX - flick.preContentX)
-//                        thePinchArea.selectedAreaY += (flick.contentY - flick.preContentY)
                         thePinchArea.selectedAreaX = (thePinchArea.initAreaX + contentX) /
                                                      thePinchArea.globalScale
                         thePinchArea.selectedAreaY = (thePinchArea.initAreaY + contentY) /
                                                      thePinchArea.globalScale
-//                        console.log("current selectedAreaX: " + thePinchArea.selectedAreaX)
-//                        console.log("current selectedAreaY: " + thePinchArea.selectedAreaY)
-//                        console.log("current selectedAreaWidth: " + thePinchArea.selectedWidth)
-//                        console.log("current selectedAreaHeight: " + thePinchArea.selectedHeight)
-//                        flick.preContentX = flick.contentX
-//                        flick.preContentY = flick.contentY
+                        console.log("current selectedAreaX: " + thePinchArea.selectedAreaX)
+                        console.log("current selectedAreaY: " + thePinchArea.selectedAreaY)
+                        console.log("current selectedAreaWidth: " + thePinchArea.selectedWidth)
+                        console.log("current selectedAreaHeight: " + thePinchArea.selectedHeight)
+                        console.log("image width" + source.width)
+                        console.log("image height" + source.height)
                     }
                         Image {
                             id: source
+                            width: imageArea.width
+                            height: width / refImg.ratio
+                            source: iconSource
+                        }
+                        Image {
+                            id: refImg
+                            visible: false
+                            property real ratio: width / height
                             source: iconSource
                         }
                     PinchArea{
@@ -113,8 +135,8 @@ CPage {
                         onPinchUpdated: {
                             if(  ((source.width < forSaveCanvas.framWidth) && pinch.scale < 1)  ||
                                  ((source.height < forSaveCanvas.framHeight) && pinch.scale < 1) ||
-                                 ((source.width >  forSaveCanvas.framWidth * 10 )  && pinch.scale > 1) ||
-                                 ((source.height>  forSaveCanvas.framHeight * 10 )  && pinch.scale > 1)
+                                 ((source.width >  forSaveCanvas.framWidth * 5)  && pinch.scale > 1) ||
+                                 ((source.height>  forSaveCanvas.framHeight * 5)  && pinch.scale > 1)
                                     )  return
                             globalScale *= pinch.scale
                             source.width *= pinch.scale
@@ -123,55 +145,78 @@ CPage {
                             selectedHeight /= pinch.scale
                             selectedAreaX = (initAreaX + flick.contentX) / globalScale
                             selectedAreaY = (initAreaY + flick.contentY) / globalScale
-//                            selectedAreaX = (selectedAreaX + (flick.contentX - flick.preContentX)) / pinch.scale
-//                            selectedAreaY = (selectedAreaY + (flick.contentY - flick.preContentY)) / pinch.scale
-//                            flick.preContentX = flick.contentX
-//                            flick.preContentY = flick.contentY
                             console.log("current selectedAreaX: " + thePinchArea.selectedAreaX)
                             console.log("current selectedAreaY: " + thePinchArea.selectedAreaY)
                             console.log("current selectedAreaWidth: " + thePinchArea.selectedWidth)
                             console.log("current selectedAreaHeight: " + thePinchArea.selectedHeight)
+                            console.log("image width" + source.width)
+                            console.log("image height" + source.height)
                         }
                         onPinchFinished: {
-//                            thePinchArea.selectedAreaX += flick.contentX - flick.preContentX
-//                            thePinchArea.selectedAreaY += flick.contentY - flick.preContentY
-//                            flick.preContentX = flick.contentX
-//                            flick.preContentY = flick.contentY
                         }
                     }
                 }
                 Canvas{
                     id:forSaveCanvas
-                    anchors.fill: parent
+                    anchors.top:parent.top
+                    anchors.left:parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
                     property real framX: 20
                     property real framY: 250
                     property real framWidth: imageArea.width - 40
                     property real framHeight: framWidth
                     property var imagedata: null
+                    property real imgX: 0
+                    property real imgY: 0
+                    property real imgWidth: 0
+                    property real imgHeight: 0
+                    property string filePath: "/home/user/data.jpg"
                     Image {
+                        property real initScale: width / refImg.width
                         id: forSaveSource
+                        width: imageArea.width
+                        height: width / refImg.ratio
                         visible: false
                         source: iconSource
                     }
                     onPaint: {
                         var ctx = getContext("2d")
                         if(imagedata != null){
-                            ctx.drawImage(forSaveSource, thePinchArea.selectedAreaX, thePinchArea.selectedAreaY,
-                                          thePinchArea.selectedWidth, thePinchArea.selectedHeight,
-                                          framX, framY, framWidth, framHeight)
-//                            console.log("source width: " + forSaveSource.width)
+//                            anchors.top = parent.top + 250
+//                            anchors.left = parent.left + 20
+//                            anchors.right = parent.right - framX
+//                            anchors.bottom = top +
+                            anchors.topMargin = 250
+                            anchors.leftMargin = 20
+                            width = framWidth
+                            height = width
+                            imgX = thePinchArea.selectedAreaX / forSaveSource.initScale
+                            imgY = thePinchArea.selectedAreaY / forSaveSource.initScale
+                            imgWidth = thePinchArea.selectedWidth / forSaveSource.initScale
+                            imgHeight = thePinchArea.selectedHeight / forSaveSource.initScale
+                            console.log("imgX " + imgX)
+                            console.log("imgY " + imgY)
+                            console.log("imgWidth " + imgWidth)
+                            console.log("imgHeight" + imgHeight)
+                            ctx.drawImage(forSaveSource, imgX, imgY, imgWidth, imgHeight,
+                                          0, 0, width, height)
+//                            forSaveCanvas.visible = false
+                            console.log(" width " + width + " height " + height)
+                            forSaveCanvas.save(filePath)
                         }
-                        ctx.fillStyle = "#a0000000"
-                        ctx.beginPath()
-                        ctx.rect(0, 0, parent.width, framY)
-                        ctx.rect(0, framY, 20, framY + framHeight)
-                        ctx.rect(parent.width - 20, framY, parent.width, framY + framHeight)
-                        ctx.rect(0, framY + framHeight, parent.height, parent.height)
-                        ctx.fill()
+                        else{
+                            ctx.fillStyle = "#a0000000"
+                            ctx.beginPath()
+                            ctx.rect(0, 0, parent.width, framY)
+                            ctx.rect(0, framY, 20, framY + framHeight)
+                            ctx.rect(parent.width - 20, framY, parent.width, framY + framHeight)
+                            ctx.rect(0, framY + framHeight, parent.height, parent.height)
+                            ctx.fill()
+                        }
+
                     }
                 }
-                 //TODO: call function forSaveCanvas.context.getImage(forSaveSource,ramX, framY, framWidth, framHeight)
-                 //to get the new Header Image
             }
         }
     }

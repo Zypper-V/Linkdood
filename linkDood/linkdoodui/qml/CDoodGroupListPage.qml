@@ -121,6 +121,7 @@ CPage {
 
                         onReleased: {
                             background.color = "white"
+                            memberManager.clearMemberList();
                             chatManager.switchToChatPage(model.modelData.id,model.modelData.name,"2",0,"");
                             //                            loadingDialog.show();
                             console.log(model.modelData.id,"lixinlixin");

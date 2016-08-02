@@ -6,6 +6,12 @@ Item {
         onGetFarOrgResult: {
           enterpriseManager.getSonOrgs(id);
           orgManager.addOrg(id,name);
+            loadingDialog.show();
+        }
+        onGetSonOrgsResult:{
+            console.log("ogr change.")
+            loadingDialog.hide();
+            orgTitleListView.positionViewAtEnd();
         }
     }
     id: contactEnterprise
@@ -39,6 +45,7 @@ Item {
             orientation:ListView.Horizontal
             spacing: -25
             model: orgManager
+            snapMode: ListView.SnapOneItem
             Rectangle{
                 anchors.fill: parent
                 color:"#F2F2F2"
@@ -78,6 +85,7 @@ Item {
                     onClicked: {
                         orgManager.selectOrg(model.modelData.id)
                         enterpriseManager.getSonOrgs(model.modelData.id)
+                        loadingDialog.show();
                     }
                 }
             }
@@ -152,6 +160,7 @@ Item {
                         orgManager.addOrg(model.modelData.id, model.modelData.name);
 
                         enterpriseManager.getSonOrgs(model.modelData.id)
+                         loadingDialog.show();
                         }
                         else{
                             background.color = "#F2F2F2"
@@ -234,6 +243,11 @@ Item {
                 }
             }
         }
+    }
+    CIndicatorDialog {
+        id:loadingDialog
+        //            indicatorDirection: Qt.Horizontal
+        messageText: os.i18n.ctr(qsTr("正在获取中...")) // qsTr("正在获取中...")
     }
 }
 

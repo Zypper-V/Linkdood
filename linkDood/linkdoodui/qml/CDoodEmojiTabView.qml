@@ -8,7 +8,7 @@ CTabView{
     tabPosition : Qt.BottomEdge
     tabBar: Rectangle {
 
-        height: 70
+        height: 90
         color: "white"
         width: parent.width
         anchors.bottom: parent.bottom
@@ -22,7 +22,7 @@ CTabView{
                 model: root.tabModel
                 delegate: Rectangle {
                     id: tabviewStyle
-                    height: 70
+                    height: 90
                     width: height
                     opacity: 0.5
                     color:index === root.currentIndex? "#777777" : "white"
@@ -51,7 +51,8 @@ CTabView{
     }
     CTab {
         id:basicTab
-
+        width: 90
+        height: width
         property url imgSource: "qrc:/res/smilies/instruct/weixiao.png"
         CDoodEmojiGridView{
             anchors.fill: parent
@@ -59,6 +60,8 @@ CTabView{
     }
     CTab {
         id:gifTab
+        width: 90
+        height: width
         CDoodDyEmojiGridView{
             anchors.fill: parent
         }

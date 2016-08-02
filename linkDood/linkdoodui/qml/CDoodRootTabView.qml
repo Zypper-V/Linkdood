@@ -38,7 +38,7 @@ CPage {
             contactManager.clearChatList();
             sessionListManager.clearChatList();
             loginManager.setAppLoginStatus(0);
-            pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+            pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
         }
     }
 
@@ -148,8 +148,10 @@ CPage {
             }
 
             onCurrentIndexChanged: {
-                console.log("zhangp onCurrentIndexChanged currentIndex = ", currentIndex)
-
+               if(currentIndex == 2){
+                   userProfileManager.getPrivateSetting();
+                   console.log("very press");
+               }
             }
 
             CTab {

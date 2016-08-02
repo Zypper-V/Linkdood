@@ -33,17 +33,21 @@ public:
     void updateGroupMems(MemberList list);
 
     int msgCount();
-    void addItemToListViewModel(Msg msg,QString textMsgContent="");
+    void addHistoryMsgToListView(MsgList msgList);
+    void addItemToListViewModel(Msg msg,QString textMsgContent="",bool isHistory = false);
     void modifyItemToListViewModel(Msg msg,bool isLoading=false,int progress=0);
     void clearList();
     void removeItemById(QString id);
-    void analyzeMsg(MsgList msgList);
+    void analyzeHistoryMsg(MsgList msgList);
     void updateAvatar(QString id,QString avater);
-    void updateUnreadMsg(QString lastMsgId,int count);
+    void updateLastMsgId(QString lastMsgId);
     void setAccountId(QString id);
     void updateAccountUserInfo(QString id,QString name,QString avatar);
     void updateItemNameAndAvatar(QString localId,QString userId);
     void updateItemData(QString userId,QString name,QString avater);
+    QString lastMsgId();
+    int  groupMemsCount();
+    void addChatItemtoMap(CDoodChatItem* chatItem);
     CDoodChatItem* itemById(QString id);
 
     ~CDoodChatManagerModel();
@@ -53,8 +57,6 @@ public:
     QString avatar()const;
     QString chatType() const;
     QString setChatType(const QString &data);
-    QString lastMsgId();
-    int     unReadMsgCount();
 
     void   setAvatar(const QString &data);
     void   setId(const QString&id);
@@ -66,9 +68,14 @@ signals:
     void nameChanged();
     void chatTypeChanged();
     void avatarChanged();
+    void reqestUserInfo(QString uerId);
+    void downloadImage(QString targetId,QString localId,QString url,QString enkey);
 protected:
     void judgeAddTimeTip(QDateTime date);
-
+    bool isJudageShowTime(QDateTime date);
+public:
+    int     mNeedNewMsgCount;
+    QString mNeedNewMsgLastId;
 private:
     QMap<QString, CDoodChatItem*> m_pChatMap;
     MemberList mGroupMemList;
@@ -78,13 +85,12 @@ private:
     QString m_sBeginMsgId;
     QString m_sTargetid;
     QString mChatType;
-    int     mTotalUnreadMsgCount;
-    QString mLastMsgId;
-    QString mAvatar;
 
+    QString mAvatar;
     QString mAccountUserId;
     QString mAccountAvater;
     QString mAccountName;
+
 };
 
 #endif // CDOODCHATMANAGERMODEL_H

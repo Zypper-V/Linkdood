@@ -74,7 +74,7 @@ Item {
                                 console.log("sdgfsdfgsdgasfsasfsf:"+unreadCount)
                                 chatManager.switchToChatPage(model.modelData.id,model.modelData.name,model.modelData.chatType,model.modelData.lastMsgid,unreadCount,model.modelData.thumbAvatar);
                             }else{
-                                chatManager.switchToChatPage(model.modelData.id,model.modelData.name,model.modelData.chatType,0,model.modelData.thumbAvatar);
+                                chatManager.switchToChatPage(model.modelData.id,model.modelData.name,model.modelData.chatType,model.modelData.lastMsgid,0,model.modelData.thumbAvatar);
                                 chatManager.entryChat(model.modelData.id);
                             }
                             console.log("123avater:"+model.modelData.thumbAvatar)

@@ -64,7 +64,8 @@ CPage {
     Connections {
         target: groupManager
         onGetGroupInfoResult: {
-            groupManager.getMemberList(groupManager.id);
+//            memberManager.clearMemberList();
+//            groupManager.getMemberList(groupManager.id);
             pageStack.push(Qt.resolvedUrl("CDoodGroupSetPage.qml"));
 
         }
@@ -73,6 +74,10 @@ CPage {
         target: chatManager
         onNewMessageNotice:{
             chatListView.positionViewAtEnd();
+        }
+        onTransforMessageBack:{
+            gToast.requestToast("消息转发成功","","");
+            console.log("transparent msg ..................")
         }
     }
     Keys.onReleased: {
@@ -194,17 +199,83 @@ CPage {
                 anchors.rightMargin:40
                 onClicked:{
                     groupManager.getGroupInfo(chatPage.targetid);
+                    groupManager.getGroupSet(chatPage.targetid);
                     //TODO
                 }
             }
         }
+        Rectangle{
+            id: addFriendTip
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.topMargin: titleBackground.height
+            height: 70
+            color: "#cdcdcd"
+            visible: setVisible()
+
+            function setVisible(){
+                return !contactManager.isFriend(chatManagerModel.id) && chatManagerModel.chatType === "1";
+            }
+
+            Text {
+                id: addasfriend
+                text: qsTr("添加为好友")
+                font.pixelSize: 30
+                anchors.centerIn: parent
+            }
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                     addContactManager.getVerifyType(chatManagerModel.id)
+                }
+            }
+        }
+        Connections{
+            target: addContactManager
+            onGetVerifyResult:{
+                if(code !== 0)
+                {
+                    gToast.requestToast("获取验证方式失败","","");
+                    return;
+                }
+                if(type === 2) //2:不允许任何人添加
+                {
+                    gToast.requestToast("不允许任何人添加","","");
+                }
+                else if(type === 1) //1:需要验证信息
+                {
+                    friendVericationManager.setName(chatManagerModel.name);
+                    friendVericationManager.setThumbAvatar(chatManagerModel.avatar);
+                    friendVericationManager.setMyName(userProfileManager.name);
+                    friendVericationManager.setId(chatManagerModel.id);
+                    pageStack.push(Qt.resolvedUrl("CDoodFriendVerificationPage.qml"));
+                }
+                else if(type === 3) //3:允许任何人添加
+                {
+                     addContactManager.addContact(chatManagerModel.id,"","");
+                }
+            }
+        }
+
+        Connections{
+            target: contactManager
+            onAddContactReslut:{
+                if(chatManagerModel.id === userId){
+                    addFriendTip.visible =  addFriendTip.setVisible();
+                    console.log("add contact changed.")
+                }
+            }
+        }
+
         CEditListView {
             id: chatListView
             anchors.top: parent.top
 
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.topMargin: titleBackground.height
+            anchors.topMargin:addFriendTip.visible ? (titleBackground.height + addFriendTip.height) :
+                                                     titleBackground.height
             anchors.bottom: functionPanelRoot.top
 
             property variant selectDeleteIndexList
@@ -221,14 +292,13 @@ CPage {
             }
 
             delegate: CDoodChatDelegate {
+                id:delegateChat
                 Component.onCompleted: {
                     if(chatPage.loadDataFlag)
                     {
                         loadDataCheckTimer.restart()
                     }
-                }
-                onIsSenderChanged: {
-                    chatListView.spacing = !isSender ?20:40
+                    chatListView.spacing = !delegateChat.isSender ?20:40
                 }
             }
 

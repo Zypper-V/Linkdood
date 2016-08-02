@@ -84,9 +84,12 @@ CPage {
                 anchors.margins: 3
                 editLabelSize:Qt.size(0,0)
                 onClicked: {
-                    console.log("xxxxxxxxx:"+filePath)
-                   var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodHeaderImageCropPage.qml"),"CDoodHeaderImageCropPage");
-                    pageStack.push(component,{iconSource:url});
+//                      pageStack.replace(Qt.resolvedUrl("qrc:/qml/CDoodHeaderImageCropPage.qml"), {iconSource:url}, true);
+                    userProfileManager.uploadAvatar(filePath)
+                    pageStack.pop();
+//                    console.log("xxxxxxxxx:"+filePath)
+//                   var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodHeaderImageCropPage.qml"),"CDoodHeaderImageCropPage");
+//                    pageStack.push(component,{iconSource:url});
                 }
 
                 Rectangle{

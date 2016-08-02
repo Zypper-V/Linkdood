@@ -1,4 +1,4 @@
-﻿#include "cdoodchatmanager.h"
+#include "cdoodchatmanager.h"
 #include "cdoodchatitem.h"
 #include <QDebug>
 
@@ -32,6 +32,7 @@ void CDoodChatManager::initConnect()
             SLOT(onChatupLoadImage(QString,QString,QString,int)));
     connect(m_pClient,SIGNAL(downloadImageResult(int,QString,QString)),this,
             SLOT(onChatDownloadImage(int,QString,QString)));
+    connect(m_pClient, SIGNAL(downloadHistoryImageResult(int,QString,QString,QString)), this, SLOT(onDownloadHistoryImage(int,QString,QString,QString)));
     connect(m_pClient,SIGNAL(getFileListResult(int,FileInfoList)),this,
             SLOT(onChatGetFileList(int,FileInfoList)));
     connect(m_pClient,SIGNAL(getUserInfoResult(int,Contact)), this, SLOT(onGetUserInfo(int,Contact)));
@@ -43,6 +44,8 @@ void CDoodChatManager::initConnect()
             SLOT(onContactInfoChanged(int,Contact)));
     connect(m_pClient,SIGNAL(getGroupMemberListReslut(int,QString,MemberList)),this,
             SLOT(onGetGroupMemberListReslut(int,QString,MemberList)));
+    connect(m_pClient,SIGNAL(transMessageFinishBack(int,QString)),this,
+            SLOT(onTransMessageFinishBack(int,QString)));
     /*    connect(m_pClient,SIGNAL(),this,
                     SLOT())*/;
 }
@@ -86,73 +89,171 @@ CDoodChatManager::~CDoodChatManager()
     exitChat();
 }
 
-void CDoodChatManager::switchToChatPage(QString targetId, QString name,QString chatType,QString lastMsgId,int unReadCount,QString icon)
+void CDoodChatManager::switchToChatPage(QString targetId, QString name, QString chatType, QString lastMsgId, int unReadCount, QString icon)
 {
-    qDebug() << Q_FUNC_INFO<<"targetId:"<<targetId<<"chatType:"<<chatType <<"name:"<<name<<"lastId:"<<lastMsgId;
-    if(mChatModel != NULL && mChatModel->id() == targetId){
-        if(unReadCount != 0){
-            if(mChatModel->msgCount()==0){
-                getMessages(m_sTargetid,unReadCount+20,lastMsgId,0);
-            }else{
-                getMessages(m_sTargetid,unReadCount,lastMsgId,0);
-            }
-
+    qDebug()<<Q_FUNC_INFO<<"targetId:"<<targetId<<"name:"<<name<<"chatType:"<<chatType<<"lastMsgId:"<<lastMsgId<<"unReadCount:"<<unReadCount<<"icon:"<<icon;
+    CDoodChatManagerModel* model = mMsgListModel.value(targetId,NULL);
+    if(model != NULL){
+        if(targetId != m_sTargetid ||mChatModel==NULL){
+            mChatModel = model;
+            m_sTargetid = targetId;
         }
-        mChatModel->setId(targetId);
-        mChatModel->setName(name);
-        mChatModel->setChatType(chatType);
-        mChatModel->setAvatar(icon);
-        mChatModel->updateAccountUserInfo(mActId,mActName,mActAvatar);
-        emit ChatPageChanged();
-        emit sendShowChatPage(name,targetId,chatType);
     }else{
+        model = new CDoodChatManagerModel(this);
+        model->setId(targetId);
+        model->setAccountId(m_pClient->UserId());
+
+        connect(model,SIGNAL(downloadImage(QString,QString,QString,QString)),this,SLOT(onDownloadImage(QString,QString,QString,QString)));
+        connect(model,SIGNAL(reqestUserInfo(QString)),this,SLOT(onReqestUserInfo(QString)));
+        mChatModel = model;
         m_sTargetid = targetId;
-        QMap<QString,CDoodChatManagerModel*>::iterator iter = mMsgListModel.find(targetId);
-        if(iter != mMsgListModel.end() && iter.value() != NULL){
-            if(mChatModel != NULL){
-                mMsgListModel[mChatModel->id()] = mChatModel;
-            }
-            mChatModel = iter.value();
-        }else{
-            CDoodChatManagerModel* item = new CDoodChatManagerModel(this);
-            item->setId(targetId);
-            item->setName(name);
-            item->setChatType(chatType);
-            item->setAccountId(m_pClient->UserId());
-            if(mChatModel != NULL){
-                mMsgListModel[mChatModel->id()] = mChatModel;
-            }
-            mChatModel = item;
-            mMsgListModel[targetId] = item;
-            if(chatType == "2"){
-                m_pClient->getMemberList(targetId);
-            }
-        }
-        if(unReadCount != 0){
-            if(mChatModel->msgCount()==0){
-                getMessages(m_sTargetid,unReadCount+20,lastMsgId,0);
-            }else{
-                getMessages(m_sTargetid,unReadCount,lastMsgId,0);
-            }
-        }
-        if(mChatModel != NULL){
-            mChatModel->setId(targetId);
-            mChatModel->setName(name);
-            mChatModel->setChatType(chatType);
-            mChatModel->setAvatar(icon);
-            mChatModel->updateAccountUserInfo(mActId,mActName,mActAvatar);
-        }
-        emit ChatPageChanged();
-        emit sendShowChatPage(name,targetId,chatType);
+        mMsgListModel[targetId] = mChatModel;
     }
+    mChatModel->setChatType(chatType);
+    mChatModel->setAvatar(icon);
+    mChatModel->setName(name);
+    mChatModel->mNeedNewMsgCount = unReadCount;
+    mChatModel->mNeedNewMsgLastId =lastMsgId;
+    mChatModel->updateAccountUserInfo(mActId,mActName,mActAvatar);
+    mCurentChatName = name;
+    mCurentChatId = targetId;
+    mCurentChatType = chatType;
+
+    if(chatType == "2" && mChatModel->groupMemsCount() == 0){
+        m_pClient->getMemberList(targetId);
+    }
+    emit chatPageChanged();
 }
 
-void CDoodChatManager::updateUnreadMsg()
+//void CDoodChatManager::switchToChatPage(QString targetId, QString name,QString chatType,QString lastMsgId,int unReadCount,QString icon)
+//{
+//    qDebug() << Q_FUNC_INFO<<"targetId:"<<targetId<<"chatType:"<<chatType <<"name:"<<name<<"lastId:"<<lastMsgId;
+//    if(mChatModel != NULL && mChatModel->id() == targetId){
+//        if(unReadCount != 0){
+//            int flag = lastMsgId !="0"?0:1;
+//            if(mChatModel->msgCount()==0){
+//                getMessages(m_sTargetid,unReadCount+20,lastMsgId,flag);
+//            }else{
+//                getMessages(m_sTargetid,unReadCount,lastMsgId,flag);
+//            }
+
+//        }
+//        if(mChatModel->msgCount()>0){
+//            if(mChatModel->lastMsgId() != lastMsgId){
+//                getMessages(m_sTargetid,unReadCount,lastMsgId,0);
+//            }else{
+//                emit chatPageChanged();
+//                //sendShowChatPage(name,targetId,chatType);
+//            }
+//        }else{
+//            if(lastMsgId != "0"&& lastMsgId !=""){
+//                getMessages(m_sTargetid,unReadCount+20,lastMsgId,0);
+//            }else {
+//                getMessages(m_sTargetid,unReadCount+20,"0",1);
+//            }
+//        }
+//        mChatModel->setId(targetId);
+//        mChatModel->setName(name);
+//        mChatModel->setChatType(chatType);
+//        mChatModel->setAvatar(icon);
+//        mChatModel->updateAccountUserInfo(mActId,mActName,mActAvatar);
+
+//        mCurentChatName = name;
+//        mCurentChatId = targetId;
+//        mCurentChatType = chatType;
+
+//        if(chatType == "2" && mChatModel->groupMemsCount()==0){
+//            m_pClient->getMemberList(targetId);
+//        }
+//        // emit chatPageChanged();
+
+//        // emit sendShowChatPage(name,targetId,chatType);
+//    }else{
+//        m_sTargetid = targetId;
+//        QMap<QString,CDoodChatManagerModel*>::iterator iter = mMsgListModel.find(targetId);
+//        if(iter != mMsgListModel.end() && iter.value() != NULL){
+//            if(mChatModel != NULL){
+//                mMsgListModel[mChatModel->id()] = mChatModel;
+//            }
+//            mChatModel = iter.value();
+//        }else{
+//            CDoodChatManagerModel* item = new CDoodChatManagerModel(this);
+//            item->setId(targetId);
+//            item->setName(name);
+//            item->setChatType(chatType);
+//            item->setAccountId(m_pClient->UserId());
+//            connect(item,SIGNAL(downloadImage(QString,QString,QString,QString)),this,SLOT(onDownloadImage(QString,QString,QString,QString)));
+//            connect(item,SIGNAL(reqestUserInfo(QString)),this,SLOT(onReqestUserInfo(QString)));
+//            if(mChatModel != NULL){
+//                mMsgListModel[mChatModel->id()] = mChatModel;
+//            }
+//            mChatModel = item;
+//            mMsgListModel[targetId] = item;
+//        }
+//        if(mChatModel->msgCount()>0){
+//            if(mChatModel->lastMsgId() != lastMsgId){
+//                getMessages(m_sTargetid,unReadCount,lastMsgId,0);
+//            }else{
+//                emit chatPageChanged();
+//                // emit sendShowChatPage(name,targetId,chatType);
+//            }
+//        }else{
+//            if(lastMsgId != "0"&& lastMsgId !=""){
+//                getMessages(m_sTargetid,unReadCount+20,lastMsgId,0);
+//            }else {
+//                getMessages(m_sTargetid,unReadCount+20,"0",1);
+//            }
+//        }
+//        if(mChatModel != NULL){
+//            mChatModel->setId(targetId);
+//            mChatModel->setName(name);
+//            mChatModel->setChatType(chatType);
+//            mChatModel->setAvatar(icon);
+//            mChatModel->updateAccountUserInfo(mActId,mActName,mActAvatar);
+//        }
+
+//        mCurentChatName = name;
+//        mCurentChatId = targetId;
+//        mCurentChatType = chatType;
+//        if(chatType == "2" && mChatModel->groupMemsCount()==0){
+//            m_pClient->getMemberList(targetId);
+//        }
+
+//        //    emit chatPageChanged();
+//        //        emit sendShowChatPage(name,targetId,chatType);
+//    }
+//}
+
+void CDoodChatManager::showUiFinished()
 {
-    if(mChatModel ->unReadMsgCount() != 0){
-        getMessages(m_sTargetid,mChatModel->unReadMsgCount(),mChatModel->lastMsgId(),0);
+    if(mChatModel->msgCount()>0){
+        if(mChatModel->lastMsgId() != mChatModel->mNeedNewMsgLastId){
+            getMessages(m_sTargetid,mChatModel->mNeedNewMsgCount,mChatModel->mNeedNewMsgLastId,0);
+        }
+    }else{
+        if(mChatModel->mNeedNewMsgLastId != "0"){
+            getMessages(m_sTargetid,mChatModel->mNeedNewMsgCount+20,mChatModel->mNeedNewMsgLastId ,0);
+        }else {
+            getMessages(m_sTargetid,mChatModel->mNeedNewMsgCount+20,"0",1);
+        }
     }
-    mChatModel->updateUnreadMsg("",0);
+    mChatModel->mNeedNewMsgCount = 0;
+    mChatModel->mNeedNewMsgLastId = "0";
+}
+
+void CDoodChatManager::clearList()
+{
+    qDebug()<<Q_FUNC_INFO;
+    QList<CDoodChatManagerModel*> list = mMsgListModel.values();
+    for(int i = 0;i<list.size();++i){
+        CDoodChatManagerModel* item = list.at(i);
+        if(item != NULL){
+            item->clearList();
+            delete item;
+        }
+    }
+    mMsgListModel.clear();
+    mChatModel = NULL;
 }
 
 CDoodChatManagerModel* CDoodChatManager::chatModel() const
@@ -173,10 +274,16 @@ void CDoodChatManager::updateMsgToListView(Msg msg)
             item->setId(msg.targetid);
             item->setName(msg.targetName);
             item->setAccountId(m_pClient->UserId());
+            item->setChatType(m_pClient->userType(msg.targetid));
             item->addItemToListViewModel(msg);
             mMsgListModel[msg.targetid] = item;
         }
     }
+}
+
+void CDoodChatManager::startPushChatPage()
+{
+    emit sendShowChatPage(mCurentChatName,mCurentChatId,mCurentChatType);
 }
 
 int CDoodChatManager::selectImageCount()
@@ -347,7 +454,7 @@ void CDoodChatManager::sendText(QString targetText ,QString oriText)
     msgText.localid = msgText.msgid;
 
     if(m_sTargetid == mChatModel->id()){
-        mChatModel->addItemToListViewModel(msgText,targetText);
+        mChatModel->addItemToListViewModel(msgText,targetText,true);
     }
     msgText.body = targetText;
     sendMessage(msgText);
@@ -448,7 +555,7 @@ void CDoodChatManager::resendMessage(QString localId)
             msg.i_height  = QString::number(THUMP_PIC_HEIGHT);
             msg.i_width   = QString::number(THUMP_PIC_WIDTH);
         }
-        sendMessage(msg);
+        m_pClient->sendMessage(msg);
     }
 
 }
@@ -519,10 +626,80 @@ void CDoodChatManager::getUnReadMessages()
     m_pClient->getUnReadMessages();
 }
 
-void CDoodChatManager::deleteMessage(QString targetid, QStringList msgs)
+void CDoodChatManager::deleteMessage(QString targetid, QString msgid)
 {
     qDebug() << Q_FUNC_INFO;
+    QStringList msgs;
+    msgs.push_back(msgid);
     m_pClient->deleteMessage(targetid,msgs);
+    if(mChatModel != NULL){
+        mChatModel->removeItemById(msgid);
+    }
+
+}
+
+void CDoodChatManager::transforMessage(QString targetid, QString targetName,QString avatar,QString localId)
+{
+    qDebug() << Q_FUNC_INFO;
+    CDoodChatItem *pChatItem = mChatModel->itemById(localId);
+
+    if(pChatItem != NULL){
+
+        Msg msg;
+
+        msg.targetName = targetName;
+        msg.thumb_avatar = avatar;
+        msg.isTransMsg = true;
+        msg.targetid = targetid;
+        msg.fromid =m_pClient->UserId();
+        msg.name = m_pClient->userName();
+        msg.localid = localId;
+        msg.toid = targetid;
+        QDateTime time;
+        msg.time = time.currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        msg.msgid = pChatItem->msgId();
+
+        if(pChatItem->msgType()== QString::number(MSG_TYPE_TEXT)){
+            msg.msgtype = QString::number(MSG_TYPE_TEXT);
+            msg.body = pChatItem->body();
+        }
+
+        if(pChatItem->msgType()== QString::number(MEDIA_MSG_DYNAMIC_EMOJI)){
+            msg.msgtype = QString::number(MEDIA_MSG_DYNAMIC_EMOJI);
+            QFileInfo file(pChatItem->body());
+            msg.body = file.baseName();
+        }
+
+        if(pChatItem->msgType()== QString::number(MSG_TYPE_FILE)){
+            msg.msgtype = QString::number(MSG_TYPE_FILE);
+
+            msg.f_path = pChatItem->filePath();
+            QFile file(msg.f_path);
+            msg.filename = file.fileName();
+            msg.f_size = pChatItem->fileSize();
+
+            msg.encrypt_user = pChatItem->mEnkeyUser;
+            msg.encrypt_key = pChatItem->mEnkey;
+            msg.f_url = pChatItem->mFileUrl;
+        }
+
+        if(pChatItem->msgType()== QString::number(MSG_TYPE_IMG)){
+            msg.msgtype = QString::number(MSG_TYPE_IMG);
+
+            msg.main_url  = pChatItem->textMsg();
+            QFile file(msg.main_url);
+            msg.filename  = file.fileName();
+            msg.i_height  = QString::number(THUMP_PIC_HEIGHT);
+            msg.i_width   = QString::number(THUMP_PIC_WIDTH);
+
+            msg.main_url = pChatItem->mImageMainUrl;
+            msg.thumb_url = pChatItem->mImageThumbUrl;
+
+            msg.encrypt_user = pChatItem->mEnkeyUser;
+            msg.encrypt_key = pChatItem->mEnkey;
+        }
+        m_pClient->sendMessage(msg);
+    }
 }
 
 void CDoodChatManager::entryChat(const QString &targetid)
@@ -593,6 +770,12 @@ void CDoodChatManager::downloadImage(QString url, QString property)
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->downloadImage(url, property);
+}
+
+void CDoodChatManager::downloadHistoryImage(QString url, QString property, QString targetid, QString localid)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_pClient->downloadHistoryImage(url, property, targetid, localid);
 }
 
 bool CDoodChatManager::decryptFile(QString encryptkey, QString srcpath, QString destpath)
@@ -666,10 +849,15 @@ void CDoodChatManager::onContactInfoChanged(int oper, Contact user)
     }
 }
 
+void CDoodChatManager::onDownloadImage(QString targetId, QString localId, QString url, QString enkey)
+{
+    downloadHistoryImage(url,enkey,targetId,localId);
+}
+
 
 void CDoodChatManager::onChatAvatarChanged(QString id, QString avatar)
 {
-    qDebug() << Q_FUNC_INFO<< "111111111111111111avater:"<<avatar;
+    //    qDebug() << Q_FUNC_INFO<< "111111111111111111avater:"<<avatar;
     if(id != ""){
         if(mChatModel != NULL){
             mChatModel->updateAvatar(id,avatar);
@@ -694,7 +882,7 @@ void CDoodChatManager::onChatMessageNotice(Msg msg)
     }
     updateMsgToListView(msg);
 
-   // emit newMessageNotice();
+    emit newMessageNotice();
 }
 
 void CDoodChatManager::onChatSendMessageResult(bool code, QString sendTime, QString msgId)
@@ -724,11 +912,12 @@ void CDoodChatManager::onChatGetMessagesResult(bool code, QString sessionId, Msg
 {
     if(mChatModel != NULL && mChatModel->id() == sessionId){
         qDebug() << Q_FUNC_INFO<< "mChatModel size:"<<msgList.size();
-        mChatModel->analyzeMsg(msgList);
+        mChatModel->analyzeHistoryMsg(msgList);
+        //        emit chatPageChanged();
     }else{
         QMap<QString,CDoodChatManagerModel*>::iterator model = mMsgListModel.find(sessionId);
         if(model != mMsgListModel.end()){
-            model.value()->analyzeMsg(msgList);
+            model.value()->analyzeHistoryMsg(msgList);
         }
     }
 }
@@ -789,6 +978,114 @@ void CDoodChatManager::onChatDownloadImage(int code, QString localpath, QString 
     qDebug() << Q_FUNC_INFO;
 }
 
+void CDoodChatManager::onDownloadHistoryImage(int code, QString localpath, QString targetid, QString localid)
+{
+    CDoodChatManagerModel* item = mMsgListModel.value(targetid,NULL);
+    if(item != NULL){
+        CDoodChatItem* chatItem = item->itemById(localid);
+        if(chatItem != NULL){
+            if(code == 0){
+                chatItem->setLoading(false);
+                chatItem->setBody("file:// "+localpath);
+            }else{
+                chatItem->setLoading(false);
+                chatItem->setStatus(false);
+            }
+        }
+    }
+}
+
+void CDoodChatManager::onTransMessageFinishBack(int code, QString info)
+{
+    QStringList list = info.split(":");
+    QString targetId = list.at(0),localId=list.at(1),name=list.at(2),avatar=list.at(3),time=list.at(4);
+    if(mChatModel != NULL){
+        CDoodChatItem* chatItem = mChatModel->itemById(localId);
+        if(chatItem != NULL){
+            CDoodChatManagerModel* model = mMsgListModel.value(targetId);
+            if(model == NULL){
+                model = new CDoodChatManagerModel(this);
+                model->setId(targetId);
+                model->setName(name);
+                model->setChatType("1");
+                model->setAvatar(avatar);
+                mMsgListModel[targetId] = model;
+            }
+            QDateTime msgDate = QDateTime::fromString(time, "yyyy-MM-dd hh:mm:ss");
+            //bool bShow = isJudageShowTime(msgDate);
+
+            CDoodChatItem *pChatItem = new CDoodChatItem(model);
+            pChatItem->setLocalId(m_pClient->createMsgId());
+            pChatItem->setMsgType(chatItem->msgType());
+            pChatItem->setActiveType(chatItem->activeType());
+            pChatItem->setMsgId(chatItem->msgId());
+            pChatItem->setTargetId(targetId);
+            pChatItem->setFromId(m_pClient->UserId());
+            pChatItem->setName(chatItem->name());
+            pChatItem->setTime(msgDate);
+            pChatItem->setShowTime(false);
+            pChatItem->setLoading(false);
+            pChatItem->setContactThumbAvatar(chatItem->contactThumbAvatar());
+            pChatItem->setIsMyselft(true);
+            if(chatItem->msgType().toInt() == MSG_TYPE_FILE){
+                pChatItem->setFileSize(chatItem->fileSize());
+                pChatItem->setThumbAvatar(chatItem->thumbAvatar());
+                pChatItem->setTar_thumbAvatar(chatItem->tar_thumbAvatar());
+                pChatItem->setTextMsg(chatItem->textMsg());
+                pChatItem->setBody(chatItem->body());
+                pChatItem->setFilePath(chatItem->filePath());
+
+                pChatItem->mFileUrl = pChatItem->mFileUrl;
+            }
+            else if(chatItem->msgType().toInt() == MSG_TYPE_IMG){
+
+                pChatItem->setBody(chatItem->body());
+                pChatItem->setTar_thumbAvatar(chatItem->tar_thumbAvatar());
+                pChatItem->setTextMsg(chatItem->textMsg());
+
+                pChatItem->mImageMainUrl = chatItem->mImageMainUrl;
+                pChatItem->mImageThumbUrl = chatItem->mImageThumbUrl;
+            }
+            else{
+                pChatItem->setBody(chatItem->body());
+            }
+            pChatItem->mEnkey =chatItem->mEnkey;
+            pChatItem->mEnkeyUser = chatItem->mEnkeyUser;
+            model->addChatItemtoMap(pChatItem);
+        }
+    }
+    qDebug()<<Q_FUNC_INFO<<"trans msg code:"<<code;
+
+    emit transforMessageBack(code);
+}
+
+void CDoodChatManager::onUploadFileBackUrl(QString targetId, QString localId, QString fileUrl, QString enkey)
+{
+    CDoodChatManagerModel* item = mMsgListModel.value(targetId,NULL);
+    if(item != NULL){
+        CDoodChatItem* chatItem = item->itemById(localId);
+        if(chatItem != NULL){
+            chatItem->mFileUrl = fileUrl;
+            chatItem->mEnkey = enkey;
+            chatItem->mEnkeyUser = targetId;
+        }
+    }
+}
+
+void CDoodChatManager::onUploadImgeBackUrl(QString targetId, QString localId, QString mainUrl, QString thumbUrl, QString enkey)
+{
+    CDoodChatManagerModel* item = mMsgListModel.value(targetId,NULL);
+    if(item != NULL){
+        CDoodChatItem* chatItem = item->itemById(localId);
+        if(chatItem != NULL){
+            chatItem->mImageMainUrl = mainUrl;
+            chatItem->mImageThumbUrl = thumbUrl;
+            chatItem->mEnkey = enkey;
+            chatItem->mEnkeyUser = targetId;
+        }
+    }
+}
+
 void CDoodChatManager::onChatGetFileList(int code, FileInfoList files)
 {
     qDebug() << Q_FUNC_INFO;
@@ -796,7 +1093,18 @@ void CDoodChatManager::onChatGetFileList(int code, FileInfoList files)
 
 void CDoodChatManager::onGetUserInfo(int code, Contact contact)
 {
-    //    emit getUserInfoResult(code, contact);
+    QList<CDoodChatManagerModel*> list = mMsgListModel.values();
+    for(int i = 0;i<list.size();++i){
+        CDoodChatManagerModel*model = list.at(i);
+        if(model != NULL){
+            model->updateItemData(contact.id,contact.name,contact.thumbAvatar);
+        }
+    }
+}
+
+void CDoodChatManager::onReqestUserInfo(QString userId)
+{
+    m_pClient->getUserInfo(userId);
 }
 
 void CDoodChatManager::scaledImage(QString sourceImagePath, float scaledWidth, float scaledHeight, QString &outImagePath)

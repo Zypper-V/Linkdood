@@ -5,7 +5,8 @@
 #include "IAuthObserver.h"
 #include "linkdoodtypes.h"
 #include "LoginInfo.hpp"
-#include"cnetworkmanager.h"
+#include "cnetworkmanager.h"
+#include "packet.h"
 
 namespace service {
     class IMClient;
@@ -21,6 +22,7 @@ public:
                const QString &userId,
                const QString &password);
     //
+    void autoLogin(QString userid,QString service);
     void getVerifyImg( QString userid,QString code);
     void _getVerifyImg(service::ErrorInfo info,std::string img);
     void changepassword(QString oldpsw,QString newpsw);
@@ -70,11 +72,17 @@ public:
     void onPasswordRuleChanged(service::ErrorInfo& info, int16 rule);
     void onAvatarChanged(std::string avatar);
 
+    void setPrivateSetting(IMPrivateSetting ps);
+    void getPrivateSetting();
+
  protected slots:
     void onNetworkStatusChanged(bool connected, CNetworkManager::NetworkType type);
+    void onSetPrivateSetting(int code);
+    void onGetPrivateSetting(int code, PrivateSetting ps);
+
     //void login(const QString &server, const QString &userId, const QString &password);
  signals:
-    void loginSucceeded(void);
+    void loginSucceeded(QString userid);
     void loginFailed(int code);
     void changePasswordResult(QString result);
     void getVerifyImgResult(QString code,QString img);
@@ -87,6 +95,9 @@ public:
     void getLoginHistoryResult(LoginInfoList list);
     //推送用户信息
     void accountInfoChanged(Contact user);
+
+    void setPrivateSettingResult(int code);
+    void getPrivateSettingResult(int code, IMPrivateSetting ps);
 private:
     void initConnects();
     void _getLoginHistory(std::vector<service::LoginInfo> list);
@@ -95,6 +106,7 @@ private:
 private:
    std::shared_ptr<service::User> mpUserInfo;
    CNetworkManager* m_net;
+   QString m_account;
 };
 
 #endif // AUTHCONTROLER_H

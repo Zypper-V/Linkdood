@@ -6,40 +6,81 @@ CPage {
 
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
-            userdataPage.statusBarHoldEnabled = true
-            gScreenInfo.setStatusBar(userdataPage.statusBarHoldEnabled)
-            userdataPage.statusBarHoldItemColor = "#edf0f0"
+            welcomePage.statusBarHoldEnabled = true
+            gScreenInfo.setStatusBar(welcomePage.statusBarHoldEnabled)
+            welcomePage.statusBarHoldItemColor = "#edf0f0"
             gScreenInfo.setStatusBarStyle("black")
+        }
+    }
+    Connections {
+        target: loginManager
+
+        onGetLoginHistoryResult: {
+            var code = loginManager.getAppLoginStatus();
+            if(code===0){
+                pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
+            }
+            if(code===1){
+                sessionListManager.getChatList();
+                contactManager.getContactList();
+                userProfileManager.getAccountInfo();
+                groupManager.getGroupList();
+                enterpriseManager.setFarOrg();
+                orgManager.resetOrgList();
+                pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+            }
+            if(code===2){
+                if(userid===""||service===""){
+                    pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
+                }
+                else{
+                    loginManager.autoLogin(userid,service);
+                }
+            }
+        }
+        onLoginSucceeded: {
+            console.log("onLoginSuccess !!!!")
+            sessionListManager.getChatList();
+            enterpriseManager.setFarOrg();
+            orgManager.resetOrgList();
+            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+        }
+        onLoginFailed: {
+            gToast.requestToast("自動登錄失敗:"+err,"","");
+            pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
         }
     }
     contentAreaItem:Item {
         anchors.fill :parent
         Rectangle{
-            RotationAnimation on rotation {
-                loops: Animation.Infinite
-                from: 0
-                to: 360
-            }
             id:imagebackground
             anchors.fill: parent
             color:"white"
             Image{
-                id:image
+                id:image1
                 anchors.horizontalCenter:parent.horizontalCenter
                 anchors.top:parent.top
-                anchors.topMargin: 300
-                source: "qrc:/res/logo.png"
-//                SequentialAnimation {
-//                    PropertyAction {target:image; property: "opacity"; value: .5 }
-//                    NumberAnimation { target: image; property: "width"; to: 300; duration: 10000 }
-//                    PropertyAction { target: image; property: "opacity"; value: 1 }
-//                }
+                anchors.topMargin: 80
+                source: "qrc:/res/wlcomepage1.png"
             }
-
+            Image{
+                id:image2
+                anchors.horizontalCenter:parent.horizontalCenter
+                anchors.top:image1.bottom
+                anchors.topMargin: 85
+                source: "qrc:/res/wlcomepage2.png"
+            }
+            AnimatedImage{
+                id:image3
+                anchors.horizontalCenter:parent.horizontalCenter
+                anchors.top:image2.bottom
+                playing: true
+                source: "qrc:/res/welcomepage3.gif"
+            }
         }
     }
     Component.onCompleted: {
-
-        pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+        //        loginManager.getLoginHistory();
+        //        pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
     }
 }

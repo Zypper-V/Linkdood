@@ -38,12 +38,16 @@ void CDoodLoginManager::login(const QString &server,
                               const QString &password)
 {
     qDebug() << Q_FUNC_INFO << server << userId << password;
-    if(mLoginCount>5){
+    std::string id;
+    id=userId.toStdString();
+    mVerifyId=QString::fromStdString((id.substr(0,id.size()-2)));
+    if(mLoginCount>2){
+        getVerifyImg(mVerifyId,"");
         emit loginFailed("输入错误次数过多,请输入验证码");
-        getVerifyImg(userId,"");
     }
     else{
-         m_pClient->login(server, userId, password);
+        //        setLastLoginAccount(server,userId,password);
+        m_pClient->login(server, userId, password);
     }
 
 
@@ -51,11 +55,36 @@ void CDoodLoginManager::login(const QString &server,
     //getLoginHistory();
 }
 
+void CDoodLoginManager::autoLogin(QString id, QString service)
+{
+    qDebug() << Q_FUNC_INFO<<id<<service;
+    m_pClient->autoLogin(id,service);
+}
+
 void CDoodLoginManager::getVerifyImg(QString userid, QString code)
 {
     qDebug() << Q_FUNC_INFO<<userid<<code<<"ssssssssssssssssss";
-    m_pClient->getVerifyImg(userid,code);
+    m_pClient->getVerifyImg(mVerifyId,code);
 }
+
+void CDoodLoginManager::openUrl(QString url)
+{
+//    QWebView *view = new QWebView(parent);
+//    view->load(QUrl(url));
+//    view->show();
+//    qDebug()<<Q_FUNC_INFO<<"open url code:"<<code;
+}
+
+//void CDoodLoginManager::autoLoginLastAccount()
+//{
+//    QString service;
+//    QString id;
+//    QString psw;
+//    getLastLoginAccount(service,id,psw);
+//    qDebug() << Q_FUNC_INFO<<service<<id<<psw;
+//    m_pClient->login(service, id, psw);
+//    emit autoLogin();
+//}
 
 int CDoodLoginManager::getAppLoginStatus()
 {
@@ -98,6 +127,58 @@ QString CDoodLoginManager::getLoginService()
     QSettings settings(fileName, QSettings::IniFormat);
     return settings.value("Service","").toString();
 }
+
+void CDoodLoginManager::setLoginPhoneId(QString id)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("PhoneId",id);
+}
+
+void CDoodLoginManager::setLoginServiceId(QString service)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("ServiceId",service);
+}
+
+QString CDoodLoginManager::getLoginPhoneId()
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    return settings.value("PhoneId","").toString();
+}
+
+QString CDoodLoginManager::getLoginServiceId()
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    return settings.value("ServiceId","").toString();
+}
+
+//void CDoodLoginManager::setLastLoginAccount(QString service, QString id, QString psw)
+//{
+//    qDebug() << Q_FUNC_INFO;
+//    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+//    QSettings settings(fileName, QSettings::IniFormat);
+//    settings.setValue("LastService",service);
+//    settings.setValue("LastId",id);
+//    settings.setValue("LastPsw",psw);
+//}
+
+//void CDoodLoginManager::getLastLoginAccount(QString &service, QString &id, QString &psw)
+//{
+//    qDebug() << Q_FUNC_INFO;
+//    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+//    QSettings settings(fileName, QSettings::IniFormat);
+//    service=settings.value("LastService","").toString();
+//    id=settings.value("LastId","").toString();
+//    psw=settings.value("LastPsw","").toString();
+//}
 
 QString CDoodLoginManager::verifyImg()
 {
@@ -232,11 +313,12 @@ void CDoodLoginManager::onGetVerifyImgResult(QString code, QString img)
 {
     qDebug() << Q_FUNC_INFO<<code<<img<<"sssssss";
     if(code=="0"){
+        mLoginCount=0;
         emit getVerifyImgResult("验证成功,请重新登录");
     }
     if(code=="103")
     {
-       emit getVerifyImgResult("验证码输入错误,请重新输入");
+        emit getVerifyImgResult("验证码输入错误,请重新输入");
     }
     setNVerifyImgCount(++mNVerifyImgCount);
     setVerifyImg(img);
@@ -248,7 +330,10 @@ void CDoodLoginManager::onLoginFailed(QString err)
     if(err=="帐号密码不匹配"){
         mLoginCount++;
     }
-  emit loginFailed(err);
+    if(err=="输入错误次数过多,请输入验证码"){
+        getVerifyImg(mVerifyId,"");
+    }
+    emit loginFailed(err);
 }
 
 void CDoodLoginManager::onLoginoutRelust(bool loginout)
@@ -267,9 +352,24 @@ void CDoodLoginManager::onGetLoginHistoryResult(LoginInfoList list)
 {
     qDebug() << Q_FUNC_INFO << "LoginHistorySize:" << list.size();
     if(list.size()>0){
-        //setUser(list[0].name);
-        //setServer(list[0].areaNum);
+        qDebug() << Q_FUNC_INFO << list[0].userId<<list[0].server;
+        emit getLoginHistoryResult(QString::number(list[0].userId),list[0].server);
     }
+    else{
+        emit getLoginHistoryResult("","");
+    }
+    for(size_t i=0;i<list.size();++i)
+    {
+        QString name;
+        QString id;
+        name=list[i].name;
+        id=QString::number(list[i].userId);
+        qDebug()<< Q_FUNC_INFO<<name<<id;
+    }
+    //    if(list.size()>0){
+    //        //setUser(list[0].name);
+    //        //setServer(list[0].areaNum);
+    //    }
 }
 
 void CDoodLoginManager::onLoginResultObserver(int code, QString userID)

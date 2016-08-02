@@ -40,6 +40,7 @@ struct  OnlineState
 struct SearchResult {
 	std::vector<service::User> users;
 	std::vector<service::User> groups;
+	std::vector<std::shared_ptr<service::User> > orgusers;
 };
 
 struct  MsgSearchProperty {

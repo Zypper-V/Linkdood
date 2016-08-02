@@ -10,15 +10,7 @@ Component {
 
         width: parent.width
         height: textMessageBg.height
-
-        Loader {
-            id: textNameRootLoader
-            anchors.top: receiveTextMsgHeadImageViewLoader.top
-            anchors.left: textMessageBg.left
-            asynchronous: false
-            sourceComponent: textNameRootComponent
-        }
-
+  signal showMenu()
         Component {
             id: textNameRootComponent
 
@@ -46,7 +38,7 @@ Component {
 
         Loader {
             id: receiveTextMsgHeadImageViewLoader
-            anchors.top: textNameRootLoader.bottom
+            anchors.top: parent.top
 
             anchors.left: parent.left
             anchors.leftMargin: 20
@@ -65,24 +57,32 @@ Component {
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                 iconSource: setIcon("1", model.modelData.contactThumbAvatar)
-//                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
+                //                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
 
-                MouseArea {
-                    anchors.fill: parent
+//                MouseArea {
+//                    anchors.fill: parent
 
-                    onClicked: {
-                        console.log("todo show Info Page !!!")
-                        console.log(model.modelData.name)
+//                    onClicked: {
+//                        console.log("todo show Info Page !!!")
+//                        console.log(model.modelData.name)
 
-                        if (chatListView.editing)
-                            return;
-                    }
+//                        if (chatListView.editing)
+//                            return;
+//                    }
 
-                    onPressAndHold: {
-                        console.log("todo @ !!!")
-                    }
-                }
+//                    onPressAndHold: {
+//                        console.log("todo @ !!!")
+//                    }
+//                }
             }
+        }
+
+        Loader {
+            id: textNameRootLoader
+            anchors.top: receiveTextMsgHeadImageViewLoader.top
+            anchors.left: textMessageBg.left
+            asynchronous: false
+            sourceComponent: textNameRootComponent
         }
 
         Rectangle {
@@ -112,6 +112,12 @@ Component {
                 Component.onCompleted: {
                     if(textMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
                         textMessage.width = chatDelegateRoot.maxMessageLength
+                }
+            }
+            MouseArea{
+                anchors.fill: parent
+                onPressAndHold: {
+                    emit: showMenu();
                 }
             }
         }

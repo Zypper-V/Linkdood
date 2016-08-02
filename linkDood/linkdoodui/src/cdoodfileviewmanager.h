@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "linkdoodclient.h"
+#include <QDesktopServices>
 
 class CDoodFileViewManager: public QObject
 {

@@ -28,6 +28,7 @@ class CDoodContactItem : public QObject
 
 public:
     explicit CDoodContactItem(QObject *parent = 0);
+
     QString id() const;
     QString setId(const QString &data);
 

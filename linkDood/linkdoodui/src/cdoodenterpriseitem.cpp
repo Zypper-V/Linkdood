@@ -104,5 +104,20 @@ QString CDoodEnterPriseItem::setRemark(const QString &data)
     return mRemark;
 }
 
+QString CDoodEnterPriseItem::order_num() const
+{
+    return mOrder_num;
+}
+
+QString CDoodEnterPriseItem::setOrder_num(const QString &data)
+{
+    if(mOrder_num==data){
+        data;
+    }
+    mOrder_num=data;
+    emit order_numChanged();
+    return mOrder_num;
+}
+
 
 

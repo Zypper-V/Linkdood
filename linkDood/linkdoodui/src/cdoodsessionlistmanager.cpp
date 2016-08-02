@@ -384,7 +384,8 @@ void CDoodSessionListManager::onSysMessageNotice(IMSysMsg sysMsg)
         item->setLastMsg(sysMsg.info);
         item->setLastMsgid(sysMsg.msgid);
         item->setMsgTime(sysMsg.time);
-        if(!mIsSysMsgPage){
+        qDebug() << Q_FUNC_INFO << "sysMsg.isread:" << sysMsg.isread;
+        if(!mIsSysMsgPage && sysMsg.isread == "0"){
             item->setUnReadCount("1");
             setUnreadCount(1);
             item->setUnreadMsgCOunt(1);
@@ -401,7 +402,7 @@ void CDoodSessionListManager::onSysMessageNotice(IMSysMsg sysMsg)
         item->setMsgTime(sysMsg.time);
         item->setName("系统消息");
 
-        if(!mIsSysMsgPage){
+        if(!mIsSysMsgPage && sysMsg.isread == "0"){
             item->setUnReadCount("1");
             setUnreadCount(1);
             item->setUnreadMsgCOunt(1);

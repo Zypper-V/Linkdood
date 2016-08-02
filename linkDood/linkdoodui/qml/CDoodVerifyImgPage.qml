@@ -23,7 +23,7 @@ CPage {
             loadingDialog.hide();
             if(result==="验证成功,请重新登录")
             {
-                pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+                pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
             }
         }
     }
@@ -122,7 +122,7 @@ CPage {
                     radius: 10
                 }
                 onClicked: {
-                loginManager.getVerifyImg("0086"+loginManager.getLoginPhone(),"");
+                loginManager.getVerifyImg("","");
                 }
             }
             CLine {
@@ -178,7 +178,7 @@ CPage {
                     radius: 10
                 }
                 onClicked: {
-                loginManager.getVerifyImg("0086"+loginManager.getLoginPhone(),verifycodeEdit.text);
+                loginManager.getVerifyImg("",verifycodeEdit.text);
                 }
             }
 

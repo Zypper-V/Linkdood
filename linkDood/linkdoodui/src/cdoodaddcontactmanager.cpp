@@ -79,13 +79,20 @@ void CDoodAddContactManager::onSearchFromNet(int code, ContactList user, Contact
 
 void CDoodAddContactManager::onAddContact(int code)
 {
+    qDebug()<<Q_FUNC_INFO<<"add contact reselut:"<< code;
+}
 
+void CDoodAddContactManager::onGetVerifyType(int code, QString userid, int type)
+{
+    qDebug() << Q_FUNC_INFO << "code:" << code << "   userid:" << userid << "   type:" << type;
+    emit getVerifyResult(code, userid, type);
 }
 
 void CDoodAddContactManager::initConnect()
 {
     connect(m_pClient, SIGNAL(searchFromNetResult(int,ContactList, ContactList)), this, SLOT(onSearchFromNet(int,ContactList, ContactList)));
     connect(m_pClient, SIGNAL(addContactResult(int)), this, SLOT(onAddContact(int)));
+    connect(m_pClient, SIGNAL(getVerifyTypeResult(int,QString,int)), this, SLOT(onGetVerifyType(int,QString,int)));
 }
 
 void CDoodAddContactManager::contactListClear()
@@ -98,4 +105,11 @@ void CDoodAddContactManager::contactListClear()
     m_contactListMap.clear();
 
 }
+
+void CDoodAddContactManager::getVerifyType(QString userid)
+{
+    qDebug() << Q_FUNC_INFO << "userid:" << userid;
+    m_pClient->getVerifyType(userid);
+}
+
 

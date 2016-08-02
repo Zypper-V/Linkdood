@@ -60,8 +60,8 @@ Rectangle{
                 BorderImage {
                     id: img
                     source: model.modelData.path
-                    width: 36
-                    height: 36
+                    width: 48
+                    height: 48
                     anchors.centerIn: parent
                 }
             }

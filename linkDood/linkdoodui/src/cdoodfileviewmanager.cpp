@@ -38,7 +38,8 @@ void CDoodFileViewManager::downloadFile(QString id)
 
 void CDoodFileViewManager::openFile()
 {
-
+    QFileInfo tempFileInfo(mPath);
+    QDesktopServices::openUrl(QUrl(tempFileInfo.absolutePath(), QUrl::TolerantMode));
 }
 
 void CDoodFileViewManager::showFilePage(QString id, QString fileName, QString url, QString encryptKey, long long size, QString encryptUser)

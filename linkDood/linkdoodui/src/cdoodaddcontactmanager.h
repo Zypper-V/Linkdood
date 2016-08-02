@@ -16,14 +16,18 @@ public:
     //添加联系人
     Q_INVOKABLE void addContact(QString userid, QString remark, QString info);
     Q_INVOKABLE void contactListClear();
+    Q_INVOKABLE void getVerifyType(QString userid);
+
 
 signals:
     void searchFromNetResult(int size);
+    void getVerifyResult(int code, QString userid, int type);
 private slots:
     //从网络获取联系人
     void onSearchFromNet(int code, ContactList user, ContactList group);
     //添加联系人返回
     void onAddContact(int code);
+    void onGetVerifyType(int code, QString userid, int type);
 
 
 private:

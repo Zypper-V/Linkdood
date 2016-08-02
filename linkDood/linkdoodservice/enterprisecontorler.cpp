@@ -29,8 +29,8 @@ void EnterpriseControler::getSonOrgs(QString orgid)
     int64 org_id;
     org_id=orgid.toLongLong();
     service::IMClient::getClient()->getEnterprise()->getSonOrgs(org_id,
-        std::bind(&EnterpriseControler::_getSonOrgs,this,std::placeholders::_1,
-        std::placeholders::_2,std::placeholders::_3));
+                                                                std::bind(&EnterpriseControler::_getSonOrgs,this,std::placeholders::_1,
+                                                                          std::placeholders::_2,std::placeholders::_3));
 }
 void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers)
 {
@@ -43,16 +43,30 @@ void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<servi
     for(auto orgUser:orgusers){
         orgUserList.insert(orgUserList.size(),orguserToQorguser(orgUser));
     }
-//    for(size_t i=0;i<orgUserList.size()-1;++i){
-//        for(size_t j=i+1;j<orgUserList.size();++j){
-//            OrgUser temp;
-//            if(orgUserList[i].order_num.toInt()>orgUserList[j].order_num.toInt()){
-//                temp=orgUserList[i];
-//                orgUserList[i]=orgUserList[j];
-//                orgUserList[j]=temp;
-//            }
-//        }
-//    }
+    if(orgUserList.size()>1){
+        for(size_t i=0;i<orgUserList.size()-1;++i){
+            for(size_t j=i+1;j<orgUserList.size();++j){
+                OrgUser temp;
+                if(orgUserList[i].order_num.toInt()>orgUserList[j].order_num.toInt()){
+                    temp=orgUserList[i];
+                    orgUserList[i]=orgUserList[j];
+                    orgUserList[j]=temp;
+                }
+            }
+        }
+    }
+    if(orgList.size()>1){
+        for(size_t i=0;i<orgList.size()-1;++i){
+            for(size_t j=i+1;j<orgList.size();++j){
+                Org temp;
+                if(orgList[i].order_num.toInt()>orgList[j].order_num.toInt()){
+                    temp=orgList[i];
+                    orgList[i]=orgList[j];
+                    orgList[j]=temp;
+                }
+            }
+        }
+    }
     emit getSonOrgsResult(info.code(),orgList,orgUserList);
 }
 
@@ -69,8 +83,8 @@ void EnterpriseControler::getOnlineStates(QStringList &userid)
         Ids.push_back(id);
     }
     service::IMClient::getClient()->getEnterprise()->getOnlineStates(Ids,
-        std::bind(&EnterpriseControler::_getOnlineStates,this,
-        std::placeholders::_1));
+                                                                     std::bind(&EnterpriseControler::_getOnlineStates,this,
+                                                                               std::placeholders::_1));
 }
 void EnterpriseControler::_getOnlineStates(std::vector<OnlineState> &states)
 {
@@ -96,8 +110,8 @@ void EnterpriseControler::getOrgUserInfo(QString userid)
     std::stringstream str(userid.toStdString());
     str >>id;
     service::IMClient::getClient()->getEnterprise()->getOrgUserInfo(id,
-       std::bind(&EnterpriseControler::_getOrgUserInfo,this,
-       std::placeholders::_1,std::placeholders::_2));
+                                                                    std::bind(&EnterpriseControler::_getOrgUserInfo,this,
+                                                                              std::placeholders::_1,std::placeholders::_2));
 }
 void EnterpriseControler::_getOrgUserInfo(service::ErrorInfo &info, service::OrgUser &orguser)
 {

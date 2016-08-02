@@ -42,6 +42,8 @@ public:
     void _getGroupFileList(service::ErrorInfo& info, std::vector<FileInfo> fileInfos);
     void deleteGroupFile(QStringList fileList);
     void _deleteGroupFile(service::ErrorInfo& info);
+    void uploadGroupAvatar(QString path);
+    void _uploadGroupAvatar(std::string orgijson, std::string thumbjson, int code);
 
 
     void onListChanged(std::vector<std::shared_ptr<service::User> >  group);
@@ -77,6 +79,7 @@ signals:
     void getMemberListResult(QString result,MemberList memberList);
     void getGroupFileListResult(FileInfoList fileInfoList);
     void deleteGroupFileResult(QString result);
+    void uploadGroupAvatarResult(QString thum_url,QString src_url);
 };
 
 

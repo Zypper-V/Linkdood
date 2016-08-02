@@ -68,6 +68,7 @@ signals:
     void getGroupFileListResult(FileInfoList fileInfoList);
     void deleteGroupFileResilt(QString result);
     void getGroupMemberListReslut(int code, QString id, MemberList list);
+    void uploadGroupAvatarResult(QString thum_url,QString src_url);
     //servie重启信号
     void serviceRestart();
 
@@ -100,6 +101,9 @@ signals:
     //会话列表(通知栏)新消息更新通知
     void sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString);
 
+    void uploadFileBackUrl(QString targetId,QString localId,QString fileUrl,QString enkey);
+    void uploadImgeBackUrl(QString targetId,QString localId,QString mainUrl,QString thumbUrl,QString enkey);
+    void transMessageFinishBack(int code,QString targetId);
     //上传头像返回
     void uploadAvatarResult(QString orgijson, QString thumbjson, int code);
     //上传文件返回
@@ -113,6 +117,7 @@ signals:
     void uploadImageResult(QString tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
     void downloadImageResult(int code, QString jasoninfo, QString tagetid);
+    void downloadHistoryImageResult(int code, QString localpath, QString targetid, QString localid);
     //获取文件列表返回
     void getFileListResult(int code, FileInfoList fileList);
     //获取联发系人返回
@@ -126,9 +131,12 @@ signals:
     //添加联系人返回
     void addContactResult(int code);
     //删除联系人返回
-    int removeContactResult(int code);
+    void removeContactResult(int code);
+    //获取验证方式返回
+    void getVerifyTypeResult(int code, QString userid, int type);
 
-
+    void setPrivateSettingResult(int code);
+    void getPrivateSettingResult(int code, IMPrivateSetting ps);
 
 public slots:
     QString installPath();
@@ -142,13 +150,14 @@ public slots:
     void exitChat(const QString targetId);
 
     // 从配置文件读取登录状态
-     int getAppLoginStatus();
+    int getAppLoginStatus();
     //向配置文件写入登录状态
     void setAppLoginStatus(const int status);
     //登录
     void login(const QString &server,
                const QString &userId,
                const QString &password);
+    void autoLogin(QString id,QString service);
     void getVerifyImg( QString userid,QString code);
     void changepassword(QString oldpsw,QString newpsw);
     //用户信息UserId
@@ -156,10 +165,10 @@ public slots:
     QString userName();
     QString userType(QString userId);
     //更新联系人信息
-     void updateContactInfo(QString userId,QString operStar,QString remark="");
-     //改变联系人状态
-     void onOnlineChanged(QString id, QString deviceType);
-     void onElsewhereLogin(QString tip);
+    void updateContactInfo(QString userId,QString operStar,QString remark="");
+    //改变联系人状态
+    void onOnlineChanged(QString id, QString deviceType);
+    void onElsewhereLogin(QString tip);
 
     //获取账户信息
     void getAccountInfo(void);
@@ -198,6 +207,7 @@ public slots:
     void uploadAndSendImageMsg(Msg);
     //下载图片
     void downloadImage(QString url, QString property);
+    void downloadHistoryImage(QString url, QString property, QString targetid, QString localid);
     //解密文件
     bool decryptFile(QString encryptkey, QString srcpath, QString destpath);
     //获取文件列表
@@ -212,34 +222,40 @@ public slots:
     void addContact(QString userid, QString remark, QString info);
     //删除联系人
     void removeContact(QString userid);
+    //获取验证方式
+    void getVerifyType(QString userid);
 
 
     /*****************start Enterprise**************************/
-   void getSonOrgs(QString orgid);
-   void getOnlineStates(QStringList& userid);
-   void getOrgUserInfo(QString userid);
-   /*****************end Enterprise**************************/
+    void getSonOrgs(QString orgid);
+    void getOnlineStates(QStringList& userid);
+    void getOrgUserInfo(QString userid);
+    /*****************end Enterprise**************************/
 
-   void createGroup(QString level, QString name, MemberList memberList);
-   void addGroup(QString groupid, QString verify_info);
-   void removeGroup(QString type, QString groupid);
-   void transferGroup(QString groupid, QString userid);
-   void setGroupSet(QString groupid, QString verify_type, QString is_allow);
-   void setGroupInfo(Group group);
-   void getGroupSet(QString groupid);
-   void getGroupInfo(QString groupid);
-   void inviteMember(QString groupid,MemberList memberList);
-   void removeMember(QString groupid, QString userid);
-   void setMemberInfo(Member member);
-   void getMemberInfo(QString groupid,QString userid);
-   void getMemberList(QString groupid);
-   void getGroupList();
-   void getGroupFileList(QString groupid);
-   void deleteGroupFile(QStringList fileIdList);
+    void createGroup(QString level, QString name, MemberList memberList);
+    void addGroup(QString groupid, QString verify_info);
+    void removeGroup(QString type, QString groupid);
+    void transferGroup(QString groupid, QString userid);
+    void setGroupSet(QString groupid, QString verify_type, QString is_allow);
+    void setGroupInfo(Group group);
+    void getGroupSet(QString groupid);
+    void getGroupInfo(QString groupid);
+    void inviteMember(QString groupid,MemberList memberList);
+    void removeMember(QString groupid, QString userid);
+    void setMemberInfo(Member member);
+    void getMemberInfo(QString groupid,QString userid);
+    void getMemberList(QString groupid);
+    void getGroupList();
+    void getGroupFileList(QString groupid);
+    void deleteGroupFile(QStringList fileIdList);
+   void uploadGroupAvatar(QString path);
 
-   void getSysMessages(int type,int count,QString msgid,int flag);
-   void setSysMessagRead(int type, QString msg);
-   void response(IMSysMsgRespInfo info);
+    void getSysMessages(int type,int count,QString msgid,int flag);
+    void setSysMessagRead(int type, QString msg);
+    void response(IMSysMsgRespInfo info);
+
+    void setPrivateSetting(IMPrivateSetting ps);
+    void getPrivateSetting();
 
 private slots:
     void onLoginoutRelust(bool loginout);
@@ -283,6 +299,7 @@ private slots:
     void onGetGroupFileListResult(FileInfoList fileInfoList);
     void onDeleteGroupFileResult(QString result);
     void onGetGroupMemberListReslut(int code, QString id, MemberList list);
+    void onUploadGroupAvatarResult(QString thum_url,QString src_url);
     //servie重启信号
     void onServiceRestart();
     //联系人信息更新
@@ -317,12 +334,16 @@ private slots:
     //文件进度
     void onChatFileProgress(int extra_req, int process, QString info,QString localId,QString targetId);
 
+    void onTransMessageFinishBack(int code,QString targetId);
+    void onUploadFileBackUrl(QString targetId,QString localId,QString fileUrl,QString enkey);
+    void onUploadImgeBackUrl(QString targetId,QString localId,QString mainUrl,QString thumbUrl,QString enkey);
     //下载文件返回
     void onChatDownloadFile(int code, QString localpath, QString tagetid);
     //上传图片返回
     void onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
     void onChatDownloadImage(int code, QString localpath, int64 tagetid);
+    void onDownloadHistoryImage(int code, QString localpath, QString targetid, QString localid);
     //获取文件列表返回
     void onChatGetFileList(int code, FileInfoList fileList);
     //获取用户信息返回
@@ -337,6 +358,12 @@ private slots:
     void onAddContactResult(int code);
     //删除联系人返回
     void onRemoveContactResult(int code);
+
+    //获取验证方式
+    void onGetVerifyTypeResult(int code, QString userid, int type);
+    void onSetPrivateSetting(int code);
+    void onGetPrivateSetting(int code, IMPrivateSetting ps);
+
 
 private:
     void initDBusConnect();

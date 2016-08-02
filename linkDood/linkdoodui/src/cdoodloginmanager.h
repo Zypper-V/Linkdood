@@ -40,10 +40,13 @@ public:
     Q_INVOKABLE void login(const QString &server,
                            const QString &userId,
                            const QString &password);
+    Q_INVOKABLE void autoLogin(QString id,QString service);
     Q_INVOKABLE void getVerifyImg( QString userid,
                             QString code);
 
+    Q_INVOKABLE void openUrl(QString url);
     // 从配置文件读取登录状态
+//    Q_INVOKABLE void autoLoginLastAccount();
     Q_INVOKABLE int getAppLoginStatus();
     //向配置文件写入登录状态
     Q_INVOKABLE void setAppLoginStatus(const int status);
@@ -52,6 +55,15 @@ public:
     Q_INVOKABLE void setLoginService(QString service);
     Q_INVOKABLE QString getLoginPhone();
     Q_INVOKABLE QString getLoginService();
+    Q_INVOKABLE void setLoginPhoneId(QString id);
+    Q_INVOKABLE void setLoginServiceId(QString service);
+    Q_INVOKABLE QString getLoginPhoneId();
+    Q_INVOKABLE QString getLoginServiceId();
+
+
+
+//    Q_INVOKABLE void setLastLoginAccount(QString service,QString id,QString psw);
+//    Q_INVOKABLE void getLastLoginAccount(QString& service,QString& id,QString& psw);
 
     //用户信息UserId    
     Q_INVOKABLE QString verifyImg();
@@ -69,11 +81,13 @@ public:
     Q_INVOKABLE bool checkFirstWordIsSpace(const QString &text);
     //获取登录历史记录
     Q_INVOKABLE void getLoginHistory(void);
+
     //设置登录信息
     Q_INVOKABLE void setLoginInfo(int flag, QString userid, QString username, QString avatar);
     Q_INVOKABLE int loginStatus();
 signals:
     void loginStatusChanged();
+    void autoLogin();
     void getVerifyImgResult(QString result);
     void loginSucceeded();
     void loginFailed(QString err);
@@ -91,6 +105,7 @@ signals:
 
     //servie重启信号
     void serviceRestart();
+    void getLoginHistoryResult(QString userid,QString service);
 private slots:
     void onElsewhereLogin(QString tip);
     void onLoginSucceeded();
@@ -112,6 +127,7 @@ private:
     QString mVerifyImg;
     QString mUserId;
     bool m_bWindowFocus;
+    QString mVerifyId;
     LinkDoodClient *m_pClient;
 };
 

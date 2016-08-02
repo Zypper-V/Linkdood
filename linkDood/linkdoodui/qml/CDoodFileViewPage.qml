@@ -75,7 +75,9 @@ CPage {
                 anchors.fill: parent
                 onClicked: {
                     if(fileViewManager.status === 3){
-                        fileViewManager.openFile();
+                        //fileViewManager.openFile();
+                        console.log("file:"+fileViewManager.path)
+                         fileOpen.open("file://" + fileViewManager.path, CMIMEDialogTool.Open,"image/jpg")
                     }else if(fileViewManager.status === 1){
                         fileViewManager.downloadFile();
                     }else if(fileViewManager.status === 2){
@@ -96,33 +98,40 @@ CPage {
                 anchors.horizontalCenter:parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.verticalCenterOffset: -200
-                sourceSize: Qt.size(240,240);
+                width: 320
+                height: 320
+//                sourceSize: Qt.size(640,640);
                 source: chatManager.judgeFileFromat(fileViewManager.fileName)
             }
-            Column{
-                anchors.top: fileIcon.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                Text {
-                    id: fileName
-                    font.pixelSize: 30
-                    text: fileViewManager.fileName
-                }
+            Text {
+                id: fileName
+                font.pixelSize: 30
+                anchors.top: parent.bottom
+                anchors.topMargin: 40
+                anchors.centerIn: parent
+                width: parent.width - 200
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WrapAnywhere
+                text: fileViewManager.fileName
             }
-
             CProgressBar {
                 id:loadStatus
 
                 minimum: 0
                 maximum: 100
-                width: parent.width
+                width: parent.width - 20
                 height: 8
                 visible:fileViewManager.status===2
                 value: fileViewManager.proggress+10
 
                 anchors.bottom: parent.bottom
                 anchors.bottomMargin: 200
-                anchors.left: parent.left
+                anchors.horizontalCenter: parent.horizontalCenter
             }
+        }
+        CMIMEDialog{
+            id:fileOpen
+
         }
     }
 }
