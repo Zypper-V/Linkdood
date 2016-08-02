@@ -773,6 +773,16 @@ void LinkDoodClient::getVerifyType(QString userid)
     manager.call("getVerifyType", userid);
 }
 
+void LinkDoodClient::getContactInfo(QString userId)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("getContactInfo", userId);
+}
+
 void LinkDoodClient::onLoginoutRelust(bool loginout)
 {
     qDebug() << Q_FUNC_INFO << loginout;
@@ -837,6 +847,12 @@ void LinkDoodClient::onGetSysMessages(int code, IMSysMsgList sysMsgList)
 {
     qDebug()<<Q_FUNC_INFO;
     emit getSysMessagesResult(code, sysMsgList);
+}
+
+void LinkDoodClient::onGetContactInfoResult(Contact contact)
+{
+    qDebug()<<Q_FUNC_INFO<<"user:"<<contact.name;
+    emit getContactInfoResult(contact);
 }
 
 
@@ -1200,6 +1216,10 @@ void LinkDoodClient::onGetPrivateSetting(int code, IMPrivateSetting ps)
 void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "getContactInfoResult",
+                                          this, SLOT(onGetContactInfoResult(Contact)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "transMessageFinishBack",

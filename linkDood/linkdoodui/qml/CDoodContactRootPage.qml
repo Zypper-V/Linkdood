@@ -116,6 +116,7 @@ Item {
                         userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
                         userdataManager.setId(model.modelData.id);
                         userdataManager.setIsFriend(contactManager.isFriend(model.modelData.id));
+                        contactManager.getContactInfo(model.modelData.id);
                         pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
                     }
                 }
@@ -143,8 +144,8 @@ Item {
                     anchors.fill: parent
                     anchors.top:parent.top
                     anchors.bottom: parent.bottom
-//                    anchors.topMargin: 1
-//                    anchors.bottomMargin: 3
+                    //                    anchors.topMargin: 1
+                    //                    anchors.bottomMargin: 3
                     anchors.leftMargin: 2
                     anchors.rightMargin:  2
 
@@ -306,9 +307,7 @@ Item {
                 anchors.topMargin: 10
                 onClicked: {
                     menu.hide();
-
-                    contactManager.removeContact(menu.id);
-                    indicatorDialog.show();
+                    alertDialog.show();
                 }
             }
             UserProfileButton{
@@ -358,6 +357,19 @@ Item {
         onAccepted: {
             contactManager.updateContactInfo(menu.id,"",inputDialog.text());
             indicatorDialog.show();
+        }
+    }
+    CDialog {
+        id: alertDialog
+
+        titleText: qsTr("提示")
+        messageText: qsTr("您确定要删除该好友？")
+        onAccepted: {
+            contactManager.removeContact(menu.id);
+            indicatorDialog.show();
+        }
+        onCanceled: {
+            console.log("onCanceled")
         }
     }
 }

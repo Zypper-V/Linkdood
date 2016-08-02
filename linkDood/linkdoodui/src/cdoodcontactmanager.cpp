@@ -76,6 +76,11 @@ void CDoodContactManager::clearChatList()
     //    appListMap.clear();
 }
 
+void CDoodContactManager::getContactInfo(QString userId)
+{
+    m_pClient->getContactInfo(userId);
+}
+
 bool CDoodContactManager::isFriend(QString id)
 {
     QMap<QString, CDoodContactItem*>::iterator it = contactListMap.find(id);

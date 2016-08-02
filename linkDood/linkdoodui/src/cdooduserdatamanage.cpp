@@ -1,9 +1,21 @@
 #include "cdooduserdatamanage.h"
 #include<QDebug>
+#include "linkdoodclient.h"
 
-CDoodUserDataManage::CDoodUserDataManage(QObject *parent) : QObject(parent)
+CDoodUserDataManage::CDoodUserDataManage(LinkDoodClient *client,QObject *parent) : QObject(parent),m_pClient(client)
 {
+    initConnect();
+}
 
+void CDoodUserDataManage::setRemark(QString remark)
+{
+    mRemark = remark;
+    emit remarkChanged();
+}
+
+QString CDoodUserDataManage::remark()
+{
+    return mRemark;
 }
 
 QString CDoodUserDataManage::id() const
@@ -64,6 +76,17 @@ bool CDoodUserDataManage::setIsFriend(const bool &data)
     mIsFriend = data;
     emit isFriendChanged();
     return mIsFriend;
+}
+
+void CDoodUserDataManage::onGetContactInfoResult(Contact contact)
+{
+    setName(contact.name);
+    setRemark(contact.remark);
+}
+
+void CDoodUserDataManage::initConnect()
+{
+    connect(m_pClient,SIGNAL(getContactInfoResult(Contact)),this,SLOT(onGetContactInfoResult(Contact)));
 }
 
 QString CDoodUserDataManage::gender() const

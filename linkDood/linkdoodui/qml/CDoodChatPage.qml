@@ -342,12 +342,12 @@ CPage {
                 if(!moving && chatListScrollbbar.y >=0 && chatListScrollbbar.y < chatPage.getMessageHeight * 4) {
                     chatPage.bNeedViewToEnd = false
                     // todo
-                    //chatManager.getMessages(chatPage.targetid, 20,"0")
+                    chatManager.getMoreHistoryMessage();
+                    console.log("22222222222222222222222:"+chatListScrollbbar.y);
                 }
                 btnEmotion.isKeyboard = true;
                 btnTool.isPressed = false;
             }
-
             footer: Item {
                 id: refreshRoot
 

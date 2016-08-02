@@ -46,6 +46,7 @@ public:
     void updateItemNameAndAvatar(QString localId,QString userId);
     void updateItemData(QString userId,QString name,QString avater);
     QString lastMsgId();
+    QString firstMsgId();
     int  groupMemsCount();
     void addChatItemtoMap(CDoodChatItem* chatItem);
     CDoodChatItem* itemById(QString id);

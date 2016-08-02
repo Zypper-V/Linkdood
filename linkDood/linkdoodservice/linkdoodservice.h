@@ -26,6 +26,7 @@ public:
     static LinkDoodService* instance();
 
 signals:
+    void getContactInfoResult(Contact contact);
     //系统消息推送
     void sysMessageNotice(IMSysMsg sysMsg);
     void getSysMessageResult(int code, IMSysMsgList sysMsgList);
@@ -179,7 +180,7 @@ public slots:
     void changepassword(QString oldpsw,QString newpsw);
 
     void logout();
-    void getContactInfo(int64 userId);
+    void getContactInfo(QString userId);
 
     //唯一标识Id
     QString createMsgId();
@@ -395,6 +396,9 @@ protected slots:
     void onSysMessageNotice(IMSysMsg sysMsg);
     void onGetSysMessages(int code, IMSysMsgList sysMsgList);
 
+    //获取联系人资料返回
+    void onGetContactInfoResult(Contact contact);
+
     //获取子组织返回
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
     void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
@@ -418,8 +422,6 @@ protected slots:
     void onLoginFailed(int code);
     //退出登录结果返回
     void onLoginoutRelust(bool loginout);
-    //获取联系人资料返回
-    void onGetContactInfoResult(service::User&user);
 
     //会话列表头像更新
     void onChatAvatarChanged(QString id,QString avatar);

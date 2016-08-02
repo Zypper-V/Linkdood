@@ -66,7 +66,7 @@ CPage {
                         leftMargin: 210
                         bottomMargin: 24
                     }
-                    text:userdataManager.name
+                    text:userdataManager.remark !=="" ?userdataManager.remark :userdataManager.name
                     color:"white"
                     font.pixelSize: 36
                 }

@@ -446,6 +446,8 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
     qDebug() << Q_FUNC_INFO ;
     if(msg){
 
+
+        qDebug()<<Q_FUNC_INFO<<"msgTime:"<<QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss")<<"body:"<<msg->body.c_str();
         qDebug()<<Q_FUNC_INFO<<"mesage:targetId:"<<msg->targetid<<"fromId:"<<msg->fromid;
         if(msg->msgtype == MSG_TYPE_TEXT)
         {

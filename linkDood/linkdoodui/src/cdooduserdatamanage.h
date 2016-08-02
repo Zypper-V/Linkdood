@@ -1,10 +1,14 @@
 #ifndef CDDODUSERDATAITEM_H
 #define CDDODUSERDATAITEM_H
 #include <QObject>
+#include "linkdoodtypes.h"
+
+class LinkDoodClient;
 class CDoodUserDataManage : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString remark READ remark WRITE setRemark NOTIFY remarkChanged)
     Q_PROPERTY(QString id READ id WRITE setId NOTIFY idChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString gender READ gender WRITE setGender NOTIFY genderChanged)
@@ -13,7 +17,10 @@ class CDoodUserDataManage : public QObject
     Q_PROPERTY(bool isFriend READ isFriend WRITE setIsFriend NOTIFY isFriendChanged)
 
 public:
-    explicit CDoodUserDataManage(QObject *parent = 0);
+    explicit CDoodUserDataManage(LinkDoodClient *client = 0,QObject *parent = 0);
+
+    void setRemark(QString remark);
+    QString remark();
 
     QString id() const;
     Q_INVOKABLE QString setId(const QString &data);
@@ -42,9 +49,10 @@ signals:
     void avatarChanged();
     void thumbAvatarChanged();
     void isFriendChanged();
+    void remarkChanged();
 
 public slots:
-
+    void onGetContactInfoResult(Contact contact);
 private:
     QString mId;
     QString mName;
@@ -52,5 +60,8 @@ private:
     QString mGender;
     QString mAvatar;
     bool mIsFriend;
+    QString mRemark;
+    LinkDoodClient *m_pClient;
+    void initConnect();
 };
 #endif // CDOODCONTACTITEM_H

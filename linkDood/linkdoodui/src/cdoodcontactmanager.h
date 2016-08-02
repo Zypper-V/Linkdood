@@ -20,6 +20,7 @@ public:
     Q_INVOKABLE void getContactList();
     //清空列表
     Q_INVOKABLE void clearChatList();
+    Q_INVOKABLE void getContactInfo(QString userId);
 
     Q_INVOKABLE bool isFriend(QString id);
     Q_INVOKABLE QString findName(QString userId);

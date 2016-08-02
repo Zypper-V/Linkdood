@@ -31,6 +31,8 @@ public:
     Q_INVOKABLE  void switchToChatPage(QString targetId, QString name,QString chatType,QString lastMsgId="",int unReadCount=0,QString icon="");
     Q_INVOKABLE  void showUiFinished();
     Q_INVOKABLE  void clearList();
+    Q_INVOKABLE  void getMoreHistoryMessage();
+
     Q_INVOKABLE  CDoodChatManagerModel* chatModel ()const;
     void updateMsgToListView(Msg msg);
 

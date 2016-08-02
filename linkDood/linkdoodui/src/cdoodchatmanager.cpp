@@ -257,6 +257,16 @@ void CDoodChatManager::clearList()
     mChatModel = NULL;
 }
 
+void CDoodChatManager::getMoreHistoryMessage()
+{
+    if(mChatModel != NULL){
+        QString firstMsgId =  mChatModel->firstMsgId();
+        if(firstMsgId != "0"){
+            getMessages(m_sTargetid,20,firstMsgId,0);
+        }
+    }
+}
+
 CDoodChatManagerModel* CDoodChatManager::chatModel() const
 {
     return mChatModel;

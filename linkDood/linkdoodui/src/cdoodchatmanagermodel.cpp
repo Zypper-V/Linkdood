@@ -451,6 +451,15 @@ QString CDoodChatManagerModel::lastMsgId()
     return "0";
 }
 
+QString CDoodChatManagerModel::firstMsgId()
+{
+    CDoodChatItem* item = m_pChatMap.first();
+    if(item != NULL){
+        return item->msgId();
+    }
+    return "0";
+}
+
 int CDoodChatManagerModel::groupMemsCount()
 {
     return mGroupMemList.size();

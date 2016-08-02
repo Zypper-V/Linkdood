@@ -77,6 +77,7 @@ signals:
     //监听联系人信息更新
     void contactOnlineChanged(QString id,QString deviceText);
     void elsewhereLogin(QString tip);
+    void getContactInfoResult(Contact contact);
 
     //会话列表头像更新
     void chatAvatarChanged(QString id,QString avatar);
@@ -225,6 +226,7 @@ public slots:
     //获取验证方式
     void getVerifyType(QString userid);
 
+    void getContactInfo(QString userId);
 
     /*****************start Enterprise**************************/
     void getSonOrgs(QString orgid);
@@ -270,7 +272,7 @@ private slots:
     //系统消息推送
     void onSysMessageNotice(IMSysMsg sysMsg);
     void onGetSysMessages(int code, IMSysMsgList sysMsgList);
-
+    void onGetContactInfoResult(Contact contact);
     //获取组织返回
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
     void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);

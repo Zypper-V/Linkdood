@@ -65,7 +65,7 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     if (!m_pChatManager.data()) {
         qDebug() << Q_FUNC_INFO << "m_pChatManager init error !!!";
     }
-    m_pUserDataManager = QSharedPointer<CDoodUserDataManage>(new CDoodUserDataManage());
+    m_pUserDataManager = QSharedPointer<CDoodUserDataManage>(new CDoodUserDataManage(m_pClient.data()));
     if (!m_pUserDataManager.data()) {
         qDebug() << Q_FUNC_INFO << "m_pUserDataManager init error !!!";
     }

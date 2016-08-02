@@ -154,15 +154,22 @@ void LinkDoodService::logout()
     }
 }
 
-void LinkDoodService::getContactInfo(int64 userId)
+void LinkDoodService::getContactInfo(QString userId)
 {
-    qDebug() << Q_FUNC_INFO;
-    long long id = userId;
-    if(m_pIMClient != NULL){
-        m_pIMClient->getContact()->getContactInfo(id,
-                                                  std::bind(&LinkDoodService::onSrvGetContactInfoResult,this,std::placeholders::_1,std::placeholders::_2));
+    if(m_pContactObserver != NULL){
+        m_pContactObserver->getContactInfo(userId);
     }
 }
+
+//void LinkDoodService::getContactInfo(int64 userId)
+//{
+//    qDebug() << Q_FUNC_INFO;
+//    long long id = userId;
+//    if(m_pIMClient != NULL){
+//        m_pIMClient->getContact()->getContactInfo(id,
+//                                                  std::bind(&LinkDoodService::onSrvGetContactInfoResult,this,std::placeholders::_1,std::placeholders::_2));
+//    }
+//}
 
 QString LinkDoodService::createMsgId()
 {
@@ -624,6 +631,12 @@ void LinkDoodService::onGetSysMessages(int code, IMSysMsgList sysMsgList)
     emit getSysMessageResult(code, sysMsgList);
 }
 
+void LinkDoodService::onGetContactInfoResult(Contact contact)
+{
+    qDebug()<<Q_FUNC_INFO<<"user:"<<contact.remark;
+    emit getContactInfoResult(contact);
+}
+
 void LinkDoodService::onGetSonOrgsResult(int code, OrgList orglist, OrgUserList orguserlist)
 {
     qDebug() << Q_FUNC_INFO << "xxxxxxxxx";
@@ -730,11 +743,6 @@ void LinkDoodService::onLoginoutRelust(bool loginout)
 {
     qDebug() << Q_FUNC_INFO << loginout;
     emit loginoutRelust(loginout);
-}
-
-void LinkDoodService::onGetContactInfoResult(service::User &user)
-{
-    qDebug() << Q_FUNC_INFO ;
 }
 
 void LinkDoodService::onChatAvatarChanged(QString id, QString avatar)
@@ -1226,6 +1234,7 @@ void LinkDoodService::initConnects()
     QObject::connect(m_pContactObserver.get(), SIGNAL(addContactBack(int)), this,SLOT(onAddContact(int)));
     QObject::connect(m_pContactObserver.get(), SIGNAL(removeContactBack(int)), this, SLOT(onRemoveContact(int)));
     QObject::connect(m_pContactObserver.get(), SIGNAL(getVerifyTypeBack(int,QString,int)), this, SLOT(onGetVerifyType(int,QString,int)));
+    QObject::connect(m_pContactObserver.get(), SIGNAL(getContactInfo(Contact)), this, SLOT(onGetContactInfoResult(Contact)));
 
 
     //SysMsgControler

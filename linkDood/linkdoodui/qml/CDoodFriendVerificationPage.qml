@@ -84,7 +84,8 @@ CPage {
                         anchors.fill: parent
                         onClicked: {
                             addContactManager.addContact(friendVericationManager.id,inputRemark.text,inputTextArea.text);
-                            pageStack.pop();
+                            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodRootTabView.qml"),"CDoodRootTabView");
+                            pageStack.push(component);
                         }
                     }
                 }

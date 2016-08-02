@@ -42,6 +42,11 @@ void ContactControler::updateContactInfo(QString userId, QString operStar, QStri
                                                                     std::bind(&ContactControler::_updateContactInfo,this,std::placeholders::_1));
 }
 
+void ContactControler::getContactInfo(QString userid)
+{
+    service::IMClient::getClient()->getContact()->getContactInfo(userid.toLongLong(),std::bind(&ContactControler::_getContactInfo,this,std::placeholders::_1,std::placeholders::_2));
+}
+
 void ContactControler::init()
 {
     qDebug() << Q_FUNC_INFO;
@@ -57,15 +62,14 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
         qDebug()<< Q_FUNC_INFO<<"name:"<<i.name.c_str()<<"team:"<<i.team<<"pingyin:"<<QString::fromStdString(i.pinyin);
         user.avatar = QString::fromStdString(i.avatar);
 
+        user.name  = QString::fromStdString(i.name);
         user.extends  = QString::fromStdString(i.extends);
         user.id  = QString::number(i.id);
         user.isStar  = i.isStar;
         user.isVip  = i.isVip;
         user.pinyin  = QString::fromStdString(i.pinyin);
         user.remark  = QString::fromStdString(i.remark);
-        if(user.remark != ""){
-            user.name  = user.remark;
-        }else{
+        if(user.remark !=""){
             user.name  = QString::fromStdString(i.name);
         }
         user.server  = QString::fromStdString(i.server);
@@ -221,7 +225,7 @@ void ContactControler::_searchFromNet(service::ErrorInfo info, SearchResult res)
         }
         contact.gender = QString::number(res.users[i].gender);
         qDebug() << Q_FUNC_INFO << "LinkDoodService::instance()->UserId():" << LinkDoodService::instance()->UserId() << "userid:" << contact.id << "   gender:" << contact.gender;
-        contact.timeZone = res.users[i].time_zone; 
+        contact.timeZone = res.users[i].time_zone;
         contact.name = QString::fromStdString(res.users[i].name);
         contact.avatar = QString::fromStdString(res.users[i].avatar);
         contact.extends = QString::fromStdString(res.users[i].extends);
@@ -288,6 +292,18 @@ void ContactControler::_getVerifyType(service::ErrorInfo info, ContactVerifyType
 {
     qDebug()<<Q_FUNC_INFO<<"code:"<<info.code() << "verify.userid:" << verify.userid <<"  verify.type:" << verify.type;
     emit getVerifyTypeBack(info.code(), QString::number(verify.userid), verify.type);
+}
+
+void ContactControler::_getContactInfo(service::ErrorInfo &info, service::User &user)
+{
+    qDebug()<<Q_FUNC_INFO;
+    service::Contact& contact = dynamic_cast<service::Contact&>(user);
+    Contact item;
+    item.name = QString::fromStdString(contact.name);
+    item.remark = QString::fromStdString(contact.remark);
+    item.id   = QString::number(user.id);
+
+    emit getContactInfo(item);
 }
 
 bool CmpByTeam(const Contact first, const Contact second)

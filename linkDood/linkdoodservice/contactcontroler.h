@@ -21,6 +21,8 @@ public:
     //更新联系人信息
     void updateContactInfo(QString userId,QString operStar,QString remark="");
 
+    void getContactInfo(QString userid);
+
     void init();
     void onListChanged(int operType, std::vector<service::Contact>& users);
     void onAvatarChanged(int64 userid, std::string avatar);
@@ -49,6 +51,7 @@ signals:
     void addContactBack(int code);
     void removeContactBack(int code);
     void getVerifyTypeBack(int code, QString userid, int type);
+    void getContactInfo(Contact contact);
 private:
     ContactList sort(const ContactList& contactList);
     //更新联系人信息
@@ -58,5 +61,6 @@ private:
     void _addContact(service::ErrorInfo info);
     void _removeContact(service::ErrorInfo info);
     void _getVerifyType(service::ErrorInfo info, ContactVerifyType verify);
+    void _getContactInfo(service::ErrorInfo&info, service::User&contact);
 };
 #endif // CONTACTCONTROLER_H
