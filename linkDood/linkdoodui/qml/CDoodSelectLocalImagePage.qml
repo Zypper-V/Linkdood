@@ -57,7 +57,7 @@ CPage {
                 height: 60
                 color:"green"
                 radius: 10
-                visible: chatManager.selectImageCount>0
+                visible: /*chatManager.selectImageCount>0*/false
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
@@ -116,22 +116,26 @@ CPage {
                         imageDelegate.color = "#cdcdcd"
                     }
 
+
                     onReleased: {
                         imageDelegate.color = "#ffffff"
-                        if(imageDelegate.imageSelectState) {
-                            imageSelectImage.source = "qrc:/res/picture_unselected.png"
-                            imageDelegate.imageSelectState = false
-                            chatManager.setSelectImageCount(-1,filePath);
-                        } else {
+                        chatManager.setSelectImageCount(1,filePath);
+                        chatManager.startSendPicture();
+                        pageStack.pop();
+//                        if(imageDelegate.imageSelectState) {
+//                            imageSelectImage.source = "qrc:/res/picture_unselected.png"
+//                            imageDelegate.imageSelectState = false
+//                            chatManager.setSelectImageCount(-1,filePath);
+//                        } else {
 
-                            if(chatManager.selectImageCount>=selectLocalImgePage.maxSelectCount){
-                                gToast.requestToast("最多选择"+selectLocalImgePage.maxSelectCount+"张图片","","");
-                                return;
-                            }
-                            imageSelectImage.source = "qrc:/res/pictures_selected.png"
-                            imageDelegate.imageSelectState = true;
-                            chatManager.setSelectImageCount(1,filePath);
-                        }
+//                            if(chatManager.selectImageCount>=selectLocalImgePage.maxSelectCount){
+//                                gToast.requestToast("最多选择"+selectLocalImgePage.maxSelectCount+"张图片","","");
+//                                return;
+//                            }
+//                            imageSelectImage.source = "qrc:/res/pictures_selected.png"
+//                            imageDelegate.imageSelectState = true;
+//                            chatManager.setSelectImageCount(1,filePath);
+//                        }
                     }
 
                     onCanceled: {
@@ -214,6 +218,7 @@ CPage {
                         sourceSize: Qt.size(50, 50)
                         asynchronous: true
                         smooth: true
+                        visible: false
                     }
                 }
 
