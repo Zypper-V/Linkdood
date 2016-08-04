@@ -449,6 +449,9 @@ void GroupControler::_getMemberList(service::ErrorInfo &info, std::vector<std::s
             member.member_type=QString::number(mem->member_type);
             member.name=QString::fromStdString(mem->name);
             member.remark=QString::fromStdString(mem->remark);
+            if(member.remark=="#"){
+                member.remark=member.name;
+            }
             member.team=QString::number(mem->team);
             if(member.remark=="#"){
                 member.remark=member.name;

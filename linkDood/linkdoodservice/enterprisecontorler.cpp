@@ -44,7 +44,7 @@ void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<servi
     }
     for(auto orgUser:orgusers){   
         qDebug() << Q_FUNC_INFO<<"ssssssssss:"<<orgUser.order_num;
-        if(orgUser.id!=4328621728){
+        if(orgUser.id!=4328621728&&orgUser.id!=4345398944){
         orgUserList.insert(orgUserList.size(),orguserToQorguser(orgUser));
         }
     }
