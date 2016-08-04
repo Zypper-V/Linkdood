@@ -149,8 +149,7 @@ CPage {
                 placeholderText:os.i18n.ctr(qsTr("请输入服务器"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-//                text: loginManager.getLoginServiceId();
-                text: "10.11.1.21"
+                text: loginManager.getLoginServiceId();
 
                 onTextChanged: {
                     passWordEdit.text = ""
@@ -199,8 +198,7 @@ CPage {
 
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-//                text: loginManager.getLoginPhoneId();
-                text: "220223197109281511"
+                text: loginManager.getLoginPhoneId();
 
                 onTextChanged: {
                     passWordEdit.text = ""
@@ -250,7 +248,6 @@ CPage {
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
 //                text: "111111"
-                text: "123456"
             }
 
             CButton {
