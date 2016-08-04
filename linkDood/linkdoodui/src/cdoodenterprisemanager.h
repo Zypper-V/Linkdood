@@ -24,6 +24,9 @@ public:
     Q_INVOKABLE void getSonOrgs(QString orgid);
     Q_INVOKABLE void getOnlineStates(QStringList& userid);
     Q_INVOKABLE void getOrgUserInfo(QString userid);
+    Q_INVOKABLE void selectMember(QString id);
+    Q_INVOKABLE void clearMember();
+    Q_INVOKABLE void changeMember(MemberList memberList);
 
 signals:
     void isOrgChanged();
@@ -41,6 +44,8 @@ private:
     void initConnect();
     int  indexOfSection(QString section);
     QMap<QString, CDoodEnterPriseItem*> enterListMap;
+    std::vector<QString> m_member;
+    MemberList m_memberList;
     LinkDoodClient *m_pClient;
     int isFarOrg;
 };

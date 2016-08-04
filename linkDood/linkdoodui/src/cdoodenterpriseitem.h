@@ -14,6 +14,7 @@ class CDoodEnterPriseItem: public QObject
     Q_PROPERTY(QString order_num READ order_num WRITE setOrder_num NOTIFY order_numChanged)
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
     Q_PROPERTY(QString onlineStatus READ onlineStatus WRITE setOnlineStatus NOTIFY onlineStatusChanged)
+    Q_PROPERTY(QString isChoose READ isChoose WRITE setIsChoose NOTIFY isChooseChanged)
 public:
     explicit CDoodEnterPriseItem(QObject *parent = 0);
     QString id() const;
@@ -39,6 +40,10 @@ public:
 
     QString onlineStatus() const;
     QString setOnlineStatus(const QString &onlineStatus);
+
+    QString isChoose() const;
+    QString setIsChoose(const QString &data);
+    QString clearIsChoose(const QString &data);
 signals:
     void idChanged();
     void nameChanged();
@@ -48,6 +53,7 @@ signals:
     void order_numChanged();
     void thumbAvatarChanged();
     void onlineStatusChanged();
+    void isChooseChanged();
 public slots:
 
 private:
@@ -59,6 +65,7 @@ private:
     QString mOrder_num;
     QString mRemark;
     QString mOnlineStatus;
+    QString mIsChoose;
 };
 
 #endif // CDOODENTERPRISEITEM_H

@@ -63,6 +63,23 @@ bool CDoodMemberManager::isMyself(QString id)
     return false;
 }
 
+bool CDoodMemberManager::isMember(QString id)
+{
+    CDoodMemberItem *item = memberListMap.value(id);
+    if(item!=NULL){
+        return true;
+    }
+    item=groupLeaderListMap.value(id);
+    if(item!=NULL){
+        return true;
+    }
+    item=groupAdminListMap.value(id);
+    if(item!=NULL){
+        return true;
+    }
+    return false;
+}
+
 void CDoodMemberManager::judgeTip(QString hisType)
 {
     qDebug() << Q_FUNC_INFO<<mMy_Type<<"sssssssss"<<hisType;
@@ -110,6 +127,7 @@ void CDoodMemberManager::setMemberInfo(QString groupid, QString memberid, QStrin
 
 void CDoodMemberManager::onGetMemberListResult(QString result, MemberList memberList)
 {
+    qDebug() << Q_FUNC_INFO <<"gao";
     if(result=="获取成员列表成功"){
         clearMemberList();
         mMy_Id=getMyId();

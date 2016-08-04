@@ -21,6 +21,7 @@ class CDoodGroupManager: public CDoodListModel
     Q_PROPERTY(QString is_allow READ is_allow WRITE setIs_allow NOTIFY is_allowChanged)
     Q_PROPERTY(bool isGroupLeader READ isGroupLeader WRITE setIsGroupLeader NOTIFY isGroupLeaderChanged)
     Q_PROPERTY(bool isCreateGroup READ isCreateGroup WRITE setIsCreateGroup NOTIFY isCreateGroupChanged)
+    Q_PROPERTY(QString memberCount READ memberCount WRITE setMemberCount NOTIFY memberCountChanged)
 
 public:
     explicit CDoodGroupManager(LinkDoodClient *client = 0, QObject *parent = 0);
@@ -51,6 +52,10 @@ public:
     QString is_allow() const;
     Q_INVOKABLE QString setIs_allow(const QString &data);
 
+    QString memberCount() const;
+    Q_INVOKABLE QString setMemberCount(const QString &data);
+
+
 
     bool isGroupLeader() const;
     Q_INVOKABLE bool setIsGroupLeader(const bool &data);
@@ -62,10 +67,12 @@ public:
     Q_INVOKABLE void getMemberList(QString groupid);
     Q_INVOKABLE void clearGroupList();
     Q_INVOKABLE void selectmember(QString id);
+    Q_INVOKABLE MemberList returnmember();
     Q_INVOKABLE void createGroup(QString name);
     Q_INVOKABLE void getGroupInfo(QString id);
     Q_INVOKABLE void removeGroup(QString groupid);
     Q_INVOKABLE void inviteMember();
+    Q_INVOKABLE void clearMemberCount();
     Q_INVOKABLE void addGroup(QString groupid);
     Q_INVOKABLE void getGroupList();
     Q_INVOKABLE void setGroupInfo(int type,QString remark);
@@ -103,6 +110,7 @@ signals:
     void bulletinChanged();
     void verify_typeChanged();
     void is_allowChanged();
+    void memberCountChanged();
     void isGroupLeaderChanged();
     void isCreateGroupChanged();
 
@@ -125,6 +133,7 @@ private:
     QString mButtletin;
     QString mVerify_type;
     QString mIs_allow;
+    QString mMemberCount;
     QString mTemp_verify;
     QString mTemp_allow;
     int mType;

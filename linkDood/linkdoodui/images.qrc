@@ -77,5 +77,6 @@
         <file>res/wlcomepage2.png</file>
         <file>res/welcomepage3.gif</file>
         <file>res/normal1.png</file>
+        <file>res/group_select_cbox_have.png</file>
     </qresource>
 </RCC>

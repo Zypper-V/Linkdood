@@ -1,4 +1,5 @@
 #include "cdoodenterpriseitem.h"
+#include <QDebug>
 
 CDoodEnterPriseItem::CDoodEnterPriseItem(QObject *parent) : QObject(parent)
 {
@@ -30,6 +31,25 @@ QString CDoodEnterPriseItem::setName(const QString &data)
     }
     emit nameChanged();
     return mName;
+}
+QString CDoodEnterPriseItem::isChoose() const
+{
+    return mIsChoose;
+}
+
+QString CDoodEnterPriseItem::setIsChoose(const QString &data)
+{
+    if(mIsChoose==data){
+        return data;
+    }
+    mIsChoose=data;
+    emit isChooseChanged();
+    return mIsChoose;
+}
+
+QString CDoodEnterPriseItem::clearIsChoose(const QString &data)
+{
+    mIsChoose=data;
 }
 
 QString CDoodEnterPriseItem::thumbAvatar() const

@@ -1,8 +1,19 @@
 import QtQuick 2.0
 import com.syberos.basewidgets 2.0
 
-CPage {
+Item {
     id: groupAddMemberPage
+    anchors.fill: parent
+    Rectangle {
+        anchors.top: parent.top
+        anchors.left: parent.left
+
+        width:parent.width
+        height: parent.height
+
+        color: "white"
+        z:parent.z-1
+    }
 
     property string localId
 
@@ -15,20 +26,14 @@ CPage {
         }
     ]
     state: "groupMng"
-    onStatusChanged: {
-        if (status === CPageStatus.WillShow) {
-            groupAddMemberPage.statusBarHoldEnabled = true
-            gScreenInfo.setStatusBar(groupAddMemberPage.statusBarHoldEnabled)
-            groupAddMemberPage.statusBarHoldItemColor = "#edf0f0"
-            gScreenInfo.setStatusBarStyle("black")
-        }
-    }
     Connections {
         target: groupManager
         onCreateGroupResult: {
             console.log("!!!!")
             loadingDialog.hide();
             contactManager.clearMember();
+            enterpriseManager.clearMember();
+            groupManager.clearMemberCount();
             gToast.requestToast(result,"","");
             pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
         }
@@ -36,205 +41,167 @@ CPage {
             console.log("!!!!")
             loadingDialog.hide();
             contactManager.clearMember();
+            enterpriseManager.clearMember();
+            groupManager.clearMemberCount();
             gToast.requestToast(result,"","");
             pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
         }
 
     }
-    contentAreaItem:Item {
-        anchors.fill :parent
-        Rectangle {
-            id: userdataBackground
-            anchors.fill: parent
-            color: "#f2f2f2"
-        }
-        Rectangle{
-            id: titleBackground
+    ListView {
+        id: contactListView
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
 
-            color:"#003953"
-            width:parent.width
-            height:86
-            anchors{
-                top:parent.top
-                left:parent.left
-            }
-            IconButton{
-                id:btnBack
+
+
+        clip: true
+        model: contactManager
+        section.property: "modelData.sectionKey"
+        section.criteria: ViewSection.FullString
+        section.delegate: Rectangle {
+            width: groupAddMemberPage.width
+            height: section==="app"?0:38
+            color: "#F2F2F2"
+
+            Text {
                 anchors.left: parent.left
-                anchors.leftMargin: 30
+                anchors.leftMargin: 25
                 anchors.verticalCenter: parent.verticalCenter
-                onClicked: {
-                    pageStack.pop();
+                text:(section !== "app" ? section:"")
+                font.pixelSize: 26
+                color: "#333333"
+                onTextChanged: {
+                    console.log("xxxxxx:"+text)
                 }
             }
-            Text{
-                text:qsTr("选择好友")
-                color:"white"
-                font.pixelSize: 36
-                anchors.centerIn: parent
-            }
-            CButton{
-                id:surbutton
-                anchors.right:parent.right
-                anchors.rightMargin: 30
-                width: 80
-                anchors.verticalCenter: parent.verticalCenter
-                backgroundComponent: Rectangle {
-                    anchors.fill: parent
-                    color:"#003953"
-                    radius: 10
+        }
+
+        delegate:Item {
+            id:contactListDelegate
+
+            width: parent.width
+            height:model.modelData.sectionKey==="app"?0:100
+            visible: model.modelData.sectionKey==="app"?false:true
+
+            MouseArea {
+                anchors.fill: parent
+
+                onPressed: {
+                    background.color = "#cdcdcd"
                 }
-                onClicked: {
-                    if(groupAddMemberPage.state == "forwordMsg"){
-                        //TODO
-                        groupManager.transMessage(localId);
-                        pageStack.pop();
-                    }
-                    else if(groupManager.isCreateGroup){
-                        //                        inputDialog.titleText= qsTr("输入群名称");
-                        //                        inputDialog.show();
-                        groupManager.createGroup("");
-                        loadingDialog.show();
+
+                onReleased: {
+                    background.color = "white"
+                    //if(groupAddMemberPage.state != "forwordMsg")
+                    if(groupManager.isCreateGroup){
+                        groupManager.selectmember(model.modelData.id);
+                        enterpriseManager.changeMember(groupManager.returnmember());
+                        contactManager.selectMember(model.modelData.id);
+                        enterpriseManager.selectMember(model.modelData.id);
                     }
                     else{
-                        loadingDialog.show();
-                        groupManager.inviteMember();
+                        if(!memberManager.isMember(model.modelData.id)){
+                            groupManager.selectmember(model.modelData.id);
+                            enterpriseManager.changeMember(groupManager.returnmember());
+                            contactManager.selectMember(model.modelData.id);
+                            enterpriseManager.selectMember(model.modelData.id);
+                        }
                     }
                 }
-                Text{
-                    text:qsTr("确定")
-                    color:"white"
-                    font.pixelSize: 32
-                    anchors.centerIn: parent
+
+                onCanceled: {
+                    background.color = "white"
                 }
-
             }
-        }
-        Rectangle{
-            anchors.top: titleBackground.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            color:"#F2F2F2"
 
-            ListView {
-                id: contactListView
-                anchors.top: parent.top
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-
-
-
-                clip: true
-                model: contactManager
-                section.property: "modelData.sectionKey"
-                section.criteria: ViewSection.FullString
-                section.delegate: Rectangle {
-                    width: groupAddMemberPage.width
-                    height: section==="app"?0:38
-                    color: "#F2F2F2"
-
-                    Text {
+            Rectangle {
+                width: contactListDelegate.width
+                height: contactListDelegate.height
+                color:"white"
+                Rectangle {
+                    id : background
+                    anchors.fill: parent
+                    color:"white"
+                    Image{
+                        id:chooseImage
                         anchors.left: parent.left
                         anchors.leftMargin: 25
+                        anchors.topMargin: 16
                         anchors.verticalCenter: parent.verticalCenter
-                        text:(section !== "app" ? section:"")
-                        font.pixelSize: 26
+                        source:select()
+                        function select(){
+                            if(groupManager.isCreateGroup){
+                                if(model.modelData.isChoose===""){
+                                    console.log("111");
+                                    return "qrc:/res/group_select_cbox_normal.png";
+                                }
+                                else{
+                                    console.log("222");
+                                    return "qrc:/res/group_select_cbox_press.png";
+                                }
+                            }
+                            else{
+                                if(memberManager.isMember(model.modelData.id)){
+                                    return "qrc:/res/group_select_cbox_have.png";
+                                }
+                                if(model.modelData.isChoose===""){
+                                    return "qrc:/res/group_select_cbox_normal.png";
+                                }
+                                else{
+                                    return "qrc:/res/group_select_cbox_press.png";
+                                }
+                            }
+
+                        }
+                    }
+
+                    CDoodHeaderImage {
+                        id: headPortraitImage
+                        anchors.left: chooseImage.left
+                        anchors.leftMargin: 80
+                        anchors.topMargin: 16
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 90
+                        height: 90
+                        radius: 6
+                        name:""
+                        headerColor: sessionListManager.getHeaderColor(model.modelData.id)
+                        iconSource: "qrc:/res/group_icon.png"/*"file://"+ model.modelData.thumbAvatar*/
+                    }
+                    Text {
+                        id: nameText
+                        anchors.left: headPortraitImage.right
+                        anchors.leftMargin: 30
+                        anchors.rightMargin: 20
+                        anchors.top: parent.top
+                        anchors.topMargin: 20
+                        font.pixelSize: 24
+                        height: 26
+                        clip: true
                         color: "#333333"
-                        onTextChanged: {
-                            console.log("xxxxxx:"+text)
-                        }
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                        text: model.modelData.name
                     }
-                }
-
-                delegate:Item {
-                    id:contactListDelegate
-
-                    width: parent.width
-                    height:model.modelData.sectionKey==="app"?0:100
-                    visible: model.modelData.sectionKey==="app"?false:true
-
-                    MouseArea {
-                        anchors.fill: parent
-
-                        onPressed: {
-                            background.color = "#cdcdcd"
-                        }
-
-                        onReleased: {
-                            background.color = "white"
-                            //if(groupAddMemberPage.state != "forwordMsg")
-                            groupManager.selectmember(model.modelData.id);
-                            contactManager.selectMember(model.modelData.id);
-                        }
-
-                        onCanceled: {
-                            background.color = "white"
-                        }
-                    }
-
-                    Rectangle {
-                        width: contactListDelegate.width
-                        height: contactListDelegate.height
-                        color:"white"
-                        Rectangle {
-                            id : background
-                            anchors.fill: parent
-                            color:"white"
-                            Image{
-                                id:chooseImage
-                                anchors.left: parent.left
-                                anchors.leftMargin: 25
-                                anchors.topMargin: 16
-                                anchors.verticalCenter: parent.verticalCenter
-                                source: model.modelData.isChoose===""? "qrc:/res/group_select_cbox_normal.png":"qrc:/res/group_select_cbox_press.png"
-                            }
-
-                            CDoodHeaderImage {
-                                id: headPortraitImage
-                                anchors.left: chooseImage.left
-                                anchors.leftMargin: 80
-                                anchors.topMargin: 16
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 90
-                                height: 90
-                                radius: 6
-                                name:""
-                                headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                                iconSource: "qrc:/res/group_icon.png"/*"file://"+ model.modelData.thumbAvatar*/
-                            }
-                            Text {
-                                id: nameText
-                                anchors.left: headPortraitImage.right
-                                anchors.leftMargin: 30
-                                anchors.rightMargin: 20
-                                anchors.top: parent.top
-                                anchors.topMargin: 20
-                                font.pixelSize: 24
-                                height: 26
-                                clip: true
-                                color: "#333333"
-                                verticalAlignment: Text.AlignVCenter
-                                elide: Text.ElideRight
-                                text: model.modelData.name
-                            }
-                            CLine {
-                                //                            width: parent.width
-                                width: 1
-                                anchors.left: parent.left
-                                //                                color:"#cdcdcd"
-                                //                        anchors.leftMargin: 150
-                                anchors.right: parent.right
-                                anchors.bottom: parent.bottom
-                                z: parent.z
-                            }
-                        }
+                    CLine {
+                        //                            width: parent.width
+                        width: 1
+                        anchors.left: parent.left
+                        //                                color:"#cdcdcd"
+                        //                        anchors.leftMargin: 150
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        z: parent.z
                     }
                 }
             }
         }
     }
+    //        }
+    //    }
     CIndicatorDialog {
         id:loadingDialog
         //            indicatorDirection: Qt.Horizontal
