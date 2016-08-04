@@ -33,21 +33,37 @@ CEditListViewDelegate {
     property Component sendTipMsgObj:CDoodTipMessageCompoent{}
 
 
+    function loadRigthUi(){
+
+        if(chatManagerModel.chatType === "6"){
+            if(model.modelData.contactThumbAvatar ==="qrc:/res/icon_pc.png"){
+                return false;
+            }else{
+                return true;
+            }
+        }else if(model.modelData.fromId === loginManager.userId){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     function loaderComponent () {
         if(model.modelData.msgType === "2") {
-            if(model.modelData.fromId === loginManager.userId) {
+            if(loadRigthUi()) {
                 return chatDelegateRoot.sendTextMsgObj
             } else {
                 return chatDelegateRoot.receiveTextMsgObj
             }
         }else if(model.modelData.msgType === "19"){
-            if(model.modelData.fromId === loginManager.userId) {
+            if(loadRigthUi()) {
                 return chatDelegateRoot.sendDyEmojiMsgObj
             } else {
                 return chatDelegateRoot.receiveDyEmojiMsgObj
             }
         }else if(model.modelData.msgType === "5"){
-            if(model.modelData.fromId === loginManager.userId) {
+            if(loadRigthUi()) {
                 return chatDelegateRoot.sendImageMsgObj
             } else {
                 return chatDelegateRoot.receiveImageMsgObj
@@ -58,7 +74,8 @@ CEditListViewDelegate {
             //TODO
         }
         if(model.modelData.msgType === "6"){
-            if(model.modelData.fromId === loginManager.userId) {
+
+            if(loadRigthUi()) {
                 return chatDelegateRoot.sendFileMsgObj
             } else {
                 return chatDelegateRoot.receiveFileMsgObj
@@ -133,7 +150,7 @@ CEditListViewDelegate {
             }else if(msgOptions.index == 2){
 
                 var compoment = pageStack.getCachedPage(Qt.resolvedUrl("CDoodGroupAddMemberPage.qml"),"CDoodGroupAddMemberPage");
-                 pageStack.push(compoment,{localId:msgOptions.id,state:"forwordMsg"});
+                pageStack.push(compoment,{localId:msgOptions.id,state:"forwordMsg"});
                 //chatManager.transforMessage(chatManagerModel.id,msgOptions.id);
             }
             msgOptions.hide();

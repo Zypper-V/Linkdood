@@ -251,10 +251,12 @@ void AuthControler::onAccountInfoChanged(service::User& info)
     service::Account& account = dynamic_cast<service::Account&>(info);
     Contact user;
     qDebug()<<Q_FUNC_INFO<<"name:"<<account.name.c_str()<<"gender:"<<account.gender<<"phone:"<<account.phone.c_str()<<"link_id:"<<account.nick_id.c_str();
-    if(account.__isset.nick_id){
+    if(account.__isset.nick_id||account.nick_id != ""){
         user.nick_id = QString::fromStdString(account.nick_id);
         qDebug()<<Q_FUNC_INFO<<"ssssssssssssssssssssss1";
     }
+
+   // user.nick_id = QString::fromStdString(account.nick_id);
 
     if(account.__isset.email){
         //user.email = QString::fromStdString(account.email);

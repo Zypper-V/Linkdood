@@ -13,7 +13,7 @@ public:
 
 signals:
 
-public slots:
+public:
     void bcNotify(const QString &senderId,
                   const QString &msgType,
                   const QString &content,

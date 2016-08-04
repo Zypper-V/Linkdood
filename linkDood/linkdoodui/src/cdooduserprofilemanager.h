@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include "linkdoodclient.h"
-
+#include "csystempackagemanager.h"
 class CDoodUserProfileManager : public QObject
 {
     Q_OBJECT
@@ -24,9 +24,11 @@ class CDoodUserProfileManager : public QObject
     Q_PROPERTY(int atNoticetype READ atNoticetype WRITE setAtNoticetype NOTIFY atNoticetypeChanged)
     Q_PROPERTY(int globalNoticetype READ globalNoticetype WRITE setGlobalNoticetype NOTIFY globalNoticetypeChanged)
 
+    Q_PROPERTY(QString appVer READ appVer WRITE setAppVer NOTIFY appVerChanged)
+
 public:
     explicit CDoodUserProfileManager(LinkDoodClient *client = 0,QObject *parent = 0);
-
+    ~CDoodUserProfileManager();
     QString id() const;
     Q_INVOKABLE QString setId(const QString &data);
 
@@ -82,8 +84,8 @@ public:
     Q_INVOKABLE void uploadAvatar(QString path);
     Q_INVOKABLE void setPrivateSettingVerify(int verify);
     Q_INVOKABLE void getPrivateSetting();
-
-
+    QString appVer();
+    void setAppVer(QString data);
 signals:
     void idChanged();
     void nameChanged();
@@ -99,6 +101,7 @@ signals:
     void vipNoticetypeChanged();
     void atNoticetypeChanged();
     void globalNoticetypeChanged();
+    void appVerChanged();
 
     void setPrivateSettingResult(int code);
     void getPrivateSettingResult(int code, IMPrivateSetting ps);
@@ -119,6 +122,7 @@ private:
     QString mAvatar;
     QString mConnectFlag;
     QString mNickId;
+    QString mVersion;
 
     int mAllowBirthday;		//	生日可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1
     int mAllowPhone;		//	电话可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1
@@ -130,6 +134,7 @@ private:
 
     void initConnect();
     LinkDoodClient *m_pClient;
+    CSystemPackageManager* m_pPackInfo;
 };
 
 #endif // CDOODUSERPROFILEMANAGER_H

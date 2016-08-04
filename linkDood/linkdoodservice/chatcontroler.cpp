@@ -216,6 +216,7 @@ ChatControler::ChatControler(QObject* parent):
     QObject(parent)
 {
     mSessionTargetID = "";
+    mLinkdoodMsgOntifacation = QSharedPointer<LinkDoodServiceThread>(new LinkDoodServiceThread(this));
 }
 
 ChatControler::~ChatControler()
@@ -445,7 +446,7 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
 {
     qDebug() << Q_FUNC_INFO ;
     if(msg){
-
+ mLinkdoodMsgOntifacation->bcNotify("","","33","56","444","333","33","44",12);
 
         qDebug()<<Q_FUNC_INFO<<"msgTime:"<<QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss")<<"body:"<<msg->body.c_str();
         qDebug()<<Q_FUNC_INFO<<"mesage:targetId:"<<msg->targetid<<"fromId:"<<msg->fromid;
@@ -460,7 +461,7 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
             handleReciveDyEmojiMsg(msg);
         }
     }
-
+   mLinkdoodMsgOntifacation->bcNotify("","","33","56","444","333","33","44",12);
 }
 
 void ChatControler::onAvatarChanged(int64 userid, std::string avatar)
@@ -930,6 +931,7 @@ void ChatControler::_fileProgress(int32 extra_req, int32 process, std::string in
 
 void ChatControler::_downloadFile(service::ErrorInfo &info, std::string localpath, int64 tagetid, QString encryFilePath, QString encryKey,QString localId)
 {
+    qDebug()<<Q_FUNC_INFO;
     if(info.code() == 0)
     {
         QDir tempDir;

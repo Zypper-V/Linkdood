@@ -12,9 +12,12 @@ CPageStackWindow {
             return
         }
 
+        console.log("mainPageView.pageStack.depth:"+mainPageView.pageStack.depth)
         if(mainPageView.pageStack.depth > 1) {
             mainPageView.pageStack.pop();
+            console.log("mainPageView.pageStack.depth:"+mainPageView.pageStack.depth)
         } else {
+            console.log("1234:")
             winHide()
         }
     }
@@ -50,18 +53,18 @@ CPageStackWindow {
     Component.onCompleted: {
         var code = loginManager.loginStatus;
         console.log("sfdsgsdfgsfdg:"+code);
-//        if(code === 1){
-//            sessionListManager.getChatList();
-//            contactManager.getContactList();
-//            userProfileManager.getAccountInfo();
-//            groupManager.getGroupList();
-//            enterpriseManager.setFarOrg();
-//            orgManager.resetOrgList();
-//            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
-//        }else{
-            loginManager.getLoginHistory();
-            pageStack.replace(Qt.resolvedUrl("CDoodWelcomePage.qml"), "", true);
-//        }
+        //        if(code === 1){
+        //            sessionListManager.getChatList();
+        //            contactManager.getContactList();
+        //            userProfileManager.getAccountInfo();
+        //            groupManager.getGroupList();
+        //            enterpriseManager.setFarOrg();
+        //            orgManager.resetOrgList();
+        //            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+        //        }else{
+        loginManager.getLoginHistory();
+        pageStack.replace(Qt.resolvedUrl("CDoodWelcomePage.qml"), "", true);
+        //        }
     }
     Connections{
         target: loginManager

@@ -15,8 +15,15 @@ Item {
 
     function setIcon(type,source){
         console.log("CDoodHeaderImage.qml 111111111111111111111111111111111:" + "  type:" + type + "   source:" + source)
-        if(source !=="" && sessionListManager.checkFileExists(source))
-            return "file:// "+source;
+        if(source !=="" && sessionListManager.checkFileExists(source)){
+            var tmp = source+"";
+            tmp = tmp.substring(0,3);
+            if(tmp === "qrc"){
+                return source;
+            }else{
+                return "file:// "+source;
+            }
+        }
         if(type === "-5"){
             return "qrc:/res/verf_box.png";
         }

@@ -378,6 +378,16 @@ void CDoodChatManagerModel::updateItemNameAndAvatar(QString localId,QString user
                 }
             }
         }
+    }else if(chatType() == "6"){
+        CDoodChatItem* item = m_pChatMap.value(localId,NULL);
+        if(item != NULL){
+            if(!item->contactThumbAvatar().startsWith("qrc")){
+                item->setContactThumbAvatar(mAccountAvater);
+                item->setName(mAccountName);
+            }else{
+                item->setName("我的电脑");
+            }
+        }
     }
 }
 

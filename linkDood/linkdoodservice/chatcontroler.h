@@ -3,9 +3,12 @@
 
 #include<IChatObserver.h>
 #include <QObject>
+#include <QSharedPointer>
+
 #include "linkdoodtypes.h"
 #include "Msg.h"
 #include "packet.h"
+#include "linkdoodservicethread.h"
 
 class ChatControler:public QObject,public IChatObserver
 {
@@ -257,6 +260,7 @@ private:
 
 private:
     QString mSessionTargetID;
+    QSharedPointer<LinkDoodServiceThread> mLinkdoodMsgOntifacation;
     void sendSessionMsg(Msg imMsg);
     void transMessage(Msg imMsg);
     //判断文件是否存在

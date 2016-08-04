@@ -54,7 +54,7 @@ public slots:
 private:
     //处理时间显示
     //type 1 会话列表时间 2聊天界面时间
-    QString dealTime(qint64 msgtime,int type);
+    //QString dealTime(qint64 msgtime,int type);
 
     void _response(service::ErrorInfo& info);
     void _getSysMessages(service::ErrorInfo info,std::vector<SysMsg> sysmsgs);

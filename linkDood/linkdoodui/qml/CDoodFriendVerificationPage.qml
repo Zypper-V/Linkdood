@@ -85,6 +85,7 @@ CPage {
                         onClicked: {
                             addContactManager.addContact(friendVericationManager.id,inputRemark.text,inputTextArea.text);
                             var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodRootTabView.qml"),"CDoodRootTabView");
+                            pageStack.clear();
                             pageStack.push(component);
                         }
                     }
@@ -107,7 +108,7 @@ CPage {
                     radius:10
                     name:""
                     iconSource: setIcon("1",friendVericationManager.thumbAvatar)
-//                        friendVericationManager.thumbAvatar !=="" ?friendVericationManager.thumbAvatar :"qrc:/res/headerDefault.png"
+                    //                        friendVericationManager.thumbAvatar !=="" ?friendVericationManager.thumbAvatar :"qrc:/res/headerDefault.png"
 
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left:parent.left

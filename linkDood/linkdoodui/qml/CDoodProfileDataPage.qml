@@ -9,7 +9,7 @@ Rectangle{
 
     anchors.fill: parent
     Column{
-        spacing: 30
+        spacing: 20
         width:parent.width
         Rectangle{
             width:parent.width
@@ -233,6 +233,44 @@ Rectangle{
                 }
             }
         }
+        Rectangle{
+            id:rectVer
+
+            border.width: 1
+            border.color: "#777777"
+            radius: 10
+            color:"white"
+            height: 100
+
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.right: parent.right
+            anchors.rightMargin:20
+            Image {
+                id: verifyTip
+                source: "qrc:/res/personal_setting.png"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 30
+            }
+            Text{
+                anchors.left: verifyTip.right
+                anchors.leftMargin: 10
+                anchors.verticalCenter: parent.verticalCenter
+
+                font.pixelSize: 34
+                text:qsTr("版本")
+            }
+            Text{
+                anchors.right: parent.right
+                anchors.rightMargin: 30
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 34
+
+                text:userProfileManager.appVer;
+            }
+        }
+
         Text{
             id:loginoutTip
 

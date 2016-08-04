@@ -79,7 +79,7 @@ private slots:
 
     //系统消息推送
     void onSysMessageNotice(IMSysMsg sysMsg);
-
+    void onGroupInfoChanged(QString type,Group gp);
 private:
     void initConnect();
 

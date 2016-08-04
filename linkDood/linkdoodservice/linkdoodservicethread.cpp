@@ -41,6 +41,7 @@ void LinkDoodServiceThread::bcNotify(const QString &senderId,
     CSystemNotificationManager notificationService;
     CSystemNotification notification;
 
+    qDebug()<<Q_FUNC_INFO<<"1111111111111111111111111111111242335456456";
     notification.setTitle("信源豆豆");
 
     //    if ("0" == msgType) {
@@ -57,14 +58,14 @@ void LinkDoodServiceThread::bcNotify(const QString &senderId,
 
     //    notification.setAction(senderId);
     notification.setAction("showRootPage");
-    notification.setMarqueeText(QString(tr("你收到了%1条即时消息")).arg(unReadNumber));
-    notification.setSubtitle(QString(tr("你收到了%1条即时消息")).arg(unReadNumber));
+    notification.setMarqueeText(QString(tr("你收到了%1条即时消息")).arg(1));
+    notification.setSubtitle(QString(tr("你收到了%1条即时消息")).arg(1));
 
     //    QString sDefaultIcon = QString::fromStdString(ReadProfile (e_Runtime, "Corp", "Portrait", "0"));
     //    notification.setIconName(sDefaultIcon);
 
     QString sSoundState ="1";// QString::fromStdString(ReadProfile(e_UserConfig, "msgAudio", "IsOn", ""));
-    if ("1" == sSoundState && "CALL" != msgType) {
+    if ("1" == sSoundState /*&& "CALL" != msgType*/) {
         // bool 通知声音，默认为空
         notification.setSound("/usr/share/rings/门铃.wav");
     }
@@ -83,7 +84,7 @@ void LinkDoodServiceThread::bcNotify(const QString &senderId,
     // 桌面角标数处理：
     // gGetAllUnreadMsgNum获取到的是已经写入数据库的未读消息总数
     CSystemBadge badge;
-    badge.setValue("com.vrv.linkDood", "linkDood", unReadNumber);
+    badge.setValue("com.vrv.linkDood", "linkDood", 1);
 
     QTimer::singleShot(2000, this, SLOT(releaseWakelockSlot()));
 }

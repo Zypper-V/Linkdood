@@ -414,11 +414,23 @@ void CDoodSessionListManager::onSysMessageNotice(IMSysMsg sysMsg)
     qDebug()<<Q_FUNC_INFO<<"name:"<<sysMsg.name<<"info:"<<sysMsg.info;
 }
 
+void CDoodSessionListManager::onGroupInfoChanged(QString type, Group gp)
+{
+    CDoodSessionListItem*item =  sessionListMap.value(gp.id);
+    if(item != NULL){
+        item->setName(gp.name);
+        if(gp.thumbAvatar != ""){
+            item->setThumbAvatar(gp.thumbAvatar);
+        }
+    }
+}
+
 
 
 void CDoodSessionListManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
+    connect(m_pClient,SIGNAL(groupInfoChanged(QString,Group)),this,SLOT(onGroupInfoChanged(QString,Group)));
     connect(m_pClient,SIGNAL(chatAvatarChanged(QString,QString)),this,SLOT(onAvatarChanged(QString,QString)));
     connect(m_pClient, SIGNAL(sysMessageNotice(IMSysMsg)), this, SLOT(onSysMessageNotice(IMSysMsg)));
     connect(m_pClient, SIGNAL(chatListChanged(const Chat_UIList &)), this, SLOT(onChatListChanged(const Chat_UIList &)));

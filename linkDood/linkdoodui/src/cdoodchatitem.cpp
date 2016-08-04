@@ -271,7 +271,7 @@ QString CDoodChatItem::body() const
 
 QString CDoodChatItem::setBody(const QString &data)
 {
-    if(data!= "" && mBody != data){
+    if(data!= "" /*&& mBody != data*/){
         mBody = data;
         emit bodyChanged();
         if(msgType() == "5"){

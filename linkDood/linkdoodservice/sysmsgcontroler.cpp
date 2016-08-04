@@ -3,7 +3,7 @@
 #include "ISysMsgService.h"
 #include "INotifyService.h"
 #include <QDebug>
-
+#include "common.h"
 SysMsgControler::SysMsgControler(QObject *parent) : QObject(parent)
 {
     service::IMClient::getClient()->getNotify()->setSysMsgObserver(this);
@@ -15,7 +15,7 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
     IMSysMsg sysMsg;
     sysMsg.msgid = QString::number(msg.msgid);
     sysMsg.targetid = QString::number(msg.targetid);
-    sysMsg.time = dealTime(msg.time, 1);
+    sysMsg.time = Common:: dealTime(msg.time, 1);
     sysMsg.respons.clear();
     sysMsg.info = QString::fromStdString(msg.info);
     sysMsg.name =QString::fromStdString(msg.name);
@@ -73,6 +73,7 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
 
     qDebug() << Q_FUNC_INFO << "  msgid:" << sysMsg.msgid << "   targetid:" << sysMsg.targetid << "  time:" << sysMsg.time << "   msgtypeText:" << sysMsg.msgtypeText << "   respons:" << sysMsg.respons << "   name:" << sysMsg.name << "   avatar:" << sysMsg.avatar  << "operUser:" << sysMsg.operUser << "   info:" << sysMsg.info << "   operUser:" << sysMsg.operUser << "sysMsg.isRead:" << sysMsg.isread;
     emit sysMessageNotice(sysMsg);
+    setSysMessagRead(msg.msgtype,sysMsg.msgid);
 }
 
 void SysMsgControler::response(IMSysMsgRespInfo info)
@@ -125,7 +126,7 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
         sysMsg.isShowButton = false;
         sysMsg.msgid = QString::number(sysmsgs[i].msgid);
         sysMsg.targetid = QString::number(sysmsgs[i].targetid);
-        sysMsg.time = dealTime(sysmsgs[i].time, 1);
+        sysMsg.time = Common::dealTime(sysmsgs[i].time, 1);
         sysMsg.respons.clear();      
         sysMsg.name =QString::fromStdString(sysmsgs[i].name);
         sysMsg.avatar = QString::fromStdString(sysmsgs[i].avatar);
@@ -210,54 +211,3 @@ void SysMsgControler::setSysMessagRead(int type, QString msg)
     service::IMClient::getClient()->getSysMsg()->setMessagRead(type,list);
 }
 
-QString SysMsgControler::dealTime(qint64 msgtime, int type)
-{
-    QString strDateTime("");
-    QDateTime msgDateTime;
-    int distance = 0;
-    if (!msgtime)
-    {
-        return strDateTime;
-    }
-    msgDateTime.setMSecsSinceEpoch(msgtime);
-    distance = msgDateTime.daysTo(QDateTime::currentDateTime());
-    //今天
-    if (qFabs(distance) <= 0)
-    {
-        strDateTime = msgDateTime.toString("HH:mm");
-    }
-    //昨天
-    else if (qFabs(distance) <= 1)
-    {
-        if ( 1 == type)
-        {
-            strDateTime = "昨天";
-        }
-        else {
-            strDateTime = "昨天" + QString::fromLocal8Bit(" ") + msgDateTime.toString("HH:mm");
-        }
-
-    }
-    //前天
-    else if (qFabs(distance) <= 2)
-    {
-        if (1 == type)
-        {
-            strDateTime = "前天";
-        }
-        else {
-            strDateTime = "前天" + QString::fromLocal8Bit(" ") + msgDateTime.toString("HH:mm");
-        }
-    }
-    else
-    {
-        if (1 == type)
-        {
-            strDateTime = msgDateTime.toString("MM月dd日");
-        }
-        else {
-            strDateTime = msgDateTime.toString("MM月dd日") +QString::fromLocal8Bit(" ")+msgDateTime.toString("HH:mm");
-        }
-    }
-    return strDateTime;
-}

@@ -161,6 +161,7 @@ private slots:
     void onChatGetFileList(int code, FileInfoList files);
     void onGetUserInfo(int code, Contact contact);
     void onReqestUserInfo(QString userId);
+    void onGroupInfoChanged(QString type,Group gp);
 private:
     void initConnect();
 private:

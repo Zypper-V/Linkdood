@@ -31,19 +31,6 @@ Component {
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                 iconSource: setIcon("1", model.modelData.contactThumbAvatar)
-                //                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
-
-                //                MouseArea {
-                //                    anchors.fill: parent
-
-                //                    onClicked: {
-                //                        console.log("todo show MyInfo Pagesssssssssss !!!")
-                //                        console.log(model.modelData.name)
-                //                        console.log(model.modelData.fromId)
-                //                        if (chatListView.editing)
-                //                            return;
-                //                    }
-                //                }
             }
         }
 

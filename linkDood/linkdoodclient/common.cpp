@@ -81,7 +81,7 @@ QString Common::dealTime(qint64 msgtime, int type)
     //今天
     if (qFabs(distance) <= 0)
     {
-        strDateTime = msgDateTime.toString("HH:mm");
+        strDateTime = msgDateTime.toString("HH:mm:ss");
     }
     //昨天
     else if (qFabs(distance) <= 1)
@@ -91,7 +91,7 @@ QString Common::dealTime(qint64 msgtime, int type)
             strDateTime = "昨天";
         }
         else {
-            strDateTime = "昨天" + QString::fromLocal8Bit(" ") + msgDateTime.toString("HH:mm");
+            strDateTime = "昨天" + QString::fromLocal8Bit(" ") + msgDateTime.toString("HH:mm:ss");
         }
 
     }
@@ -103,7 +103,7 @@ QString Common::dealTime(qint64 msgtime, int type)
             strDateTime = "前天";
         }
         else {
-            strDateTime = "前天" + QString::fromLocal8Bit(" ") + msgDateTime.toString("HH:mm");
+            strDateTime = "前天" + QString::fromLocal8Bit(" ") + msgDateTime.toString("HH:mm:ss");
         }
     }
     else
@@ -113,7 +113,7 @@ QString Common::dealTime(qint64 msgtime, int type)
             strDateTime = msgDateTime.toString("MM月dd日");
         }
         else {
-            strDateTime = msgDateTime.toString("MM月dd日") +QString::fromLocal8Bit(" ")+msgDateTime.toString("HH:mm");
+            strDateTime = msgDateTime.toString("MM月dd日") +QString::fromLocal8Bit(" ")+msgDateTime.toString("HH:mm:ss");
         }
     }
     return strDateTime;

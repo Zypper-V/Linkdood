@@ -5,6 +5,16 @@ CDoodUserProfileManager::CDoodUserProfileManager(LinkDoodClient *client,QObject 
     qRegisterMetaType<CDoodUserProfileManager*>();
     initConnect();
     mVerifytype = 1;
+    m_pPackInfo = new CSystemPackageManager(this);
+    setAppVer("");
+}
+
+CDoodUserProfileManager::~CDoodUserProfileManager()
+{
+    if(m_pPackInfo != NULL){
+        delete m_pPackInfo;
+    }
+    m_pPackInfo = NULL;
 }
 
 void CDoodUserProfileManager::initConnect()
@@ -64,7 +74,7 @@ void CDoodUserProfileManager::getAccountInfo()
     m_pClient->getAccountInfo();
 }
 
-void CDoodUserProfileManager::updateAccountInfo(QString _name, QString _avater, QString _gender, QString nickid)
+void CDoodUserProfileManager::updateAccountInfo(QString _name, QString _avater, QString _gender, QString _nickid)
 {
     Contact user;
 
@@ -76,10 +86,10 @@ void CDoodUserProfileManager::updateAccountInfo(QString _name, QString _avater, 
         user.gender = _gender;
     }
     if(_avater != "" && _avater != avatar()){
-       user.avatar = _avater;
+        user.avatar = _avater;
     }
-    if(nickid != "" && nickid != nickId()){
-       user.nick_id = nickid;
+    if(_nickid != "" && _nickid != nickId()){
+        user.nick_id = _nickid;
     }
     m_pClient->updateAccountInfo(user);
 }
@@ -105,6 +115,19 @@ void CDoodUserProfileManager::getPrivateSetting()
     m_pClient->getPrivateSetting();
 }
 
+QString CDoodUserProfileManager::appVer()
+{
+    return mVersion;
+}
+
+void CDoodUserProfileManager::setAppVer(QString data)
+{
+    if(m_pPackInfo != NULL){
+        mVersion = m_pPackInfo->packageInfo("com.vrv.linkDood")->versionName();
+        emit appVerChanged();
+    }
+}
+
 void CDoodUserProfileManager::onAccountInfoChanged(Contact user)
 {
     qDebug() << Q_FUNC_INFO;
@@ -112,18 +135,19 @@ void CDoodUserProfileManager::onAccountInfoChanged(Contact user)
         setAvatar(user.avatar);
     }
     if(user.gender != "" ){
-            setGender(user.gender);
+        setGender(user.gender);
     }
     if(user.name != ""){
-         setName(user.name);
+        setName(user.name);
     }
     if(user.thumbAvatar != ""){
         setThumbAvatar(user.thumbAvatar);
     }
-//    if(user.nick_id != ""){
-//           setNickId(user.nick_id);
-//    }
-    setNickId("");
+    if(user.nick_id != ""){
+        setNickId(user.nick_id);
+    }
+    //setNickId("");
+    //setNickId(user.nick_id);
     setId(user.id);
 }
 
@@ -320,28 +344,28 @@ int CDoodUserProfileManager::setGlobalNoticetype(const int data)
 
 void CDoodUserProfileManager::clearData()
 {
-     mId = "";
-     mName= "";
-     mThumbAvatar= "";
-     mGender= "";
-     mAvatar= "";
-     mConnectFlag= "";
-     mNickId= "";
+    mId = "";
+    mName= "";
+    mThumbAvatar= "";
+    mGender= "";
+    mAvatar= "";
+    mConnectFlag= "";
+    mNickId= "";
 
-     setNickId("");
-     emit idChanged();
-     emit nameChanged();
-     emit genderChanged();
-     emit avatarChanged();
-     emit thumbAvatarChanged();
-     emit connectFlagChanged();
-     emit nickIdChanged();
-     emit allowBirthdayChanged();
-     emit allowPhoneChanged();
-     emit allowEmailChanged();
-     emit verifytypeChanged();
-     emit vipNoticetypeChanged();
-     emit atNoticetypeChanged();
-     emit globalNoticetypeChanged();
+    setNickId("");
+    emit idChanged();
+    emit nameChanged();
+    emit genderChanged();
+    emit avatarChanged();
+    emit thumbAvatarChanged();
+    emit connectFlagChanged();
+    emit nickIdChanged();
+    emit allowBirthdayChanged();
+    emit allowPhoneChanged();
+    emit allowEmailChanged();
+    emit verifytypeChanged();
+    emit vipNoticetypeChanged();
+    emit atNoticetypeChanged();
+    emit globalNoticetypeChanged();
 }
 

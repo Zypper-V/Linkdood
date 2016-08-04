@@ -76,8 +76,8 @@ CPage {
                 onClicked: {
                     if(fileViewManager.status === 3){
                         fileViewManager.openFile();
-                        console.log("file:"+fileViewManager.path)
-                         fileOpen.open("file://" + fileViewManager.path, CMIMEDialogTool.Open,"image/jpg")
+                        console.log("file://"+fileViewManager.path)
+                         fileOpen.open("file://" + fileViewManager.path, CMIMEDialogTool.View,"image/png")
                     }else if(fileViewManager.status === 1){
                         fileViewManager.downloadFile();
                     }else if(fileViewManager.status === 2){

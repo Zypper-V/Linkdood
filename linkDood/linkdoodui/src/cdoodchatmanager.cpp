@@ -46,6 +46,8 @@ void CDoodChatManager::initConnect()
             SLOT(onGetGroupMemberListReslut(int,QString,MemberList)));
     connect(m_pClient,SIGNAL(transMessageFinishBack(int,QString)),this,
             SLOT(onTransMessageFinishBack(int,QString)));
+        connect(m_pClient,SIGNAL(groupInfoChanged(QString,Group)),this,
+                    SLOT(onGroupInfoChanged(QString,Group)));
     /*    connect(m_pClient,SIGNAL(),this,
                     SLOT())*/;
 }
@@ -274,19 +276,23 @@ CDoodChatManagerModel* CDoodChatManager::chatModel() const
 
 void CDoodChatManager::updateMsgToListView(Msg msg)
 {
+    bool isFromPC = false;
+    if(msg.thumb_avatar.startsWith("qrc")){
+        isFromPC = true;
+    }
     if(mChatModel!= NULL && mChatModel->id() == msg.targetid){
-        mChatModel->addItemToListViewModel(msg);
+        mChatModel->addItemToListViewModel(msg,"",isFromPC);
     }else{
         CDoodChatManagerModel*  item = mMsgListModel.value(msg.targetid);
         if(item != NULL){
-            item->addItemToListViewModel(msg);
+            item->addItemToListViewModel(msg,"",isFromPC);
         }else{
             CDoodChatManagerModel* item = new CDoodChatManagerModel(this);
             item->setId(msg.targetid);
             item->setName(msg.targetName);
             item->setAccountId(m_pClient->UserId());
             item->setChatType(m_pClient->userType(msg.targetid));
-            item->addItemToListViewModel(msg);
+            item->addItemToListViewModel(msg,"",isFromPC);
             mMsgListModel[msg.targetid] = item;
         }
     }
@@ -895,6 +901,9 @@ void CDoodChatManager::onChatMessageNotice(Msg msg)
     if(msg.localid =="" || msg.localid =="0"){
         msg.localid = m_pClient->createMsgId();
     }
+    if(msg.fromid == m_pClient->UserId()){
+        msg.thumb_avatar = "qrc:/res/icon_pc.png";
+    }
     updateMsgToListView(msg);
 
     emit newMessageNotice();
@@ -1120,6 +1129,23 @@ void CDoodChatManager::onGetUserInfo(int code, Contact contact)
 void CDoodChatManager::onReqestUserInfo(QString userId)
 {
     m_pClient->getUserInfo(userId);
+}
+
+void CDoodChatManager::onGroupInfoChanged(QString type, Group gp)
+{
+    QList<CDoodChatManagerModel*> list = mMsgListModel.values();
+    for(int i =0; i<list.size();++i){
+        CDoodChatManagerModel* model = list.at(i);
+        if(model != NULL){
+            if(model->id() == gp.id){
+                model->setName(gp.name);
+                if(gp.thumbAvatar != ""){
+                    model->setAvatar(gp.thumbAvatar);
+                }
+                return;
+            }
+        }
+    }
 }
 
 void CDoodChatManager::scaledImage(QString sourceImagePath, float scaledWidth, float scaledHeight, QString &outImagePath)
