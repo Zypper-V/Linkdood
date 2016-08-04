@@ -57,5 +57,7 @@
         <file>qml/CDoodHeaderImageCropPage.qml</file>
         <file>qml/CDoodChatMessageOption.qml</file>
         <file>qml/CDoodGroupViewImagePage.qml</file>
+        <file>qml/CDoodGroupAddMainPage.qml</file>
+        <file>qml/CDoodGroupAddOrgPage.qml</file>
     </qresource>
 </RCC>

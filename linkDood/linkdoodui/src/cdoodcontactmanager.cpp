@@ -32,11 +32,11 @@ void CDoodContactManager::getContactInforFromList(QString id, QString &name, QSt
 {
     qDebug()<<Q_FUNC_INFO;
     if(id != ""){
-       CDoodContactItem* item = contactListMap.value(id,NULL);
-       if(item != NULL){
-          avater =  item->thumbAvatar();
-          name   = item->name();
-       }
+        CDoodContactItem* item = contactListMap.value(id,NULL);
+        if(item != NULL){
+            avater =  item->thumbAvatar();
+            name   = item->name();
+        }
     }
 }
 
@@ -116,16 +116,19 @@ void CDoodContactManager::selectMember(QString id)
 {
     qDebug() << Q_FUNC_INFO<<"ssssssssssssss";
     CDoodContactItem *tmpItem = contactListMap.value(id);
-    if(tmpItem->isChoose()==""){
-        m_member.push_back(id);
-        tmpItem->setIsChoose("1");
-    }
-    else{
-
-        tmpItem->setIsChoose("");
+    if(tmpItem!=NULL){
+        if(tmpItem->isChoose()==""){
+            m_member.push_back(id);
+            tmpItem->setIsChoose("1");
+            qDebug() << Q_FUNC_INFO<<"ssss1";
+        }
+        else{
+            qDebug() << Q_FUNC_INFO<<"ssss2";
+            tmpItem->setIsChoose("");
+        }
     }
     //    tmpItem->clearIsChoose("");
-    CDoodContactItem *item = starContactListMap.value(tmpItem->id(),NULL);
+    CDoodContactItem *item = starContactListMap.value(id);
     if(item != NULL){
         if(item->isChoose()==""){
             item->setIsChoose("1");

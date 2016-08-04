@@ -188,7 +188,7 @@ CPage {
                     anchors.top: allMember.bottom
                     onClicked: {
                         groupManager.setIsCreateGroup(false);
-                        pageStack.push(Qt.resolvedUrl("CDoodGroupAddMemberPage.qml"));
+                        pageStack.push(Qt.resolvedUrl("CDoodGroupAddMainPage.qml"));
                     }
                 }
             }
@@ -199,7 +199,7 @@ CPage {
                 border.width: 1
                 border.color: "#cdcdcd"
                 radius: 30
-                height: 382
+                height: 202
 
                 anchors.top: bascicBackground.bottom
                 anchors.topMargin: 10
@@ -244,12 +244,17 @@ CPage {
                     anchors.rightMargin: 7
                     anchors.leftMargin: 7
                     editable:true
-                    //                showLine:false
+                                    showLine:false
                     anchors.top: group_name.bottom
                     onClicked: {
                         if(groupManager.isGroupLeader){
                             inputDialog.titleText= qsTr("群简介");
+                            if(rigthText==="无"){
+                               inputDialog.setText("");
+                            }
+                            else{
                             inputDialog.setText(rigthText);
+                            }
                             inputDialog.type = 3;
                             inputDialog.show();
                         }
@@ -258,45 +263,45 @@ CPage {
                         }
                     }
                 }
-                UserProfileButton{
-                    id:groupbull
-                    height: 90
-                    leftText: qsTr("群公告")
-                    rigthText:groupManager.bulletin===""?qsTr("无"):groupManager.bulletin
-                    anchors.left:parent.left
-                    anchors.right: parent.right
-                    anchors.rightMargin: 7
-                    anchors.leftMargin: 7
-                    editable:true
-                    //                showLine:false
-                    anchors.top: groupbrief.bottom
-                    onClicked: {
-                        if(groupManager.isGroupLeader){
-                            inputDialog.titleText= qsTr("群公告");
-                            inputDialog.setText(rigthText);
-                            inputDialog.type = 4;
-                            inputDialog.show();
-                        }
-                        else{
-                            gToast.requestToast(rigthText,"","");
-                        }
-                    }
-                }
-                UserProfileButton{
-                    id:groupFileList
-                    height: 90
-                    leftText: qsTr("查看群文件")
-                    anchors.left:parent.left
-                    anchors.right: parent.right
-                    anchors.rightMargin: 7
-                    anchors.leftMargin: 7
-                    editable:true
-                    showLine:false
-                    anchors.top: groupbull.bottom
-                    onClicked: {
-//                        groupManager.getGroupFileList(groupManager.id);
-                    }
-                }
+//                UserProfileButton{
+//                    id:groupbull
+//                    height: 90
+//                    leftText: qsTr("群公告")
+//                    rigthText:groupManager.bulletin===""?qsTr("无"):groupManager.bulletin
+//                    anchors.left:parent.left
+//                    anchors.right: parent.right
+//                    anchors.rightMargin: 7
+//                    anchors.leftMargin: 7
+//                    editable:true
+//                    //                showLine:false
+//                    anchors.top: groupbrief.bottom
+//                    onClicked: {
+//                        if(groupManager.isGroupLeader){
+//                            inputDialog.titleText= qsTr("群公告");
+//                            inputDialog.setText(rigthText);
+//                            inputDialog.type = 4;
+//                            inputDialog.show();
+//                        }
+//                        else{
+//                            gToast.requestToast(rigthText,"","");
+//                        }
+//                    }
+//                }
+//                UserProfileButton{
+//                    id:groupFileList
+//                    height: 90
+//                    leftText: qsTr("查看群文件")
+//                    anchors.left:parent.left
+//                    anchors.right: parent.right
+//                    anchors.rightMargin: 7
+//                    anchors.leftMargin: 7
+//                    editable:true
+//                    showLine:false
+//                    anchors.top: groupbull.bottom
+//                    onClicked: {
+////                        groupManager.getGroupFileList(groupManager.id);
+//                    }
+//                }
             }
             Rectangle {
                 id:groupsetBackground
@@ -431,6 +436,7 @@ CPage {
         messageText: alertDialog.operate
         onAccepted: {
             groupManager.removeGroup(groupManager.id);
+            loadingDialog.show();
         }
         onCanceled: {
             console.log("onCanceled")

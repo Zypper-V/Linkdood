@@ -156,6 +156,21 @@ QString CDoodGroupManager::setIs_allow(const QString &data)
     return mIs_allow;
 }
 
+QString CDoodGroupManager::memberCount() const
+{
+    return mMemberCount;
+}
+
+QString CDoodGroupManager::setMemberCount(const QString &data)
+{
+    if(mMemberCount==data){
+        return data;
+    }
+    mMemberCount=data;
+    emit memberCountChanged();
+    return mMemberCount;
+}
+
 bool CDoodGroupManager::isGroupLeader() const
 {
     return mIsGroupLeader;
@@ -396,6 +411,17 @@ void CDoodGroupManager::selectmember(QString id)
         m_memberList.push_back(mem);
     }
     qDebug() << Q_FUNC_INFO<<m_memberList.size();
+    if(m_memberList.size()==0){
+        setMemberCount("");
+    }
+    else{
+    setMemberCount(QString::number(m_memberList.size()));
+    }
+}
+
+MemberList CDoodGroupManager::returnmember()
+{
+    return m_memberList;
 }
 
 void CDoodGroupManager::createGroup(QString name)
@@ -427,6 +453,11 @@ void CDoodGroupManager::inviteMember()
     qDebug()<<Q_FUNC_INFO;
     m_pClient->inviteMember(mId,m_memberList);
     m_memberList.clear();
+}
+
+void CDoodGroupManager::clearMemberCount()
+{
+    setMemberCount("");
 }
 
 void CDoodGroupManager::addGroup(QString groupid)

@@ -38,15 +38,22 @@ void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<servi
     OrgList orgList;
     OrgUserList orgUserList;
     for(auto org:orgs){
+        qDebug() << Q_FUNC_INFO<<"ssssssssss:"<<org.order_num;
         orgList.insert(orgList.size(),orgToQorg(org));
+
     }
-    for(auto orgUser:orgusers){
+    for(auto orgUser:orgusers){   
+        qDebug() << Q_FUNC_INFO<<"ssssssssss:"<<orgUser.order_num;
+        if(orgUser.id!=4328621728){
         orgUserList.insert(orgUserList.size(),orguserToQorguser(orgUser));
+        }
     }
     if(orgUserList.size()>1){
         for(size_t i=0;i<orgUserList.size()-1;++i){
+
             for(size_t j=i+1;j<orgUserList.size();++j){
                 OrgUser temp;
+
                 if(orgUserList[i].order_num.toInt()>orgUserList[j].order_num.toInt()){
                     temp=orgUserList[i];
                     orgUserList[i]=orgUserList[j];

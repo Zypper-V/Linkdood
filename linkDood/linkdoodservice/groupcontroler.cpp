@@ -36,6 +36,9 @@ void GroupControler::_createGroup(service::ErrorInfo &info, long long &res)
     if(info.code()==0){
         emit createGroupResult("创建群成功");
     }
+    else if(info.code()==303){
+        emit createGroupResult("创建群失败(群数量超过限制)");
+    }
     else{
         emit createGroupResult("创建群失败");
     }

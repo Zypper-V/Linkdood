@@ -232,7 +232,7 @@ CPage {
                 onClicked: {
                     //TODO
                     groupManager.setIsCreateGroup(true);
-                    pageStack.push(Qt.resolvedUrl("CDoodGroupAddMemberPage.qml"));
+                    pageStack.push(Qt.resolvedUrl("CDoodGroupAddMainPage.qml"));
                 }
             }
             CLine{
