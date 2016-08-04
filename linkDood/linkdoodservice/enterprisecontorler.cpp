@@ -54,7 +54,7 @@ void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<servi
             for(size_t j=i+1;j<orgUserList.size();++j){
                 OrgUser temp;
 
-                if(orgUserList[i].order_num.toInt()>orgUserList[j].order_num.toInt()){
+                if(orgUserList[i].order_num.toLongLong()>orgUserList[j].order_num.toLongLong()){
                     temp=orgUserList[i];
                     orgUserList[i]=orgUserList[j];
                     orgUserList[j]=temp;
@@ -66,7 +66,7 @@ void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<servi
         for(size_t i=0;i<orgList.size()-1;++i){
             for(size_t j=i+1;j<orgList.size();++j){
                 Org temp;
-                if(orgList[i].order_num.toInt()>orgList[j].order_num.toInt()){
+                if(orgList[i].order_num.toLongLong()>orgList[j].order_num.toLongLong()){
                     temp=orgList[i];
                     orgList[i]=orgList[j];
                     orgList[j]=temp;

@@ -286,7 +286,7 @@ CPage {
             clip: true
             model: chatManagerModel
             flickDeceleration: 3000
-            cacheBuffer: chatListView.height * 2
+            cacheBuffer: 500
             onModelChanged:{
                 console.log("chat model changed")
                 //chatManager.updateUnreadMsg()
