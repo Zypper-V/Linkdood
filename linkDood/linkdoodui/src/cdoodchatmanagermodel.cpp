@@ -65,7 +65,7 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
             if(msg.localid == "" ||msg.localid == "0"){
                 msg.localid = msg.msgid;
             }
-            if(!m_pChatMap.contains(msg.localid)) {
+            if(!m_pChatMap.contains(msg.localid) &&!msgIsExitById(msg.msgid)) {
 
                 QDateTime msgDate = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
                 bool bShow = isJudageShowTime(msgDate);
@@ -133,7 +133,7 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
             if(msg.localid == "" ||msg.localid == "0"){
                 msg.localid = msg.msgid;
             }
-            if(!m_pChatMap.contains(msg.localid)) {
+            if(!m_pChatMap.contains(msg.localid)&&!msgIsExitById(msg.msgid)) {
 
                 QDateTime msgDate = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
                 bool bShow = isJudageShowTime(msgDate);
@@ -199,7 +199,7 @@ void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgConten
     if(msg.localid == "" ||msg.localid == "0"){
         msg.localid = msg.msgid;
     }
-    if(!m_pChatMap.contains(msg.localid)) {
+    if(!m_pChatMap.contains(msg.localid)&&!msgIsExitById(msg.msgid)) {
 
         QDateTime msgDate = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
         bool bShow = isJudageShowTime(msgDate);
@@ -409,6 +409,20 @@ void CDoodChatManagerModel::updateItemData(QString userId,QString name,QString a
     }
 }
 
+bool CDoodChatManagerModel::msgIsExitById(QString msgId)
+{
+    QList<CDoodChatItem*>list = m_pChatMap.values();
+    for(int i=0;i<list.size();++i){
+        CDoodChatItem* item = list.at(i);
+        if(item != NULL){
+            if(item->msgId() == msgId){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 CDoodChatItem *CDoodChatManagerModel::itemById(QString id)
 {
     QMap<QString, CDoodChatItem*>::iterator it = m_pChatMap.find(id);
@@ -511,6 +525,16 @@ void CDoodChatManagerModel::setName(const QString &name)
     qDebug() << Q_FUNC_INFO;
     mName = name;
     emit nameChanged();
+    QList<CDoodChatItem*> list = m_pChatMap.values();
+    for(int i = 0;i<list.size();++i){
+        CDoodChatItem* item = list.at(i);
+        if(item != NULL){
+            if(item->fromId() == id() && chatType() == "1"){
+                item->setName(name);
+            }
+        }
+
+    }
 }
 
 void CDoodChatManagerModel::judgeAddTimeTip(QDateTime dateTime)

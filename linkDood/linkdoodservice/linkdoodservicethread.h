@@ -14,15 +14,15 @@ public:
 signals:
 
 public:
-    void bcNotify(const QString &senderId,
-                  const QString &msgType,
-                  const QString &content,
-                  const QString &msgId,
-                  const QString &sendTime,
-                  const QString &displayName,
-                  const QString &senderIconPath,
-                  const QString &sessionType,
-                  int unReadNumber);
+    void bcNotify(const QString &senderId="1242",
+                  const QString &msgType="2",
+                  const QString &content="24234",
+                  const QString &msgId="2424",
+                  const QString &sendTime="",
+                  const QString &displayName="rwre",
+                  const QString &senderIconPath="",
+                  const QString &sessionType="rerer",
+                  int unReadNumber=3);
 private slots:
     void releaseWakelockSlot();
 

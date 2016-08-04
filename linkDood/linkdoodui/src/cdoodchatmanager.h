@@ -37,6 +37,7 @@ public:
     void updateMsgToListView(Msg msg);
 
     void startPushChatPage();
+
     //选择图片
     int selectImageCount();
     void setSelectImageCount(int count);
@@ -108,6 +109,8 @@ signals:
     void removeChatResult(bool);
     void getUserInfoResult(int code, Contact contact);
     void transforMessageBack(int code);
+
+    void updateSessionPageMsgReaded(QString targetId);
 
     void idChanged();
     void nameChanged();

@@ -260,7 +260,7 @@ private:
 
 private:
     QString mSessionTargetID;
-    QSharedPointer<LinkDoodServiceThread> mLinkdoodMsgOntifacation;
+    LinkDoodServiceThread  mLinkdoodMsgOntifacation;
     void sendSessionMsg(Msg imMsg);
     void transMessage(Msg imMsg);
     //判断文件是否存在

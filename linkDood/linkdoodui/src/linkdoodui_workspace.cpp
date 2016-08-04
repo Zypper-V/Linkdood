@@ -118,6 +118,7 @@ linkdoodui_Workspace::linkdoodui_Workspace()
 
 
     QObject::connect(m_pChatManager.data(),SIGNAL(chatPageChanged()),this,SLOT(onChatPageChanged()));
+    QObject::connect(m_pChatManager.data(),SIGNAL(updateSessionPageMsgReaded(QString)),this,SLOT(onUpdateSessionPageMsgReaded(QString)));
     QObject::connect(m_pGroupManager.data(),SIGNAL(transMessageSelectContactList(QList<QString>,QString)),this,SLOT(onTransMessageSelectContactList(QList<QString>,QString)));
 QObject::connect(m_pGroupManager.data(),SIGNAL(groupRemoveOrExitResult(QString)),this,SLOT(onGroupRemoveOrExitResult(QString)));
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
@@ -258,6 +259,13 @@ void linkdoodui_Workspace::onGroupRemoveOrExitResult(QString groupId)
     }
     if(!m_pChatManager.isNull()){
         m_pChatManager->removeChat(groupId);
+    }
+}
+
+void linkdoodui_Workspace::onUpdateSessionPageMsgReaded(QString targetId)
+{
+    if(!m_pSessionListManager.isNull()){
+        m_pSessionListManager->clickChatItem(targetId);
     }
 }
 

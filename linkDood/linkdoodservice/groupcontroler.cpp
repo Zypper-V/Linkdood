@@ -401,6 +401,9 @@ void GroupControler::_getMemberList(service::ErrorInfo &info, std::vector<std::s
                 member.member_type=QString::number(mem->member_type);
                 member.name=QString::fromStdString(mem->name);
                 member.remark=QString::fromStdString(mem->remark);
+                if(member.remark=="#"){
+                    member.remark=member.name;
+                }
                 std::string str="";
                 char c=mem->team;
                 char sz[5] = {c};
@@ -447,6 +450,9 @@ void GroupControler::_getMemberList(service::ErrorInfo &info, std::vector<std::s
             member.name=QString::fromStdString(mem->name);
             member.remark=QString::fromStdString(mem->remark);
             member.team=QString::number(mem->team);
+            if(member.remark=="#"){
+                member.remark=member.name;
+            }
             member.thumbAvatar=QString::fromStdString(mem->thumb_avatar);
             memberListt.push_back(member);
         }

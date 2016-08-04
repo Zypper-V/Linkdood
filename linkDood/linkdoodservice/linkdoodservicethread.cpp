@@ -77,7 +77,7 @@ void LinkDoodServiceThread::bcNotify(const QString &senderId,
     }
 
     notification.setSopid("com.vrv.linkDood");
-    notification.setUiAppId("linkDood");
+    notification.setUiAppId("linkdoodui");
 
     notificationService.sendNotification(notification);
 

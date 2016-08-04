@@ -45,6 +45,8 @@ public:
     void updateAccountUserInfo(QString id,QString name,QString avatar);
     void updateItemNameAndAvatar(QString localId,QString userId);
     void updateItemData(QString userId,QString name,QString avater);
+    bool msgIsExitById(QString id);
+
     QString lastMsgId();
     QString firstMsgId();
     int  groupMemsCount();

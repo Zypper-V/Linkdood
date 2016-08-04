@@ -221,7 +221,7 @@ void AuthControler::onDBUpdateFinished(int val)
 void AuthControler::onLogoutChanged(service::ErrorInfo& info)
 {
     qDebug() << Q_FUNC_INFO << "code:" << info.code();
-    if(info.code() == 0 ||info.code() == 1304)
+    if(info.code() == 0 ||info.code() == 1304 ||info.code()<0)
     {
         emit loginoutRelust(true);
     }else

@@ -242,6 +242,7 @@ void CDoodChatManager::showUiFinished()
     }
     mChatModel->mNeedNewMsgCount = 0;
     mChatModel->mNeedNewMsgLastId = "0";
+    emit updateSessionPageMsgReaded(m_sTargetid);
 }
 
 void CDoodChatManager::clearList()

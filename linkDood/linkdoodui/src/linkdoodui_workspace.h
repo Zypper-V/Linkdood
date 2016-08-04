@@ -55,6 +55,7 @@ protected slots:
     void onChatPageChanged();
     void onTransMessageSelectContactList(QList<QString>list,QString localId);
     void onGroupRemoveOrExitResult(QString groupId);
+    void onUpdateSessionPageMsgReaded(QString targetId);
 private:
     QSharedPointer<CDoodLoginManager> m_pLoginManager;
     QSharedPointer<CDoodSessionListManager> m_pSessionListManager;

@@ -152,6 +152,7 @@ void ChatControler::sendMessage(Msg &imMsg)
         msg.toid = imMsg.targetid.toLongLong();
         msg.thumb_url = imMsg.thumb_url.toStdString();
         msg.width = imMsg.i_width.toInt();
+        msg.encrypt_user = imMsg.encrypt_user.toLongLong();
         service::IMClient::getClient()->getChat()->sendMessage(msg,
                                                                std::bind(&ChatControler::_sendMesage,this,
                                                                          std::placeholders::_1,
@@ -216,7 +217,7 @@ ChatControler::ChatControler(QObject* parent):
     QObject(parent)
 {
     mSessionTargetID = "";
-    mLinkdoodMsgOntifacation = QSharedPointer<LinkDoodServiceThread>(new LinkDoodServiceThread(this));
+    //mLinkdoodMsgOntifacation = QSharedPointer<LinkDoodServiceThread>(new LinkDoodServiceThread(this));
 }
 
 ChatControler::~ChatControler()
@@ -446,7 +447,7 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
 {
     qDebug() << Q_FUNC_INFO ;
     if(msg){
- mLinkdoodMsgOntifacation->bcNotify("","","33","56","444","333","33","44",12);
+// mLinkdoodMsgOntifacation->bcNotify("","","33","56","444","333","33","44",12);
 
         qDebug()<<Q_FUNC_INFO<<"msgTime:"<<QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss")<<"body:"<<msg->body.c_str();
         qDebug()<<Q_FUNC_INFO<<"mesage:targetId:"<<msg->targetid<<"fromId:"<<msg->fromid;
@@ -461,7 +462,8 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
             handleReciveDyEmojiMsg(msg);
         }
     }
-   mLinkdoodMsgOntifacation->bcNotify("","","33","56","444","333","33","44",12);
+  // mLinkdoodMsgOntifacation->bcNotify("","","33","56","444","333","33","44",12);
+    //mLinkdoodMsgOntifacation.bcNotify();
 }
 
 void ChatControler::onAvatarChanged(int64 userid, std::string avatar)
@@ -636,10 +638,10 @@ void ChatControler::downloadImage(Msg msgImg)
     utils::FileUtils::Property p ;
     p.encryptkey = msgImg.encrypt_key.toStdString();
     p.targetid   = msgImg.targetid.toLongLong();
-    qDebug() << Q_FUNC_INFO << "property = utils::FileUtils::setProperty(p); start";
+    qDebug() << Q_FUNC_INFO << "thum:"<<msgImg.thumb_url;
     QString json("");
-    json=json+"[\"encryptkey\":"+msgImg.encrypt_key+",\"targetid\":"+msgImg.targetid+"]";
-    qDebug() << Q_FUNC_INFO << "property = utils::FileUtils::setProperty(p);  end";
+    json=json+"{\"encryptkey\":\""+p.encryptkey.c_str()+"\",\"targetid\":"+msgImg.targetid+"}";
+    qDebug() << Q_FUNC_INFO << "json:"<<json;
     service::IMClient::getClient()->getFile()->downloadImage(msgImg.thumb_url.toStdString(), json.toStdString(), std::bind(&ChatControler::_downloadImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,msgImg));
 }
 
@@ -650,7 +652,7 @@ void ChatControler::downloadHistoryImage(QString url, QString encryptKey, QStrin
     p.encryptkey = encryptKey.toStdString();
     p.targetid   = targetid.toLongLong();
     QString json("");
-    json=json+"[\"encryptkey\":"+encryptKey+",\"targetid\":"+targetid+"]";
+    json=json+"{\"encryptkey\":\""+p.encryptkey.c_str()+"\",\"targetid\":"+targetid+"}";
     service::IMClient::getClient()->getFile()->downloadImage(url.toStdString(), json.toStdString(), std::bind(&ChatControler::_downloadHistoryImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, encryptKey, targetid, localid));
 
 }
