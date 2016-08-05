@@ -3,8 +3,6 @@
 
 #include<IChatObserver.h>
 #include <QObject>
-#include <QSharedPointer>
-
 #include "linkdoodtypes.h"
 #include "Msg.h"
 #include "packet.h"
@@ -17,7 +15,7 @@ public:
     void init();//初始监听接口
 
     void getContactInfo(QString userId,Msg msg);
-
+    void getUserProfile(QString userId,std::shared_ptr<service::Msg> msg);
     //进入会话UI
     void entryChat(const QString targetId);
     //离开会话UI
@@ -171,6 +169,15 @@ public:
     void getUserInfo(QString userid);
 
 signals:
+    void bcNotify(const QString senderId,
+                  const QString msgType,
+                  const QString content,
+                  const QString msgId,
+                  const QString sendTime,
+                  const QString displayName,
+                  const QString senderIconPath,
+                  const QString sessionType,
+                  int unReadNumber);
     //监听头像更新
     void chatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
@@ -254,13 +261,17 @@ private:
     //获取文件列表回调
     void _getFileList(service::ErrorInfo& info, std::vector<FileInfo> files);
     void _getUserInfo(service::ErrorInfo info, service::User user);
+    void _getUserProfile(service::ErrorInfo info, service::User user,std::shared_ptr<service::Msg> msg);
 
     Msg msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
     service::MsgText QmsgtextTomsgtext(Msg Qmsgtext);
 
 private:
     QString mSessionTargetID;
-    LinkDoodServiceThread  mLinkdoodMsgOntifacation;
+
+    QThread mWorkThread;
+    LinkDoodServiceThread* m_pWorkControl;
+
     void sendSessionMsg(Msg imMsg);
     void transMessage(Msg imMsg);
     //判断文件是否存在
@@ -277,10 +288,7 @@ private:
     void handleHistoryDyEmjiMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
     void handleHistoryImgMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
     void handleHistoryFileMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
-
-    //    void handleOfflineDyEmjiMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
-    //    void handleHistoryOfflineImgMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
-    //    void handleOfflineFileMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
+    void handleNotification(std::shared_ptr<service::Msg> msg);
 };
 
 template<typename T>

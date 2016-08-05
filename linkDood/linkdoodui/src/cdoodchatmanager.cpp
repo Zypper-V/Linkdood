@@ -811,6 +811,7 @@ void CDoodChatManager::getFileList(int64 targetid, int64 fileid, int count, int 
 void CDoodChatManager::onGetGroupMemberListReslut(int code, QString id, MemberList list)
 {
     if(list.size() == 0){
+        emit chatPageChanged();
         return;
     }
     CDoodChatManagerModel* item = mMsgListModel.value(id);

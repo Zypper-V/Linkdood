@@ -5,10 +5,12 @@
 #include <csystemnotificationmanager.h>
 #include <csystembadge.h>
 #include <csystempowermanager.h>
+#include <QDateTime>
+#include <QUuid>
 
 LinkDoodServiceThread::LinkDoodServiceThread(QObject *parent) : QObject(parent)
 {
-
+    m_pPowerManager = new CSystemPowerManager(this);
 }
 
 LinkDoodServiceThread::~LinkDoodServiceThread()
@@ -19,16 +21,17 @@ LinkDoodServiceThread::~LinkDoodServiceThread()
     }
 }
 
-void LinkDoodServiceThread::bcNotify(const QString &senderId,
-                                      const QString &msgType,
-                                      const QString &content,
-                                      const QString &msgId,
-                                      const QString &sendTime,
-                                      const QString &displayName,
-                                      const QString &senderIconPath,
-                                      const QString &sessionType,
-                                      int unReadNumber)
+void LinkDoodServiceThread::bcNotify(const QString senderId,
+                                     const QString msgType,
+                                     const QString content,
+                                     const QString msgId,
+                                     const QString sendTime,
+                                     const QString displayName,
+                                     const QString senderIconPath,
+                                     const QString sessionType,
+                                     int unReadNumber)
 {
+    qDebug()<<Q_FUNC_INFO<<"bcNotify content:"<<content;
     Q_UNUSED(sendTime);
     Q_UNUSED(msgId);
     Q_UNUSED(sessionType);
@@ -41,31 +44,33 @@ void LinkDoodServiceThread::bcNotify(const QString &senderId,
     CSystemNotificationManager notificationService;
     CSystemNotification notification;
 
-    qDebug()<<Q_FUNC_INFO<<"1111111111111111111111111111111242335456456";
-    notification.setTitle("信源豆豆");
-
-    //    if ("0" == msgType) {
-    //        notification.setSubtitle(content);
-    //    } else if ("1" == msgType) {
-    //        notification.setSubtitle("[语音]");
-    //    } else if ("2" == msgType) {
-    //        notification.setSubtitle("[图片]");
-    //    } else if ("3" == msgType) {
-    //        notification.setSubtitle("[视频]");
-    //    }
-    //    int nUnReadNumber = gGetAllUnreadMsgNum();
-    notification.setUpdateId("{c4a1fd6e-fa7d-39f6-a1d9-b9d25f64135b}");
-
-    //    notification.setAction(senderId);
-    notification.setAction("showRootPage");
-    notification.setMarqueeText(QString(tr("你收到了%1条即时消息")).arg(1));
-    notification.setSubtitle(QString(tr("你收到了%1条即时消息")).arg(1));
-
+    if(displayName == ""){
+        notification.setTitle("天工圆圆");
+    }else{
+        notification.setTitle(displayName);
+    }
+    QString updateId = mMapUppdateId.value(senderId,"");
+    if(updateId == ""){
+        QUuid id = QUuid::createUuid();
+        updateId = id.toString();
+        mMapUppdateId[senderId] = updateId;
+    }
+    notification.setUpdateId(updateId);
+    notification.setAction(senderId);
+    notification.setMarqueeText(QString(tr("你收到了%1条即时消息")).arg(unReadNumber));
+    notification.setSubtitle(content);
+    QDateTime dateTime = QDateTime::fromMSecsSinceEpoch(sendTime.toLongLong());
+    notification.setDisplayTime(dateTime);
+    if(senderIconPath != ""){
+        notification.setIcon("file:://"+senderIconPath);
+        qDebug()<<Q_FUNC_INFO<<senderIconPath;
+    }
+    //gGetAllUnreadMsgNum();
     //    QString sDefaultIcon = QString::fromStdString(ReadProfile (e_Runtime, "Corp", "Portrait", "0"));
     //    notification.setIconName(sDefaultIcon);
 
     QString sSoundState ="1";// QString::fromStdString(ReadProfile(e_UserConfig, "msgAudio", "IsOn", ""));
-    if ("1" == sSoundState /*&& "CALL" != msgType*/) {
+    if ("1" == sSoundState && "CALL" != msgType) {
         // bool 通知声音，默认为空
         notification.setSound("/usr/share/rings/门铃.wav");
     }
@@ -83,8 +88,8 @@ void LinkDoodServiceThread::bcNotify(const QString &senderId,
 
     // 桌面角标数处理：
     // gGetAllUnreadMsgNum获取到的是已经写入数据库的未读消息总数
-    CSystemBadge badge;
-    badge.setValue("com.vrv.linkDood", "linkDood", 1);
+    //CSystemBadge badge;
+    //badge.setValue("com.vrv.linkDood", "linkdoodui", unReadNumber);
 
     QTimer::singleShot(2000, this, SLOT(releaseWakelockSlot()));
 }

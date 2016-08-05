@@ -39,6 +39,11 @@ void ChatControler::getContactInfo(QString userId,Msg msg)
     //service::IMClient::getClient()->getContact()->getContactInfo(id,std::bind(&ChatControler::_getContactInfo,this,std::placeholders::_1,std::placeholders::_2,msg));
 }
 
+void ChatControler::getUserProfile(QString userId, std::shared_ptr<service::Msg> msg)
+{
+    service::IMClient::getClient()->getSearch()->getUserInfo(userId.toLongLong(),std::bind(&ChatControler::_getUserProfile,this,std::placeholders::_1,std::placeholders::_2,msg));
+}
+
 void ChatControler::entryChat(const QString targetId)
 {
     qDebug() << Q_FUNC_INFO;
@@ -217,12 +222,16 @@ ChatControler::ChatControler(QObject* parent):
     QObject(parent)
 {
     mSessionTargetID = "";
-    //mLinkdoodMsgOntifacation = QSharedPointer<LinkDoodServiceThread>(new LinkDoodServiceThread(this));
+    m_pWorkControl = new LinkDoodServiceThread(this);
+    m_pWorkControl->moveToThread(&mWorkThread);
+    connect(this,SIGNAL(bcNotify(QString,QString,QString,QString,QString,QString,QString,QString,int)),m_pWorkControl,SLOT(bcNotify(QString,QString,QString,QString,QString,QString,QString,QString,int)));
+    mWorkThread.start();
 }
 
 ChatControler::~ChatControler()
 {
-
+    mWorkThread.quit();
+    mWorkThread.wait();
 }
 
 void ChatControler::handleReciveImgMsg(std::shared_ptr<service::Msg> msg)
@@ -447,7 +456,6 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
 {
     qDebug() << Q_FUNC_INFO ;
     if(msg){
-// mLinkdoodMsgOntifacation->bcNotify("","","33","56","444","333","33","44",12);
 
         qDebug()<<Q_FUNC_INFO<<"msgTime:"<<QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss")<<"body:"<<msg->body.c_str();
         qDebug()<<Q_FUNC_INFO<<"mesage:targetId:"<<msg->targetid<<"fromId:"<<msg->fromid;
@@ -461,9 +469,8 @@ void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
         }else if(msg->msgtype == MEDIA_MSG_DYNAMIC_EMOJI){
             handleReciveDyEmojiMsg(msg);
         }
+        handleNotification(msg);
     }
-  // mLinkdoodMsgOntifacation->bcNotify("","","33","56","444","333","33","44",12);
-    //mLinkdoodMsgOntifacation.bcNotify();
 }
 
 void ChatControler::onAvatarChanged(int64 userid, std::string avatar)
@@ -881,6 +888,18 @@ void ChatControler::handleHistoryFileMsg(Msg &imMsg, std::shared_ptr<service::Ms
     imMsg.filename = QString::fromStdString(msgFile->file_name);
 }
 
+void ChatControler::handleNotification(std::shared_ptr<service::Msg> msg)
+{
+    qDebug()<<Q_FUNC_INFO;
+    QString sessionId("");
+    getCurrentSessionId(sessionId);
+    qDebug()<<Q_FUNC_INFO<<"seesionId:"<<sessionId;
+    if(sessionId != ""){
+        return;
+    }
+    getUserProfile(QString::number(msg->fromid),msg);
+}
+
 void ChatControler::_deleteMessage(service::ErrorInfo &info)
 {
     qDebug() << Q_FUNC_INFO;
@@ -1052,6 +1071,42 @@ void ChatControler::_getUserInfo(service::ErrorInfo info, service::User user)
     contact.thumbAvatar = QString::fromStdString(user.thumb_avatar);
 
     emit getUserInfoBack(info.code(), contact);
+}
+
+void ChatControler::_getUserProfile(service::ErrorInfo info, service::User user, std::shared_ptr<service::Msg> msg)
+{
+    qDebug()<<Q_FUNC_INFO<<"name:"<<user.name.c_str();
+    QString senderId, msgType,content,msgId, sendTime, displayName,icon("");
+    if(msg->msgtype == MSG_TYPE_FILE){
+        content= "[文件]";
+    }else if(msg->msgtype == MSG_TYPE_IMG){
+        content= "[图片]";
+    }else if(msg->msgtype == MSG_TYPE_TEXT){
+        std::string target("");
+        std::string msgBody = utils::MsgUtils::getText(msg->body);
+        if(msgBody == ""){
+            msgBody = msg->body;
+        }
+
+        EmojiExplain::EmojiParseFrom(msgBody,target);
+        content = QString::fromStdString(target);
+
+    }else if(msg->msgtype == MEDIA_MSG_DYNAMIC_EMOJI){
+        QString explian(""),target("");
+        std::string msgBody = utils::MsgUtils::getText(msg->body);
+        if(msgBody == ""){
+            msgBody = msg->body;
+        }
+        EmojiExplain::dyEmojiParseFrom(QString::fromStdString(msgBody),target,explian);
+        content = explian;
+    }
+    senderId = QString::number(msg->fromid);
+    msgType  = QString::number(msg->msgtype);
+    msgId    = QString::number(msg->msgid);
+    sendTime = QString::number(msg->time);
+    displayName = QString::fromStdString(user.name);
+    icon = QString::fromStdString(user.thumb_avatar);
+    emit bcNotify(senderId,msgType,content,msgId,sendTime,displayName,icon,"",1);
 }
 
 

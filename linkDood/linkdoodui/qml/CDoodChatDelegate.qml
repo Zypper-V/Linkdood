@@ -149,7 +149,7 @@ CEditListViewDelegate {
                 chatManager.deleteMessage(chatManagerModel.id,msgOptions.id);
             }else if(msgOptions.index == 2){
 
-                var compoment = pageStack.getCachedPage(Qt.resolvedUrl("CDoodGroupAddMemberPage.qml"),"CDoodGroupAddMemberPage");
+                var compoment = pageStack.getCachedPage(Qt.resolvedUrl("CDoodGroupAddMainPage.qml"),"CDoodGroupAddMainPage");
                 pageStack.push(compoment,{localId:msgOptions.id,state:"forwordMsg"});
                 //chatManager.transforMessage(chatManagerModel.id,msgOptions.id);
             }
@@ -172,17 +172,18 @@ CEditListViewDelegate {
     Connections{
         target: messageLoader.item
         onShowMenu:{
-            msgOptions.id = model.modelData.localId;
-            msgOptions.index = -1;
-            if(model.modelData.msgType === "2"){
-                console.log("msgOptions.isVisibleCopy:true");
-                msgOptions.isVisibleCopy = true;
-            }else{
-                msgOptions.isVisibleCopy = false;
-                console.log("msgOptions.isVisibleCopy:false");
-            }
 
-            msgOptions.show();
+//            msgOptions.id = model.modelData.localId;
+//            msgOptions.index = -1;
+//            if(model.modelData.msgType === "2"){
+//                console.log("msgOptions.isVisibleCopy:true");
+//                msgOptions.isVisibleCopy = true;
+//            }else{
+//                msgOptions.isVisibleCopy = false;
+//                console.log("msgOptions.isVisibleCopy:false");
+//            }
+
+//            msgOptions.show();
         }
     }
 }

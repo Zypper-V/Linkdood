@@ -46,7 +46,7 @@ public:
     void updateItemNameAndAvatar(QString localId,QString userId);
     void updateItemData(QString userId,QString name,QString avater);
     bool msgIsExitById(QString id);
-
+    void updateGroupChatInfo(QString userId,QString name,QString thum);
     QString lastMsgId();
     QString firstMsgId();
     int  groupMemsCount();

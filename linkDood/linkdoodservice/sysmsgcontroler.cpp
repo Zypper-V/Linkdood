@@ -73,7 +73,7 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
 
     qDebug() << Q_FUNC_INFO << "  msgid:" << sysMsg.msgid << "   targetid:" << sysMsg.targetid << "  time:" << sysMsg.time << "   msgtypeText:" << sysMsg.msgtypeText << "   respons:" << sysMsg.respons << "   name:" << sysMsg.name << "   avatar:" << sysMsg.avatar  << "operUser:" << sysMsg.operUser << "   info:" << sysMsg.info << "   operUser:" << sysMsg.operUser << "sysMsg.isRead:" << sysMsg.isread;
     emit sysMessageNotice(sysMsg);
-    setSysMessagRead(msg.msgtype,sysMsg.msgid);
+    //setSysMessagRead(msg.msgtype,sysMsg.msgid);
 }
 
 void SysMsgControler::response(IMSysMsgRespInfo info)
@@ -135,7 +135,7 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
         sysMsg.operUser = QString::fromStdString(sysmsgs[i].operUser);
         sysMsg.isread = QString::number(sysmsgs[i].isread);
 
-        qDebug() << Q_FUNC_INFO << "msgtype:" << sysmsgs[i].msgtype << "   opertype:" << sysmsgs[i].opertype;
+        qDebug() << Q_FUNC_INFO << "msgtype:" << sysmsgs[i].msgtype << "   opertype:" << sysmsgs[i].opertype << "isread:" << sysMsg.isread;
         if(sysmsgs[i].msgtype == 1)
         {
             sysMsg.msgtypeText = "好友申请";
@@ -196,7 +196,9 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
             }
         }
 
-
+        if(!sysMsg.isShowButton){
+            setSysMessagRead(sysMsg.msgType.toInt(),sysMsg.msgid);
+        }
         qDebug() << "  msgid:" << sysMsg.msgid << "   targetid:" << sysMsg.targetid << "  time:" << sysMsg.time << "   msgtypeText:" << sysMsg.msgtypeText << "   respons:" << sysMsg.respons << "   name:" << sysMsg.name << "   avatar:" << sysMsg.avatar << "  operUser:" << sysMsg.operUser << "   info:" << sysMsg.info;
         msgList.push_back(sysMsg);
     }

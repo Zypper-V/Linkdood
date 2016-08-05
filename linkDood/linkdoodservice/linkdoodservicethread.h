@@ -2,7 +2,7 @@
 #define LINKDOODSERVICETHREAD_H
 
 #include <QObject>
-
+#include <QMap>
 class CSystemPowerManager;
 class LinkDoodServiceThread : public QObject
 {
@@ -13,21 +13,22 @@ public:
 
 signals:
 
-public:
-    void bcNotify(const QString &senderId="1242",
-                  const QString &msgType="2",
-                  const QString &content="24234",
-                  const QString &msgId="2424",
-                  const QString &sendTime="",
-                  const QString &displayName="rwre",
-                  const QString &senderIconPath="",
-                  const QString &sessionType="rerer",
-                  int unReadNumber=3);
+public slots:
+    void bcNotify(const QString senderId,
+                  const QString msgType,
+                  const QString content,
+                  const QString msgId,
+                  const QString sendTime,
+                  const QString displayName,
+                  const QString senderIconPath="",
+                  const QString sessionType="",
+                  int unReadNumber=1);
 private slots:
     void releaseWakelockSlot();
 
 private:
     CSystemPowerManager * m_pPowerManager;
+    QMap<QString,QString> mMapUppdateId;
 };
 
 #endif // LINKDOODSERVICETHREAD_H

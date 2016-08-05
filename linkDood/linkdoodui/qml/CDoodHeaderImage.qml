@@ -23,8 +23,7 @@ Item {
             }else{
                 return "file:// "+source;
             }
-        }
-        if(type === "-5"){
+        }else if(type === "-5"){
             return "qrc:/res/verf_box.png";
         }
         else if(type === "1")

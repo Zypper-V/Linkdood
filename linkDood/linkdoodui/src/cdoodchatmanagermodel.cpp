@@ -30,6 +30,21 @@ void CDoodChatManagerModel::updateGroupMems(MemberList list)
         mGroupMemList.push_back(mem);
 
     }
+    QList<CDoodChatItem*> msgList = m_pChatMap.values();
+    for(int i =0;i<msgList.size();++i){
+        CDoodChatItem* item = msgList.at(i);
+       if(item != NULL && item->name() == ""){
+           for(int j=0;j<mGroupMemList.size();++j){
+               if(mGroupMemList.at(j).id == item->fromId()){
+                   item->setName(mGroupMemList.at(j).name);
+                   if(mGroupMemList.at(j).thumbAvatar != ""){
+                       item->setContactThumbAvatar(mGroupMemList.at(j).thumbAvatar);
+                   }
+                   break;
+               }
+           }
+       }
+    }
     emit nameChanged();
 }
 
@@ -372,6 +387,7 @@ void CDoodChatManagerModel::updateItemNameAndAvatar(QString localId,QString user
                         if(mem.id == item->fromId()){
                             item->setContactThumbAvatar(mem.thumbAvatar);
                             item->setName(mem.name);
+                            updateGroupChatInfo(mem.id,mem.name,mem.thumbAvatar);
                             return;
                         }
                     }
@@ -421,6 +437,18 @@ bool CDoodChatManagerModel::msgIsExitById(QString msgId)
         }
     }
     return false;
+}
+
+void CDoodChatManagerModel::updateGroupChatInfo(QString userId, QString name, QString thum)
+{
+    QList<CDoodChatItem*> list = m_pChatMap.values();
+    for(int i =0;i<list.size();++i){
+        CDoodChatItem* item = list.at(i);
+        if(item != NULL && item->fromId() == userId){
+            item->setName(name);
+            item->setContactThumbAvatar(thum);
+        }
+    }
 }
 
 CDoodChatItem *CDoodChatManagerModel::itemById(QString id)
@@ -568,12 +596,12 @@ bool CDoodChatManagerModel::isJudageShowTime(QDateTime date)
     }else{
         QDateTime lastMsgTime = m_pChatMap.last()->time();
         int64 timeDistance = lastMsgTime.secsTo(date);
-        if(qFabs(timeDistance) >= 2){//60 * 5
+        if(qFabs(timeDistance) >= 60 * 3){//60 * 5
             return true;
         }else{
             QDateTime curentDate = QDateTime::currentDateTime();
             timeDistance = curentDate.secsTo(date);
-            if(qFabs(timeDistance) >= 2){//60 * 5
+            if(qFabs(timeDistance) >= 60 * 3){//60 * 5
                 return true;
             }else{
                 return false;

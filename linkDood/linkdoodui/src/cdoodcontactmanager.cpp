@@ -192,6 +192,9 @@ void CDoodContactManager::addContact(Contact user)
     QString temp;
     temp.sprintf("%c",user.team);
 
+    if(user.thumbAvatar.endsWith("head/")){
+        user.thumbAvatar = "";
+    }
     qDebug() << Q_FUNC_INFO<<"================pingyin:"<<user.pinyin<<"avater:"<<user.avatar<<"th:"<<user.thumbAvatar<<"name:"<<user.name;
     tmpItem->setId(user.id);
     tmpItem->setGender(user.gender);
@@ -224,6 +227,9 @@ void CDoodContactManager::modifyContact(Contact user)
 {
     qDebug()<<Q_FUNC_INFO<<"userName:"<<user.name<<"isSar:"<<user.isStar;
     //TODO
+    if(user.thumbAvatar.endsWith("head/")){
+        user.thumbAvatar = "";
+    }
     CDoodContactItem *tmpItem = contactListMap.value(user.id);
     if(tmpItem ==NULL){
         return;
