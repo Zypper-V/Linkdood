@@ -1,4 +1,4 @@
-import QtQuick 2.0
+simport QtQuick 2.0
 import com.syberos.basewidgets 2.0
 
 CPage {
@@ -27,6 +27,7 @@ CPage {
                 groupManager.getGroupList();
                 enterpriseManager.setFarOrg();
                 orgManager.resetOrgList();
+                chatManager.clearList();
                 pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
             }
             if(code===2){

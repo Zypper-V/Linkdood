@@ -79,9 +79,12 @@ private slots:
 
     //系统消息推送
     void onSysMessageNotice(IMSysMsg sysMsg);
+    void onRemoveSysMsg(QString msgtype,QString msgid);
     void onGroupInfoChanged(QString type,Group gp);
+    void onGetOrgUserInfoResult(int code,OrgUser orguser);
 private:
     void initConnect();
+    void addSysMessage(IMSysMsg sysMsg);
 
 private:
     LinkDoodClient *m_pClient;
@@ -90,5 +93,6 @@ private:
     QMap<QString, CDoodSessionListItem*> sessionListMap;
     linkdoodui_Workspace* m_pUiManager;
     QString updateItemInfor(QString targetId,QString name,  QString avater);
+    int indexOfNewItem(qint64 date);
 };
 #endif // CDOODSESSIONLISTMANAGER_H

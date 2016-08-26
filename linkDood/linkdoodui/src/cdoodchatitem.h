@@ -19,7 +19,9 @@ class CDoodChatItem : public QObject
     Q_PROPERTY(QString fromId READ fromId WRITE setFromId NOTIFY fromIdChanged)
     Q_PROPERTY(QString toId READ toId WRITE setToId NOTIFY toIdChanged)
     Q_PROPERTY(QDateTime time READ time WRITE setTime NOTIFY timeChanged)
+    Q_PROPERTY(QString encrypt_key READ encrypt_key WRITE setEncrypt_key NOTIFY encrypt_keyChanged)
     Q_PROPERTY(QString body READ body WRITE setBody NOTIFY bodyChanged)
+    Q_PROPERTY(QString bodyBig READ bodyBig WRITE setBodyBig NOTIFY bodyBigChanged)
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
     Q_PROPERTY(QString tar_thumbAvatar READ tar_thumbAvatar WRITE setTar_thumbAvatar NOTIFY tar_thumbAvatarChanged)
     Q_PROPERTY(bool loading READ loading WRITE setLoading NOTIFY loadingChanged)
@@ -89,11 +91,17 @@ public:
     QString body() const;
     QString setBody(const QString &data);
 
+    QString encrypt_key() const;
+    QString setEncrypt_key(const QString &data);
+
+    QString bodyBig() const;
+    QString setBodyBig(const QString &data);
+
     QString localId() const;
     QString setLocalId(const QString &data);
 
     QString textMsg();
-    QString setTextMsg(const QString&data);
+    Q_INVOKABLE  QString setTextMsg(const QString&data);
 
     QString filePath();
     QString setFilePath(const QString&data);
@@ -113,6 +121,8 @@ signals:
     void toIdChanged();
     void timeChanged();
     void bodyChanged();
+    void bodyBigChanged();
+    void encrypt_keyChanged();
     void nameChanged();
     void loadingChanged();
     void statusChanged();
@@ -137,6 +147,8 @@ private:
     QString mToId;// 发送者 ID
     QDateTime mTime;// 发送时间
     QString mBody;// 消息内容  当接收的为文件时表示encrypt_key
+    QString mBodyBig;
+    QString mEncrypt_key;
     QString mTextMsg;//文本消息解析后内容 当发送的是文件时，这里保存文件名   当接收的为文件时表示文件名
     bool    mLoading;//true消息正在加载或发送中
     bool    mSatus;//true消息加载或发送成功

@@ -10,6 +10,7 @@ class SysMsgControler : public QObject,public ISysMsgObserver
 {
     Q_OBJECT
 public:
+    void init();
     explicit SysMsgControler(QObject *parent = 0);
 
     /*********************************************
@@ -44,11 +45,16 @@ public:
     * @param[in] flag   传入偏移标志 0 向上偏移 1 向下偏移
     **********************************************/
     void getSysMessages(int type,int count,QString msgid,int flag);
+    void removeSysMessage(QString type,QString msgid);
+    void _removeSysMessage(service::ErrorInfo info);
 
 signals:
     //系统消息推送
     void sysMessageNotice(IMSysMsg msg);
     void getSysMessagesReult(int code, IMSysMsgList sysMsgList);
+    void systemMessageNotice(QString info,int64 time);
+    void removeSysMessageResult(QString result);
+
 //    void responseResult(int code);
 public slots:
 private:

@@ -62,6 +62,19 @@ QString CDoodContactItem::setSection(const QString &data)
     }
     return mSection;
 }
+QString CDoodContactItem::searchKey() const
+{
+    return mSearchKey;
+}
+
+QString CDoodContactItem::setSearchKey(const QString &data)
+{
+    if(data != "" && mSearchKey != data){
+        mSearchKey = data;
+        emit searchKeyChanged();
+    }
+    return mSearchKey;
+}
 
 QString CDoodContactItem::onlineStatus() const
 {
@@ -70,10 +83,10 @@ QString CDoodContactItem::onlineStatus() const
 
 QString CDoodContactItem::setOnlineStatus(const QString &data)
 {
-    if(data != "" && mOnlineStatus != data){
+    //if(/*data != "" && mOnlineStatus != data*/){
         mOnlineStatus = data;
         emit onlineStatusChanged();
-    }
+    //}
     return mOnlineStatus;
 }
 

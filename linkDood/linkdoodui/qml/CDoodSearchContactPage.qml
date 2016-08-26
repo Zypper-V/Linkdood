@@ -45,7 +45,7 @@ CPage {
 
                     textColor:"#787777"
                     font.pixelSize: 30
-                    placeholderText:os.i18n.ctr(qsTr("圆圆号/昵称"))
+                    placeholderText:os.i18n.ctr(qsTr("圆圆ID/名称"))
                     inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
                     inputMethodHintExtensions: {
                         var args = {};
@@ -125,10 +125,15 @@ CPage {
                         background.color = "#ffffff"
                         mousePressBackgroud.visible = false
                         if("1" === model.modelData.userOrGroup){
+
+                            userdataManager.clearData();
+
                             userdataManager.setName(model.modelData.name);
                             userdataManager.setGender(model.modelData.gender);
                             userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
                             userdataManager.setId(model.modelData.id);
+
+                            console.log(userdataManager.name);
                             userdataManager.setIsFriend(contactManager.isFriend(model.modelData.id));
                             pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
                         }else{
@@ -175,7 +180,7 @@ CPage {
                             name:""
                             headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                             iconSource: setIcon( model.modelData.userOrGroup,model.modelData.thumbAvatar)
-//                            iconSource: ("" !== model.modelData.thumbAvatar) ? model.modelData.thumbAvatar : (("1" === model.modelData.userOrGroup) ? "qrc:/res/headerDefault.png" : "qrc:/res/group_icon.png")
+                            //                            iconSource: ("" !== model.modelData.thumbAvatar) ? model.modelData.thumbAvatar : (("1" === model.modelData.userOrGroup) ? "qrc:/res/headerDefault.png" : "qrc:/res/group_icon.png")
 
                             //                            iconSource: "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
                         }

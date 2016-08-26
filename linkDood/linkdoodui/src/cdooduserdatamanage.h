@@ -19,7 +19,9 @@ class CDoodUserDataManage : public QObject
 public:
     explicit CDoodUserDataManage(LinkDoodClient *client = 0,QObject *parent = 0);
 
-    void setRemark(QString remark);
+    Q_INVOKABLE void clearData();
+
+    Q_INVOKABLE void setRemark(QString remark);
     QString remark();
 
     QString id() const;

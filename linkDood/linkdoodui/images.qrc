@@ -78,5 +78,13 @@
         <file>res/welcomepage3.gif</file>
         <file>res/normal1.png</file>
         <file>res/group_select_cbox_have.png</file>
+        <file>res/control/echo_normal.png</file>
+        <file>res/control/echo_pwd.png</file>
+        <file>res/control/delete_btn.png</file>
+        <file>res/friend_info_bg.png</file>
+        <file>res/control/checked.png</file>
+        <file>res/chat_tool_takephoto_press.png</file>
+        <file>res/chat_tool_takephoto_normal.png</file>
+        <file>res/lv_crown.png</file>
     </qresource>
 </RCC>

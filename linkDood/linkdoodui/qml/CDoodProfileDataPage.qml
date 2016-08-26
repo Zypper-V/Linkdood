@@ -21,7 +21,7 @@ Rectangle{
 
             text:qsTr("个人信息")
             color:tipTextClr
-            font.pixelSize: 36
+            font.pixelSize: 30
             anchors{
                 left:parent.left
                 leftMargin: 30
@@ -64,7 +64,7 @@ Rectangle{
                     id:userName
 
                     text:userProfileManager.name
-                    font.pixelSize: 34
+                    font.pixelSize: 30
                     anchors{
                         top:userIcon.top
                         topMargin: 20
@@ -76,7 +76,7 @@ Rectangle{
                     id:userDD
 
                     text:qsTr("圆圆号：")+userProfileManager.nickId
-                    font.pixelSize: 26
+                    font.pixelSize: 24
                     anchors{
                         bottom: parent.bottom
                         bottomMargin: 40
@@ -115,7 +115,7 @@ Rectangle{
 
             text:qsTr("操作")
             color:tipTextClr
-            font.pixelSize: 34
+            font.pixelSize: 30
             anchors{
                 left:parent.left
                 leftMargin: 30
@@ -132,7 +132,7 @@ Rectangle{
 
             Text{
                 text:qsTr("修改密码")
-                font.pixelSize: 34
+                font.pixelSize: 30
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: settingIcon.right
                 anchors.leftMargin: 25
@@ -180,7 +180,7 @@ Rectangle{
 
             Text{
                 text:qsTr("好友验证")
-                font.pixelSize: 34
+                font.pixelSize: 30
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: verifyIcon.right
                 anchors.leftMargin: 25
@@ -191,7 +191,7 @@ Rectangle{
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: verifyArrow.left
                 anchors.rightMargin: 30
-                font.pixelSize: 26
+                font.pixelSize: 24
                 function verify(){
                     if(userProfileManager.verifytype === 1)
                         return "需要验证信息";
@@ -258,14 +258,14 @@ Rectangle{
                 anchors.leftMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
 
-                font.pixelSize: 34
+                font.pixelSize: 30
                 text:qsTr("版本")
             }
             Text{
                 anchors.right: parent.right
                 anchors.rightMargin: 30
                 anchors.verticalCenter: parent.verticalCenter
-                font.pixelSize: 34
+                font.pixelSize: 30
 
                 text:userProfileManager.appVer;
             }
@@ -276,7 +276,7 @@ Rectangle{
 
             text:qsTr("退出登录")
             color:tipTextClr
-            font.pixelSize: 34
+            font.pixelSize: 30
             anchors{
                 left:parent.left
                 leftMargin: 30
@@ -293,7 +293,7 @@ Rectangle{
 
             Text{
                 text:qsTr("退出登录")
-                font.pixelSize: 34
+                font.pixelSize: 30
                 color:"red"
                 anchors.centerIn: parent
             }
@@ -336,31 +336,22 @@ Rectangle{
         target: loginManager
         onLoginoutRelust:{
             loadingDialog.hide();
-            if(loginout){
-
+            if(!loginManager.isStartupByUrl()){
                 resetUiModelData();
                 pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
-            }//else{
-            //                contactManager.clearChatList();
-            //                sessionListManager.clearChatList();
-            //                loginManager.setAppLoginStatus(0);
-            //                enterpriseManager.setFarOrg();
-            //                orgManager.resetOrgList();
-            //                pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
-            //                //TODO
-            //            }
+            }
         }
     }
 
-    CListDialog{
+    CDoodListDialog{
         id: sexListDialog
 
         property  int  currentIndex: 0
         titleText: qsTr("验证方式")
-        onDelegateItemTriggered:{
-            console.log("xxxxxxxxx:"+model[index]);
-            userProfileManager.setPrivateSettingVerify(index+1);
-            sexListDialog.currentIndex = index;
+        onNotifySelectedItems:{
+            console.log("xxxxxxxxx:"+model[curIndex]);
+            userProfileManager.setPrivateSettingVerify(curIndex+1);
+            sexListDialog.currentIndex = curIndex;
         }
         Component.onCompleted: {
             model = [qsTr("需要验证信息"),qsTr("不允许任何人添加"),qsTr("允许任何人添加")]
@@ -370,16 +361,6 @@ Rectangle{
             return userProfileManager.verifytype-1;
         }
     }
-
-    //    Connections{
-    //        target:userProfileManager
-    //        onSetPrivateSettingResult:{
-    //            if(code === 0){
-
-    //            }
-    //        }
-    //    }
-
     function resetUiModelData(){
         contactManager.clearChatList();
         sessionListManager.clearChatList();

@@ -123,4 +123,5 @@ DISTFILES += \
     qml/CDoodChatMessageOption.qml \
     qml/CDoodGroupViewImagePage.qml \
     qml/CDoodGroupAddMainPage.qml \
-    qml/CDoodGroupAddOrgPage.qml
+    qml/CDoodGroupAddOrgPage.qml \
+    qml/CDoodListDialog.qml

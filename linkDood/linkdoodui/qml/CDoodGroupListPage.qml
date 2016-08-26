@@ -12,6 +12,13 @@ CPage {
             gScreenInfo.setStatusBarStyle("black")
         }
     }
+    Connections {
+        target: groupManager
+        onRemoveGroupResult: {
+            loadingDialog.hide();
+            gToast.requestToast(result,"","");
+        }
+    }
     //    Connections {
     //        target: memberManager
     //        onGetMemberListResult: {
@@ -113,18 +120,34 @@ CPage {
 
                     MouseArea {
                         anchors.fill: parent
+                        onPressAndHold: {
+                          if(model.modelData.isLeader){
+                              menu1.groupid=model.modelData.id;
+                              menu1.groupname=model.modelData.name;
+                              menu1.isLeader="1";
+                              menu1.show();
+                          }
+                          else{
+                              menu1.groupid=model.modelData.id;
+                              menu1.groupname=model.modelData.name;
+                              menu1.isLeader="";
+                              menu1.show();
+                          }
+                        }
 
                         onPressed: {
                             background.color = "#cdcdcd"
 
                         }
+                        onClicked: {
+                            chatManager.switchToChatPage(model.modelData.id,model.modelData.name,"2","0",0,"");
+                            //                            loadingDialog.show();
+                            console.log(model.modelData.id,"lixinlixin");
+
+                        }
 
                         onReleased: {
                             background.color = "white"
-                            memberManager.clearMemberList();
-                            chatManager.switchToChatPage(model.modelData.id,model.modelData.name,"2",0,"");
-                            //                            loadingDialog.show();
-                            console.log(model.modelData.id,"lixinlixin");
 
                         }
 
@@ -158,7 +181,7 @@ CPage {
                                 id: nameText
                                 anchors.left: headPortraitImage.right
                                 anchors.leftMargin: 30
-                                anchors.rightMargin: 20
+                                anchors.rightMargin: 50
                                 anchors.top: parent.top
                                 anchors.topMargin: 20
                                 font.pixelSize: 26
@@ -171,12 +194,21 @@ CPage {
 
                                 text: model.modelData.name
                             }
+                            Image {
+                                id: leader
+                                anchors.right: parent.right
+                                anchors.top: parent.top
+                                anchors.topMargin: 20
+                                anchors.rightMargin: 20
+                                visible: model.modelData.isLeader
+                                source: "qrc:/res/lv_crown.png"
+                            }
                             CLine {
                                 //                            width: parent.width
                                 width: 1
                                 anchors.left: parent.left
                                 //                                color:"#cdcdcd"
-                                //                        anchors.leftMargin: 150
+                                anchors.leftMargin: 25
                                 anchors.right: parent.right
                                 anchors.bottom: parent.bottom
                                 z: parent.z
@@ -187,9 +219,93 @@ CPage {
             }
         }
     }
+    CDialog {
+        property string tip: ""
+        property string operate: ""
+        property string groupid: ""
+        id: alertDialog
+
+        titleText: qsTr("提示")
+        messageText: alertDialog.tip
+        onAccepted: {
+            groupManager.removeGroup(alertDialog.operate,alertDialog.groupid);
+            loadingDialog.show();
+        }
+        onCanceled: {
+            console.log("onCanceled")
+        }
+    }
+    CDoodPopWndLayer{
+        id:menu1
+        property string groupname: ""
+        property string groupid: ""
+        property string isLeader: ""
+        contentItemBackGroundOpacity:0.73
+        contentItem:Rectangle{
+
+            color: "white"
+            radius: 10
+            width:489
+            height: 190
+            Text{
+                id:title1
+
+                text:qsTr("提示")
+                font.pixelSize: 36
+                color:"#333333"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 20
+            }
+            CLine{
+                id:line1
+
+                anchors.top:title1.bottom
+                anchors.topMargin: 10
+                height: 2
+            }
+            UserProfileButton{
+                id:btntran1
+
+                width:parent.width
+                height: 100
+                leftText: menu1.isLeader===""?"退出该群":"解散该群"
+                radius: 4
+
+                anchors.top: line1.bottom
+                anchors.topMargin: 10
+                showLine:false
+                onClicked: {
+                    menu1.hide();
+                    alertDialog.groupid=menu1.groupid;
+                    if(menu1.isLeader===""){
+                        alertDialog.tip="是否退出群:"+menu1.groupname;
+                        alertDialog.operate="2";
+                    }
+                    else{
+                        alertDialog.tip="是否解散群:"+menu1.groupname;
+                        alertDialog.operate="1";
+                    }
+
+                    alertDialog.show();
+                }
+            }
+        }
+        onBackKeyReleased: {
+            console.log("11111111111111111111111111111111111")
+            menu1.hide();
+        }
+        onOutAreaClicked: {
+            console.log("222222222222222222222222222222")
+            menu1.hide();
+        }
+    }
     CIndicatorDialog {
         id:loadingDialog
-        messageText: os.i18n.ctr(qsTr("正在获取中..."))
+        messageText: os.i18n.ctr(qsTr("正在操作中..."))
+        onBackKeyReleased: {
+            loadingDialog.hide();
+        }
     }
 }
 

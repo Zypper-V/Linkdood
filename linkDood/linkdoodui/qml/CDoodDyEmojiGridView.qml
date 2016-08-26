@@ -32,12 +32,12 @@ Rectangle{
 
         delegate: _testComponent
 
-        onMovementEnded: {
-            if(flow === GridView.TopToBottom){
-                _centerPageAnimationHorizontal.restart();
-                grid.currentIndex = ((grid.width*Math.round(grid.contentX/grid.width))/grid.width)*itemsPerPage;
-            }
-        }
+//        onMovementEnded: {
+//            if(flow === GridView.TopToBottom){
+//                _centerPageAnimationHorizontal.restart();
+//                grid.currentIndex = ((grid.width*Math.round(grid.contentX/grid.width))/grid.width)*itemsPerPage;
+//            }
+//        }
         NumberAnimation { id: _centerPageAnimationHorizontal; target: grid; property: "contentX"; to: (grid.width*Math.round(grid.contentX/grid.width)); duration: 250 }
 
     }
@@ -59,15 +59,17 @@ Rectangle{
                 AnimatedImage{
                     id: img
                     source: model.modelData.path
-                    width: 64
+                    width: 100
                     height: width
                     playing:false
 
-                    anchors.top: parent.top
-                    anchors.topMargin: 12
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.centerIn: parent
+//                    anchors.top: parent.top
+//                    anchors.topMargin: 12
+//                    anchors.horizontalCenter: parent.horizontalCenter
                 }
                 Text{
+                    visible: false
                     text:model.modelData.explain
                     font.pixelSize: 24
                     color: "#333333"

@@ -83,13 +83,19 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
         }
     }
     emit contactListChanged(operType,sort(contacts));
+
+    std::vector<int64> list;
+    for(int i =0;i<contacts.size();++i){
+        list.push_back(contacts.at(i).id.toLongLong());
+    }
+    service::IMClient::getClient()->getContact()->getContactOnline(list,std::bind(&ContactControler::_getContactOnline,this,std::placeholders::_1));
 }
 
 void ContactControler::onAvatarChanged(int64 userid, std::string avatar)
-{
-    qDebug() << Q_FUNC_INFO;
+{    
     if(avatar.size() == 0)
         return;
+    qDebug() << Q_FUNC_INFO<<userid;
     emit chatAvatarChanged(QString::number(userid), QString::fromStdString(avatar));
 }
 
@@ -175,7 +181,7 @@ void ContactControler::addContact(QString userid, QString remark, QString info)
 
 void ContactControler::removeContact(QString userid)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<userid;
     service::IMClient::getClient()->getContact()->removeContact(userid.toLongLong(), std::bind(&ContactControler::_removeContact, this, std::placeholders::_1));
 }
 
@@ -210,7 +216,7 @@ void ContactControler::_updateContactInfo(service::ErrorInfo &info)
     emit updateContactInfoBack(info.code());
 }
 
-void ContactControler::_searchFromNet(service::ErrorInfo info, SearchResult res)
+void ContactControler::_searchFromNet(service::ErrorInfo& info, SearchResult& res)
 {
     qDebug() << Q_FUNC_INFO;
     ContactList user;
@@ -223,6 +229,9 @@ void ContactControler::_searchFromNet(service::ErrorInfo info, SearchResult res)
         {
             continue;    //搜索到自己不在界面显示
         }
+//        if(IS_MSG_APP(res.users[i].id)){
+//             continue;
+//        }
         contact.gender = QString::number(res.users[i].gender);
         qDebug() << Q_FUNC_INFO << "LinkDoodService::instance()->UserId():" << LinkDoodService::instance()->UserId() << "userid:" << contact.id << "   gender:" << contact.gender;
         contact.timeZone = res.users[i].time_zone;
@@ -246,7 +255,7 @@ void ContactControler::_searchFromNet(service::ErrorInfo info, SearchResult res)
     emit searchFromNetBack(info.code(), user, group);
 }
 
-void ContactControler::_searchFromLocal(service::ErrorInfo info, SearchResult res)
+void ContactControler::_searchFromLocal(service::ErrorInfo& info, SearchResult& res)
 {
     qDebug() << Q_FUNC_INFO;
     ContactList user;
@@ -254,6 +263,9 @@ void ContactControler::_searchFromLocal(service::ErrorInfo info, SearchResult re
     Contact contact;
     for(int i = 0; i < res.users.size(); i++)
     {
+        if(IS_MSG_APP(res.users[i].id)){
+             continue;
+        }
         contact.gender = QString::number(res.users[i].gender);
         contact.timeZone = res.users[i].time_zone;
         contact.id = QString::number(res.users[i].id);
@@ -261,6 +273,18 @@ void ContactControler::_searchFromLocal(service::ErrorInfo info, SearchResult re
         contact.avatar = QString::fromStdString(res.users[i].avatar);
         contact.extends = QString::fromStdString(res.users[i].extends);
         contact.thumbAvatar = QString::fromStdString(res.users[i].thumb_avatar);
+        user.push_back(contact);
+    }
+    for(int i=0;i<res.orgusers.size();i++){
+        qDebug()<<Q_FUNC_INFO<<"ssssssss";
+        contact.id = QString::number(res.orgusers[i]->id);
+        contact.name=QString::fromStdString(res.orgusers[i]->name);
+        contact.gender = QString::number(res.orgusers[i]->gender);
+        contact.timeZone = res.orgusers[i]->time_zone;
+        contact.avatar = QString::fromStdString(res.orgusers[i]->avatar);
+        contact.thumbAvatar = QString::fromStdString(res.orgusers[i]->thumb_avatar);
+        contact.pinyin="组织成员";
+        qDebug()<<Q_FUNC_INFO<<"ssssssss:"<<contact.id<<contact.name;
         user.push_back(contact);
     }
     for(int i = 0; i < res.groups.size(); i++)
@@ -285,6 +309,7 @@ void ContactControler::_addContact(service::ErrorInfo info)
 
 void ContactControler::_removeContact(service::ErrorInfo info)
 {
+    qDebug()<<Q_FUNC_INFO<<"code:"<<info.code();
     emit removeContactBack(info.code());
 }
 
@@ -304,6 +329,23 @@ void ContactControler::_getContactInfo(service::ErrorInfo &info, service::User &
     item.id   = QString::number(user.id);
 
     emit getContactInfo(item);
+}
+
+void ContactControler::_getContactOnline(std::vector<OnlineState> &statusList)
+{
+    qDebug()<<Q_FUNC_INFO;
+    for(int i =0;i<statusList.size();++i){
+        QString device("");
+        OnlineState status = statusList.at(i);
+        if(status.flag == 1)
+        {
+            if(status.deviceType == 1)
+                device = "[电脑]";
+            else if(status.deviceType == 2)
+                device = "[手机]";
+        }
+        emit contactOnlineChanged(QString::number(status.userID), device,status.flag);
+    }
 }
 
 bool CmpByTeam(const Contact first, const Contact second)

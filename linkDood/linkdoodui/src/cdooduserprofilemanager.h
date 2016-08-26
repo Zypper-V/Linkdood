@@ -8,6 +8,10 @@ class CDoodUserProfileManager : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(QString email READ email WRITE setEmail NOTIFY emailChanged)
+    Q_PROPERTY(QString phone READ phone WRITE setPhone NOTIFY phoneChanged)
+    Q_PROPERTY(QString birth READ birth WRITE setBirth NOTIFY birthChanged)
+
     Q_PROPERTY(QString id READ id WRITE setId NOTIFY idChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString gender READ gender WRITE setGender NOTIFY genderChanged)
@@ -31,7 +35,7 @@ public:
     ~CDoodUserProfileManager();
     QString id() const;
     Q_INVOKABLE QString setId(const QString &data);
-
+    Q_INVOKABLE qint64 birthMScon();
     QString name() const;
     Q_INVOKABLE QString setName(const QString &data);
 
@@ -78,7 +82,7 @@ public:
     //获取账户信息
     Q_INVOKABLE void getAccountInfo(void);
     //更新用户信息
-    Q_INVOKABLE void updateAccountInfo(QString name,QString avater,QString gender, QString nickid = "");
+    Q_INVOKABLE void updateAccountInfo(QString name,QString avater,QString gender, QString nickid = "",QString birth="");
 
     //上传头像
     Q_INVOKABLE void uploadAvatar(QString path);
@@ -86,6 +90,15 @@ public:
     Q_INVOKABLE void getPrivateSetting();
     QString appVer();
     void setAppVer(QString data);
+    QString email() const;
+    void setEmail(const QString &email);
+
+    QString phone() const;
+    void setPhone(const QString &phone);
+
+    QString birth() const;
+    void setBirth(const QString &birth);
+
 signals:
     void idChanged();
     void nameChanged();
@@ -102,10 +115,13 @@ signals:
     void atNoticetypeChanged();
     void globalNoticetypeChanged();
     void appVerChanged();
-
+    void emailChanged();
+    void phoneChanged();
+    void birthChanged();
     void setPrivateSettingResult(int code);
     void getPrivateSettingResult(int code, IMPrivateSetting ps);
-
+    void connectChanged(QString flag);
+    void uploadAvataerFinished();
 public slots:
     //推送用户信息
     void onAccountInfoChanged(Contact user);
@@ -123,7 +139,7 @@ private:
     QString mConnectFlag;
     QString mNickId;
     QString mVersion;
-
+    QString mEmail,mPhone,mBirth;
     int mAllowBirthday;		//	生日可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1
     int mAllowPhone;		//	电话可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1
     int mAllowEmail;		//	邮箱可见状态 1：所有人可见 2：仅好友可见 3：仅自己可见，默认1

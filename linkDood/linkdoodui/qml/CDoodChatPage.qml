@@ -66,7 +66,7 @@ CPage {
         onGetGroupInfoResult: {
 //            memberManager.clearMemberList();
 //            groupManager.getMemberList(groupManager.id);
-            pageStack.push(Qt.resolvedUrl("CDoodGroupSetPage.qml"));
+//            pageStack.push(Qt.resolvedUrl("CDoodGroupSetPage.qml"));
 
         }
     }
@@ -79,7 +79,19 @@ CPage {
             gToast.requestToast("消息转发成功","","");
             console.log("transparent msg ..................")
         }
+        onRemoveCurrentChat:{
+            btnEmotion.isKeyboard = true;
+            btnTool.isPressed = false;
+            pageStack.pop();
+        }
     }
+    Connections{
+        target: chatManagerModel
+        onUpdateDataFinished:{
+            chatListView.positionViewAtEnd();
+        }
+    }
+
     Keys.onReleased: {
         if (event.key === Qt.Key_Back || event.key === Qt.Key_Escape) {
             btnEmotion.isKeyboard = true;
@@ -128,7 +140,12 @@ CPage {
 
     function sendTextMsg() {
         console.log("dood sendMsg inputTextArea.plainText() = ", inputTextArea.plainText())
-
+        var tmp = ""+inputTextArea.plainText();
+        tmp = tmp.replace(/(\s)|(\r\n)|(\r)|(\n)/g,"");
+        if(tmp === ""){
+            gToast.requestToast("发送消息不能为空","","");
+            return;
+        }
         if(inputTextArea.plainText().replace(/(\s)|(\r\n)|(\r)|(\n)/g, "") !== "") {
             console.log("dood === sendMsg !!!!")
             chatManager.sendText(inputTextArea.textDocument,inputTextArea.plainText());
@@ -199,8 +216,11 @@ CPage {
                 anchors.right: parent.right
                 anchors.rightMargin:40
                 onClicked:{
+//                    memberManager.clearMemberList();
+//                    groupManager.getMemberList(chatPage.id);
                     groupManager.getGroupInfo(chatPage.targetid);
                     groupManager.getGroupSet(chatPage.targetid);
+                    pageStack.push(Qt.resolvedUrl("CDoodGroupSetPage.qml"));
                     //TODO
                 }
             }
@@ -494,6 +514,10 @@ CPage {
                         args["enterKeyText"] = "send"
                         return args;
                     }
+                    onTextChanged: {
+                        console.log("text:"+inputTextArea.text);
+                         console.log("textFormat:"+inputTextArea.textFormat);
+                    }
 
                     onFocusChanged: {
                         console.log("zhangp onFocusChanged = ", focus)
@@ -521,10 +545,6 @@ CPage {
                             console.log("dood === Key_Return !!!!")
                             sendTextMsg()
                         }
-                    }
-
-                    onTextChanged:  {
-                        oldLength = text.length
                     }
                 }
             }

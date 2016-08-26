@@ -11,11 +11,17 @@ Component {
         signal showMenu()
 
         function copy(){
-            textMessage.selectAll();
-            textMessage.copy();
-            gToast.requestToast("已经复制","","");
+            if(chatManager.isTextOnly(textMessage.text)){
+                textMessage.selectAll();
+                textMessage.copy();
+                gToast.requestToast("已经复制","","");
+            }else{
+                gToast.requestToast("本版本仅支持纯文本复制","","");
+            }
         }
-
+        function documentText(){
+            return textMessage.textDocument;
+        }
         Loader {
             id: textNameRootLoader
             anchors.top: parent.top
@@ -129,7 +135,7 @@ Component {
                 anchors.topMargin: 25
 
                 wrapMode: Text.Wrap
-                textFormat: TextEdit.RichText
+                textFormat: TextEdit.AutoText
                 readOnly:true
                 selectionColor: "transparent"
                 selectedTextColor: "#333333"

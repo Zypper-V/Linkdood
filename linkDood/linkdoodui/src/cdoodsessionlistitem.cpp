@@ -1,4 +1,5 @@
 #include "cdoodsessionlistitem.h"
+#include "common.h"
 
 CDoodSessionListItem::CDoodSessionListItem(QObject *parent) : QObject(parent)
 {
@@ -14,6 +15,11 @@ void CDoodSessionListItem::setUnreadMsgCOunt(int count)
 int CDoodSessionListItem::unReadMsgCount()
 {
     return mUnreadMsgCount;
+}
+
+qint64 CDoodSessionListItem::dateTime()
+{
+    return mMsgTime.toLongLong();
 }
 
 QString CDoodSessionListItem::id() const
@@ -141,7 +147,8 @@ QString CDoodSessionListItem::setLastMsgid(const QString &data)
 
 QString CDoodSessionListItem::msgTime() const
 {
-    return mMsgTime;
+    QString tmp = Common::dealTime(mMsgTime.toLongLong(),1);
+    return tmp;
 }
 
 QString CDoodSessionListItem::setMsgTime(const QString &data)

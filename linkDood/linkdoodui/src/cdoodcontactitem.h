@@ -24,6 +24,7 @@ class CDoodContactItem : public QObject
     Q_PROPERTY(QString extend READ extend WRITE setExtend NOTIFY extendChanged)
     Q_PROPERTY(QString userOrGroup READ userOrGroup WRITE setUserOrGroup NOTIFY userOrGroupChanged)
     Q_PROPERTY(QString isChoose READ isChoose WRITE setIsChoose NOTIFY isChooseChanged)
+    Q_PROPERTY(QString searchKey READ searchKey WRITE setSearchKey NOTIFY searchKeyChanged)
 
 
 public:
@@ -65,6 +66,9 @@ public:
     QString sectionKey() const;
     QString setSection(const QString &section);
 
+    QString searchKey() const;
+    QString setSearchKey(const QString &section);
+
     QString onlineStatus() const;
     QString setOnlineStatus(const QString &onlineStatus);
 
@@ -93,6 +97,7 @@ signals:
     void thumbAvatarChanged();
     void isOrgChanged();
     void sectionChanged();
+    void searchKeyChanged();
     void onlineStatusChanged();
     void extendChanged();
     void userOrGroupChanged();
@@ -112,6 +117,7 @@ private:
     QString mRemark;
     QString mServer;
     QString mSection;
+    QString mSearchKey;
     QString mOnlineStatus;
     QString mExtend;
     QString mUserOrGroup;

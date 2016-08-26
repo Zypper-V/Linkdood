@@ -118,8 +118,11 @@ Component {
                 }
                 onClicked: {
                     console.log("sseeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+                    chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.targetId);
                     myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodViewImage.qml"),"CDoodViewImage");
                     myChatPage.imageSource = model.modelData.body;
+                    myChatPage.tip="(图片加载中...)";
+                    myChatPage.url=model.modelData.bodyBig
                     console.log("xxxx1224:"+model.modelData.body)
                     pageStack.push(myChatPage);
                     if (chatListView.editing)
@@ -137,6 +140,7 @@ Component {
                 source: model.modelData.body
                 asynchronous:true
                 visible: true
+                clip: true
                 onBChangeChanged: {
                     width = bChange?width+1:width-1;
                     console.log("imag:"+width)

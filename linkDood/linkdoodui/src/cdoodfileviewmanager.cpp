@@ -1,11 +1,18 @@
 #include "cdoodfileviewmanager.h"
+#include <QMimeDatabase>
 
 void CDoodFileViewManager::initConnect()
 {
+    connect(m_pClient,SIGNAL(downloadFileCancelId(QString,QString)),this,SLOT(onDownloadFileCancelId(QString,QString)));
     connect(m_pClient,SIGNAL(downloadFileResult(int,QString,QString)),this,SLOT(onChatDownloadFile(int,QString,QString)));
     connect(m_pClient,SIGNAL(fileProgressResult(int,int,QString,QString,QString)),this,SLOT(onChatFileProgress(int,int,QString,QString,QString)));
 }
 
+QString CDoodFileViewManager::getMimeType(const QString &filepath)
+{
+    QMimeDatabase mdb;
+    return mdb.mimeTypeForFile(filepath).name();
+}
 void CDoodFileViewManager::init()
 {
     mId="";
@@ -19,11 +26,20 @@ void CDoodFileViewManager::init()
     mProggress = 0;
 }
 
+void CDoodFileViewManager::onDownloadFileCancelId(QString id, QString cancelId)
+{
+    qDebug()<<Q_FUNC_INFO<<cancelId;
+    if(mId == id){
+        mdownloadFileOperId = cancelId;
+    }
+}
+
 CDoodFileViewManager::CDoodFileViewManager(LinkDoodClient *client,QObject *parent):QObject(parent),m_pClient(client)
 {
     qRegisterMetaType<CDoodFileViewManager*>();
     init();
     initConnect();
+    mdownloadFileOperId = "";
 }
 
 void CDoodFileViewManager::downloadFile(QString id)
@@ -50,7 +66,7 @@ void CDoodFileViewManager::showFilePage(QString id, QString fileName, QString ur
     QFileInfo file;
 
     if(url != ""){//send
-        path = QString::fromStdString(APP_DATA_PATH)+m_pClient->UserId()+"/file/encryfile/"+fileName;
+        path = QString::fromStdString(APP_SAVE_FILE_APTH)+"/"+fileName;
     }else{
         path = fileName;
     }
@@ -83,6 +99,17 @@ void CDoodFileViewManager::showFilePage(QString id, QString fileName, QString ur
 void CDoodFileViewManager::reset()
 {
     init();
+}
+
+void CDoodFileViewManager::cancelDownload()
+{
+    setProggress(0);
+    setStatus(1);
+    setPath("");
+
+    if(mdownloadFileOperId !=""){
+        m_pClient->cancelDonwloadFile(mdownloadFileOperId);
+    }
 }
 
 void CDoodFileViewManager::setField(QString& field, QString data,QString fieldName)
@@ -215,6 +242,7 @@ void CDoodFileViewManager::onChatFileProgress(int extra_req, int process, QStrin
     if(localId == mId){
         setProggress(process);
     }
+    qDebug()<<Q_FUNC_INFO<<"extra_req:"<<extra_req;
 }
 void CDoodFileViewManager::onChatDownloadFile(int code, QString localpath, QString localId)
 {

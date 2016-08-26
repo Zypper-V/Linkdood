@@ -22,7 +22,24 @@ void CDoodLocalSearchManager::contactListClear()
         removeItem(m_contactListMap[it.key()]);
         delete m_contactListMap[it.key()];
     }
+    reset();
+    setSearchKeyCount(0);
     m_contactListMap.clear();
+}
+
+int CDoodLocalSearchManager::searchKeyCount() const
+{
+    return mSearchKeyCount;
+}
+
+int CDoodLocalSearchManager::setSearchKeyCount(const int &data)
+{
+    if(mSearchKeyCount==data){
+        return data;
+    }
+    mSearchKeyCount=data;
+    emit searchKeyCountChanged();
+    return mSearchKeyCount;
 }
 
 void CDoodLocalSearchManager::onSearchFromLocal(int code, ContactList user, ContactList group)
@@ -31,7 +48,11 @@ void CDoodLocalSearchManager::onSearchFromLocal(int code, ContactList user, Cont
     if(code != 0)
         return;
     int i = 0;
+    bool flag1=false;
+    bool flag2=false;
+    bool flag3=false;
     reset();
+    setSearchKeyCount(0);
     contactListClear();
     for(; i < user.size(); i++)
     {
@@ -57,8 +78,25 @@ void CDoodLocalSearchManager::onSearchFromLocal(int code, ContactList user, Cont
         tmpItem->setExtend(user[i].extends);
         tmpItem->setThumbAvatar(user[i].thumbAvatar);
         tmpItem->setUserOrGroup(QString::number(1)); //这里用1表示好友，用2表示群
+        if(user[i].pinyin=="组织成员"){
+            tmpItem->setSearchKey("组织成员");
+            flag1=true;
+        }
+        else{
+            tmpItem->setSearchKey("联系人");
+            flag2=true;
+        }
         insertItem(itemCount(),tmpItem);
         m_contactListMap[user[i].id] = tmpItem;
+    }
+    if(flag1){
+        setSearchKeyCount(1);
+    }
+    if(flag2){
+        setSearchKeyCount(1);
+    }
+    if(flag1&&flag2){
+        setSearchKeyCount(2);
     }
     for(int j = 0; j < group.size(); j++)
     {
@@ -74,7 +112,15 @@ void CDoodLocalSearchManager::onSearchFromLocal(int code, ContactList user, Cont
         tmpItem->setExtend(group[j].extends);
         tmpItem->setThumbAvatar(group[j].thumbAvatar);
         tmpItem->setUserOrGroup(QString::number(2));
+        tmpItem->setSearchKey("群组");
+        flag3=true;
         insertItem(itemCount(),tmpItem);
         m_contactListMap[group[j].id] = tmpItem;
+    }
+    if(flag3){
+        int i;
+        i=searchKeyCount();
+        i++;
+        setSearchKeyCount(i);
     }
 }

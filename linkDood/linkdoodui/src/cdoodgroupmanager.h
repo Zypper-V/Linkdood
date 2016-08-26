@@ -67,13 +67,15 @@ public:
     Q_INVOKABLE void getMemberList(QString groupid);
     Q_INVOKABLE void clearGroupList();
     Q_INVOKABLE void selectmember(QString id);
+    Q_INVOKABLE QString getSize(QString type,QString size1,QString size2);
+    Q_INVOKABLE void selectMemberName(QString id,QString name);
     Q_INVOKABLE MemberList returnmember();
     Q_INVOKABLE void createGroup(QString name);
     Q_INVOKABLE void getGroupInfo(QString id);
-    Q_INVOKABLE void removeGroup(QString groupid);
+    Q_INVOKABLE void removeGroup(QString operate,QString groupid);
     Q_INVOKABLE void inviteMember();
     Q_INVOKABLE void clearMemberCount();
-    Q_INVOKABLE void addGroup(QString groupid);
+    Q_INVOKABLE void addGroup(QString groupid,QString info);
     Q_INVOKABLE void getGroupList();
     Q_INVOKABLE void setGroupInfo(int type,QString remark);
     Q_INVOKABLE void getGroupSet(QString groupid);
@@ -92,6 +94,7 @@ private slots:
     void onGroupListChanged(GroupList groupList);
     void onGetGroupInfoResult(QString result,Group group);
     void onGroupInfoChanged(QString type,Group gp);
+    void onGroupLeaderChanged(QString userid,QString username,QString groupid,QString groupname);
     void onRemoveGroupResult(QString result);
     void onTransferGroupResult(QString result);
     void onInviteMemberResult(QString result);
@@ -120,10 +123,13 @@ signals:
     void getGroupFileListResult();
     void inviteMemberResult(QString result);
     void addGroupResult(QString result);
+    void transferGroupResult(QString result);
     void transMessageSelectContactList(QList<QString>list,QString localId);
     void uploadGroupAvatarResult();
-    void wordsOutOfLimited();
+    void wordsOutOfLimited(QString tip);
     void groupRemoveOrExitResult(QString groupId);
+    void noMemberInvited(QString tip);
+    void newGroupToChat(QString id,QString name);
 private:
     QString mId;
     QString mName;
@@ -141,6 +147,7 @@ private:
     bool mIsGroupLeader;
     bool mIsCreateGroup;
     int mGetGroupInfo;
+    bool mNewGroupInfo;
 
     void initConnect();
     int  indexOfSection(QString sectnion);//从map开头找第一个section相同item位置

@@ -117,51 +117,6 @@ CPage {
                 color: "#ffffff"
             }
 
-            //            Item {
-            //                id: moreBtnRoot
-            //                anchors.top: logoInlogonImage.bottom
-            //                anchors.topMargin: 28
-            //                anchors.right: parent.right
-
-            //                height: 120
-            //                visible: true
-            //                width:  91
-
-            //                Image {
-            //                    id: moreBtn
-            //                    anchors.centerIn: parent
-            //                    smooth: true
-            //                    sourceSize: Qt.size(31, 20)
-            //                    source: "qrc:/res/more.png"
-            //                    asynchronous: true
-            //                }
-
-            //                Behavior on opacity {
-            //                    NumberAnimation { duration: 200 }
-            //                }
-
-            //                MouseArea {
-            //                    anchors.fill: parent
-
-            //                    onPressed: {
-            //                        moreBtnRoot.opacity = 0.3
-            //                    }
-
-            //                    onReleased: {
-            //                        moreBtnRoot.opacity = 1
-
-            //                        if(loginPage.state !== "show")
-            //                            loginPage.state = "show"
-            //                        else
-            //                            loginPage.state = "hidden"
-            //                    }
-
-            //                    onCanceled: {
-            //                        moreBtnRoot.opacity = 1
-            //                    }
-            //                }
-            //            }
-
             Text{
                 id:conTip
 
@@ -238,7 +193,7 @@ CPage {
                 textColor:"#787777"
                 font.pixelSize: 30
                 placeholderText:os.i18n.ctr(qsTr("请输入服务器"))
-
+                validator:RegExpValidator{regExp:/^[a-zA-Z0-9.][a-zA-Z0-9.]*$/}
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
                 text: loginManager.getLoginService();
 
@@ -285,12 +240,12 @@ CPage {
                 textColor:"#787777"
                 font.pixelSize: 30
                 placeholderText:os.i18n.ctr(qsTr("请输入手机号"))
-
+                validator:RegExpValidator{regExp:/^[0-9]*$/}
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
                 text: loginManager.getLoginPhone();
 
                 onTextChanged: {
-                    passWordEdit.text = ""
+                    passWordEdit.text = "";
 
                     if(loginPage.state !== "hidden") {
                         loginPage.state = "hidden"
@@ -334,20 +289,33 @@ CPage {
                 anchors.top: userLineEdit.bottom
                 anchors.left: srvPwd.right
                 anchors.right:inputBackGround.right
-                anchors.leftMargin: 50/*srvLineEdit.text ==="" ? 50 : 0*/
+                anchors.leftMargin: 50
+                anchors.rightMargin: 20
 
+                clearLabelRightMargin:40
                 height: 101
                 passwordLabelEnabled: false
                 echoMode: TextInput.Password
                 textLeftMargin: 50
                 clip: true
-
-                //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
+                validator:RegExpValidator{regExp:/^[a-zA-Z0-9][a-zA-Z0-9]*$/}
                 placeholderText:os.i18n.ctr(qsTr("请输入密码"))
-
-                inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
+                inputMethodHints:Qt.ImhHiddenText
+                CButton{
+                    id: seePassword;
+                    anchors.right: parent.right
+                    iconSource: passWordEdit.echoMode === TextInput.Normal ? "qrc:/res/control/echo_normal.png" : "qrc:/res/control/echo_pwd.png"
+                    backgroundEnabled: false
+                    width: 40
+                    height: parent.height
+                    onReleased: {
+                        if(containsMouse){
+                            passWordEdit.echoMode = passWordEdit.echoMode === TextInput.Normal ? TextInput.Password : TextInput.Normal;
+                        }
+                    }
+                }
             }
 
             CButton {
@@ -371,8 +339,18 @@ CPage {
 
                 onClicked: {
                     console.log("login onClicked !!!")
-                    if(userLineEdit.text ==="" || passWordEdit.text ==="")
+                    if(srvLineEdit.text ===""){
+                        gToast.requestToast("服务器不能为空","","");
                         return;
+                    }
+                    if(userLineEdit.text ===""){
+                        gToast.requestToast("用户名不能为空","","");
+                        return;
+                    }
+                    if(passWordEdit.text ===""){
+                        gToast.requestToast("密码不能为空","","");
+                        return;
+                    }
                     if(loginManager.checkFirstWordIsSpace(userLineEdit.text)) {
                         userLineEdit.text = ""
                         userLineEdit.focus = true

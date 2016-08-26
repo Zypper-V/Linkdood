@@ -16,6 +16,7 @@ class CDoodGroupItem : public QObject
     Q_PROPERTY(QString server READ server WRITE setServer NOTIFY serverChanged)
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
     Q_PROPERTY(QString level READ level WRITE setLevel NOTIFY levelChanged)
+    Q_PROPERTY(bool isLeader READ isLeader WRITE setIsLeader NOTIFY isLeaderChanged)
     Q_PROPERTY(QString sectionKey READ sectionKey WRITE setSection NOTIFY sectionChanged)
 
 
@@ -54,6 +55,9 @@ public:
 
     QString level() const;
     QString setLevel(const QString &data);
+
+    bool isLeader() const;
+    bool setIsLeader(const bool &data);
 
     QString sectionKey() const;
     QString setSection(const QString &section);
@@ -97,6 +101,7 @@ signals:
     void avatarChanged();
     void thumbAvatarChanged();
     void levelChanged();
+    void isLeaderChanged();
     void sectionChanged();
 
     void f_fileidChanged();
@@ -121,6 +126,7 @@ private:
     QString mServer;
     QString mLevel;
     QString mSection;
+    bool mIsLeader;
 
     QString mF_fileid;
     QString mF_userid;

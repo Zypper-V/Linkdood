@@ -102,7 +102,7 @@ Component {
                 sourceSize: Qt.size(50, 50)
                 source: "qrc:/res/sendfailed.png"
                 asynchronous: true
-                visible: !model.modelData.status
+                visible:!model.modelData.status
                 MouseArea {
                     anchors.fill: parent
                     onPressed: {

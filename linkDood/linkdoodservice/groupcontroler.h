@@ -46,6 +46,9 @@ public:
     void _uploadGroupAvatar(std::string orgijson, std::string thumbjson, int code);
 
 
+    void getGroupMemsList(QString groupid);
+    void _getGroupMemsList(service::ErrorInfo& info, std::vector<std::shared_ptr<service::User> > members,QString groupid);
+
     void onListChanged(std::vector<std::shared_ptr<service::User> >  group);
     void onGroupAvatarChanged(int64 groupid,std::string avatar);
     void onMemberAvatarChanged(int64 userid, std::string avatar);
@@ -80,6 +83,8 @@ signals:
     void getGroupFileListResult(FileInfoList fileInfoList);
     void deleteGroupFileResult(QString result);
     void uploadGroupAvatarResult(QString thum_url,QString src_url);
+private:
+    MemberList MemberToQMemberList(std::vector<std::shared_ptr<service::User> > members);
 };
 
 

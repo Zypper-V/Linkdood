@@ -19,6 +19,13 @@ CDoodContactManager::CDoodContactManager(LinkDoodClient *client, QObject *parent
     appListMap[tmpItem->id()] = tmpItem;
 
     tmpItem = new CDoodContactItem(this);
+    tmpItem->setName("系统消息");
+    tmpItem->setId("3");
+    tmpItem->setSection("app");
+    addItem(tmpItem);
+    appListMap["3"] = tmpItem;
+
+    tmpItem = new CDoodContactItem(this);
     tmpItem->setName("群");
     tmpItem->setId("2");
     tmpItem->setSection("app");
@@ -142,6 +149,7 @@ void CDoodContactManager::selectMember(QString id)
 
 void CDoodContactManager::clearMember()
 {
+
     for(size_t i=0;i<m_member.size();++i){
         CDoodContactItem *tmpItem = contactListMap.value(m_member[i]);
         tmpItem->setIsChoose("");
@@ -155,6 +163,7 @@ void CDoodContactManager::clearMember()
 
 void CDoodContactManager::onAvatarChanged(QString userid, QString avatar)
 {
+    qDebug() << Q_FUNC_INFO<<userid;
     if(avatar != ""){
         CDoodContactItem *item = contactListMap.value(userid);
         if(item != NULL){
@@ -320,6 +329,7 @@ void CDoodContactManager::removeContact(Contact user)
         contactListMap.remove(user.id);
         delete item;
     }
+    emit removeContactOper(user.id);
 }
 
 void CDoodContactManager::onContactInfoChanged(int oper, Contact user)

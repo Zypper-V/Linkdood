@@ -376,6 +376,21 @@ void LinkDoodClient::getOrgUserInfo(QString userid)
     manager.call("getOrgUserInfo",userid);
 }
 
+void LinkDoodClient::getGroupMemsList(QString groupid)
+{
+    qDebug()<<Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    MemberList memberList;
+    Member mem;
+    mem.groupid=groupid;
+    memberList.push_back(mem);
+    emit getMemberListResult("ThePresentGroupid",memberList);
+    manager.call("getGroupMemsList",groupid);
+}
+
 void LinkDoodClient::createGroup(QString level, QString name, MemberList memberList)
 {
     qDebug() << Q_FUNC_INFO;
@@ -576,6 +591,16 @@ void LinkDoodClient::response(IMSysMsgRespInfo info)
     manager.call("response",QVariant::fromValue<IMSysMsgRespInfo>(info));
 }
 
+void LinkDoodClient::removeSysMessage(QString type,QString msgid)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("removeSysMessage",type,msgid);
+}
+
 void LinkDoodClient::setPrivateSetting(IMPrivateSetting ps)
 {
     qDebug() << Q_FUNC_INFO;
@@ -655,6 +680,16 @@ void LinkDoodClient::downloadFile(QString path, QString url, QString json,QStrin
     manager.call("downloadFile", path, url, json,localId,targetId);
 }
 
+void LinkDoodClient::cancelDonwloadFile(QString id)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("cancelDonwloadFile",id);
+}
+
 void LinkDoodClient::uploadAndSendImageMsg(Msg msg)
 {
     qDebug() << Q_FUNC_INFO;
@@ -663,6 +698,16 @@ void LinkDoodClient::uploadAndSendImageMsg(Msg msg)
                            DBUS_DOOD_INTERFACE,
                            QDBusConnection::sessionBus());
     manager.call("uploadAndSendImageMsg", QVariant::fromValue<Msg>(msg));
+}
+
+void LinkDoodClient::downloadMainImage(QString main_url, QString encryptkey, QString targetId)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("downloadMainImage", main_url, encryptkey,targetId);
 }
 
 void LinkDoodClient::downloadImage(QString url, QString property)
@@ -855,6 +900,12 @@ void LinkDoodClient::onGetContactInfoResult(Contact contact)
     emit getContactInfoResult(contact);
 }
 
+void LinkDoodClient::onRemoveSysMessageResult(QString result)
+{
+    qDebug()<<Q_FUNC_INFO;
+    emit removeSysMessageResult(result);
+}
+
 
 
 void LinkDoodClient::onGetSonOrgsResult(int code, OrgList orglist, OrgUserList orguserlist)
@@ -870,7 +921,7 @@ void LinkDoodClient::onGetOnlineStatesResult(QOnlineStateList onlinestatelist)
     emit getOnlineStatesResult(onlinestatelist);
 }
 
-void LinkDoodClient::onGetorgUserInfoResult(int code, OrgUser orguser)
+void LinkDoodClient::onGetOrgUserInfoResult(int code, OrgUser orguser)
 {
     qDebug() << Q_FUNC_INFO;
     emit getOrgUserInfoResult(code,orguser);
@@ -889,7 +940,6 @@ void LinkDoodClient::onGroupAvatarChanged(QString groupid, QString avatar)
 
 void LinkDoodClient::onMemberAvatarChanged(QString userid, QString avatar)
 {
-    qDebug()<<Q_FUNC_INFO;
     emit memberAvatarChanged(userid,avatar);
 }
 
@@ -1031,7 +1081,7 @@ void LinkDoodClient::onContactInfoChanged(int oper, Contact user)
 
 void LinkDoodClient::onChatAvatarChanged(QString id, QString avatar)
 {
-    qDebug() << Q_FUNC_INFO;
+   // qDebug() << Q_FUNC_INFO;
     emit chatAvatarChanged(id,avatar);
 }
 
@@ -1114,6 +1164,16 @@ void LinkDoodClient::onChatFileProgress(int extra_req, int process, QString info
     emit fileProgressResult(extra_req, process, info,localId,targetId);
 }
 
+void LinkDoodClient::onDownloadFileCancelId(QString id, QString cancelId)
+{
+    emit downloadFileCancelId(id,cancelId);
+}
+
+void LinkDoodClient::onUploadImageProgess(QString targetId, QString localId, int progress)
+{
+    emit uploadImageProgess(targetId,localId,progress);
+}
+
 void LinkDoodClient::onTransMessageFinishBack(int code, QString targetId)
 {
     emit transMessageFinishBack(code,targetId);
@@ -1139,6 +1199,12 @@ void LinkDoodClient::onChatupLoadImage(int64 tagetid, QString orgijson, QString 
 {
     qDebug() << Q_FUNC_INFO;
     emit uploadImageResult(QString::number(tagetid), orgijson, thumbjson, code);
+}
+
+void LinkDoodClient::onDownloadMainImageResult(QString main_url, QString loaclpath)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit downloadMainImageResult(main_url,loaclpath);
 }
 
 void LinkDoodClient::onChatDownloadImage(int code, QString localpath, long long tagetid)
@@ -1216,6 +1282,18 @@ void LinkDoodClient::onGetPrivateSetting(int code, IMPrivateSetting ps)
 void LinkDoodClient::initDBusConnect()
 {
     qDebug() << Q_FUNC_INFO;
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "downloadFileCancelId",
+                                          this, SLOT(onDownloadFileCancelId(QString,QString)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "downloadMainImageResult",
+                                          this, SLOT(onDownloadMainImageResult(QString,QString)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "uploadImageProgess",
+                                          this, SLOT(onUploadImageProgess(QString,QString,int)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "getContactInfoResult",
@@ -1353,8 +1431,8 @@ void LinkDoodClient::initDBusConnect()
                                           DBUS_DOOD_INTERFACE, "getOnlineStatesResult",
                                           this, SLOT(onGetOnlineStatesResult(QOnlineStateList)));
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
-                                          DBUS_DOOD_INTERFACE, "getorgUserInfoResult",
-                                          this, SLOT(onGetorgUserInfoResult(int,OrgUse)));
+                                          DBUS_DOOD_INTERFACE, "getOrgUserInfoResult",
+                                          this, SLOT(onGetOrgUserInfoResult(int,OrgUser)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "groupListChanged",
@@ -1445,6 +1523,10 @@ void LinkDoodClient::initDBusConnect()
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "sysMessageNotice",
                                           this, SLOT(onSysMessageNotice(IMSysMsg)));
+
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "removeSysMessageResult",
+                                          this, SLOT(onRemoveSysMessageResult(QString)));
 
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "getSysMessageResult", this, SLOT(onGetSysMessages(int,IMSysMsgList)));

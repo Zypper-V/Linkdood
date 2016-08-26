@@ -115,12 +115,16 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     if(!m_pLocalSearchManager.data()){
         qDebug() << Q_FUNC_INFO << "m_pLocalSearchManager init error !!!";
     }
-
-
+    QObject::connect(m_pSysmsgManager.data(),SIGNAL(removeSysMsg(QString,QString)),m_pSessionListManager.data(),SLOT(onRemoveSysMsg(QString,QString)));
+    QObject::connect(m_pMemberManager.data(),SIGNAL(groupMemsChanged(QString,int)),this,SLOT(onGroupMemsChanged(QString,int)));
     QObject::connect(m_pChatManager.data(),SIGNAL(chatPageChanged()),this,SLOT(onChatPageChanged()));
     QObject::connect(m_pChatManager.data(),SIGNAL(updateSessionPageMsgReaded(QString)),this,SLOT(onUpdateSessionPageMsgReaded(QString)));
     QObject::connect(m_pGroupManager.data(),SIGNAL(transMessageSelectContactList(QList<QString>,QString)),this,SLOT(onTransMessageSelectContactList(QList<QString>,QString)));
-QObject::connect(m_pGroupManager.data(),SIGNAL(groupRemoveOrExitResult(QString)),this,SLOT(onGroupRemoveOrExitResult(QString)));
+    QObject::connect(m_pGroupManager.data(),SIGNAL(groupRemoveOrExitResult(QString)),this,SLOT(onGroupRemoveOrExitResult(QString)));
+    QObject::connect(m_pContactManager.data(),SIGNAL(removeContactOper(QString)),this,SLOT(onRemoveContactOper(QString)));
+    QObject::connect(this,SIGNAL(switchLoginByUrl()),m_pLoginManager.data(),SLOT(onSwitchLoginByUrl()));
+    QObject::connect(this,SIGNAL(switchChatPageByUrl()),m_pLoginManager.data(),SLOT(onSwitchChatPageByUrl()));
+
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), qApp, SLOT(quit()));
     m_view->engine()->rootContext()->setContextProperty("loginManager", m_pLoginManager.data());
@@ -151,12 +155,16 @@ QObject::connect(m_pGroupManager.data(),SIGNAL(groupRemoveOrExitResult(QString))
 void linkdoodui_Workspace::onLaunchComplete(Option option, const QStringList& params)
 {
     Q_UNUSED(params)
-    qDebug() << Q_FUNC_INFO;
+    if(option == CWorkspace::URL){
+        m_pLoginManager->setIsStartupByUrl(true);
+    }else{
+        m_pLoginManager->setIsStartupByUrl(false);
+    }
     qApp->runService("linkdoodservice", QStringList());
-
     switch (option) {
     case CWorkspace::HOME:
         qDebug()<< "Start by Home";
+       m_pLoginManager->getLoginHistory();
         break;
     case CWorkspace::URL:
         qDebug() << "Start by URL";
@@ -177,12 +185,18 @@ void linkdoodui_Workspace::openByUrl(const QUrl &url)
     QString scheme = url.scheme();
     QString path = url.path();
     QUrlQuery query(url.query());
-    if (scheme == "linkDood") {
-        if (path == "showLinkDood") {
+
+    scheme = scheme.toLower();
+    path   = path.toLower();
+    if (scheme == "linkdood") {
+        if (path == "showlinkdood") {
             //linkDood:showLinkDood?id=xxx&pwd=xxx
             QString id = query.queryItemValue("id");
             QString pwd = query.queryItemValue("pwd");
-            showLinkDood(id, pwd);
+
+            m_pLoginManager->text("url:"+id+":"+pwd);
+            //showLinkDood(id, pwd);
+            showLinkDoodByUrl(id);
             setActiveWindow();
         }
     } else {
@@ -205,10 +219,90 @@ void linkdoodui_Workspace::getContactInforFromList(QString id, QString& name, QS
     }
 }
 
-void linkdoodui_Workspace::showLinkDood(const QString &id, const QString &pwd)
+void linkdoodui_Workspace::showLinkDood( QString &id,  QString &pwd)
 {
     qDebug() << Q_FUNC_INFO << __LINE__ << id << " " << pwd;
-    // TODO
+
+    int appStatus    = m_pLoginManager->getAppLoginStatus();
+    QString userHist = m_pLoginManager->getLoginPhoneId();
+    if(appStatus == 1){
+        QStringList info = m_pLoginManager->loginInfoByUrl().split(":");
+        if(info.size()== 2){
+            if(id == info.at(0)){
+                emit switchChatPageByUrl();
+                return;
+            }else{
+                m_pLoginManager->setLoginInfoByUrl(id+":"+"123456");
+                m_pLoginManager->setLoginPhoneId(id);
+                emit switchLoginByUrl();
+                qDebug()<<Q_FUNC_INFO<<"login 3";
+            }
+        }else{
+            m_pLoginManager->setLoginInfoByUrl(id+":"+"123456");
+            m_pLoginManager->setLoginPhoneId(id);
+            emit switchLoginByUrl();
+            qDebug()<<Q_FUNC_INFO<<"login 4";
+        }
+
+    }else{
+        if(!m_pLoginManager.isNull()){
+            QString srv = m_pLoginManager->getLoginServiceId();
+            if(srv == ""){
+                m_pLoginManager->setLoginServiceId("10.17.60.42");
+                srv = "10.17.60.42";
+            }
+            QStringList info = m_pLoginManager->loginInfoByUrl().split(":");
+            if(info.size()== 2){
+                pwd = info.at(1);
+                id = (id ==info.at(0)?id:info.at(0));
+                m_pLoginManager->login(srv,id+":7",pwd);
+
+                qDebug()<<Q_FUNC_INFO<<"login 1";
+            }else{
+                m_pLoginManager->login(srv,id+":7","123456");
+                pwd = "123456";
+                qDebug()<<Q_FUNC_INFO<<"login 2";
+            }
+            m_pLoginManager->setLoginInfoByUrl(id+":"+pwd);
+            m_pLoginManager->setLoginPhoneId(id);
+        }
+    }
+}
+
+void linkdoodui_Workspace::showLinkDoodByUrl(QString id)
+{
+    //srv
+    QString srv = m_pLoginManager->getLoginServiceId();
+    if(srv == ""){
+        m_pLoginManager->setLoginServiceId("10.17.60.42");
+        srv = "10.17.60.42";
+    }
+
+    //last login info
+    QStringList lastAct = m_pLoginManager->loginInfoByUrl().split(":");
+    QString oldId(""),oldPwd("123456");
+    if(lastAct.size() == 2){
+        oldId = lastAct.at(0);
+        oldPwd = lastAct.at(1);
+    }
+    //current pwd
+    QString pwd("123456");
+    if(id == oldId){
+        pwd = oldPwd;
+    }
+    //set config
+    m_pLoginManager->setLoginInfoByUrl(id+":"+pwd);
+    m_pLoginManager->setLoginPhoneId(id);
+
+    // app server status
+    int appStatus = m_pLoginManager->getAppLoginStatus();
+    if(appStatus != 1){//offline
+        m_pLoginManager->login(srv,id+":7",pwd);
+    }else if(oldId == id){//same user
+        emit switchChatPageByUrl();
+    }else{//diff user
+        emit switchLoginByUrl();
+    }
 }
 
 void linkdoodui_Workspace::setActiveWindow()
@@ -237,14 +331,20 @@ void linkdoodui_Workspace::onTransMessageSelectContactList(QList<QString> list,Q
     QString targetName(""),th("");
     if(!m_pChatManager.isNull()){
         for(int i = 0;i<list.size();++i){
+
+            QStringList values = list.at(i).split(":");
+            QString id = values.at(0),name = values.at(1);
+            //fromat id:name
             if(!m_pContactManager.isNull()){
-                CDoodContactItem* item = m_pContactManager->itemById(list.at(i));
+                CDoodContactItem* item = m_pContactManager->itemById(id);
                 if(item != NULL){
                     targetName = item->name();
                     th = item->thumbAvatar();
+                }else{
+                    targetName = name;
                 }
             }
-            m_pChatManager->transforMessage(list.at(i),targetName,th,localId);
+            m_pChatManager->transforMessage(id,targetName,th,localId);
         }
     }
     if(!m_pContactManager.isNull()){
@@ -266,6 +366,23 @@ void linkdoodui_Workspace::onUpdateSessionPageMsgReaded(QString targetId)
 {
     if(!m_pSessionListManager.isNull()){
         m_pSessionListManager->clickChatItem(targetId);
+    }
+}
+
+void linkdoodui_Workspace::onGroupMemsChanged(QString groupid, int size)
+{
+    if(!m_pChatManager.isNull()){
+        m_pChatManager->groupMemsChanged(groupid,size);
+    }
+}
+
+void linkdoodui_Workspace::onRemoveContactOper(QString id)
+{
+    if(!m_pSessionListManager.isNull()){
+        m_pSessionListManager->removeChatItem(id);
+    }
+    if(!m_pChatManager.isNull()){
+        m_pChatManager->removeChat(id);
     }
 }
 

@@ -38,7 +38,9 @@ enum MSG_TYPE{
 };
 
 #define APP_DATA_PATH "/data/data/com.vrv.linkDood/"
-
+#define APP_SAVE_FILE_APTH "/home/user/tiangongyuanyuan/file"
+#define APP_SAVE_IAMGE_APTH "/home/user/tiangongyuanyuan/image"
+#define  APP_SAVE_DATA_PATH "/home/user/tiangongyuanyuan"
 //IMSysMsgRespInfo
 class IMSysMsgRespInfo
 {
@@ -81,6 +83,7 @@ public:
     QString msgType;
     QString operUser;      //操作人名字
     QString isread;        //是否已读  ０未读，１已读 isRead.
+
 };
 Q_DECLARE_METATYPE(IMSysMsg)
 QDBusArgument &operator << (QDBusArgument &argument, const IMSysMsg &info);
@@ -160,6 +163,7 @@ public:
     QString i_width;
     QString i_height;
     QString thumb_url;
+    QString fromName;
     QString main_url;
     bool    isTransMsg;
     // QList<int64> related_users;// 秘聊时相关的用户 ID
@@ -235,6 +239,9 @@ public:
     QString remark;    //备注
     QString server;    //服务器
     QString nick_id;
+    QString email;
+    QString phone;
+    QString birthday;
     int     team;
 };
 Q_DECLARE_METATYPE(Contact)

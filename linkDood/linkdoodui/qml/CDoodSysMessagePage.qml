@@ -50,6 +50,30 @@ CPage {
                 font.pixelSize: 36
                 anchors.centerIn: parent
             }
+            CButton{
+                id:surbutton
+                anchors.right:parent.right
+                anchors.rightMargin: 5
+                visible: sysmsgManager.isSysMsg
+                width: 200
+                anchors.verticalCenter: parent.verticalCenter
+                backgroundComponent: Rectangle {
+                    anchors.fill: parent
+                    color:"#003953"
+                    radius: 10
+                }
+                onClicked: {
+                    alertDialog.show();
+                }
+                Text{
+                    text:qsTr("清空")
+                    color:"white"
+                    font.pixelSize: 32
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 20
+                }
+            }
         }
         Rectangle{
             anchors.top: titleBackground.bottom
@@ -74,7 +98,11 @@ CPage {
 
                     MouseArea {
                         anchors.fill: parent
-
+                        onPressAndHold: {
+                            menu.id=model.modelData.msgid;
+                            menu.msgtype=model.modelData.msgType;
+                              menu.show();
+                        }
                         onPressed: {
                             delegateBk.color = "#cdcdcd"
                         }
@@ -83,6 +111,9 @@ CPage {
                         }
                         onCanceled: {
                             delegateBk.color = "white"
+                        }
+                        onClicked: {
+                            gToast.requestToast(model.modelData.info,"","");
                         }
                     }
 
@@ -144,11 +175,18 @@ CPage {
                                 height: 90
                                 radius: 6
                                 name:""
-                                iconSource: "qrc:/res/group_icon.png"/*"file://"+ model.modelData.thumbAvatar*/
+                                iconSource: setIcon(getType(),model.modelData.thumbAvatar);//"qrc:/res/group_icon.png"/*"file://"+ model.modelData.thumbAvatar*/
 
                                 anchors.left: parent.left
                                 anchors.top:line.bottom
                                 anchors.topMargin: 10
+                                function getType(){
+                                    if(model.modelData.msgType===1 ||model.modelData.msgType===2){
+                                        return "1";
+                                    }else{
+                                        return "2";
+                                    }
+                                }
                             }
                             Text{
                                 id:msgUserName
@@ -181,7 +219,7 @@ CPage {
 
                                 height:50
                                 width:70
-                                opacity : pressed ? 1: 0.5
+
                                 text:os.i18n.ctr(qsTr("同意"))
                                 textColor:  "#ffffff"
                                 visible: model.modelData.isShowButton
@@ -193,6 +231,7 @@ CPage {
                                     anchors.fill: parent
                                     color:"#32c2fe"
                                     radius: 10
+                                    opacity : !btnAgree.pressed ? 1: 0.5
                                 }
                                 Behavior on opacity {
                                     PropertyAnimation { duration: 200 }
@@ -206,7 +245,7 @@ CPage {
 
                                 height:btnAgree.height
                                 width:btnAgree.width
-                                opacity : pressed ? 1: 0.5
+
                                 text:os.i18n.ctr(qsTr("拒绝"))
                                 textColor:  "#ffffff"
                                 visible: model.modelData.isShowButton
@@ -219,6 +258,7 @@ CPage {
                                     anchors.fill: parent
                                     color:"#32c2fe"
                                     radius: 10
+                                    opacity : !btnIg.pressed ? 1: 0.5
                                 }
                                 Behavior on opacity {
                                     PropertyAnimation { duration: 200 }
@@ -231,6 +271,74 @@ CPage {
                     }
                 }
             }
+        }
+    }
+    CDoodPopWndLayer{
+        id:menu
+        property string id: ""
+        property string msgtype: ""
+        contentItemBackGroundOpacity:0.73
+        contentItem:Rectangle{
+
+            color: "white"
+            radius: 10
+            width:489
+            height: 190
+            Text{
+                id:title1
+
+                text:qsTr("提示")
+                font.pixelSize: 36
+                color:"#333333"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 20
+            }
+            CLine{
+                id:line1
+
+                anchors.top:title1.bottom
+                anchors.topMargin: 10
+                height: 2
+            }
+            UserProfileButton{
+                id:btntran1
+
+                width:parent.width
+                height: 100
+                leftText: "删除此系统消息"
+                radius: 4
+
+                anchors.top: line1.bottom
+                anchors.topMargin: 10
+                showLine:false
+                onClicked: {
+                    menu.hide();
+                    sysmsgManager.removeSysMessage(menu.msgtype,menu.id);
+                }
+            }
+        }
+        onBackKeyReleased: {
+            console.log("11111111111111111111111111111111111")
+            menu.hide();
+        }
+        onOutAreaClicked: {
+            console.log("222222222222222222222222222222")
+            menu.hide();
+        }
+    }
+    CDialog {
+        id: alertDialog
+
+        titleText: qsTr("提示")
+        messageText: "是否删除所有系统消息"
+        onAccepted: {
+           sysmsgManager.removeSysMessage("0","123");
+            alertDialog.hide();
+        }
+        onCanceled: {
+            alertDialog.hide();
+            console.log("onCanceled")
         }
     }
 }

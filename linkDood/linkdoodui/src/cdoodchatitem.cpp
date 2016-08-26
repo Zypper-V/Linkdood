@@ -6,7 +6,7 @@ CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
     mLoading = false;
     mSatus = true;
     mTextMsg = "";
-    mProgress = 10;
+    mProgress = 1;
     mFileSize = 0;
     mLocalId = "";
 
@@ -280,6 +280,34 @@ QString CDoodChatItem::setBody(const QString &data)
         }
     }
     return mBody;
+}
+
+QString CDoodChatItem::encrypt_key() const
+{
+    return mEncrypt_key;
+}
+
+QString CDoodChatItem::setEncrypt_key(const QString &data)
+{
+    if(data!=""){
+        mEncrypt_key=data;
+        emit encrypt_keyChanged();
+    }
+    return mEncrypt_key;
+}
+
+QString CDoodChatItem::bodyBig() const
+{
+    return mBodyBig;
+}
+
+QString CDoodChatItem::setBodyBig(const QString &data)
+{
+    if(data!=""){
+        mBodyBig=data;
+        emit bodyBigChanged();
+    }
+    return mBodyBig;
 }
 
 QString CDoodChatItem::localId() const

@@ -3,6 +3,9 @@ import com.syberos.basewidgets 2.0
 
 Item {
     id: groupAddMemberPage
+
+    property bool isTransMsg: false
+
     anchors.fill: parent
     Rectangle {
         anchors.top: parent.top
@@ -13,40 +16,6 @@ Item {
 
         color: "white"
         z:parent.z-1
-    }
-
-    property string localId
-
-    states: [
-        State {
-            name: "forwordMsg"
-        },
-        State {
-            name: "groupMng"
-        }
-    ]
-    state: "groupMng"
-    Connections {
-        target: groupManager
-        onCreateGroupResult: {
-            console.log("!!!!")
-            loadingDialog.hide();
-            contactManager.clearMember();
-            enterpriseManager.clearMember();
-            groupManager.clearMemberCount();
-            gToast.requestToast(result,"","");
-            pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
-        }
-        onInviteMemberResult: {
-            console.log("!!!!")
-            loadingDialog.hide();
-            contactManager.clearMember();
-            enterpriseManager.clearMember();
-            groupManager.clearMemberCount();
-            gToast.requestToast(result,"","");
-            pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
-        }
-
     }
     ListView {
         id: contactListView
@@ -95,19 +64,41 @@ Item {
 
                 onReleased: {
                     background.color = "white"
-                    //if(groupAddMemberPage.state != "forwordMsg")
                     if(groupManager.isCreateGroup){
-                        groupManager.selectmember(model.modelData.id);
-                        enterpriseManager.changeMember(groupManager.returnmember());
-                        contactManager.selectMember(model.modelData.id);
-                        enterpriseManager.selectMember(model.modelData.id);
+                        var size=groupManager.getSize("1","0",groupManager.memberCount);
+                        if(size==="1000"){
+                            gToast.requestToast("群成员数不能超过1000","","");
+                            return;
+                        }
                     }
                     else{
-                        if(!memberManager.isMember(model.modelData.id)){
+                        var size=groupManager.getSize("1",memberManager.memberSize,groupManager.memberCount);
+                        if(size==="1000"){
+                            gToast.requestToast("群成员数不能超过1000","","");
+                            return;
+                        }
+                    }
+
+                    if(groupAddOrgPage.isTransMsg){
+                        groupManager.selectmember(model.modelData.id);
+                        enterpriseManager.changeMember(groupManager.returnmember());
+                        enterpriseManager.selectMember(model.modelData.id);
+                        contactManager.selectMember(model.modelData.id);
+
+                    }else{
+                        if(groupManager.isCreateGroup){
                             groupManager.selectmember(model.modelData.id);
                             enterpriseManager.changeMember(groupManager.returnmember());
                             contactManager.selectMember(model.modelData.id);
                             enterpriseManager.selectMember(model.modelData.id);
+                        }
+                        else{
+                            if(!memberManager.isMember(model.modelData.id)){
+                                groupManager.selectmember(model.modelData.id);
+                                enterpriseManager.changeMember(groupManager.returnmember());
+                                contactManager.selectMember(model.modelData.id);
+                                enterpriseManager.selectMember(model.modelData.id);
+                            }
                         }
                     }
                 }
@@ -133,13 +124,21 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         source:select()
                         function select(){
-                            if(groupManager.isCreateGroup){
+
+                            if(groupAddMemberPage.isTransMsg){
                                 if(model.modelData.isChoose===""){
-                                    console.log("111");
                                     return "qrc:/res/group_select_cbox_normal.png";
                                 }
                                 else{
-                                    console.log("222");
+                                    return "qrc:/res/group_select_cbox_press.png";
+                                }
+                            }
+
+                            if(groupManager.isCreateGroup){
+                                if(model.modelData.isChoose===""){
+                                    return "qrc:/res/group_select_cbox_normal.png";
+                                }
+                                else{
                                     return "qrc:/res/group_select_cbox_press.png";
                                 }
                             }
@@ -168,8 +167,8 @@ Item {
                         height: 90
                         radius: 6
                         name:""
-                        headerColor: sessionListManager.getHeaderColor(model.modelData.id)
-                        iconSource: "qrc:/res/group_icon.png"/*"file://"+ model.modelData.thumbAvatar*/
+                        //headerColor: sessionListManager.getHeaderColor(model.modelData.id)
+                        iconSource: setIcon("1",model.modelData.thumbAvatar)
                     }
                     Text {
                         id: nameText
@@ -202,11 +201,11 @@ Item {
     }
     //        }
     //    }
-    CIndicatorDialog {
-        id:loadingDialog
-        //            indicatorDirection: Qt.Horizontal
-        messageText: os.i18n.ctr(qsTr("正在操作中..."))
-    }
+    //    CIndicatorDialog {
+    //        id:loadingDialog
+    //        //            indicatorDirection: Qt.Horizontal
+    //        messageText: os.i18n.ctr(qsTr("正在操作中..."))
+    //    }
     CInputDialog{
         id:inputDialog
         messageTextColor:"#777777"

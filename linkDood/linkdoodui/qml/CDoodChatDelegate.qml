@@ -139,6 +139,21 @@ CEditListViewDelegate {
         }
     }
 
+    CDialog {
+        id: alertDialog
+
+        titleText: qsTr("提示")
+        messageText: qsTr("确定要删除此消息吗？")
+        property string id
+        property string msgId
+        onAccepted: {
+            chatManager.deleteMessage(id,msgId);
+        }
+        onCanceled: {
+            console.log("onCanceled")
+        }
+    }
+
     CDoodChatMessageOption{
         id:msgOptions
         onInerClicked: {
@@ -146,12 +161,18 @@ CEditListViewDelegate {
             if(msgOptions.index == 0){
                 messageLoader.item.copy();
             }else if(msgOptions.index == 1){
-                chatManager.deleteMessage(chatManagerModel.id,msgOptions.id);
+                alertDialog.id = chatManagerModel.id;
+                alertDialog.msgId = msgOptions.id;
+                alertDialog.show();
             }else if(msgOptions.index == 2){
 
+                if(model.modelData.msgType ==="2"){
+                    var tmp = chatManager.handleEmojiText(messageLoader.item.documentText());
+                    model.modelData.setTextMsg(tmp);
+                }
+
                 var compoment = pageStack.getCachedPage(Qt.resolvedUrl("CDoodGroupAddMainPage.qml"),"CDoodGroupAddMainPage");
-                pageStack.push(compoment,{localId:msgOptions.id,state:"forwordMsg"});
-                //chatManager.transforMessage(chatManagerModel.id,msgOptions.id);
+                pageStack.push(compoment,{localId:msgOptions.id,isTransMessage:true});
             }
             msgOptions.hide();
         }
@@ -173,17 +194,17 @@ CEditListViewDelegate {
         target: messageLoader.item
         onShowMenu:{
 
-//            msgOptions.id = model.modelData.localId;
-//            msgOptions.index = -1;
-//            if(model.modelData.msgType === "2"){
-//                console.log("msgOptions.isVisibleCopy:true");
-//                msgOptions.isVisibleCopy = true;
-//            }else{
-//                msgOptions.isVisibleCopy = false;
-//                console.log("msgOptions.isVisibleCopy:false");
-//            }
+            msgOptions.id = model.modelData.localId;
+            msgOptions.index = -1;
+            if(model.modelData.msgType === "2"){
+                console.log("msgOptions.isVisibleCopy:true");
+                msgOptions.isVisibleCopy = true;
+            }else{
+                msgOptions.isVisibleCopy = false;
+                console.log("msgOptions.isVisibleCopy:false");
+            }
 
-//            msgOptions.show();
+            msgOptions.show();
         }
     }
 }

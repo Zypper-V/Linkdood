@@ -39,6 +39,7 @@ CPage {
                 anchors.verticalCenter: parent.verticalCenter
                 onClicked: {
                     pageStack.pop();
+                    loadingDialog.hide();
                 }
             }
             Text{
@@ -86,7 +87,8 @@ CPage {
                 onClicked: {
 //                      pageStack.replace(Qt.resolvedUrl("qrc:/qml/CDoodHeaderImageCropPage.qml"), {iconSource:url}, true);
                     userProfileManager.uploadAvatar(filePath)
-                    pageStack.pop();
+                    loadingDialog.show();
+//                    pageStack.pop();
 //                    console.log("xxxxxxxxx:"+filePath)
 //                   var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodHeaderImageCropPage.qml"),"CDoodHeaderImageCropPage");
 //                    pageStack.push(component,{iconSource:url});
@@ -137,5 +139,18 @@ CPage {
             }
 
         }
+        Connections{
+            target: userProfileManager
+            onUploadAvataerFinished:{
+                pageStack.pop();
+                loadingDialog.hide();
+            }
+        }
+    }
+    CIndicatorDialog {
+        id:loadingDialog
+
+        canceledOnBackKeyReleased:true
+        messageText: os.i18n.ctr(qsTr("正在上传头像中..."))
     }
 }

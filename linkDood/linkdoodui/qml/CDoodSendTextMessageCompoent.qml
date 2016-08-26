@@ -10,11 +10,22 @@ Component {
         signal showMenu()
 
         function copy(){
-            textMessage.selectAll();
-            textMessage.copy();
-            gToast.requestToast("已经复制","","");
+
+            //chatManager.isTextOnClipboard();
+            if(chatManager.isTextOnly(textMessage.text)){
+                textMessage.selectAll();
+                textMessage.copy();
+                gToast.requestToast("已经复制","","");
+            }else{
+                gToast.requestToast("本版本仅支持纯文本复制","","");
+            }
+
             console.log("copy text:"+ textMessage.text+":"+textMessage.canPaste)
         }
+        function documentText(){
+            return textMessage.textDocument;
+        }
+
         width: chatListView.editing ? chatListView.width - 100 : chatListView.width
         height: textMessageBg.height
 
@@ -39,18 +50,6 @@ Component {
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                 iconSource:setIcon("1", model.modelData.contactThumbAvatar)
-
-                //                MouseArea {
-                //                    anchors.fill: parent
-
-                //                    onClicked: {
-                //                        console.log("todo show MyInfo Pagesssssssssss !!!")
-                //                        console.log(model.modelData.name)
-                //                        console.log(model.modelData.fromId)
-                //                        if (chatListView.editing)
-                //                            return;
-                //                    }
-                //                }
             }
         }
 
@@ -82,7 +81,7 @@ Component {
                 anchors.topMargin: 25
 
                 wrapMode: Text.Wrap
-                textFormat: TextEdit.RichText
+                textFormat: TextEdit.AutoText//TextEdit.RichText
                 readOnly:true
                 selectionColor: "transparent"
                 selectedTextColor: "#333333"

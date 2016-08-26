@@ -141,6 +141,20 @@ Component {
                     anchors.left: icon.right
                     anchors.leftMargin: 10
                     anchors.right: fileMessage.right
+                    anchors.rightMargin: 80
+                }
+                Text{
+                    id:txtprogress
+                    visible: progressBar.visible
+                    text:model.modelData.progress+"%";
+                    font.pixelSize: 20
+                    color: "#333333"
+
+                    anchors.top:fileName.bottom
+                    anchors.topMargin: 10
+                    anchors.left: progressBar.right
+                    anchors.leftMargin: 10
+                    anchors.right: fileMessage.right
                     anchors.rightMargin: 10
                 }
 
@@ -201,7 +215,7 @@ Component {
                     anchors.fill: parent
                     onPressed: {
                         console.log("zhangp to resend !!!")
-                        chatManager.resendMessage(model.modelData.msgId);
+                        chatManager.resendMessage(model.modelData.localId);
                     }
                 }
             }

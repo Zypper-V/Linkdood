@@ -23,6 +23,8 @@
 #include "FileUtils.h"
 #include "EncryptKey.h"
 #include "Contact.h"
+#include "IDRangeJuge.hpp"
+#include "IGroupService.h"
 
 #include<QSettings>
 
@@ -41,6 +43,7 @@ void ChatControler::getContactInfo(QString userId,Msg msg)
 
 void ChatControler::getUserProfile(QString userId, std::shared_ptr<service::Msg> msg)
 {
+    qDebug()<<Q_FUNC_INFO<<"userId:"<<userId;
     service::IMClient::getClient()->getSearch()->getUserInfo(userId.toLongLong(),std::bind(&ChatControler::_getUserProfile,this,std::placeholders::_1,std::placeholders::_2,msg));
 }
 
@@ -100,9 +103,10 @@ void ChatControler::sendMessage(Msg &imMsg)
         transMessage(imMsg);
         return;
     }
-    qDebug()<<Q_FUNC_INFO<<"imMsg.targetName:"<<imMsg.targetName;
+
     QDateTime dateTime = QDateTime::fromString(imMsg.time,"yyyy-MM-dd hh:mm:ss");
-    QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
+    //QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
+    QString time = QString::number(dateTime.toMSecsSinceEpoch());
 
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
@@ -221,6 +225,9 @@ void ChatControler::getChatList()
 ChatControler::ChatControler(QObject* parent):
     QObject(parent)
 {
+    qRegisterMetaType<std::shared_ptr<service::Msg> >("std::shared_ptr<service::Msg>");
+    connect(this,SIGNAL(handleRevMsg(std::shared_ptr<service::Msg>)),this,SLOT(onHandleRevMsg(std::shared_ptr<service::Msg>)));
+
     mSessionTargetID = "";
     m_pWorkControl = new LinkDoodServiceThread(this);
     m_pWorkControl->moveToThread(&mWorkThread);
@@ -257,7 +264,7 @@ void ChatControler::handleReciveImgMsg(std::shared_ptr<service::Msg> msg)
     imMsg.encrypt_key = QString::fromStdString(msgImg->encrypt_key);
     imMsg.thumb_url = QString::fromStdString(msgImg->thumb_url);
     imMsg.filename = QString::fromStdString(msgImg->file_name);
-
+    imMsg.fromName = QString::fromStdString(msg->from_name);
     imMsg.body     = "[图片]";
     if(judgeFileExist(thumbPath,MSG_TYPE_IMG)){
         QDir tempDir;
@@ -270,7 +277,11 @@ void ChatControler::handleReciveImgMsg(std::shared_ptr<service::Msg> msg)
         {
             QString fileName = strList.at(strList.size() - 1);
             QString srcPath = appDataPath +"image/"+ fileName;
-            QString outPath = (appDataPath +"cache/"+ fileName);
+            QString outPath = (QString::fromStdString(APP_SAVE_IAMGE_APTH) +"/"+ fileName);
+            if (!tempDir.exists(APP_SAVE_IAMGE_APTH))
+            {
+                tempDir.mkdir(APP_SAVE_IAMGE_APTH);
+            }
             bool ret = service::IMClient::getClient()->getFile()->decryptFile(msgImg->encrypt_key,srcPath.toStdString(),outPath.toStdString());
 
             if(ret){
@@ -307,6 +318,7 @@ void ChatControler::handleReciveFileMsg(std::shared_ptr<service::Msg> msg)
     imMsg.f_path = QString::fromStdString(msgFile->file_path);
     imMsg.f_url = QString::fromStdString(msgFile->url);
     imMsg.filename = QString::fromStdString(msgFile->file_name);
+    imMsg.fromName = QString::fromStdString(msg->from_name);
     imMsg.body = "[文件]";
     sendSessionMsg(imMsg);
 }
@@ -321,6 +333,7 @@ void ChatControler::handleReciveDyEmojiMsg(std::shared_ptr<service::Msg> msg)
     imMsg.toid   = QString::number(msg->toid);
     imMsg.targetid = QString::number(msg->targetid);
     imMsg.activeType = QString::number(msg->active_type);
+    imMsg.fromName = QString::fromStdString(msg->from_name);
     imMsg.time   =  QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss");
     QString explian(""),target("");
     std::string msgBody = utils::MsgUtils::getText(msg->body);
@@ -337,8 +350,8 @@ void ChatControler::sendSessionMsg(Msg imMsg)
     getCurrentSessionId(sessionId);
     QString isUnread = "0";
     QDateTime dateTime = QDateTime::fromString(imMsg.time,"yyyy-MM-dd hh:mm:ss");
-    QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
-
+    //QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
+    QString time = QString::number(dateTime.toMSecsSinceEpoch());
     emit chatMessageNotice(imMsg);
     qDebug()<<Q_FUNC_INFO<<"session:"<<sessionId<<"tagertId:"<<imMsg.targetid;
     if(sessionId == imMsg.targetid){
@@ -357,17 +370,17 @@ void ChatControler::transMessage(Msg imMsg)
 
     QDateTime dateTime = QDateTime::fromString(imMsg.time,"yyyy-MM-dd hh:mm:ss");
     int64 time = dateTime.toMSecsSinceEpoch();
-    QString bodyText(""),timeText = dealTime(time,1);
+    QString bodyText(""),timeText = QString::number(time);
 
     QString info = imMsg.targetid +":"+imMsg.localid+":"+imMsg.targetName+":"+imMsg.thumb_avatar+":"+time;
     if(imMsg.msgtype.toInt() == MSG_TYPE_TEXT)
     {
 
-        std::string src=imMsg.body.toStdString(),target("");
+        std::string src=imMsg.msgProperties.toStdString(),target("");
         EmojiExplain::EmojiParseTo(src,target);
-
-        imMsg.body = QString::fromStdString(target);
         bodyText = imMsg.body;
+        imMsg.body = QString::fromStdString(target);
+
         service::MsgText msg = QmsgtextTomsgtext(imMsg);
         service::IMClient::getClient()->getChat()->sendMessage(msg,
                                                                std::bind(&ChatControler::_transMesage,this,
@@ -445,39 +458,58 @@ void ChatControler::handleRecevieTextMsg(std::shared_ptr<service::Msg> msg)
     }
     std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
     Msg imMsg = msgtextToQmsgtext(msgText);
-
+    imMsg.fromName = QString::fromStdString(msg->from_name);
     std::string target("");
     EmojiExplain::EmojiParseFrom(imMsg.body.toStdString(),target);
     imMsg.body = QString::fromStdString(target);
+    imMsg.fromName = QString::fromStdString(msg->from_name);
+    qDebug()<<Q_FUNC_INFO<<"1111111111111111111111";
     sendSessionMsg(imMsg);
+}
+
+void ChatControler::handleReciveTipMsg(std::shared_ptr<service::Msg> msg)
+{
+    //handleReciveTipMsg(msg);
+    std::shared_ptr<service::MsgTip> msgTip = std::dynamic_pointer_cast<service::MsgTip>(msg);
+
+    Msg imMsg;
+    imMsg.body = QString::fromStdString(msgTip->body);
+    imMsg.msgid = QString::number(msg->msgid);
+    imMsg.msgtype = QString::number(MSG_TYPE_TIP);
+    imMsg.targetid = QString::number(msg->targetid);
+    imMsg.fromid = QString::number(msg->targetid);
+    imMsg.time   =  QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss");
+    emit chatMessageNotice(imMsg);
+}
+
+void ChatControler::handleReciveUnSurportMsg(std::shared_ptr<service::Msg> msg)
+{
+    Msg msgTip;
+    msgTip.msgtype      = QString::number(MSG_TYPE_TEXT);
+    msgTip.activeType   =QString::number(msg->active_type);
+   // msgTip.msgtype      =QString::number(msg->msgtype);
+    msgTip.msgid        =QString::number(msg->msgid);
+    msgTip.targetid     =QString::number(msg->targetid);
+    msgTip.fromid       =QString::number(msg->fromid);
+    msgTip.toid         =QString::number(msg->toid);
+    msgTip.localid      =QString::number(msg->localid);
+    msgTip.time         =QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss");
+    msgTip.body = "此类型消息暂不支持，请在PC端查看";
+    msgTip.fromName = QString::fromStdString(msg->from_name);
+    sendSessionMsg(msgTip);
 }
 
 void ChatControler::onMessageNotice(std::shared_ptr<service::Msg> msg)
 {
     qDebug() << Q_FUNC_INFO ;
-    if(msg){
-
-        qDebug()<<Q_FUNC_INFO<<"msgTime:"<<QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss")<<"body:"<<msg->body.c_str();
-        qDebug()<<Q_FUNC_INFO<<"mesage:targetId:"<<msg->targetid<<"fromId:"<<msg->fromid;
-        if(msg->msgtype == MSG_TYPE_TEXT)
-        {
-            handleRecevieTextMsg(msg);
-        }else if(msg->msgtype == MSG_TYPE_IMG){
-            handleReciveImgMsg(msg);
-        }else if(msg->msgtype == MSG_TYPE_FILE){
-            handleReciveFileMsg(msg);
-        }else if(msg->msgtype == MEDIA_MSG_DYNAMIC_EMOJI){
-            handleReciveDyEmojiMsg(msg);
-        }
-        handleNotification(msg);
-    }
+    emit handleRevMsg(msg);
 }
 
 void ChatControler::onAvatarChanged(int64 userid, std::string avatar)
 {
-    qDebug() << Q_FUNC_INFO;
     if(avatar.size() == 0)
         return;
+    qDebug() << Q_FUNC_INFO <<userid;
     emit chatAvatarChanged(QString::number(userid), QString::fromStdString(avatar));
 }
 
@@ -497,7 +529,7 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
         imMsg.fromId =QString::number(msg.msg->fromid);
         imMsg.msgId  = QString::number(msg.msg->msgid);
         //imMsg.time   = QDateTime::fromMSecsSinceEpoch(msg.msg->time).toString("yyyy-MM-dd hh:mm:ss");
-        imMsg.time = dealTime(msg.msg->time,1);
+        imMsg.time =QString::number(msg.msg->time) /*dealTime(msg.msg->time,1)*/;
         imMsg.targetId =QString::number(msg.msg->targetid);
         if(msg.msg->msgtype == MSG_TYPE_TEXT){
             std::string target("");
@@ -520,6 +552,9 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
             imMsg.body = "文件";
         }else if(msg.msg->msgtype == MSG_TYPE_IMG){
             imMsg.body = "图片";
+        }else{
+            continue;
+            imMsg.body = "此类型消息暂不支持，请在PC端查看";
         }
         msgList.push_back(imMsg);
     }
@@ -537,7 +572,7 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
             continue;
         }
         std::shared_ptr<service::Chat> ch = std::dynamic_pointer_cast<service::Chat>(i);
-        if(ch->msg_type == 0/* ||ch->msg_type == 5*/){
+        if(ch->msg_type == 0||(IS_MSG_APP(ch->id))){
             continue;
         }
         Chat_UI chatData;
@@ -565,17 +600,18 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
             chatData.last_msg = "文件";
         }
         else{
-            //chatData.last_msg = "不支持的消息类型，请在电脑端查看";
             continue;
+            chatData.last_msg = "此类型消息暂不支持，请在PC端查看";
+
         }
         chatData.avatar =  QString::fromStdString(ch->avatar);
-        chatData.msg_time = dealTime(ch->msg_time,1);
+        chatData.msg_time = QString::number(ch->msg_time)/*dealTime(ch->msg_time,1)*/;
         chatData.id = QString::number(ch->id);
         qDebug() << Q_FUNC_INFO << "name" << chatData.name<<"th:"<<chatData.thumb_avatar<<" ava:"<<chatData.avatar;
         chatData.chat_type = ch->chat_type;
         chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
         chatData.unread_count=ch->unread_count;
-
+        chatData.last_msgid = ch->last_msgid;
         chatList.push_back(chatData);
     }
     emit chatListChanged(chatList);
@@ -605,19 +641,26 @@ void ChatControler::uploadAndSendFileMsg(Msg msg)
     msg.encrypt_user = msg.fromid;
 
     qDebug() << Q_FUNC_INFO << "f_path:" << msg.f_path << "  json:" << json;
-    service::IMClient::getClient()->getFile()->uploadFile(msg.f_path.toStdString(), json.toStdString(), std::bind(&ChatControler::_uploadFile, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,std::placeholders::_4,msg), std::bind(&ChatControler::_fileProgress, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,msg.msgid,msg.targetid));
-
+    qint64 code = service::IMClient::getClient()->getFile()->uploadFile(msg.f_path.toStdString(), json.toStdString(), std::bind(&ChatControler::_uploadFile, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,std::placeholders::_4,msg), std::bind(&ChatControler::_fileProgress, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,msg.msgid,msg.targetid));
+    qDebug()<<Q_FUNC_INFO<<"ret:"<<code;
 }
 
 void ChatControler::downloadFile(QString path, QString url, QString json,QString localId,QString targetId)
 {
     qDebug() << Q_FUNC_INFO;
     QString allFilePath = APP_DATA_PATH +LinkDoodService::instance()->UserId() + "/file/" + path;
-    QString encryFilePath = APP_DATA_PATH +LinkDoodService::instance()->UserId() + "/file/encryfile/" + path;
+    QString encryFilePath = APP_SAVE_FILE_APTH;
+    encryFilePath +="/"+path;
 
     qDebug() << Q_FUNC_INFO << "allPath:" << allFilePath << "  url:" << url << "  json:" << json << "    localId:" << localId << "  targetId:" << targetId;
-    service::IMClient::getClient()->getFile()->downloadFile(allFilePath.toStdString(), url.toStdString(), json.toStdString(), std::bind(&ChatControler::_downloadFile, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, encryFilePath, json,localId), std::bind(&ChatControler::_fileProgress, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,localId,targetId));
+    qint64 code = service::IMClient::getClient()->getFile()->downloadFile(allFilePath.toStdString(), url.toStdString(), json.toStdString(), std::bind(&ChatControler::_downloadFile, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, encryFilePath, json,localId), std::bind(&ChatControler::_fileProgress, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,localId,targetId));
+    qDebug()<<Q_FUNC_INFO<<"ret:"<<code;
+    emit downloadFileCancelId(localId,QString::number(code));
+}
 
+void ChatControler::cancelDonwloadFile(QString id)
+{
+    service::IMClient::getClient()->getFile()->cancel(service::FILE_DOWNLOAD,id.toLongLong(),std::bind(&ChatControler::_cancelFile,this, std::placeholders::_1));
 }
 
 void ChatControler::uploadAndSendImageMsg(Msg msg)
@@ -636,7 +679,7 @@ void ChatControler::uploadAndSendImageMsg(Msg msg)
     msg.encrypt_key = QString::fromStdString(p.encryptkey);
     msg.encrypt_user = msg.fromid;
     qDebug()<<Q_FUNC_INFO<<"666:"<<msg.encrypt_key;
-    service::IMClient::getClient()->getFile()->uploadImage(msg.thumb_url.toStdString(), msg.main_url.toStdString(),json.toStdString(), std::bind(&ChatControler::_uploadImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,msg));
+    service::IMClient::getClient()->getFile()->uploadImage(msg.thumb_url.toStdString(), msg.main_url.toStdString(),json.toStdString(), std::bind(&ChatControler::_uploadImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4,msg),std::bind(&ChatControler::_uploadImageProgess,this,std::placeholders::_1,std::placeholders::_2,std::placeholders::_3,msg.targetid,msg.localid));
 }
 
 void ChatControler::downloadImage(Msg msgImg)
@@ -650,6 +693,17 @@ void ChatControler::downloadImage(Msg msgImg)
     json=json+"{\"encryptkey\":\""+p.encryptkey.c_str()+"\",\"targetid\":"+msgImg.targetid+"}";
     qDebug() << Q_FUNC_INFO << "json:"<<json;
     service::IMClient::getClient()->getFile()->downloadImage(msgImg.thumb_url.toStdString(), json.toStdString(), std::bind(&ChatControler::_downloadImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,msgImg));
+}
+
+void ChatControler::downloadMainImage(QString main_url, QString encryptkey, QString targetId)
+{
+    qDebug() << Q_FUNC_INFO<<"main_url:"<<main_url<<"encryptkey:"<<encryptkey<<"targetId:"<<targetId;
+    utils::FileUtils::Property p ;
+    p.encryptkey=encryptkey.toStdString();
+    p.targetid=targetId.toLongLong();
+    QString json("");
+    json=json+"{\"encryptkey\":\""+p.encryptkey.c_str()+"\",\"targetid\":"+targetId+"}";
+    service::IMClient::getClient()->getFile()->downloadImage(main_url.toStdString(), json.toStdString(), std::bind(&ChatControler::_downloadMainImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,encryptkey,main_url));
 }
 
 void ChatControler::downloadHistoryImage(QString url, QString encryptKey, QString targetid, QString localid)
@@ -680,6 +734,36 @@ void ChatControler::getUserInfo(QString userid)
 {
     qDebug() << Q_FUNC_INFO;
     service::IMClient::getClient()->getSearch()->getUserInfo(userid.toLongLong(), std::bind(&ChatControler::_getUserInfo, this, std::placeholders::_1, std::placeholders::_2));
+}
+
+void ChatControler::onSystemMessageNotice(QString info, int64 time)
+{
+    qDebug()<<Q_FUNC_INFO<<"info:"<<info;
+    emit bcNotify("-5","-5",info,"-5",QString::number(time),"系统消息","","",1);
+}
+
+void ChatControler::onHandleRevMsg(std::shared_ptr<service::Msg> msg)
+{
+    if(msg != NULL){
+        qDebug()<<Q_FUNC_INFO<<"mesage:targetId:"<<msg->targetid<<"fromId:"<<msg->fromid<<"body:"<<msg->body.c_str();
+        if(msg->msgtype == MSG_TYPE_TEXT)
+        {
+            handleRecevieTextMsg(msg);
+        }else if(msg->msgtype == MSG_TYPE_IMG){
+            handleReciveImgMsg(msg);
+        }else if(msg->msgtype == MSG_TYPE_FILE){
+            handleReciveFileMsg(msg);
+        }else if(msg->msgtype == MEDIA_MSG_DYNAMIC_EMOJI){
+            handleReciveDyEmojiMsg(msg);
+        }else if(msg->msgtype == MSG_TYPE_TIP){
+            handleReciveTipMsg(msg);
+        }else{
+            //handleReciveUnSurportMsg(msg);
+        }
+        if(msg->msgtype != MSG_TYPE_TIP){
+            handleNotification(msg);
+        }
+    }
 }
 
 
@@ -790,6 +874,31 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
             Msg imMsg;
             handleHistoryFileMsg(imMsg,msg);
             msgList.push_back(imMsg);
+
+        }else if(msg->msgtype == MSG_TYPE_TIP){
+            Msg imMsg;
+            imMsg.body = QString::fromStdString(msg->body);
+            imMsg.msgid = QString::number(msg->msgid);
+            imMsg.msgtype = QString::number(MSG_TYPE_TIP);
+            imMsg.targetid = QString::number(msg->targetid);
+            imMsg.fromid = QString::number(msg->targetid);
+            imMsg.time   =  QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss");
+            msgList.push_back(imMsg);
+        }
+        else{
+            Msg msgTip;
+            msgTip.msgtype      = QString::number(MSG_TYPE_TEXT);
+            msgTip.activeType   =QString::number(msg->active_type);
+            //msgTip.msgtype      =QString::number(msg->msgtype);
+            msgTip.msgid        =QString::number(msg->msgid);
+            msgTip.targetid     =QString::number(msg->targetid);
+            msgTip.fromid       =QString::number(msg->fromid);
+            msgTip.toid         =QString::number(msg->toid);
+            msgTip.localid      =QString::number(msg->localid);
+            msgTip.time         =QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss");
+            msgTip.body = "此类型消息暂不支持，请在PC端查看";
+            msgTip.fromName = QString::fromStdString(msg->from_name);
+            msgList.push_back(msgTip);
         }
     }
     if(!info.code()){
@@ -893,11 +1002,16 @@ void ChatControler::handleNotification(std::shared_ptr<service::Msg> msg)
     qDebug()<<Q_FUNC_INFO;
     QString sessionId("");
     getCurrentSessionId(sessionId);
-    qDebug()<<Q_FUNC_INFO<<"seesionId:"<<sessionId;
+    qDebug()<<Q_FUNC_INFO<<"seesionId:"<<msg->fromid<<"body:"<<msg->body.c_str();
     if(sessionId != ""){
         return;
     }
-    getUserProfile(QString::number(msg->fromid),msg);
+    if(!IS_MSG_GROUP(msg->targetid)){
+        getUserProfile(QString::number(msg->fromid),msg);
+    }else{
+         service::IMClient::getClient()->getGroup()->getGroupInfo(msg->targetid,std::bind(&ChatControler::_getGroupInfo,this,std::placeholders::_1,std::placeholders::_2,msg));
+    }
+
 }
 
 void ChatControler::_deleteMessage(service::ErrorInfo &info)
@@ -915,7 +1029,7 @@ void ChatControler::_getContactInfo(service::ErrorInfo &info, service::User &use
     msg.targetName = msg.name = QString::fromStdString(contact.name);
     msg.thumb_avatar = QString::fromStdString(contact.avatar);
     QDateTime dateTime = QDateTime::fromString(msg.time,"yyyy-MM-dd hh:mm:ss");
-    QString time = dealTime(dateTime.toMSecsSinceEpoch(),1);
+    QString time =QString::number(dateTime.toMSecsSinceEpoch());
     QString sessionId("");
     qDebug()<<Q_FUNC_INFO<<"wwwwwwwwwwwwwww:"<<msg.thumb_avatar;
     getCurrentSessionId(sessionId);
@@ -950,16 +1064,22 @@ void ChatControler::_fileProgress(int32 extra_req, int32 process, std::string in
     emit fileProgressBack(extra_req, process, QString::fromStdString(info),localId,targetId);
 }
 
+void ChatControler::_cancelFile(int code)
+{
+    qDebug()<<Q_FUNC_INFO<<code;
+}
+
 void ChatControler::_downloadFile(service::ErrorInfo &info, std::string localpath, int64 tagetid, QString encryFilePath, QString encryKey,QString localId)
 {
     qDebug()<<Q_FUNC_INFO;
     if(info.code() == 0)
     {
         QDir tempDir;
-        QString path = APP_DATA_PATH +LinkDoodService::instance()->UserId() + "/file/encryfile/";
+        QString path = APP_SAVE_FILE_APTH/*APP_DATA_PATH +LinkDoodService::instance()->UserId() + "/file/encryfile/"*/;
         if (!tempDir.exists(path))
         {
-            tempDir.mkdir(path);
+            bool ret = tempDir.mkdir(path);
+             qDebug()<<Q_FUNC_INFO <<"makedir:"<<path<<"ret:"<<ret;
         }
         qDebug()<<Q_FUNC_INFO << " localpath:" << localpath.c_str() << "  tagetid:" << tagetid << "  encryFilePath:" << encryFilePath << "  encryKey:" << encryKey;
         if(decryptFile(encryKey, QString::fromStdString(localpath), encryFilePath))
@@ -972,11 +1092,18 @@ void ChatControler::_downloadFile(service::ErrorInfo &info, std::string localpat
 
 void ChatControler::_uploadImage(int64 tagetid, std::string orgijson, std::string thumbjson, int code,Msg msg)
 {
+    qDebug()<<Q_FUNC_INFO<<"msg:"<<msg.thumb_url;
     msg.thumb_url = QString::fromStdString(utils::FileUtils::getFile(thumbjson,"url"));
     msg.main_url  = QString::fromStdString(utils::FileUtils::getFile(orgijson,"url"));
     sendMessage(msg);
 
     emit uploadImgeBackUrl(msg.targetid,msg.localid,msg.thumb_url,msg.main_url,msg.encrypt_key);
+}
+
+void ChatControler::_uploadImageProgess(int32 extra_req, int32 process, std::string info, QString target, QString localId)
+{
+    qDebug()<<Q_FUNC_INFO<<"progrss:"<<process;
+    emit uploadImageProgess(target,localId,process);
 }
 
 void ChatControler::_downloadImage(service::ErrorInfo &info, std::string localpath, int64 tagetid,Msg msgImg)
@@ -998,14 +1125,45 @@ void ChatControler::_downloadImage(service::ErrorInfo &info, std::string localpa
         {
             QString fileName = strList.at(strList.size() - 1);
             QString srcPath = appDataPath +"image/"+ fileName;
-            QString outPath = (appDataPath +"cache/"+ fileName);
-            qDebug() << Q_FUNC_INFO << "decryptFile(...) start";
+            QString outPath = (QString::fromStdString(APP_SAVE_IAMGE_APTH) +"/"+ fileName);
+            if (!tempDir.exists(APP_SAVE_IAMGE_APTH))
+            {
+                tempDir.mkdir(APP_SAVE_IAMGE_APTH);
+            }
+
             bool ret = service::IMClient::getClient()->getFile()->decryptFile(msgImg.encrypt_key.toStdString(),srcPath.toStdString(),outPath.toStdString());
             qDebug()<<Q_FUNC_INFO<<"decryptFile:"<<outPath<<":ret:"<<ret;
             if(ret){
                 msgImg.thumb_url = outPath;
                 msgImg.body = "[图片]";
                 sendSessionMsg(msgImg);
+            }
+        }
+    }
+}
+
+void ChatControler::_downloadMainImage(service::ErrorInfo &info, std::string localpath, long long tagetid, QString encryptKey,QString main_url)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString appDataPath =  APP_DATA_PATH +LinkDoodService::instance()->UserId() + "/";
+    QString imgPath = QString::fromStdString(localpath);
+    if(judgeFileExist(imgPath,MSG_TYPE_IMG)){
+        QDir tempDir;
+        if (!tempDir.exists(appDataPath))
+        {
+            tempDir.mkdir(appDataPath);
+        }
+        QStringList strList = imgPath.split("/");
+        qDebug() << Q_FUNC_INFO<< "strList.size = " << strList.size();
+        if (strList.size() > 0)
+        {
+            QString fileName = strList.at(strList.size() - 1);
+            QString srcPath = appDataPath +"image/"+ fileName;
+            QString outPath = (appDataPath +"cache/"+ fileName);
+            bool ret = service::IMClient::getClient()->getFile()->decryptFile(encryptKey.toStdString(),srcPath.toStdString(),outPath.toStdString());
+            qDebug()<<Q_FUNC_INFO<<"decryptFile:"<<outPath<<":ret:"<<ret;
+            if(ret){
+             emit downloadMainImageResult(main_url,outPath);
             }
         }
     }
@@ -1058,7 +1216,7 @@ void ChatControler::_getFileList(service::ErrorInfo &info, std::vector<FileInfo>
     emit getFileListBack(info.code(), msgList);
 }
 
-void ChatControler::_getUserInfo(service::ErrorInfo info, service::User user)
+void ChatControler::_getUserInfo(service::ErrorInfo& info, service::User& user)
 {
     qDebug()<<Q_FUNC_INFO << "code:" << info.code() << " name:" << user.name.c_str();
     Contact contact;
@@ -1073,9 +1231,9 @@ void ChatControler::_getUserInfo(service::ErrorInfo info, service::User user)
     emit getUserInfoBack(info.code(), contact);
 }
 
-void ChatControler::_getUserProfile(service::ErrorInfo info, service::User user, std::shared_ptr<service::Msg> msg)
+void ChatControler::_getUserProfile(service::ErrorInfo& info, service::User& user, std::shared_ptr<service::Msg> msg)
 {
-    qDebug()<<Q_FUNC_INFO<<"name:"<<user.name.c_str();
+    qDebug()<<Q_FUNC_INFO<<"1111111111111";
     QString senderId, msgType,content,msgId, sendTime, displayName,icon("");
     if(msg->msgtype == MSG_TYPE_FILE){
         content= "[文件]";
@@ -1090,7 +1248,7 @@ void ChatControler::_getUserProfile(service::ErrorInfo info, service::User user,
 
         EmojiExplain::EmojiParseFrom(msgBody,target);
         content = QString::fromStdString(target);
-
+        qDebug()<<Q_FUNC_INFO<<"22222222222";
     }else if(msg->msgtype == MEDIA_MSG_DYNAMIC_EMOJI){
         QString explian(""),target("");
         std::string msgBody = utils::MsgUtils::getText(msg->body);
@@ -1100,12 +1258,52 @@ void ChatControler::_getUserProfile(service::ErrorInfo info, service::User user,
         EmojiExplain::dyEmojiParseFrom(QString::fromStdString(msgBody),target,explian);
         content = explian;
     }
+    qDebug()<<Q_FUNC_INFO<<"33333333333333";
     senderId = QString::number(msg->fromid);
     msgType  = QString::number(msg->msgtype);
     msgId    = QString::number(msg->msgid);
     sendTime = QString::number(msg->time);
+
     displayName = QString::fromStdString(user.name);
-    icon = QString::fromStdString(user.thumb_avatar);
+    qDebug()<<Q_FUNC_INFO<<"555555555555555555555:"<<displayName;
+    emit bcNotify(senderId,msgType,content,msgId,sendTime,displayName,icon,"",1);
+}
+
+void ChatControler::_getGroupInfo(service::ErrorInfo &info, service::Group group,std::shared_ptr<service::Msg> msg)
+{
+    qDebug()<<Q_FUNC_INFO;
+    QString senderId, msgType,content,msgId, sendTime, displayName,icon("");
+    if(msg->msgtype == MSG_TYPE_FILE){
+        content= "[文件]";
+    }else if(msg->msgtype == MSG_TYPE_IMG){
+        content= "[图片]";
+    }else if(msg->msgtype == MSG_TYPE_TEXT){
+        std::string target("");
+        std::string msgBody = utils::MsgUtils::getText(msg->body);
+        if(msgBody == ""){
+            msgBody = msg->body;
+        }
+
+        EmojiExplain::EmojiParseFrom(msgBody,target);
+        content = QString::fromStdString(target);
+        qDebug()<<Q_FUNC_INFO<<"22222222222";
+    }else if(msg->msgtype == MEDIA_MSG_DYNAMIC_EMOJI){
+        QString explian(""),target("");
+        std::string msgBody = utils::MsgUtils::getText(msg->body);
+        if(msgBody == ""){
+            msgBody = msg->body;
+        }
+        EmojiExplain::dyEmojiParseFrom(QString::fromStdString(msgBody),target,explian);
+        content = explian;
+    }
+    qDebug()<<Q_FUNC_INFO<<"33333333333333";
+    senderId = QString::number(msg->targetid);
+    msgType  = QString::number(msg->msgtype);
+    msgId    = QString::number(msg->msgid);
+    sendTime = QString::number(msg->time);
+
+    displayName = QString::fromStdString(group.info.name);
+    qDebug()<<Q_FUNC_INFO<<"555555555555555555555:"<<displayName;
     emit bcNotify(senderId,msgType,content,msgId,sendTime,displayName,icon,"",1);
 }
 

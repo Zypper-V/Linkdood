@@ -65,6 +65,7 @@ namespace service {
 		int64 time;    //发送时间
 		int64 sourceid;	//会话来源ID
 		std::string body;//消息内容
+		std::string from_name;		 //	消息来源者的名称，个人聊天为联系人名称，群聊为群成员名称
 		std::vector<int64> related_users;//秘聊时相关的用户ID
 		std::vector<int64> limit_range; //@人员列表
 	};
@@ -158,6 +159,30 @@ namespace service {
 		}
 	public:
 		std::string msg_properties;
+	};
+
+	class MsgTip : public Msg {
+	public:
+		MsgTip():tipType(0),operType(0){ msgtype = MSG_TYPE_TIP; }
+		bool operator == (const MsgTip& rhs)const {
+			if (tipType != rhs.tipType)
+				return false;
+			if (operType != rhs.operType)
+				return false;
+			if (tiptime != rhs.tiptime)
+				return false;
+			if (operUser != rhs.operUser)
+				return false;
+			if (userInfo != rhs.userInfo)
+				return false;
+			return true;
+		}
+	public:
+		int tipType;
+		int operType;
+		std::string tiptime;
+		std::string operUser;
+		std::string userInfo;
 	};
 
 	typedef std::shared_ptr<Msg> MsgPtr;

@@ -29,18 +29,6 @@ CPage {
             tabView.currentIndex = 0;
         }
     }
-    Connections {
-        target: loginManager
-
-        onElsewhereLogin: {
-            console.log("CDoodRootTabbView  onElsewhereLogin !!!")
-            gToast.requestToast(tip,"","");
-            contactManager.clearChatList();
-            sessionListManager.clearChatList();
-            loginManager.setAppLoginStatus(0);
-            pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
-        }
-    }
 
     function showChatPage(chatName, targetid, chatType, icon) {
         console.log("CDoodRootTabbView  showChatPage !!!")
@@ -81,7 +69,7 @@ CPage {
             Text{
                 color: "white"
                 text:"["+userProfileManager.name+"]"
-                font.pixelSize: 16
+                font.pixelSize: 20
 
                 anchors.left: logo.right
                 anchors.leftMargin: 10
@@ -256,7 +244,7 @@ CPage {
                 onClicked: {
                     //TODO
                      addContactMenu.hide();
-                     pageStack.push(Qt.resolvedUrl("CDoodAddContactPage.qml"));
+                     pageStack.push(Qt.resolvedUrl("CDoodSearchContactPage.qml"));
                 }
             }
         }

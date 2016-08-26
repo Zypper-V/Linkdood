@@ -7,6 +7,15 @@ CDoodUserDataManage::CDoodUserDataManage(LinkDoodClient *client,QObject *parent)
     initConnect();
 }
 
+void CDoodUserDataManage::clearData()
+{
+    setAvatar("");
+    setGender("");
+    setName("");
+    setRemark("");
+    setThumbAvatar("");
+}
+
 void CDoodUserDataManage::setRemark(QString remark)
 {
     mRemark = remark;

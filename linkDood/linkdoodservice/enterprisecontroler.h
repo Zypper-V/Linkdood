@@ -5,12 +5,13 @@
 #include<QObject>
 #include<IEnterpriseService.h>
 #include<IEnterpriseObserver.h>
+#include "INotifyService.h"
 #include "linkdoodtypes.h"
 class EnterpriseControler:public QObject,public IEnterpriseObserver
 {
     Q_OBJECT
 public:
-
+    void init();
     EnterpriseControler(QObject *parent = 0);
     ~EnterpriseControler();
     void onUpdateRootFinished();

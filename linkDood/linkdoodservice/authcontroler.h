@@ -29,7 +29,7 @@ public:
     void _changepassword(service::ErrorInfo& info);
     void logout();
     //用户信息
-    void getUserInfo(QString& userId,QString& name,QString& avater);
+    //void getUserInfo(QString& userId,QString& name,QString& avater);
     //用户信息UserId
     QString UserId();
     QString userName();
@@ -104,7 +104,7 @@ private:
     void _loginResult(service::ErrorInfo& info,int64 userId);
     void _updateAccountInfo(service::ErrorInfo& info);
 private:
-   std::shared_ptr<service::User> mpUserInfo;
+  // std::shared_ptr<service::User> mpUserInfo;
    CNetworkManager* m_net;
    QString m_account;
 };

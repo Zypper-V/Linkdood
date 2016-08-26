@@ -36,8 +36,11 @@ signals:
     void loginoutRelust(bool loginout);
     void anthAvatarChanged(QString avatar);
     //系统消息推送
+    void removeSysMessageResult(QString result);
     void sysMessageNotice(IMSysMsg sysMsg);
     void getSysMessagesResult(int code, IMSysMsgList sysMsgList);
+
+    void uploadImageProgess(QString targetId,QString localId,int progress);
 
     //获取组织返回
     void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
@@ -113,10 +116,13 @@ signals:
     void fileProgressResult(int extra_req, int process, QString info,QString localId,QString targetId);
 
     //下载文件返回
+    void downloadMainImageResult(QString main_url,QString localpath);
     void downloadFileResult(int code, QString localpath, QString tagetid);
+    void downloadFileCancelId(QString id,QString cancelId);
     //上传图片返回
     void uploadImageResult(QString tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
+
     void downloadImageResult(int code, QString jasoninfo, QString tagetid);
     void downloadHistoryImageResult(int code, QString localpath, QString targetid, QString localid);
     //获取文件列表返回
@@ -204,9 +210,11 @@ public slots:
     void uploadAndSendFileMsg(Msg msg);
     //下载文件
     void downloadFile(QString path, QString url, QString json,QString localId,QString targetId);
+    void cancelDonwloadFile(QString id);
     //上传照片
     void uploadAndSendImageMsg(Msg);
     //下载图片
+    void downloadMainImage(QString main_url,QString encryptkey,QString targetId);
     void downloadImage(QString url, QString property);
     void downloadHistoryImage(QString url, QString property, QString targetid, QString localid);
     //解密文件
@@ -234,6 +242,7 @@ public slots:
     void getOrgUserInfo(QString userid);
     /*****************end Enterprise**************************/
 
+    void getGroupMemsList(QString groupid);
     void createGroup(QString level, QString name, MemberList memberList);
     void addGroup(QString groupid, QString verify_info);
     void removeGroup(QString type, QString groupid);
@@ -250,11 +259,12 @@ public slots:
     void getGroupList();
     void getGroupFileList(QString groupid);
     void deleteGroupFile(QStringList fileIdList);
-   void uploadGroupAvatar(QString path);
+    void uploadGroupAvatar(QString path);
 
     void getSysMessages(int type,int count,QString msgid,int flag);
     void setSysMessagRead(int type, QString msg);
     void response(IMSysMsgRespInfo info);
+    void removeSysMessage(QString type,QString msgid);
 
     void setPrivateSetting(IMPrivateSetting ps);
     void getPrivateSetting();
@@ -273,10 +283,11 @@ private slots:
     void onSysMessageNotice(IMSysMsg sysMsg);
     void onGetSysMessages(int code, IMSysMsgList sysMsgList);
     void onGetContactInfoResult(Contact contact);
+    void onRemoveSysMessageResult(QString result);
     //获取组织返回
     void onGetSonOrgsResult(int code, OrgList orglist,OrgUserList orguserlist);
     void onGetOnlineStatesResult(QOnlineStateList onlinestatelist);
-    void onGetorgUserInfoResult(int code,OrgUser orguser);
+    void onGetOrgUserInfoResult(int code,OrgUser orguser);
 
     void onGroupListChanged(GroupList groupList);
     void onGroupAvatarChanged(QString groupid,QString avatar);
@@ -335,7 +346,8 @@ private slots:
     void onChatUploadFile(int64 tagetid, QString jasoninfo, int code);
     //文件进度
     void onChatFileProgress(int extra_req, int process, QString info,QString localId,QString targetId);
-
+    void onDownloadFileCancelId(QString id,QString cancelId);
+    void onUploadImageProgess(QString targetId,QString localId,int progress);
     void onTransMessageFinishBack(int code,QString targetId);
     void onUploadFileBackUrl(QString targetId,QString localId,QString fileUrl,QString enkey);
     void onUploadImgeBackUrl(QString targetId,QString localId,QString mainUrl,QString thumbUrl,QString enkey);
@@ -344,6 +356,7 @@ private slots:
     //上传图片返回
     void onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
+    void onDownloadMainImageResult(QString main_url,QString loaclpath);
     void onChatDownloadImage(int code, QString localpath, int64 tagetid);
     void onDownloadHistoryImage(int code, QString localpath, QString targetid, QString localid);
     //获取文件列表返回

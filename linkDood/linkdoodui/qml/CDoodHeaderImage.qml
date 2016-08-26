@@ -5,6 +5,7 @@ import QtGraphicalEffects 1.0
 Item {
     id: root
 
+    property alias bkRect: roundImage
     property url iconSource: ""
     property string name: ""
     property string headerColor: ""
@@ -39,8 +40,7 @@ Item {
     Rectangle {
         id: defaultImage
         anchors.fill: parent
-
-        radius: defaultImage.width / 2
+        radius: defaultImage.height / 2
         color: headerColor
 
         Text {

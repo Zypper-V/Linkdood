@@ -21,20 +21,6 @@ AuthControler::AuthControler(QObject *parent)
 
 void AuthControler::login(const QString &server, const QString &userId, const QString &password)
 {
-    //    QString user("0086");
-
-    //    QByteArray ba = userId.toLatin1();
-    //    const char *s = ba.data();
-    //    while(*s && *s>='0' && *s<='9') s++;
-    //    bool isNum = *s ? false:true;
-
-    //    if(isNum && !userId.startsWith("0086"))
-    //    {
-    //        user = user+userId;
-    //    }else
-    //    {
-    //       user = userId;
-    //    }
     qDebug() << Q_FUNC_INFO << server << userId << password;
     service::IMClient::getClient()->getAuth()->login(userId.toStdString(),
                                                      password.toStdString(),
@@ -62,6 +48,9 @@ void AuthControler::getVerifyImg(QString userid, QString code)
 void AuthControler::_getVerifyImg(service::ErrorInfo info, std::string img)
 {
     qDebug() << Q_FUNC_INFO<<info.code()<<img.c_str();
+    if(img!=""){
+        img="file://"+img;
+    }
     emit getVerifyImgResult(QString::number(info.code()),QString::fromStdString(img));
 }
 
@@ -74,9 +63,12 @@ void AuthControler::changepassword(QString oldpsw, QString newpsw)
 
 void AuthControler::_changepassword(service::ErrorInfo &info)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<info.code();
     if(info.code()==0){
         emit changePasswordResult("修改成功");
+    }
+    else if(info.code()==543){
+        emit changePasswordResult("旧密码不正确");
     }
     else{
         emit changePasswordResult("修改失败");
@@ -93,17 +85,17 @@ void AuthControler::logout()
     service::IMClient::getClient()->getAuth()->logout();
 }
 
-void AuthControler::getUserInfo(QString &userId,QString& name,QString& avater)
-{
-    qDebug() << Q_FUNC_INFO;
-    userId = QString::number(mpUserInfo->id);
-    name   = QString::fromStdString(mpUserInfo->name);
-    avater = QString::fromStdString(mpUserInfo->thumb_avatar);
-}
+//void AuthControler::getUserInfo(QString &userId,QString& name,QString& avater)
+//{
+//    qDebug() << Q_FUNC_INFO;
+//    userId = QString::number(mpUserInfo->id);
+//    name   = QString::fromStdString(mpUserInfo->name);
+//    avater = QString::fromStdString(mpUserInfo->thumb_avatar);
+//}
 
 QString AuthControler::UserId()
 {
-    qDebug() << Q_FUNC_INFO <<"Id:" << mpUserInfo->id;
+    //qDebug() << Q_FUNC_INFO <<"Id:" << mpUserInfo->id;
     QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
     QString myId = settings.value("myId","").toString();
@@ -115,7 +107,7 @@ QString AuthControler::UserId()
 
 QString AuthControler::userName()
 {
-    qDebug() << Q_FUNC_INFO <<"userName:" << mpUserInfo->name.c_str();
+    //qDebug() << Q_FUNC_INFO <<"userName:" << mpUserInfo->name.c_str();
 
     QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
@@ -171,11 +163,14 @@ void AuthControler::updateAccountInfo(Contact user)
         if(user.gender == "女"){
             item.__set_gender(2);
         }
+        //item.__set_birthday(QDateTime::currentMSecsSinceEpoch());
     }
     if(user.nick_id != ""){
         item.__set_nick_id(user.nick_id.toStdString());
     }
-
+    if(user.birthday != ""){
+        item.__set_birthday(user.birthday.toLongLong());
+    }
     qDebug() << Q_FUNC_INFO << "end:" << user.name;
 
     service::IMClient::getClient()->getAuth()->updateAccountInfo(item,std::bind(&AuthControler::_updateAccountInfo,this,std::placeholders::_1));
@@ -183,7 +178,7 @@ void AuthControler::updateAccountInfo(Contact user)
 
 void AuthControler::init()
 {
-    mpUserInfo = std::make_shared<service::User>();
+   // mpUserInfo = std::make_shared<service::User>();
     service::IMClient::getClient()->getNotify()->setAuthObserver(this);
 }
 
@@ -215,12 +210,12 @@ void AuthControler::onLoginResultObserver(service::ErrorInfo& info, int64 userid
 
 void AuthControler::onDBUpdateFinished(int val)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<val<<"     "<<"pspspspspspspspspspspspspspspspsps";
 }
 
 void AuthControler::onLogoutChanged(service::ErrorInfo& info)
 {
-    qDebug() << Q_FUNC_INFO << "code:" << info.code();
+    qDebug() << Q_FUNC_INFO << "loginout_code:" << info.code();
 
     if(info.code() == 0 ||info.code() == 1304||info.code()<0)
     {
@@ -235,13 +230,13 @@ void AuthControler::onAccountInfoChanged(service::User& info)
 {
     qDebug() << Q_FUNC_INFO;
 
-    mpUserInfo->__set_avatar(info.avatar);
-    mpUserInfo->__set_gender(info.gender);
-    mpUserInfo->__set_extends(info.extends);
-    mpUserInfo->__set_id(info.id);
-    mpUserInfo->__set_name(info.name);
-    mpUserInfo->__set_thumb_avatar(info.thumb_avatar);
-    mpUserInfo->__set_time_zone(info.time_zone);
+//    mpUserInfo->__set_avatar(info.avatar);
+//    mpUserInfo->__set_gender(info.gender);
+//    mpUserInfo->__set_extends(info.extends);
+//    mpUserInfo->__set_id(info.id);
+//    mpUserInfo->__set_name(info.name);
+//    mpUserInfo->__set_thumb_avatar(info.thumb_avatar);
+//    mpUserInfo->__set_time_zone(info.time_zone);
 
     QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
@@ -253,15 +248,16 @@ void AuthControler::onAccountInfoChanged(service::User& info)
     Contact user;
     qDebug()<<Q_FUNC_INFO<<"name:"<<account.name.c_str()<<"gender:"<<account.gender<<"phone:"<<account.phone.c_str()<<"link_id:"<<account.nick_id.c_str();
     if(account.__isset.nick_id||account.nick_id != ""){
-        user.nick_id = QString::fromStdString(account.nick_id);
+        QString tmp = QString::fromStdString(account.nick_id);
+        QStringList list = tmp.split("/");
+        if(list.size() == 2){
+             user.nick_id = list.at(0);
+        }else{
+            user.nick_id = tmp;
+        }
         qDebug()<<Q_FUNC_INFO<<"ssssssssssssssssssssss1";
     }
 
-   // user.nick_id = QString::fromStdString(account.nick_id);
-
-    if(account.__isset.email){
-        //user.email = QString::fromStdString(account.email);
-    }
     if(account._user_isset.avatar){
         user.avatar = QString::fromStdString(account.avatar);
         qDebug()<<Q_FUNC_INFO<<"ssssssssssssssssssssss1";
@@ -281,6 +277,23 @@ void AuthControler::onAccountInfoChanged(service::User& info)
         qDebug()<<Q_FUNC_INFO<<"ssssssssssssssssssssss4";
     }
     user.id = QString::number(info.id);
+    if(account.__isset.email){
+        user.email = QString::fromStdString(account.email);
+    }
+    if(account.__isset.phone){
+
+        user.phone = QString::fromStdString(account.phone);
+        if(user.phone.startsWith("0086")){
+            user.phone.remove("0086");
+        }
+    }
+    if(account.__isset.birthday){
+        if(account.birthday > 0){
+            qDebug()<<Q_FUNC_INFO<<"birthDay:"<<account.birthday;
+            //QDateTime time = QDateTime::fromMSecsSinceEpoch(account.birthday);
+            user.birthday = QString::number(account.birthday);
+        }
+    }
     emit accountInfoChanged(user);
 }
 

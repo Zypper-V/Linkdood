@@ -25,7 +25,7 @@ CPage {
             pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
         }
         onWordsOutOfLimited:{
-            gToast.requestToast("字符数超过限制,请重新设置","","");
+            gToast.requestToast(tip,"","");
         }
     }
     contentAreaItem:Item {
@@ -169,8 +169,8 @@ CPage {
                     anchors.rightMargin: 7
                     anchors.leftMargin: 7
                     onClicked: {
-                        memberManager.clearMemberList();
-                        groupManager.getMemberList(groupManager.id);
+//                        memberManager.clearMemberList();
+//                        groupManager.getMemberList(groupManager.id);
                         pageStack.push(Qt.resolvedUrl("CDoodMemberListPage.qml"));
                         //                    loadingDialog.show();
                     }
@@ -223,7 +223,7 @@ CPage {
                     anchors.leftMargin: 7
                     //                width:400
                     onClicked: {
-                        if(groupManager.isGroupLeader){
+                        if(groupManager.isGroupLeader||memberManager.my_Type==="2"){
                             inputDialog.titleText= qsTr("群名称");
                             inputDialog.setText(rigthText);
                             inputDialog.type = 2;
@@ -247,7 +247,7 @@ CPage {
                                     showLine:false
                     anchors.top: group_name.bottom
                     onClicked: {
-                        if(groupManager.isGroupLeader){
+                        if(groupManager.isGroupLeader||memberManager.my_Type==="2"){
                             inputDialog.titleText= qsTr("群简介");
                             if(rigthText==="无"){
                                inputDialog.setText("");
@@ -333,7 +333,7 @@ CPage {
                     anchors.rightMargin: 7
                     anchors.leftMargin: 7
                     onClicked: {
-                        if(groupManager.isGroupLeader){
+                        if(groupManager.isGroupLeader||memberManager.my_Type==="2"){
                         verifyListDialog.deselect();
                         verifyListDialog.select(verifyListDialog.initSelect(),true);
                         verifyListDialog.show();
@@ -356,7 +356,7 @@ CPage {
                     showLine:false
                     anchors.top: group_verifyType.bottom
                     onClicked: {
-                        if(groupManager.isGroupLeader){
+                        if(groupManager.isGroupLeader||memberManager.my_Type==="2"){
                         is_AllowListDialog.deselect();
                         is_AllowListDialog.select(is_AllowListDialog.initSelect(),true);
                         is_AllowListDialog.show();
@@ -406,8 +406,8 @@ CPage {
                 }
             }
             onFlickEnded: {
-                groupFileList.color = "white"
-                groupbull.color = "white"
+//                groupFileList.color = "white"
+//                groupbull.color = "white"
                 groupbrief.color = "white"
                 group_name.color = "white"
                 inviteMember.color = "white"
@@ -435,20 +435,20 @@ CPage {
         titleText: qsTr("提示")
         messageText: alertDialog.operate
         onAccepted: {
-            groupManager.removeGroup(groupManager.id);
+            groupManager.removeGroup("",groupManager.id);
             loadingDialog.show();
         }
         onCanceled: {
             console.log("onCanceled")
         }
     }
-    CListDialog{
+    CDoodListDialog{
         id: verifyListDialog
 
         titleText: qsTr("身份验证")
-        onDelegateItemTriggered:{
-            console.log("xxxxxxxxx:"+model[index]);
-            groupManager.setGroupSet(1,model[index]);
+        onNotifySelectedItems:{
+            console.log("xxxxxxxxx:"+model[curIndex]);
+            groupManager.setGroupSet(1,model[curIndex]);
         }
         Component.onCompleted: {
             model = [qsTr("不允许加群"),qsTr("需要验证"),qsTr("允许任何人加群")]
@@ -463,13 +463,13 @@ CPage {
             return 2;
         }
     }
-    CListDialog{
+    CDoodListDialog{
         id: is_AllowListDialog
 
         titleText: qsTr("允许群成员邀请好友加入")
-        onDelegateItemTriggered:{
-            console.log("xxxxxxxxx:"+model[index]);
-            groupManager.setGroupSet(2,model[index]);
+        onNotifySelectedItems:{
+            console.log("xxxxxxxxx:"+model[curIndex]);
+            groupManager.setGroupSet(2,model[curIndex]);
         }
         Component.onCompleted: {
             model = [qsTr("允许邀请"),qsTr("不允许邀请")]

@@ -19,9 +19,11 @@ CPage {
         target: loginManager
         onGetVerifyImgResult: {
             console.log("onChangePasswordResult !!!!")
+            if(result!=""){
             gToast.requestToast(result,"","");
+            }
             loadingDialog.hide();
-            if(result==="验证成功,请重新登录")
+            if(judge==="")
             {
                 pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
             }
@@ -64,6 +66,15 @@ CPage {
                 width:parent.width
                 height: 86
                 color:"#003658"
+                IconButton{
+                    id:btnBack
+                    anchors.left: parent.left
+                    anchors.leftMargin: 30
+                    anchors.verticalCenter: parent.verticalCenter
+                    onClicked: {
+                        pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
+                    }
+                }
                 Text{
                     id:titleText
 
@@ -95,17 +106,13 @@ CPage {
                 property int nCount: loginManager.nVerifyImgCount
                 anchors.top:inputBackGround.top
                 anchors.left: inputBackGround.left
-                anchors.leftMargin: 100
+                anchors.leftMargin: 120
                 anchors.topMargin: 100
                 height:150
-                width: 150
-                sourceSize.width: width === 150 ? 151: 150
-                sourceSize.height: height
-                source:"file://"+loginManager.verifyImg
-                onNCountChanged:
-                {
-                    verifyimg.sourceSize.width = (verifyimg.sourceSize.width === 150 ? 151: 150)
-                }
+                width: 150+loginManager.nVerifyImgCount
+                sourceSize.width: 150+loginManager.nVerifyImgCount
+                sourceSize.height:150
+                source:loginManager.verifyImg
             }
             CButton{
                 id:cantsee
@@ -122,7 +129,8 @@ CPage {
                     radius: 10
                 }
                 onClicked: {
-                loginManager.getVerifyImg("","");
+                    loadingDialog.show();
+                    loginManager.getVerifyImg("","");
                 }
             }
             CLine {
@@ -155,11 +163,11 @@ CPage {
                 anchors.leftMargin: 65
                 width: 350
                 passwordLabelEnabled: false
-//                textLeftMargin: 50
+                //                textLeftMargin: 50
                 clip: true
                 textColor:"#787777"
                 font.pixelSize: 32
-//                inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
+                //                inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
                 //                text: "111111"
             }
             CButton{
@@ -178,7 +186,13 @@ CPage {
                     radius: 10
                 }
                 onClicked: {
-                loginManager.getVerifyImg("",verifycodeEdit.text);
+                    if(verifycodeEdit.text==""){
+                        gToast.requestToast("请输入验证码","","");
+                    }
+                    else{
+                        loadingDialog.show();
+                        loginManager.getVerifyImg("",verifycodeEdit.text);
+                    }
                 }
             }
 

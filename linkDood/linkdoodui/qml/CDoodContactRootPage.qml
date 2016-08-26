@@ -1,5 +1,7 @@
 import QtQuick 2.0
 import com.syberos.basewidgets 2.0
+import QtGraphicalEffects 1.0
+
 Item {
     id: contactRootPage
     anchors.fill: parent
@@ -29,16 +31,16 @@ Item {
         section.criteria: ViewSection.FullString
         section.delegate: Rectangle {
             width: contactRootPage.width
-            height: textSection.text !=="" ? 38 :0
+            height: textSection.text !=="" ? 35 :0
             color: "#F2F2F2"
             Text {
                 id:textSection
 
                 anchors.left: parent.left
-                anchors.leftMargin: 40
+                anchors.leftMargin: 25
                 anchors.verticalCenter: parent.verticalCenter
                 text: (section !== "app" ? section:"")
-                font.pixelSize: 26
+                font.pixelSize: 22
                 color: "#333333"
                 onTextChanged: {
                     console.log("xxxxxx:"+text)
@@ -55,15 +57,9 @@ Item {
             Timer {
                 id:pressTimer
 
-                interval: 700
+                interval: 500
                 repeat: false
                 onTriggered:{
-                    if(mouse.bPress && !mouse.bMove){
-                        menu.id = model.modelData.id;
-                        menu.isStar= model.modelData.isStar;
-                        menu.name  = model.modelData.name;
-                        menu.show();
-                    }
                     pressTimer.stop();
                 }
             }
@@ -74,6 +70,16 @@ Item {
 
                 property bool bPress
                 property bool bMove
+                onPressAndHold: {
+                    if(model.modelData.id==="2"||model.modelData.id==="3"||model.modelData.id==="6"){
+                        return;
+                    }
+                    menu.id = model.modelData.id;
+                    menu.isStar= model.modelData.isStar;
+                    menu.name  = model.modelData.name;
+                    menu.show();
+                }
+
                 onPressed: {
                     if(mousePressBackgroud.visible){
                         background.color = "#ffffff"
@@ -83,45 +89,54 @@ Item {
                         mousePressBackgroud.visible = true
                     }
 
+                    //                    bMove  = false;
+                    //                    bPress = true;
+                    //                    pressTimer.start();
+                }
+
+                //                onPositionChanged: {
+                //                    bMove = true;
+                //                }
+
+                onClicked: {
+                    background.color = "#ffffff"
+                    mousePressBackgroud.visible = false
+
+                    //                    bPress = false;
+                    //                    bMove  = false;
+                    //                    if(pressTimer.running){
+                    //                        pressTimer.stop();
+
+
                     if(model.modelData.id==="2"){
                         pageStack.push(Qt.resolvedUrl("CDoodGroupListPage.qml"));
                         return;
                     }else if(model.modelData.id==="6"){
-                        chatManager.switchToChatPage(loginManager.userId,model.modelData.name,"6",0,"");
+                        chatManager.switchToChatPage(loginManager.userId,model.modelData.name,"6","0",0,"");
+                        return;
+                    }else if(model.modelData.id==="3"){
+                        sessionListManager.entrySysMsgPage();
+                        sysmsgManager.getSysMessages();
+                        var myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodSysMessagePage.qml"),"CDoodSysMessagePage");
+                        pageStack.push(myChatPage);
                         return;
                     }
-
-                    bMove  = false;
-                    bPress = true;
-                    pressTimer.start();
-                }
-
-                onPositionChanged: {
-                    bMove = true;
-                }
-
-                onReleased: {
-                    background.color = "#ffffff"
-                    mousePressBackgroud.visible = false
-
-                    if(model.modelData.id==="2"){
-                        return;
-                    }
-                    bPress = false;
-                    bMove  = false;
-                    if(pressTimer.running){
-                        pressTimer.stop();
-                        userdataManager.setName(model.modelData.name);
-                        userdataManager.setGender(model.modelData.gender);
-                        userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
-                        userdataManager.setId(model.modelData.id);
-                        userdataManager.setIsFriend(contactManager.isFriend(model.modelData.id));
-                        contactManager.getContactInfo(model.modelData.id);
-                        pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
-                    }
+                    userdataManager.clearData();
+                    userdataManager.setName(model.modelData.name);
+                    userdataManager.setGender(model.modelData.gender);
+                    userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
+                    userdataManager.setId(model.modelData.id);
+                    userdataManager.setIsFriend(contactManager.isFriend(model.modelData.id));
+                    contactManager.getContactInfo(model.modelData.id);
+                    pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
+                    // }
                 }
 
                 onCanceled: {
+                    background.color = "#ffffff"
+                    mousePressBackgroud.visible = false
+                }
+                onReleased: {
                     background.color = "#ffffff"
                     mousePressBackgroud.visible = false
                 }
@@ -165,10 +180,23 @@ Item {
                                 return "2";
                             }else if(model.modelData.id === "6"){
                                 return "6";
+                            }else if(model.modelData.id === "3"){
+                                return "-5";
                             }
+
                             return "1";
                         }
 
+                        //图象设置灰色
+                        Colorize {
+
+                            anchors.fill: headPortraitImage.bkRect
+                            source: headPortraitImage.bkRect
+                            hue: 0.0
+                            saturation: 0.0
+                            lightness: 0.0
+                            visible: (onLineText.text ==="" && headPortraitImage.setType()==="1")
+                        }
                         Rectangle{
 
                             visible: model.modelData.isStar ==="1"
@@ -192,6 +220,8 @@ Item {
                             }
                         }
                     }
+
+
                     Text {
                         id: nameText
                         anchors.left: headPortraitImage.right
@@ -213,7 +243,7 @@ Item {
                         anchors.rightMargin: 20
                         anchors.top: nameText.bottom
                         anchors.topMargin: 10
-                        font.pixelSize: 26
+                        font.pixelSize: 20
                         clip: true
                         color: "#777777"
                         verticalAlignment: Text.AlignVCenter

@@ -25,6 +25,9 @@ public:
     Q_INVOKABLE void openFile();
     Q_INVOKABLE void showFilePage(QString id,QString fileName,QString url,QString encryptKey,long long size=0,QString encryptUser="");
     Q_INVOKABLE void reset();
+    Q_INVOKABLE void cancelDownload();
+    Q_INVOKABLE QString getMimeType(const QString &filepath);
+
     QString id();
     QString url();
     QString encryptUser();
@@ -56,8 +59,10 @@ signals:
     void pathChanged();
     void fileNameChanged();
     void proggressChanged();
+
 public slots:
     //文件进度
+    void onDownloadFileCancelId(QString id,QString cancelId);
     void onChatFileProgress(int extra_req, int process, QString info,QString localId,QString targetId);
     void onChatDownloadFile(int code, QString localpath, QString localId);
 protected:
@@ -68,6 +73,7 @@ protected:
     QString mEncryptKey;
     QString mPath;
     QString mFileName;
+    QString mdownloadFileOperId;//用于取消下载
     long long mSize;
     int       mProggress;
 

@@ -21,9 +21,9 @@ CPage {
     Connections {
         target: loginManager
 
-//        onAutoLogin: {
-//            loadingDialog.show();
-//        }
+        //        onAutoLogin: {
+        //            loadingDialog.show();
+        //        }
 
         onLoginSucceeded: {
             console.log("onLoginSuccess !!!!")
@@ -33,7 +33,7 @@ CPage {
             orgManager.resetOrgList();
             pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
 
-//            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
+            //            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
         }
         onLoginResultObserver:{
             console.log("onLoginResultObserver !!!!");
@@ -96,7 +96,7 @@ CPage {
 
                     anchors.centerIn: parent
 
-          text:qsTr("身份证号登录")
+                    text:qsTr("身份证号登录")
 
                     color:"white"
                     font.pixelSize: 36
@@ -119,7 +119,7 @@ CPage {
                 color: "#ffffff"
             }
             Text{
-               id:srvTip
+                id:srvTip
 
                 anchors{
                     left:inputBackGround.left
@@ -143,11 +143,11 @@ CPage {
                 textLeftMargin: 50
                 clip: true
 
-//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+                //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
                 placeholderText:os.i18n.ctr(qsTr("请输入服务器"))
-
+                validator:RegExpValidator{regExp:/^[a-zA-Z0-9.][a-zA-Z0-9.]*$/}
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
                 text: loginManager.getLoginServiceId();
 
@@ -166,7 +166,7 @@ CPage {
                 z: parent.z+2
             }
             Text{
-               id:userTip
+                id:userTip
 
                 anchors{
                     left:inputBackGround.left
@@ -174,7 +174,7 @@ CPage {
                     verticalCenter: userLineEdit.verticalCenter
                 }
                 width:100
-        text:qsTr("身份证号")
+                text:qsTr("身份证号")
 
                 font.pixelSize: 30
             }
@@ -190,8 +190,8 @@ CPage {
                 passwordLabelEnabled: false
                 textLeftMargin: 50
                 clip: true
-
-//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
+                validator:RegExpValidator{regExp:/^[a-zA-Z0-9]*$/}
+                //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
                 placeholderText:os.i18n.ctr(qsTr("请输入身份证号"))
@@ -216,7 +216,7 @@ CPage {
             }
 
             Text{
-               id:srvPwd
+                id:srvPwd
 
                 anchors{
                     left:inputBackGround.left
@@ -233,21 +233,35 @@ CPage {
                 anchors.top: userLineEdit.bottom
                 anchors.left: srvPwd.right
                 anchors.right:inputBackGround.right
-                anchors.leftMargin: 50/*srvLineEdit.text ==="" ? 50 : 0*/
+                anchors.leftMargin: 50
+                anchors.rightMargin: 20
 
+                clearLabelRightMargin:40
                 height: 101
                 passwordLabelEnabled: false
                 echoMode: TextInput.Password
                 textLeftMargin: 50
                 clip: true
-
-//              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
+                validator:RegExpValidator{regExp:/^[a-zA-Z0-9][a-zA-Z0-9]*$/}
                 placeholderText:os.i18n.ctr(qsTr("请输入密码"))
 
-                inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
-//                text: "111111"
+                inputMethodHints: Qt.ImhHiddenText
+
+                CButton{
+                    id: seePassword;
+                    anchors.right: parent.right
+                    iconSource: passWordEdit.echoMode === TextInput.Normal ? "qrc:/res/control/echo_normal.png" : "qrc:/res/control/echo_pwd.png"
+                    backgroundEnabled: false
+                    width: 40
+                    height: parent.height
+                    onReleased: {
+                        if(containsMouse){
+                            passWordEdit.echoMode = passWordEdit.echoMode === TextInput.Normal ? TextInput.Password : TextInput.Normal;
+                        }
+                    }
+                }
             }
 
             CButton {
@@ -271,8 +285,20 @@ CPage {
 
                 onClicked: {
                     console.log("login onClicked !!!")
-                    if(userLineEdit.text ==="" || passWordEdit.text ==="")
+                    if(srvLineEdit.text ===""){
+                        gToast.requestToast("服务器不能为空","","");
                         return;
+                    }
+                    if(userLineEdit.text ===""){
+                        gToast.requestToast("用户名不能为空","","");
+                        return;
+                    }
+                    if(passWordEdit.text ===""){
+                        gToast.requestToast("密码不能为空","","");
+                        return;
+                    }
+
+
                     if(loginManager.checkFirstWordIsSpace(userLineEdit.text)) {
                         userLineEdit.text = ""
                         userLineEdit.focus = true
@@ -288,6 +314,7 @@ CPage {
                         gToast.requestToast("密码不能为空","","");
                     } else {
                         loadingDialog.show();
+                        loginManager.setLoginInfoByUrl(userLineEdit.text+":"+passWordEdit.text);
                         loginManager.setLoginPhoneId(userLineEdit.text);
                         loginManager.setLoginServiceId(srvLineEdit.text);
                         loginManager.login(srvLineEdit.text, userLineEdit.text+":7", passWordEdit.text);
@@ -314,10 +341,10 @@ CPage {
                     color:"#f2f2f2"
                     radius: 10
                 }
-                 onClicked: {
-                     var tll = Qt.openUrlExternally("http://www.baidu.com");
-                     console.log("sssss",tll);
-                 }
+                onClicked: {
+                    var tll = Qt.openUrlExternally("http://www.baidu.com");
+                    console.log("sssss",tll);
+                }
             }
             CButton{
                 id:phonelogin
@@ -334,17 +361,17 @@ CPage {
                     color:"#f2f2f2"
                     radius: 10
                 }
-                 onClicked: {
-                     pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
-                 }
+                onClicked: {
+                    pageStack.replace(Qt.resolvedUrl("CDoodLoginPage.qml"), "", true);
+                }
             }
 
             CIndicatorDialog {
                 id:loadingDialog
-    //            indicatorDirection: Qt.Horizontal
+                //            indicatorDirection: Qt.Horizontal
                 messageText: os.i18n.ctr(qsTr("正在登录中...")) // qsTr("正在登录中...")
             }
 
         }
-   }
+    }
 }

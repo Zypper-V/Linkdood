@@ -26,9 +26,11 @@ public:
     static LinkDoodService* instance();
 
 signals:
+
     void getContactInfoResult(Contact contact);
     //系统消息推送
     void sysMessageNotice(IMSysMsg sysMsg);
+    void removeSysMessageResult(QString result);
     void getSysMessageResult(int code, IMSysMsgList sysMsgList);
     void anthAvatarChanged(QString avatar);
     //servie重启信号
@@ -55,7 +57,7 @@ signals:
     //获取子组织返回
     void getSonOrgsResult(int code,OrgList orglist,OrgUserList orguserlist);
     void getOnlineStatesResult(QOnlineStateList onlinestatelist);
-    void getOrgUserInfoResult(int code,OrgUser& orguser);
+    void getOrgUserInfoResult(int code,OrgUser orguser);
 
     //获取登录历史记录
     void getLoginHistoryResult(LoginInfoList list);
@@ -94,9 +96,11 @@ signals:
     void fileProgressResult(int extra_req, int process, QString info,QString localId,QString targetId);
     //下载文件返回
     void downloadFileResult(int code, QString localpath, QString tagetid);
+    void downloadFileCancelId(QString id,QString cancelId);
     //上传图片返回
     void uploadImageResult(QString tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
+    void downloadMainImageResult(QString main_url,QString localPath);
     void downloadImageResult(int code, QString jasoninfo, QString tagetid);
     void downloadHistoryImageResult(int code, QString localpath, QString targetid, QString localid);
     //获取文件列表返回
@@ -116,6 +120,7 @@ signals:
 
     void uploadFileBackUrl(QString targetId,QString localId,QString fileUrl,QString enkey);
     void uploadImgeBackUrl(QString targetId,QString localId,QString mainUrl,QString thumbUrl,QString enkey);
+    void uploadImageProgess(QString targetId,QString localId,int progress);
 
     void groupListChanged(GroupList groupList);
     void groupAvatarChanged(QString groupid,QString avatar);
@@ -300,7 +305,7 @@ public slots:
     * @param[in] url 传入url
     **************************/
     void downloadFile(QString path, QString url, QString json,QString localId,QString targetId);
-
+    void cancelDonwloadFile(QString id);
     /********************************************
     * @brief uploadImage
     * @description: 上传照片
@@ -315,6 +320,7 @@ public slots:
     * @param[in] await  传入接收结果回调
     ************************************************************************/
     void downloadImage(QString url, QString property);
+    void downloadMainImage(QString main_url,QString encryptkey,QString targetId);
 
     void downloadHistoryImage(QString url, QString property, QString targetid, QString localid);
 
@@ -365,6 +371,7 @@ public slots:
     void removeContact(QString userid);
     void getVerifyType(QString userid);
 
+    void getGroupMemsList(QString groupid);
     void createGroup(QString level, QString name, MemberList memberList);
     void addGroup(QString groupid, QString verify_info);
     void removeGroup(QString type, QString groupid);
@@ -386,6 +393,7 @@ public slots:
     void getSysMessages(int type,int count,QString msgid,int flag);
     void setSysMessagRead(int type, QString msg);
     void response(IMSysMsgRespInfo info);
+    void removeSysMessage(QString type,QString msgid);
 
     void setPrivateSetting(IMPrivateSetting ps);
     void getPrivateSetting();
@@ -395,6 +403,7 @@ protected slots:
     //系统消息推送
     void onSysMessageNotice(IMSysMsg sysMsg);
     void onGetSysMessages(int code, IMSysMsgList sysMsgList);
+    void onRemoveSysMessageResult(QString result);
 
     //获取联系人资料返回
     void onGetContactInfoResult(Contact contact);
@@ -423,6 +432,7 @@ protected slots:
     //退出登录结果返回
     void onLoginoutRelust(bool loginout);
 
+    void onUploadImageProgess(QString targetId,QString localId,int progress);
     //会话列表头像更新
     void onChatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
@@ -446,10 +456,12 @@ protected slots:
     void onChatFileProgress(int extra_req, int process, QString info,QString localId,QString targetId);
 
     //下载文件返回
+    void onDownloadFileCancelId(QString id,QString cancelId);
     void onChatDownloadFile(int code, QString localpath, QString tagetid);
     //上传图片返回
     void onChatupLoadImage(int64 tagetid, QString orgijson, QString thumbjson, int code);
     //下载图片返回
+    void onDownloadMainImageResult(QString main_url,QString localpath);
     void onChatDownloadImage(service::ErrorInfo& info, QString localpath, int64 tagetid);
     void onDownloadHistoryImage(int code, QString localpath, QString targetid, QString localid);
     //获取文件列表返回
@@ -519,7 +531,6 @@ protected slots:
 
 public:
     static LinkDoodService* m_pInstance;
-
 private:
     LinkDoodService(QObject *parent = 0);
 
@@ -527,8 +538,10 @@ private:
 
     // 初始化SDK
     void initSdk();
+    void unInitSdk();
     void initObserver();//初始监听接口
     void initConnects();
+    void initControl();
     // 初始化Dbus连接
     void initDBusConnection();
 

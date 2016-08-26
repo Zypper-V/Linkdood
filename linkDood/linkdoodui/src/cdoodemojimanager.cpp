@@ -44,7 +44,7 @@ CDoodEmojiManager::CDoodEmojiManager(LinkDoodClient *client, int type, QObject *
     mType = type;
     if(type == 1)
     {
-        qDebug() << Q_FUNC_INFO <<"init dy..........";
+        //qDebug() << Q_FUNC_INFO <<"init dy..........";
         initEmojiExplainMap();
         loadEmoji(":/res/smilies/dynamic_expression");
     }
@@ -97,7 +97,13 @@ void CDoodEmojiManager::loadEmoji(QString path)
             {
                 item->setExplain(mEmojiExplain[faceName]);
             }
-            insertItem(itemCount(),item);
+            //insertItem(itemCount(),item);
+
+            if(item->path().contains("Dynamic_Expression")){
+                insertItem(itemCount(),item);
+            }else{
+                addItemBegin(item);
+            }
             mEmojiListMap[faceName] = item;
         }
     }

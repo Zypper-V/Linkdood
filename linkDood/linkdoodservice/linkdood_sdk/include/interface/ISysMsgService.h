@@ -55,6 +55,15 @@ namespace service{
 		virtual void getMessages(
 			int type,int count,int64 msgid,int flag, std::function<void(ErrorInfo info,std::vector<SysMsg> sysmsgs)>await) = 0;	
 
+		/************************************************************************
+		* @brief removeMessages
+		* @description: 删除消息消息
+		* @param[in] type  传入响应消息类型 0 全部 1 加好友请求 2 加好友响应 3 加群请求 4 加群响应
+		* @param[in] msgs 传入要删除的消息id
+		* @param[in] await  传入接收结果回调
+		************************************************************************/
+		virtual void removeMessages(
+			int type, std::vector<int64> msgs, std::function<void(ErrorInfo info)> await) = 0;
 	};
 
 	std::shared_ptr<ISysMsgService> getSysMsgInstance(void);

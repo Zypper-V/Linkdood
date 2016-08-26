@@ -57,7 +57,8 @@ CPage {
                 anchors.top:parent.top
                 height:215
                 z: 5
-                source: "qrc:/res/descbgtop.jpg"
+//                source: "qrc:/res/descbgtop.jpg"
+                source: "qrc:/res/friend_info_bg.png"
                 Text{
                     id:username
                     anchors.bottom: parent.bottom
@@ -132,6 +133,12 @@ CPage {
                     z: parent.z+10
 
                     anchors.bottom: parent.bottom
+                }
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log(userdataManager.name);
+                    }
                 }
             }
             Rectangle{
@@ -216,8 +223,8 @@ CPage {
 
             width: parent.width - 40
             height: 90
-            opacity : pressed ? 1: 0.7
-            visible: userdataManager.isFriend && userdataManager.id != userProfileManager.id
+            opacity : pressed ? 0.7: 1
+            visible: userdataManager.isFriend && userdataManager.id !== userProfileManager.id
             text:os.i18n.ctr(qsTr("发消息"))
             textColor:  "#ffffff"
             pixelSize:34
@@ -227,8 +234,8 @@ CPage {
                 radius: 10
             }
             onClicked: {
-                console.log("org name:"+userdataManager.name);
-                chatManager.switchToChatPage(userdataManager.id,userdataManager.name,"1",0,userdataManager.thumbAvatar);
+                console.log("org name:"+userdataManager.name+"thm:"+userdataManager.thumbAvatar);
+                chatManager.switchToChatPage(userdataManager.id,userdataManager.name,"1","0",0,userdataManager.thumbAvatar);
             }
         }
         CButton{
@@ -241,7 +248,7 @@ CPage {
 
             width: parent.width - 40
             height: 90
-            opacity : pressed ? 1: 0.7
+            opacity : pressed ? 0.7: 1
             text:os.i18n.ctr(qsTr("添加好友"))
             textColor:  "#ffffff"
             pixelSize:34

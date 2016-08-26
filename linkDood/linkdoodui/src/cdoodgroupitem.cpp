@@ -119,6 +119,21 @@ QString CDoodGroupItem::setLevel(const QString &data)
     emit levelChanged();
     return mLevel;
 }
+
+bool CDoodGroupItem::isLeader() const
+{
+    return mIsLeader;
+}
+
+bool CDoodGroupItem::setIsLeader(const bool &data)
+{
+    if(data==mIsLeader){
+        return data;
+    }
+    mIsLeader=data;
+    emit isLeaderChanged();
+    return mIsLeader;
+}
 QString CDoodGroupItem::sectionKey() const
 {
     return mSection;

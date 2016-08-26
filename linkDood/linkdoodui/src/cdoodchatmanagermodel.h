@@ -31,13 +31,14 @@ public:
     explicit CDoodChatManagerModel(QObject *parent = 0);
 
     void updateGroupMems(MemberList list);
-
+    void updateGroupSize(int size);
     int msgCount();
     void addHistoryMsgToListView(MsgList msgList);
     void addItemToListViewModel(Msg msg,QString textMsgContent="",bool isHistory = false);
     void modifyItemToListViewModel(Msg msg,bool isLoading=false,int progress=0);
     void clearList();
     void removeItemById(QString id);
+    void removeItemsByFromId(QString fromId);
     void analyzeHistoryMsg(MsgList msgList);
     void updateAvatar(QString id,QString avater);
     void updateLastMsgId(QString lastMsgId);
@@ -47,6 +48,8 @@ public:
     void updateItemData(QString userId,QString name,QString avater);
     bool msgIsExitById(QString id);
     void updateGroupChatInfo(QString userId,QString name,QString thum);
+    int  indexOfNewItem(QDateTime date);
+    void addGroupMems(MemberList mems);
     QString lastMsgId();
     QString firstMsgId();
     int  groupMemsCount();
@@ -73,12 +76,16 @@ signals:
     void avatarChanged();
     void reqestUserInfo(QString uerId);
     void downloadImage(QString targetId,QString localId,QString url,QString enkey);
+    void updateDataFinished();
+    void deleteMessage(QString targetId,QStringList msgs);
 protected:
     void judgeAddTimeTip(QDateTime date);
     bool isJudageShowTime(QDateTime date);
 public:
     int     mNeedNewMsgCount;
     QString mNeedNewMsgLastId;
+    int     mGroupSize;
+    QString createLocalId();
 private:
     QMap<QString, CDoodChatItem*> m_pChatMap;
     MemberList mGroupMemList;

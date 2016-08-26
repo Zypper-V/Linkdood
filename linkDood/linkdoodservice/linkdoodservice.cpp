@@ -94,7 +94,7 @@ LinkDoodService::LinkDoodService(QObject *parent) :
 {
 
     qDebug() << Q_FUNC_INFO;
-
+    m_pPackageManager = NULL;
     registerDoodDataTypes();
 
     initSdk();
@@ -108,7 +108,10 @@ LinkDoodService::LinkDoodService(QObject *parent) :
     setAppLoginStatus(2);
     emit serviceRestart();
     //    }
-
+    QDir path(APP_SAVE_DATA_PATH);
+    if(!path.exists()){
+        path.mkdir(APP_SAVE_DATA_PATH);
+    }
 }
 
 void LinkDoodService::login(const QString &server,
@@ -116,6 +119,7 @@ void LinkDoodService::login(const QString &server,
                             const QString &password)
 {
     qDebug() << Q_FUNC_INFO;
+    //initControl();
     if(m_pAuth != NULL){
         m_pAuth->login(server,userId,password);
     }
@@ -210,6 +214,7 @@ void LinkDoodService::onOnlineChanged(QString id, QString deviceType,int flag)
 {
     qDebug() << Q_FUNC_INFO;
     if(id==m_userid&&flag==(-1)){
+        setAppLoginStatus(0);
         emit elsewhereLogin("您的帐号已在别处登录");
     }
     emit contactOnlineChanged(id, deviceType);
@@ -385,6 +390,13 @@ void LinkDoodService::downloadFile(QString path, QString url, QString json,QStri
         m_pChatObserver->downloadFile(path, url, json,localId,targetId);
 }
 
+void LinkDoodService::cancelDonwloadFile(QString id)
+{
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->cancelDonwloadFile(id);
+    }
+}
+
 void LinkDoodService::uploadAndSendImageMsg(Msg msg)
 {
     qDebug() << Q_FUNC_INFO;
@@ -397,6 +409,14 @@ void LinkDoodService::downloadImage(QString url, QString property)
     qDebug() << Q_FUNC_INFO;
     //if(m_pChatObserver != NULL)
     //  m_pChatObserver->downloadImage(url, property);
+}
+
+void LinkDoodService::downloadMainImage(QString main_url, QString encryptkey, QString targetId)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->downloadMainImage(main_url,encryptkey,targetId);
+    }
 }
 
 void LinkDoodService::downloadHistoryImage(QString url, QString property, QString targetid, QString localid)
@@ -603,6 +623,14 @@ void LinkDoodService::response(IMSysMsgRespInfo info)
         m_pSysMsg->response(info);
 }
 
+void LinkDoodService::removeSysMessage(QString type,QString msgid)
+{
+    qDebug()<<Q_FUNC_INFO<<msgid;
+    if(m_pSysMsg!=NULL){
+        m_pSysMsg->removeSysMessage(type,msgid);
+    }
+}
+
 void LinkDoodService::setPrivateSetting(IMPrivateSetting ps)
 {
     qDebug() << Q_FUNC_INFO;
@@ -629,6 +657,12 @@ void LinkDoodService::onGetSysMessages(int code, IMSysMsgList sysMsgList)
 {
     qDebug() << Q_FUNC_INFO;
     emit getSysMessageResult(code, sysMsgList);
+}
+
+void LinkDoodService::onRemoveSysMessageResult(QString result)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit removeSysMessageResult(result);
 }
 
 void LinkDoodService::onGetContactInfoResult(Contact contact)
@@ -726,13 +760,21 @@ void LinkDoodService::onLoginFailed(int errCode)
         break;
     case 113:
         err = "帐号已经登录";
+        break;
     case 117:
+        err="输入错误次数过多,请输入验证码";
+        break;
+    case 1102:
         err="输入错误次数过多,请输入验证码";
         break;
     case 1303:
         err="首次登录，请激活帐号";
+        break;
+    case 1308:
+        err="账号已锁定";
+        break;
     default:
-        err = "登录失败(code:"+QString::number(errCode)+")";
+        err = "登录失败(code: "+QString::number(errCode)+")";
         break;
     }
 
@@ -742,7 +784,13 @@ void LinkDoodService::onLoginFailed(int errCode)
 void LinkDoodService::onLoginoutRelust(bool loginout)
 {
     qDebug() << Q_FUNC_INFO << loginout;
+    unInitSdk();
     emit loginoutRelust(loginout);
+}
+
+void LinkDoodService::onUploadImageProgess(QString targetId, QString localId, int progress)
+{
+    emit uploadImageProgess(targetId,localId,progress);
 }
 
 void LinkDoodService::onChatAvatarChanged(QString id, QString avatar)
@@ -820,7 +868,7 @@ void LinkDoodService::onChatUploadAvatar(QString orgijson, QString thumbjson, in
         updateAccountInfo(contact);
     }
 
-    //    emit uploadAvatarResult(orgijson, thumbjson, code);
+    emit uploadAvatarResult(orgijson, thumbjson, code);
 }
 
 void LinkDoodService::onChatUploadFile(int64 tagetid, QString jasoninfo, int code)
@@ -836,6 +884,12 @@ void LinkDoodService::onChatFileProgress(int extra_req, int process, QString inf
     emit fileProgressResult(extra_req, process, info,localId,targetId);
 }
 
+void LinkDoodService::onDownloadFileCancelId(QString id, QString cancelId)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit downloadFileCancelId(id,cancelId);
+}
+
 void LinkDoodService::onChatDownloadFile(int code , QString localpath, QString tagetid)
 {
     qDebug() << Q_FUNC_INFO;
@@ -846,6 +900,12 @@ void LinkDoodService::onChatupLoadImage(int64 tagetid, QString orgijson, QString
 {
     qDebug() << Q_FUNC_INFO;
     emit uploadImageResult(QString::number(tagetid), orgijson, thumbjson, code);
+}
+
+void LinkDoodService::onDownloadMainImageResult(QString main_url, QString localpath)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit downloadMainImageResult(main_url,localpath);
 }
 
 void LinkDoodService::onChatDownloadImage(service::ErrorInfo &info, QString localpath, int64 tagetid)
@@ -953,7 +1013,6 @@ void LinkDoodService::onGroupAvatarChanged(QString groupid, QString avatar)
 
 void LinkDoodService::onMemberAvatarChanged(QString userid, QString avatar)
 {
-    qDebug()<<Q_FUNC_INFO;
     emit memberAvatarChanged(userid,avatar);
 }
 
@@ -978,7 +1037,7 @@ void LinkDoodService::onMemberInfoChanged(QString groupid, Member member)
 void LinkDoodService::onMemberListChanged(QString operType, QString groupid, MemberList memberList)
 {
     qDebug()<<Q_FUNC_INFO;
-    //    emit memberListChanged(operType,groupid,memberList);
+    emit memberListChanged(operType,groupid,memberList);
 }
 
 void LinkDoodService::onCreateGroupResult(QString result)
@@ -1108,7 +1167,11 @@ LinkDoodService::~LinkDoodService()
 void LinkDoodService::initSdk()
 {
     qDebug() << Q_FUNC_INFO;
-    m_pPackageManager = new CSystemPackageManager();
+    if(m_pPackageManager == NULL){
+        m_pPackageManager = new CSystemPackageManager(this);
+        qDebug() << Q_FUNC_INFO<<"m_pPackageManager";
+    }
+
     m_sInstallPath = m_pPackageManager->packageInfo(LINKDOOD_SOPID)->installPath();
     qDebug() << Q_FUNC_INFO << "installPath = " << m_sInstallPath;
 
@@ -1124,33 +1187,66 @@ void LinkDoodService::initSdk()
     qDebug() << Q_FUNC_INFO << "m_client->initret:" << ret;
     if(ret)
     {
-        qDebug() << Q_FUNC_INFO <<"dggsdgsdhgdfdfhdfhgf";
+        qDebug() << Q_FUNC_INFO <<"init sdk";
         initObserver();
     }
 
     //    login("vrv","008615829282366","chengcy2015");
 }
 
-void LinkDoodService::initObserver()
+void LinkDoodService::unInitSdk()
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug()<<Q_FUNC_INFO;
+    return;
+    m_pIMClient->getNotify()->removeAuthObserver(m_pAuth.get());
+    m_pIMClient->getNotify()->removeChatObserver(m_pChatObserver.get());
+    m_pIMClient->getNotify()->removeContactObserver(m_pContactObserver.get());
+    m_pIMClient->getNotify()->removeGroupObserver(m_pGroupControler.get());
+    m_pIMClient->getNotify()->removeEnterpriseObserver(m_pEnterpriseControler.get());
+    m_pIMClient->getNotify()->removeSysMsgObserver(m_pSysMsg.get());
+}
 
-    m_pSysMsg          = std::make_shared<SysMsgControler>();
-    m_pAuth            = std::make_shared<AuthControler>();
-    m_pContactObserver = std::make_shared<ContactControler>();
-    m_pChatObserver    = std::make_shared<ChatControler>();
-    m_pEnterpriseControler = std::make_shared<EnterpriseControler>();
-    m_pGroupControler      =std::make_shared<GroupControler>();
+void LinkDoodService::initControl()
+{
+    qDebug()<<Q_FUNC_INFO;
     m_pAuth->init();
     m_pChatObserver->init();
     m_pContactObserver->init();
     m_pGroupControler->init();
+    m_pEnterpriseControler->init();
+    m_pSysMsg->init();
+}
+
+void LinkDoodService::initObserver()
+{
+    qDebug() << Q_FUNC_INFO;
+    //    m_pSysMsg          = std::make_shared<SysMsgControler>();
+    //    m_pAuth            = std::make_shared<AuthControler>();
+    //    m_pContactObserver = std::make_shared<ContactControler>();
+    //    m_pChatObserver    = std::make_shared<ChatControler>();
+    //    m_pEnterpriseControler = std::make_shared<EnterpriseControler>();
+    //    m_pGroupControler      =std::make_shared<GroupControler>();
+
+    m_pSysMsg.reset(new SysMsgControler);
+    m_pAuth.reset(new AuthControler);
+    m_pContactObserver.reset(new ContactControler);
+    m_pChatObserver.reset(new ChatControler);
+    m_pEnterpriseControler.reset(new EnterpriseControler);
+    m_pGroupControler.reset(new GroupControler);
+
+    initControl();
     initConnects();
+
 }
 
 void LinkDoodService::initConnects()
 {
     qDebug() << Q_FUNC_INFO ;
+    QObject::connect(m_pChatObserver.get(),SIGNAL(downloadFileCancelId(QString,QString)),this,
+                     SLOT(onDownloadFileCancelId(QString,QString)));
+
+    QObject::connect(m_pChatObserver.get(),SIGNAL(uploadImageProgess(QString,QString,int)),this,
+                     SLOT(onUploadImageProgess(QString,QString,int)));
 
     QObject::connect(m_pChatObserver.get(),SIGNAL(transMessageFinishBack(int,QString)),this,
                      SLOT(onTransMessageFinishBack(int,QString)));
@@ -1182,7 +1278,7 @@ void LinkDoodService::initConnects()
 
     QObject::connect(m_pChatObserver.get(), SIGNAL(fileProgressBack(int,int,QString,QString,QString)), this, SLOT(onChatFileProgress(int,int,QString,QString,QString)));
     QObject::connect(m_pChatObserver.get(), SIGNAL(downloadFileBack(int,QString,QString)), this, SLOT(onChatDownloadFile(int,QString,QString)));
-
+    QObject::connect(m_pChatObserver.get(), SIGNAL(downloadMainImageResult(QString,QString)), this, SLOT(onDownloadMainImageResult(QString,QString)));
     QObject::connect(m_pChatObserver.get(), SIGNAL(getUserInfoBack(int,Contact)), this, SLOT(onGetUserInfoResult(int,Contact)));
 
     QObject::connect(m_pChatObserver.get(), SIGNAL(downloadHistoryImageResult(int,QString,QString,QString)), this, SLOT(onDownloadHistoryImage(int,QString,QString,QString)));
@@ -1238,6 +1334,7 @@ void LinkDoodService::initConnects()
 
 
     //SysMsgControler
+    QObject::connect(m_pSysMsg.get(),SIGNAL(removeSysMessageResult(QString)),this,SLOT(onRemoveSysMessageResult(QString)));
     QObject::connect(m_pSysMsg.get(),SIGNAL(sysMessageNotice(IMSysMsg)),this,SLOT(onSysMessageNotice(IMSysMsg)));
     QObject::connect(m_pSysMsg.get(), SIGNAL(getSysMessagesReult(int,IMSysMsgList)), this, SLOT(onGetSysMessages(int,IMSysMsgList)));
 
@@ -1263,6 +1360,8 @@ void LinkDoodService::initConnects()
     QObject::connect(m_pGroupControler.get(),SIGNAL(getMemberListResult(QString,MemberList)),this,SLOT(onGetMemberListResult(QString,MemberList)));
     QObject::connect(m_pGroupControler.get(),SIGNAL(getGroupMemberListReslut(int,QString,MemberList)),this,SLOT(onGetGroupMemberListReslut(int,QString,MemberList)));
     QObject::connect(m_pGroupControler.get(),SIGNAL(uploadGroupAvatarResult(QString,QString)),this,SLOT(onUploadGroupAvatarResult(QString,QString)));
+
+    QObject::connect(m_pSysMsg.get(),SIGNAL(systemMessageNotice(QString,int64)),m_pChatObserver.get(),SLOT(onSystemMessageNotice(QString,int64)));
 }
 
 void LinkDoodService::initDBusConnection()
@@ -1291,6 +1390,13 @@ void LinkDoodService::_getContactInfo(service::ErrorInfo &info, service::User &u
     msg.thumb_avatar = QString::fromStdString(user.thumb_avatar);
     if(m_pChatObserver != NULL){
         m_pChatObserver->sendMessage(msg);
+    }
+}
+void LinkDoodService::getGroupMemsList(QString groupid)
+{
+    qDebug()<<Q_FUNC_INFO;
+    if(m_pGroupControler != NULL){
+        m_pGroupControler->getMemberList(groupid);
     }
 }
 

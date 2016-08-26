@@ -12,6 +12,11 @@ CDoodLoginManager::CDoodLoginManager(LinkDoodClient *client, QObject *parent) :
 
 }
 
+void CDoodLoginManager::text(QString param)
+{
+    emit textPareams(param);
+}
+
 CDoodLoginManager::~CDoodLoginManager()
 {
 
@@ -30,6 +35,21 @@ void CDoodLoginManager::logout()
 void CDoodLoginManager::changepassword(QString oldpsw, QString newpsw)
 {
     qDebug() << Q_FUNC_INFO;
+    if(newpsw.size()<6){
+        emit illegalPassword("新密码长度不能低于6位");
+        return;
+    }
+    if(newpsw.size()>32){
+        emit illegalPassword("新密码长度不能高于32位");
+        return;
+    }
+    for(int i=0;i<newpsw.size();i++){
+        if(newpsw.toStdString().substr(i,1)==" "){
+            emit illegalPassword("密码中不能含有空格");
+            return;
+        }
+    }
+
     m_pClient->changepassword(oldpsw, newpsw);
 }
 
@@ -41,18 +61,17 @@ void CDoodLoginManager::login(const QString &server,
     std::string id;
     id=userId.toStdString();
     mVerifyId=QString::fromStdString((id.substr(0,id.size()-2)));
-    if(mLoginCount>2){
-        getVerifyImg(mVerifyId,"");
-        emit loginFailed("输入错误次数过多,请输入验证码");
-    }
-    else{
-        //        setLastLoginAccount(server,userId,password);
-        m_pClient->login(server, userId, password);
-    }
-
-
+    m_pClient->login(server, userId, password);
     //    m_pClient->installPath();
     //getLoginHistory();
+}
+
+void CDoodLoginManager::loginByUrl()
+{
+    QStringList info = loginInfoByUrl().split(":");
+    if(info.size() == 2){
+        m_pClient->login(getLoginServiceId(),info.at(0)+":7",info.at(1));
+    }
 }
 
 void CDoodLoginManager::autoLogin(QString id, QString service)
@@ -96,6 +115,20 @@ void CDoodLoginManager::setAppLoginStatus(const int status)
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->setAppLoginStatus(status);
+}
+
+void CDoodLoginManager::setLoginInfoByUrl(QString loginInfo)
+{
+    QString fileName = QString::fromStdString(APP_DATA_PATH)+"config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("loginInfo",loginInfo);
+}
+
+QString CDoodLoginManager::loginInfoByUrl()
+{
+    QString fileName = QString::fromStdString(APP_DATA_PATH)+"config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    return settings.value("loginInfo","").toString();
 }
 void CDoodLoginManager::setLoginPhone(QString phone)
 {
@@ -158,6 +191,23 @@ QString CDoodLoginManager::getLoginServiceId()
     QString fileName = "/data/data/com.vrv.linkDood/config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
     return settings.value("ServiceId","").toString();
+}
+
+bool CDoodLoginManager::isStartupByUrl()
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    bool value = settings.value("startupByUrl",false).toBool();
+    return value;
+}
+
+void CDoodLoginManager::setIsStartupByUrl(bool isByUrl)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName = "/data/data/com.vrv.linkDood/config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("startupByUrl",isByUrl);
 }
 
 //void CDoodLoginManager::setLastLoginAccount(QString service, QString id, QString psw)
@@ -226,6 +276,16 @@ void CDoodLoginManager::setLoginInfo(int flag, QString userid, QString username,
 int CDoodLoginManager::loginStatus()
 {
     return getAppLoginStatus();
+}
+
+void CDoodLoginManager::onSwitchLoginByUrl()
+{
+    emit switchLoginByUrl();
+}
+
+void CDoodLoginManager::onSwitchChatPageByUrl()
+{
+    emit switchChatPageByUrl();
 }
 
 void CDoodLoginManager::onElsewhereLogin(QString tip)
@@ -305,6 +365,7 @@ void CDoodLoginManager::onLoginSucceeded()
 {
     qDebug() << Q_FUNC_INFO;
     mLoginCount=0;
+    setNVerifyImgCount(0);
     emit loginSucceeded();
     setAppLoginStatus(1);
 }
@@ -312,16 +373,31 @@ void CDoodLoginManager::onLoginSucceeded()
 void CDoodLoginManager::onGetVerifyImgResult(QString code, QString img)
 {
     qDebug() << Q_FUNC_INFO<<code<<img<<"sssssss";
+    setVerifyImg(img);
+    setNVerifyImgCount(++mNVerifyImgCount);
     if(code=="0"){
         mLoginCount=0;
-        emit getVerifyImgResult("验证成功,请重新登录");
+        emit getVerifyImgResult("","验证成功,请重新登录");
     }
-    if(code=="103")
+    else if(code=="103")
     {
-        emit getVerifyImgResult("验证码输入错误,请重新输入");
+        emit getVerifyImgResult("1","验证码输入错误,请重新输入");
     }
-    setNVerifyImgCount(++mNVerifyImgCount);
-    setVerifyImg(img);
+    else if(code=="104"){
+        emit getVerifyImgResult("1","");
+    }
+    else if(code=="11100"){
+        mLoginCount=0;
+        emit getVerifyImgResult("","无法回避的内部错误,服务无法找到");
+    }
+    else{
+        mLoginCount=0;
+        emit getVerifyImgResult("","未知错误");
+    }
+
+
+
+
 }
 
 void CDoodLoginManager::onLoginFailed(QString err)
@@ -340,6 +416,9 @@ void CDoodLoginManager::onLoginoutRelust(bool loginout)
 {
     qDebug() << Q_FUNC_INFO << "loginout:" << loginout;
     emit loginoutRelust(loginout);
+    if(isStartupByUrl()){
+        emit siwtchLoginout();
+    }
 }
 
 void CDoodLoginManager::onChangePasswordResult(QString result)

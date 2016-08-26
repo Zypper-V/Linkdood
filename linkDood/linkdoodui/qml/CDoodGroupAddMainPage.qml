@@ -3,6 +3,10 @@ import com.syberos.basewidgets 2.0
 
 CPage {
     id: groupAddMainPage
+
+    property bool isTransMessage: false
+    property string localId
+
     anchors.fill: parent
     onStatusChanged: {
         if (status === CPageStatus.WillShow) {
@@ -11,6 +15,49 @@ CPage {
             groupAddMainPage.statusBarHoldItemColor = "#edf0f0"
             gScreenInfo.setStatusBarStyle("black")
         }
+    }
+    Connections {
+        target: groupManager
+        onNoMemberInvited:{
+           loadingDialog.hide();
+            gToast.requestToast(tip,"","");
+        }
+        onCreateGroupResult: {
+            console.log("!!!!")
+            loadingDialog.hide();
+            contactManager.clearMember();
+            enterpriseManager.clearMember();
+            groupManager.clearMemberCount();
+            gToast.requestToast(result,"","");
+            pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
+        }
+        onInviteMemberResult: {
+            console.log("!!!!")
+            loadingDialog.hide();
+            contactManager.clearMember();
+            enterpriseManager.clearMember();
+            groupManager.clearMemberCount();
+            gToast.requestToast(result,"","");
+             pageStack.pop();
+//            pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
+        }
+        onNewGroupToChat:{
+            console.log("!1111!")
+            console.log("!!!!")
+            loadingDialog.hide();
+            contactManager.clearMember();
+            enterpriseManager.clearMember();
+            groupManager.clearMemberCount();
+            memberManager.clearMemberList();
+            if(id===""){
+                gToast.requestToast("获取新群信息时出错","","");
+               pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
+            }
+            else{
+            chatManager.switchToChatPage(id,name,"2","0",0,"");
+            }
+        }
+
     }
     contentAreaItem:Item {
         anchors.fill :parent
@@ -42,7 +89,7 @@ CPage {
                 }
             }
             Text{
-                text:qsTr("选择好友")
+                text:isTransMessage ? qsTr("选择转发人员"): qsTr("选择成员")
                 color:"white"
                 font.pixelSize: 36
                 anchors.centerIn: parent
@@ -51,7 +98,7 @@ CPage {
                 id:surbutton
                 anchors.right:parent.right
                 anchors.rightMargin: 5
-                width: 120
+                width: 200
                 anchors.verticalCenter: parent.verticalCenter
                 backgroundComponent: Rectangle {
                     anchors.fill: parent
@@ -59,16 +106,17 @@ CPage {
                     radius: 10
                 }
                 onClicked: {
-                    if(groupAddMemberPage.state == "forwordMsg"){
+                    if(groupAddMainPage.isTransMessage){
                         //TODO
-                        groupManager.transMessage(localId);
+                        groupManager.transMessage(groupAddMainPage.localId);
                         pageStack.pop();
                     }
                     else if(groupManager.isCreateGroup){
                         //                        inputDialog.titleText= qsTr("输入群名称");
                         //                        inputDialog.show();
-                        groupManager.createGroup("");
                         loadingDialog.show();
+                        groupManager.createGroup("");
+
                     }
                     else{
                         loadingDialog.show();
@@ -76,10 +124,36 @@ CPage {
                     }
                 }
                 Text{
-                    text:groupManager.memberCount===""?qsTr("确定"):qsTr("确定(")+groupManager.memberCount+qsTr(")")
+                    text:qsTr("确定")+size()
                     color:"white"
                     font.pixelSize: 32
-                    anchors.centerIn: parent
+//                    anchors.centerIn: parent
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.right: parent.right
+                    anchors.rightMargin: 20
+                    function size(){
+                        var size;
+                        if(groupManager.isCreateGroup){
+                            if(groupManager.memberCount===""){
+                                size="";
+                                return size;
+                            }
+                            else{
+                                size="("+groupManager.memberCount+"/1000)";
+                                return size;
+                            }
+                        }
+                        else{
+                            if(groupManager.memberCount===""){
+                                size="("+memberManager.memberSize+"/1000)";
+                                return size;
+                            }
+                            else{
+                                size=groupManager.getSize("",memberManager.memberSize,groupManager.memberCount);
+                                return size;
+                            }
+                        }
+                    }
                 }
 
             }
@@ -103,6 +177,7 @@ CPage {
                 CDoodGroupAddMemberPage {
                     id: groupAddMemberPage
 
+                    isTransMsg:groupAddMainPage.isTransMessage
                     anchors.fill: parent
                 }
             }
@@ -110,6 +185,8 @@ CPage {
                 title: qsTr("组织架构")
                 CDoodGroupAddOrgPage{
                     id: groupAddOrgPage
+
+                    isTransMsg:groupAddMainPage.isTransMessage
                     anchors.fill: parent
                 }
             }

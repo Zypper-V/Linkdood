@@ -32,13 +32,13 @@ Rectangle{
 
         delegate: _testComponent
 
-        onMovementEnded: {
-            if(flow === GridView.TopToBottom){
-                _centerPageAnimationHorizontal.restart();
-                grid.currentIndex = ((grid.width*Math.round(grid.contentX/grid.width))/grid.width)*itemsPerPage;
-            console.log("move end:"+grid.currentIndex)
-            }
-        }
+//        onMovementEnded: {
+//            if(flow === GridView.TopToBottom){
+//                _centerPageAnimationHorizontal.restart();
+//                grid.currentIndex = ((grid.width*Math.round(grid.contentX/grid.width))/grid.width)*itemsPerPage;
+//            console.log("move end:"+grid.currentIndex)
+//            }
+//        }
         NumberAnimation { id: _centerPageAnimationHorizontal; target: grid; property: "contentX"; to: (grid.width*Math.round(grid.contentX/grid.width)); duration: 250 }
 
     }

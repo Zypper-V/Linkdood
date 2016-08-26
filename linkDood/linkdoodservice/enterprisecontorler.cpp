@@ -6,6 +6,12 @@
 #include<string>
 
 
+
+void EnterpriseControler::init()
+{
+    service::IMClient::getClient()->getNotify()->setEnterpriseObserver(this);
+}
+
 EnterpriseControler::EnterpriseControler(QObject *parent):QObject(parent)
 {
 }
@@ -34,7 +40,7 @@ void EnterpriseControler::getSonOrgs(QString orgid)
 }
 void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<service::Org> orgs, std::vector<service::OrgUser> orgusers)
 {
-    qDebug() << Q_FUNC_INFO<<"pspspspspspspsppspspspspspspspsp"<<orgs.size()<<orgusers.size();
+    qDebug() << Q_FUNC_INFO<<"pspspspspspspsppspspspspspspspsp"<<orgs.size()<<orgusers.size()<<"   :"<<info.code();
     OrgList orgList;
     OrgUserList orgUserList;
     for(auto org:orgs){
@@ -50,7 +56,7 @@ void EnterpriseControler::_getSonOrgs(service::ErrorInfo info, std::vector<servi
     }
     if(orgUserList.size()>1){
         for(size_t i=0;i<orgUserList.size()-1;++i){
-
+             qDebug() << Q_FUNC_INFO<<orgUserList[i].name<<":"<<orgUserList[i].order_num;
             for(size_t j=i+1;j<orgUserList.size();++j){
                 OrgUser temp;
 
@@ -113,10 +119,8 @@ void EnterpriseControler::_getOnlineStates(std::vector<OnlineState> &states)
 
 void EnterpriseControler::getOrgUserInfo(QString userid)
 {
-    int64 id;
-    std::stringstream str(userid.toStdString());
-    str >>id;
-    service::IMClient::getClient()->getEnterprise()->getOrgUserInfo(id,
+
+    service::IMClient::getClient()->getEnterprise()->getOrgUserInfo(userid.toLongLong(),
                                                                     std::bind(&EnterpriseControler::_getOrgUserInfo,this,
                                                                               std::placeholders::_1,std::placeholders::_2));
 }
@@ -161,14 +165,14 @@ OrgUser EnterpriseControler::orguserToQorguser(service::OrgUser orguser)
     Qorguser.role_id      =QString::number(orguser.role_id);
     Qorguser.neworg_id    =QString::number(orguser.org_id);
     Qorguser.id           =QString::number(orguser.id);
-    if(orguser.gender==0){
-        Qorguser.gender="保密";
-    }
     if(orguser.gender==1){
         Qorguser.gender="男";
     }
-    if(orguser.gender==2){
+    else if(orguser.gender==2){
         Qorguser.gender="女";
+    }
+    else{
+        Qorguser.gender="保密";
     }
     Qorguser.timeZone     =QString::number(orguser.time_zone);
     Qorguser.avatar       =QString::fromStdString(orguser.avatar);

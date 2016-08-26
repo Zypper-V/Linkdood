@@ -25,6 +25,7 @@ public:
 
     void setUnreadMsgCOunt(int count);
     int  unReadMsgCount();
+    qint64 dateTime();
 
     QString id() const;
     QString setId(const QString &data);

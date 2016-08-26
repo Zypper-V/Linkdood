@@ -1,7 +1,7 @@
 #include "cdoodchatmanagermodel.h"
 #include "cdoodchatitem.h"
 #include <QDebug>
-
+#include <QUuid>
 CDoodChatManagerModel::CDoodChatManagerModel(QObject *parent):
     CDoodListModel(parent)
 {
@@ -13,6 +13,7 @@ CDoodChatManagerModel::CDoodChatManagerModel(QObject *parent):
     mAccountAvater = "";
     mAccountName = "";
     mAccountUserId = "";
+    mGroupSize = 0;
 }
 
 void CDoodChatManagerModel::updateGroupMems(MemberList list)
@@ -28,24 +29,32 @@ void CDoodChatManagerModel::updateGroupMems(MemberList list)
             mem.thumbAvatar = QString::fromStdString(APP_DATA_PATH)+"public/head/"+mem.thumbAvatar;
         }
         mGroupMemList.push_back(mem);
-
     }
+    mGroupSize = list.size();
     QList<CDoodChatItem*> msgList = m_pChatMap.values();
     for(int i =0;i<msgList.size();++i){
         CDoodChatItem* item = msgList.at(i);
-       if(item != NULL && item->name() == ""){
-           for(int j=0;j<mGroupMemList.size();++j){
-               if(mGroupMemList.at(j).id == item->fromId()){
-                   item->setName(mGroupMemList.at(j).name);
-                   if(mGroupMemList.at(j).thumbAvatar != ""){
-                       item->setContactThumbAvatar(mGroupMemList.at(j).thumbAvatar);
-                   }
-                   break;
-               }
-           }
-       }
+        if((item != NULL && item->name() == item->fromId())||item != NULL && item->contactThumbAvatar() == ""){
+            for(int j=0;j<mGroupMemList.size();++j){
+                if(mGroupMemList.at(j).id == item->fromId()){
+                    item->setName(mGroupMemList.at(j).name);
+                    if(mGroupMemList.at(j).thumbAvatar != ""){
+                        item->setContactThumbAvatar(mGroupMemList.at(j).thumbAvatar);
+                    }
+                    break;
+                }
+            }
+        }
     }
     emit nameChanged();
+}
+
+void CDoodChatManagerModel::updateGroupSize(int size)
+{
+    if(size>0){
+        mGroupSize = size;
+        emit nameChanged();
+    }
 }
 
 int CDoodChatManagerModel::msgCount()
@@ -57,162 +66,96 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
 {
     qDebug()<<Q_FUNC_INFO<<"msg size:"<<msgList.size();
     int len = msgList.size();
+    bool isUpdate = false;
     if(msgList.size() <= 0){
         return;
     }
-    //判断消息插入位置
-    bool bInsertHead = false;
-    if(m_pChatMap.size() >0){
 
-        QDateTime msgDate = QDateTime::fromString(msgList.at(0).time, "yyyy-MM-dd hh:mm:ss");
-        int64 desc = msgDate.secsTo(m_pChatMap.last()->time());
-        if(desc<0){
-            bInsertHead = true;
+    for(int i = 0; i<len;++i){
+
+        Msg msg = msgList.at(i);
+        if(msg.msgtype.toInt() == MSG_TYPE_IMG || msg.fromid =="0"||msg.fromid == ""){
+            continue;
         }
-    }else{
-        bInsertHead = false;
+        if(msg.localid == "" ||msg.localid == "0"){
+           msg.localid = createLocalId();
+        }
+        if(!m_pChatMap.contains(msg.localid)&&!msgIsExitById(msg.msgid)) {
+
+            QDateTime msgDate = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
+            bool bShow = isJudageShowTime(msgDate);
+            isUpdate = true;
+            qDebug()<< Q_FUNC_INFO<<"msgTime:"<<msg.time;
+            CDoodChatItem *pChatItem = new CDoodChatItem(this);
+            pChatItem->setLocalId(msg.localid);
+            pChatItem->setMsgType(msg.msgtype);
+            pChatItem->setActiveType(msg.activeType);
+            pChatItem->setMsgId(msg.msgid);
+            pChatItem->setTargetId(msg.targetid);
+            pChatItem->setFromId(msg.fromid);
+            pChatItem->setToId(msg.toid);
+            pChatItem->setName(msg.name);
+            pChatItem->setTime(msgDate);
+            pChatItem->setShowTime(bShow);
+            pChatItem->setLoading(false);
+            pChatItem->setContactThumbAvatar(msg.thumb_avatar);
+            pChatItem->setIsMyselft(mAccountUserId == msg.fromid);
+            if(msg.msgtype.toInt() == MSG_TYPE_FILE){
+                pChatItem->setFileSize(msg.f_size.toLongLong());
+                pChatItem->setProgress(0);
+                pChatItem->setThumbAvatar(msg.f_url);
+                pChatItem->setTar_thumbAvatar(msg.encrypt_user);
+                pChatItem->setTextMsg(msg.filename);
+                pChatItem->setBody(msg.encrypt_key);
+                pChatItem->setFilePath("");
+                pChatItem->mFileUrl = msg.f_url;
+            }
+            else if(msg.msgtype.toInt() == MSG_TYPE_IMG){
+                if(msg.body != ""){
+                    msg.body = "file://"+msg.body;
+                }else{
+                    msg.body = "qrc:/res/chat_tool_photo_normal.png";
+                }
+                pChatItem->setBody(msg.body);
+                pChatItem->setTar_thumbAvatar(msg.thumb_url);
+                pChatItem->setTextMsg(msg.main_url);
+
+                pChatItem->mImageMainUrl = msg.main_url;
+                pChatItem->mImageThumbUrl = msg.thumb_url;
+            }
+            else{
+                pChatItem->setBody(msg.body);
+            }
+
+            //addItem(pChatItem);
+            qint64 pos = indexOfNewItem(pChatItem->time());
+            if(pos>=0 &&pos<= m_pChatMap.size()){
+                insertItem(pos,pChatItem);
+            }
+
+            m_pChatMap[msg.localid] = pChatItem;
+            updateItemNameAndAvatar(msg.localid,msg.fromid);
+            pChatItem->mEnkey = msg.encrypt_key;
+            pChatItem->mEnkeyUser = msg.encrypt_user;
+            if(msg.body == "qrc:/res/chat_tool_photo_normal.png" && msg.msgtype.toInt() == MSG_TYPE_IMG){
+                pChatItem->setLoading(true);
+                emit downloadImage(id(),msg.localid,msg.thumb_url,msg.encrypt_key);
+            }
+
+        }
     }
-    if(bInsertHead){
-
-        for(int i = len-1; i>=0;--i){
-
-            Msg msg = msgList.at(i);
-            if(msg.localid == "" ||msg.localid == "0"){
-                msg.localid = msg.msgid;
-            }
-            if(!m_pChatMap.contains(msg.localid) &&!msgIsExitById(msg.msgid)) {
-
-                QDateTime msgDate = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
-                bool bShow = isJudageShowTime(msgDate);
-
-                qDebug()<< Q_FUNC_INFO<<"msgTime:"<<msg.time;
-                CDoodChatItem *pChatItem = new CDoodChatItem(this);
-                pChatItem->setLocalId(msg.localid);
-                pChatItem->setMsgType(msg.msgtype);
-                pChatItem->setActiveType(msg.activeType);
-                pChatItem->setMsgId(msg.msgid);
-                pChatItem->setTargetId(msg.targetid);
-                pChatItem->setFromId(msg.fromid);
-                pChatItem->setToId(msg.toid);
-                pChatItem->setName(msg.name);
-                pChatItem->setTime(msgDate);
-                pChatItem->setShowTime(bShow);
-                pChatItem->setLoading(false);
-                pChatItem->setContactThumbAvatar(msg.thumb_avatar);
-                pChatItem->setIsMyselft(mAccountUserId == msg.fromid);
-                if(msg.msgtype.toInt() == MSG_TYPE_FILE){
-                    pChatItem->setFileSize(msg.f_size.toLongLong());
-                    pChatItem->setProgress(0);
-                    pChatItem->setThumbAvatar(msg.f_url);
-                    pChatItem->setTar_thumbAvatar(msg.encrypt_user);
-                    pChatItem->setTextMsg(msg.filename);
-                    pChatItem->setBody(msg.encrypt_key);
-                    pChatItem->setFilePath("");
-                    pChatItem->mFileUrl = msg.f_url;
-                }
-                else if(msg.msgtype.toInt() == MSG_TYPE_IMG){
-                    if(msg.body != ""){
-                        msg.body = "file:// "+msg.body;
-                    }else{
-                        msg.body = "qrc:/res/chat_tool_photo_normal.png";
-                    }
-                    pChatItem->setBody(msg.body);
-                    pChatItem->setTar_thumbAvatar(msg.thumb_url);
-                    pChatItem->setTextMsg(msg.main_url);
-
-                    pChatItem->mImageMainUrl = msg.main_url;
-                    pChatItem->mImageThumbUrl = msg.thumb_url;
-                }
-                else{
-                    pChatItem->setBody(msg.body);
-                }
-                m_pChatMap[msg.localid] = pChatItem;
-                addItemBegin(pChatItem);
-                updateItemNameAndAvatar(msg.localid,msg.fromid);
-
-                pChatItem->mEnkey = msg.encrypt_key;
-                pChatItem->mEnkeyUser = msg.encrypt_user;
-
-                if(msg.body == "qrc:/res/chat_tool_photo_normal.png" && msg.msgtype.toInt() == MSG_TYPE_IMG){
-                    pChatItem->setLoading(true);
-                    emit downloadImage(id(),msg.localid,msg.thumb_url,msg.encrypt_key);
-                }
-
-            }
-        }
-    }else{
-
-        for(int i = 0; i<len;++i){
-
-            Msg msg = msgList.at(i);
-            if(msg.localid == "" ||msg.localid == "0"){
-                msg.localid = msg.msgid;
-            }
-            if(!m_pChatMap.contains(msg.localid)&&!msgIsExitById(msg.msgid)) {
-
-                QDateTime msgDate = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
-                bool bShow = isJudageShowTime(msgDate);
-
-                qDebug()<< Q_FUNC_INFO<<"msgTime:"<<msg.time;
-                CDoodChatItem *pChatItem = new CDoodChatItem(this);
-                pChatItem->setLocalId(msg.localid);
-                pChatItem->setMsgType(msg.msgtype);
-                pChatItem->setActiveType(msg.activeType);
-                pChatItem->setMsgId(msg.msgid);
-                pChatItem->setTargetId(msg.targetid);
-                pChatItem->setFromId(msg.fromid);
-                pChatItem->setToId(msg.toid);
-                pChatItem->setName(msg.name);
-                pChatItem->setTime(msgDate);
-                pChatItem->setShowTime(bShow);
-                pChatItem->setLoading(false);
-                pChatItem->setContactThumbAvatar(msg.thumb_avatar);
-                pChatItem->setIsMyselft(mAccountUserId == msg.fromid);
-                if(msg.msgtype.toInt() == MSG_TYPE_FILE){
-                    pChatItem->setFileSize(msg.f_size.toLongLong());
-                    pChatItem->setProgress(0);
-                    pChatItem->setThumbAvatar(msg.f_url);
-                    pChatItem->setTar_thumbAvatar(msg.encrypt_user);
-                    pChatItem->setTextMsg(msg.filename);
-                    pChatItem->setBody(msg.encrypt_key);
-                    pChatItem->setFilePath("");
-                    pChatItem->mFileUrl = msg.f_url;
-                }
-                else if(msg.msgtype.toInt() == MSG_TYPE_IMG){
-                    if(msg.body != ""){
-                        msg.body = "file://"+msg.body;
-                    }else{
-                        msg.body = "qrc:/res/chat_tool_photo_normal.png";
-                    }
-                    pChatItem->setBody(msg.body);
-                    pChatItem->setTar_thumbAvatar(msg.thumb_url);
-                    pChatItem->setTextMsg(msg.main_url);
-
-                    pChatItem->mImageMainUrl = msg.main_url;
-                    pChatItem->mImageThumbUrl = msg.thumb_url;
-                }
-                else{
-                    pChatItem->setBody(msg.body);
-                }
-                m_pChatMap[msg.localid] = pChatItem;
-                addItem(pChatItem);
-                updateItemNameAndAvatar(msg.localid,msg.fromid);
-                pChatItem->mEnkey = msg.encrypt_key;
-                pChatItem->mEnkeyUser = msg.encrypt_user;
-                if(msg.body == "qrc:/res/chat_tool_photo_normal.png" && msg.msgtype.toInt() == MSG_TYPE_IMG){
-                    pChatItem->setLoading(true);
-                    emit downloadImage(id(),msg.localid,msg.thumb_url,msg.encrypt_key);
-                }
-
-            }
-        }
+    if(isUpdate){
+        emit updateDataFinished();
     }
 }
 
 void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgContent,bool isHistory)
 {
+    if(msg.fromid ==""||msg.fromid =="0"){
+        return;
+    }
     if(msg.localid == "" ||msg.localid == "0"){
-        msg.localid = msg.msgid;
+        msg.localid = createLocalId();
     }
     if(!m_pChatMap.contains(msg.localid)&&!msgIsExitById(msg.msgid)) {
 
@@ -234,6 +177,9 @@ void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgConten
         pChatItem->setLoading(!isHistory);
         pChatItem->setContactThumbAvatar(msg.thumb_avatar);
         pChatItem->setIsMyselft(mAccountUserId == msg.fromid);
+        if(msg.fromName != ""){
+            pChatItem->setName(msg.fromName);
+        }
         if(msg.msgtype.toInt() == MSG_TYPE_FILE){
             pChatItem->setFileSize(msg.f_size.toLongLong());
             pChatItem->setProgress(0);
@@ -251,22 +197,39 @@ void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgConten
             else{
                 msg.body = "qrc:/res/chat_tool_photo_normal.png";
             }
+//            if(msg.main_url!=""){
+//                pChatItem->setBodyBig("file://"+msg.main_url);
+//            }
+//            else{
+//                pChatItem->setBodyBig(msg.body);
+//            }
+            qDebug()<< Q_FUNC_INFO<<"msg.main_url:"<<msg.main_url<<"msg.encrypt_key:"<<msg.encrypt_key;
+            pChatItem->setBodyBig(msg.main_url);
             pChatItem->setBody(msg.body);
             pChatItem->setTar_thumbAvatar(msg.thumb_url);
             pChatItem->setTextMsg(msg.main_url);
+            pChatItem->setEncrypt_key(msg.encrypt_key);
 
             pChatItem->mImageMainUrl = msg.main_url;
             pChatItem->mImageThumbUrl = msg.thumb_url;
+
         }
         else{
             pChatItem->setBody(msg.body);
         }
-        addItem(pChatItem);
+        //addItem(pChatItem);
+        qint64 pos = indexOfNewItem(pChatItem->time());
+        if(pos>=0 &&pos<= m_pChatMap.size()){
+            insertItem(pos,pChatItem);
+        }
+
         m_pChatMap[msg.localid] = pChatItem;
         updateItemNameAndAvatar(msg.localid,msg.fromid);
 
         pChatItem->mEnkey = msg.encrypt_key;
         pChatItem->mEnkeyUser = msg.encrypt_user;
+
+        emit updateDataFinished();
     }
 }
 
@@ -315,6 +278,26 @@ void CDoodChatManagerModel::removeItemById(QString id)
     }
 }
 
+void CDoodChatManagerModel::removeItemsByFromId(QString fromId)
+{
+    QList<CDoodChatItem*> list = m_pChatMap.values();
+    QStringList msgs;
+    int len = list.size();
+    for(int i =0;i<len;i++){
+        CDoodChatItem* item = list.at(i);
+        if(item != NULL && item->fromId() == fromId){
+            removeItem(item);
+            msgs.push_back(item->msgId());
+            m_pChatMap.remove(item->localId());
+            delete item;
+        }
+    }
+    if(msgs.size()>0){
+        emit deleteMessage(id(),msgs);
+    }
+
+}
+
 void CDoodChatManagerModel::analyzeHistoryMsg(MsgList msgList)
 {
     qDebug() << Q_FUNC_INFO;
@@ -323,7 +306,7 @@ void CDoodChatManagerModel::analyzeHistoryMsg(MsgList msgList)
 
 void CDoodChatManagerModel::updateAvatar(QString id,QString avater)
 {
-//    qDebug()<<Q_FUNC_INFO<<"avater:"<<avater;
+    //    qDebug()<<Q_FUNC_INFO<<"avater:"<<avater;
     QList<CDoodChatItem*> list = m_pChatMap.values();
     for(int i =0;i<list.size();++i){
         CDoodChatItem* item = list.at(i);
@@ -368,11 +351,14 @@ void CDoodChatManagerModel::updateItemNameAndAvatar(QString localId,QString user
                 item->setName(mAccountName);
             }else{
                 item->setContactThumbAvatar(avatar());
-                item->setName(name());
+                if(item->name() == item->fromId()){
+                    item->setName(name());
+                }
             }
         }
     }else if(chatType()=="2"){
         CDoodChatItem* item = m_pChatMap.value(localId,NULL);
+        //emit reqestUserInfo(item->fromId());
         if(item != NULL){
             if(item->fromId() == mAccountUserId){
                 item->setContactThumbAvatar(mAccountAvater);
@@ -380,13 +366,15 @@ void CDoodChatManagerModel::updateItemNameAndAvatar(QString localId,QString user
             }else{
                 int size = mGroupMemList.size();
                 if(size == 0){
-                    emit reqestUserInfo(item->fromId());
+                    //emit reqestUserInfo(item->fromId());
                 }else{
                     for(int i=0;i<size;++i){
                         Member mem = mGroupMemList.at(i);
                         if(mem.id == item->fromId()){
                             item->setContactThumbAvatar(mem.thumbAvatar);
-                            item->setName(mem.name);
+                            if(item->name() ==item->fromId()){
+                                item->setName(mem.name);
+                            }
                             updateGroupChatInfo(mem.id,mem.name,mem.thumbAvatar);
                             return;
                         }
@@ -427,6 +415,9 @@ void CDoodChatManagerModel::updateItemData(QString userId,QString name,QString a
 
 bool CDoodChatManagerModel::msgIsExitById(QString msgId)
 {
+    if(msgId == "" || msgId =="0"){
+        return false;
+    }
     QList<CDoodChatItem*>list = m_pChatMap.values();
     for(int i=0;i<list.size();++i){
         CDoodChatItem* item = list.at(i);
@@ -445,8 +436,48 @@ void CDoodChatManagerModel::updateGroupChatInfo(QString userId, QString name, QS
     for(int i =0;i<list.size();++i){
         CDoodChatItem* item = list.at(i);
         if(item != NULL && item->fromId() == userId){
-            item->setName(name);
+            if(name != ""){
+                item->setName(name);
+            }
             item->setContactThumbAvatar(thum);
+        }
+    }
+}
+
+int CDoodChatManagerModel::indexOfNewItem(QDateTime date)
+{
+    qDebug()<<Q_FUNC_INFO<<"date:"<< date.toMSecsSinceEpoch();
+
+    if(m_pChatMap.size() ==0){
+        return 0;
+    }
+
+    int index = 0;
+    QList<CDoodChatItem*> list = m_pChatMap.values();
+    int len = list.size();
+    qint64 time = date.toMSecsSinceEpoch();
+
+    for(int i = len-1;i>=0;--i){
+        CDoodChatItem* item =  list.at(i);
+        if(item !=NULL){
+            qint64 curItemTime = item->time().toMSecsSinceEpoch();
+            if(curItemTime<=time){
+                index = i+1;
+                break;
+            }
+        }
+    }
+    return index;
+}
+
+void CDoodChatManagerModel::addGroupMems(MemberList mems)
+{
+    if(mems.size()<=0){
+        return;
+    }
+    if(mems[0].groupid == id()){
+        for(int i =0;i<mems.size();++i){
+            mGroupMemList.push_back(mems[i]);
         }
     }
 }
@@ -505,6 +536,9 @@ QString CDoodChatManagerModel::lastMsgId()
 
 QString CDoodChatManagerModel::firstMsgId()
 {
+    if(m_pChatMap.size() == 0){
+        return "0";
+    }
     CDoodChatItem* item = m_pChatMap.first();
     if(item != NULL){
         return item->msgId();
@@ -515,6 +549,14 @@ QString CDoodChatManagerModel::firstMsgId()
 int CDoodChatManagerModel::groupMemsCount()
 {
     return mGroupMemList.size();
+}
+
+QString CDoodChatManagerModel::createLocalId()
+{
+    QUuid id = QUuid::createUuid();
+    QString strId = id.toString();
+    qDebug() << "Uuid:" << strId;
+    return strId;
 }
 
 void CDoodChatManagerModel::addChatItemtoMap(CDoodChatItem *chatItem)
@@ -537,8 +579,8 @@ QString CDoodChatManagerModel::name() const
 {
     qDebug() << Q_FUNC_INFO;
     QString tmp = mName;
-    if(chatType() == "2" && mGroupMemList.size()>0){
-        tmp +="("+QString::number(mGroupMemList.size())+")";
+    if(chatType() == "2" && mGroupSize>0){
+        tmp +="("+QString::number(mGroupSize)+")";
     }
     return tmp;
 }
@@ -559,6 +601,9 @@ void CDoodChatManagerModel::setName(const QString &name)
         if(item != NULL){
             if(item->fromId() == id() && chatType() == "1"){
                 item->setName(name);
+                if(item->contactThumbAvatar() ==""){
+                    item->setContactThumbAvatar(avatar());
+                }
             }
         }
 
@@ -595,10 +640,11 @@ bool CDoodChatManagerModel::isJudageShowTime(QDateTime date)
         return true;
     }else{
         QDateTime lastMsgTime = m_pChatMap.last()->time();
+        QString tmp = Common::dealTime(lastMsgTime.toMSecsSinceEpoch(),1);
         int64 timeDistance = lastMsgTime.secsTo(date);
-        if(qFabs(timeDistance) >= 60 * 3){//60 * 5
+        if(qFabs(timeDistance) >= 60 * 3 && m_pChatMap.last()->timeText() != tmp){//60 * 5
             return true;
-        }else{
+        }/*else{
             QDateTime curentDate = QDateTime::currentDateTime();
             timeDistance = curentDate.secsTo(date);
             if(qFabs(timeDistance) >= 60 * 3){//60 * 5
@@ -606,7 +652,7 @@ bool CDoodChatManagerModel::isJudageShowTime(QDateTime date)
             }else{
                 return false;
             }
-        }
+        }*/
     }
     return false;
 }

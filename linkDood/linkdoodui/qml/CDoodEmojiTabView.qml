@@ -65,6 +65,6 @@ CTabView{
         CDoodDyEmojiGridView{
             anchors.fill: parent
         }
-        property url imgSource: "qrc:/res/smilies/instruct/aoman.png"
+        property url imgSource: "qrc:/res/smilies/dynamic_expression/Dynamic_Expression_01.gif"
     }
 }

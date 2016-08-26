@@ -6,6 +6,8 @@
 #include "linkdoodtypes.h"
 #include "Msg.h"
 #include "packet.h"
+#include "Group.h"
+
 #include "linkdoodservicethread.h"
 
 class ChatControler:public QObject,public IChatObserver
@@ -16,6 +18,7 @@ public:
 
     void getContactInfo(QString userId,Msg msg);
     void getUserProfile(QString userId,std::shared_ptr<service::Msg> msg);
+
     //进入会话UI
     void entryChat(const QString targetId);
     //离开会话UI
@@ -128,7 +131,7 @@ public:
     * @param[in] url 传入url
     ***************************************/
     void downloadFile(QString path, QString url, QString json,QString localId,QString targetId);
-
+    void cancelDonwloadFile(QString id);
     /*******************************
     * @brief uploadImage
     * @description: 上传照片
@@ -143,6 +146,7 @@ public:
     * @description: 下载图片
     ***************************************/
     void downloadImage(Msg msgImg);
+    void downloadMainImage(QString main_url,QString encryptkey,QString targetId);
 
     void downloadHistoryImage(QString url, QString property, QString targetid, QString localid);
 
@@ -169,6 +173,8 @@ public:
     void getUserInfo(QString userid);
 
 signals:
+    void handleRevMsg(std::shared_ptr<service::Msg> msg);
+    void downloadFileCancelId(QString id,QString cancelId);
     void bcNotify(const QString senderId,
                   const QString msgType,
                   const QString content,
@@ -208,11 +214,16 @@ signals:
     void getFileListBack(int code, FileInfoList fileList);
 
     //获取联系人信息返回
+    void downloadMainImageResult(QString main_url,QString localPath);
     void getUserInfoBack(int code, Contact user);
     void transMessageFinishBack(int code,QString targetId);
     void downloadHistoryImageResult(int code, QString localpath, QString targetid, QString localid);
     void uploadFileBackUrl(QString targetId,QString localId,QString fileUrl,QString enkey);
     void uploadImgeBackUrl(QString targetId,QString localId,QString mainUrl,QString thumbUrl,QString enkey);
+    void uploadImageProgess(QString targetId,QString localId,int progress);
+public slots:
+    void onSystemMessageNotice(QString info,int64 time);
+    void onHandleRevMsg(std::shared_ptr<service::Msg> msg);
 private:
     //处理时间显示
     //type 1 会话列表时间 2聊天界面时间
@@ -249,19 +260,22 @@ private:
     //上传文件回调
     void _uploadFile(int64 tagetid,int64 operId, std::string jasoninfo, int code,Msg fileMsg);
     //文件进度
-
     void _fileProgress(int32 extra_req, int32 process, std::string info,QString localId,QString targetId);
     //下载文件回调
+    void _cancelFile(int);
     void _downloadFile(service::ErrorInfo& info, std::string localpath, int64 tagetid, QString fileName, QString encryKey,QString localId);
     //上传图片回调
     void _uploadImage(int64 tagetid, std::string orgijson, std::string thumbjson, int code,Msg msg);
+    void _uploadImageProgess(int32 extra_req, int32 process, std::string info,QString target,QString localId);
     //下载图片回调
     void _downloadImage(service::ErrorInfo& info, std::string localpath, int64 tagetid,Msg msgImg);
+    void _downloadMainImage(service::ErrorInfo& info, std::string localpath, int64 tagetid,QString encryptKey,QString main_url);
     void _downloadHistoryImage(service::ErrorInfo& info, std::string localpath, int64 tid, QString encryptKey, QString tagetid, QString localid);
     //获取文件列表回调
     void _getFileList(service::ErrorInfo& info, std::vector<FileInfo> files);
-    void _getUserInfo(service::ErrorInfo info, service::User user);
-    void _getUserProfile(service::ErrorInfo info, service::User user,std::shared_ptr<service::Msg> msg);
+    void _getUserInfo(service::ErrorInfo& info, service::User& user);
+    void _getUserProfile(service::ErrorInfo& info, service::User& user,std::shared_ptr<service::Msg> msg);
+    void _getGroupInfo(service::ErrorInfo& info,service::Group group,std::shared_ptr<service::Msg> msg);
 
     Msg msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext);
     service::MsgText QmsgtextTomsgtext(Msg Qmsgtext);
@@ -279,7 +293,6 @@ private:
 
     //处理接收到的图片消息
     void handleReciveImgMsg(std::shared_ptr<service::Msg> msg);
-    //处理接收到的文件消息
     void handleReciveFileMsg(std::shared_ptr<service::Msg> msg);
     void handleReciveDyEmojiMsg(std::shared_ptr<service::Msg> msg);
     void handleRecevieTextMsg(std::shared_ptr<service::Msg> msg);
@@ -289,6 +302,8 @@ private:
     void handleHistoryImgMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
     void handleHistoryFileMsg(Msg& imMsg,std::shared_ptr<service::Msg> msg);
     void handleNotification(std::shared_ptr<service::Msg> msg);
+    void handleReciveTipMsg(std::shared_ptr<service::Msg> msg);
+    void handleReciveUnSurportMsg(std::shared_ptr<service::Msg> msg);
 };
 
 template<typename T>

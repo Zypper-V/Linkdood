@@ -59,5 +59,9 @@
         <file>qml/CDoodGroupViewImagePage.qml</file>
         <file>qml/CDoodGroupAddMainPage.qml</file>
         <file>qml/CDoodGroupAddOrgPage.qml</file>
+        <file>qml/CDoodListDialog.qml</file>
+        <file>qml/CDoodCameraView.qml</file>
+        <file>qml/CDoodTakePotoPage.qml</file>
+        <file>qml/CDoodMimePage.qml</file>
     </qresource>
 </RCC>

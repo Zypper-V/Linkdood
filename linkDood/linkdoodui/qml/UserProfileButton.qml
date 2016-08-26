@@ -103,6 +103,7 @@ Rectangle{
         anchors.fill: parent
         onPressed: parent.color = "#cdcdcd"
         onReleased: parent.color = "white"
+        onCanceled: parent.color = "white"
         onClicked: {
             emit: comp.clicked();
         }

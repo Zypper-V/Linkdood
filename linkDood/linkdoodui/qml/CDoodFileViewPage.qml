@@ -35,8 +35,13 @@ CPage {
                 anchors.leftMargin: 30
                 anchors.verticalCenter: parent.verticalCenter
                 onClicked: {
-                    fileViewManager.reset();
-                    pageStack.pop();
+                    if(fileViewManager.status ===2){
+                        alertDialog.show();
+                    }
+                    else{
+                        fileViewManager.reset();
+                        pageStack.pop();
+                    }
                 }
             }
             Text{
@@ -75,9 +80,7 @@ CPage {
                 anchors.fill: parent
                 onClicked: {
                     if(fileViewManager.status === 3){
-                        fileViewManager.openFile();
-                        console.log("file://"+fileViewManager.path)
-                         fileOpen.open("file://" + fileViewManager.path, CMIMEDialogTool.View,"image/png")
+                        openTextFile(fileViewManager.path,"");
                     }else if(fileViewManager.status === 1){
                         fileViewManager.downloadFile();
                     }else if(fileViewManager.status === 2){
@@ -100,7 +103,7 @@ CPage {
                 anchors.verticalCenterOffset: -200
                 width: 320
                 height: 320
-//                sourceSize: Qt.size(640,640);
+                //                sourceSize: Qt.size(640,640);
                 source: chatManager.judgeFileFromat(fileViewManager.fileName)
             }
             Text {
@@ -119,19 +122,65 @@ CPage {
 
                 minimum: 0
                 maximum: 100
-                width: parent.width - 20
+                width: parent.width - 100
                 height: 8
                 visible:fileViewManager.status===2
                 value: fileViewManager.proggress+10
 
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 200
-                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottomMargin: 300
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+            }
+            Image {
+                id: btnCancel
+                source: "qrc:/res/control/delete_btn.png"
+                visible: loadStatus.visible
+
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 280
+                anchors.left: loadStatus.right
+                anchors.leftMargin: 10
+                MouseArea{
+                    anchors.fill: parent
+                    onClicked: {
+                        fileViewManager.cancelDownload();
+                    }
+                }
             }
         }
-        CMIMEDialog{
-            id:fileOpen
+        CDialog {
+            id: alertDialog
 
+            titleText: qsTr("提示")
+            messageText: qsTr("文件正在下载，返回后将停止下载，您确定要返回吗？")
+            onAccepted: {
+                fileViewManager.cancelDownload();
+                fileViewManager.reset();
+                pageStack.pop();
+            }
+            onCanceled: {
+            }
         }
+    }
+    function openTextFile(filepath, filename) {
+        var mimeType = fileViewManager.getMimeType(filepath)
+        var comp = Qt.createComponent("qrc:/qml/CDoodMimePage.qml");
+        if (comp.status === Component.Ready) {
+            var mimeDialog = comp.createObject(fileViewPage);
+        }
+        mimeDialog.open(filepath, CMIMEDialogTool.View,mimeType);
+
+        //        if (mimeType === "application/vnd.ms-excel" || mimeType === "application/pdf" ||
+        //                mimeType === "application/msword" || mimeType === "application/vnd.ms-powerpoint"
+        //                ||mimeType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || mimeType === "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        //                ||mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+
+        //            var comp = Qt.createComponent("qrc:/qml/CDoodMimePage.qml");
+        //            if (comp.status === Component.Ready) {
+        //                var mimeDialog = comp.createObject(fileViewPage);
+        //            }
+        //            mimeDialog.open(filepath, CMIMEDialogTool.View,mimeType)
+        //        }
     }
 }

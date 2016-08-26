@@ -10,6 +10,7 @@ Rectangle{
     property int itemsPerPage: columns*rows
     property variant flow: GridView.TopToBottom
 
+    property Component component;
     CLine{
         id:line
         anchors.top:parent.top
@@ -80,15 +81,24 @@ Rectangle{
                 id:mouseCell
 
                 anchors.fill: _item
+                property  var component
                 onClicked: {
                     grid.forceActiveFocus();
                     grid.currentIndex = index;
                     if(index ===0){
                         pageStack.push(Qt.resolvedUrl("CDoodSelectLocalImagePage.qml"));
-                    }
-                    if(index === 1){
+                    }else if(index === 1){
                         pageStack.push(Qt.resolvedUrl("CDoodSelectLocalFilePage.qml"));
+                    }else if(index === 2){
+                        component= pageStack.push(Qt.resolvedUrl("CDoodCameraView.qml"),{ rootWindow: mainPageView});
+                        component.imageConfirmed.connect(cameraSavePic)
                     }
+                }
+
+                function cameraSavePic (filePath, is_original) {
+                    chatManager.sendPictrue(filePath);
+                    console.log("filePath:"+filePath)
+                    pageStack.pop(chatPage);
                 }
             }
         }
@@ -100,14 +110,18 @@ Rectangle{
     }
 
     ListModel{
-       id:rootModel
-       ListElement{
-           appTYpe:"qrc:/res/chat_tool_photo_normal.png"
-           appTip:"图片"
-       }
-       ListElement{
-           appTYpe:"qrc:/res/chat_tool_file_normal.png"
-           appTip:"文件"
-       }
+        id:rootModel
+        ListElement{
+            appTYpe:"qrc:/res/chat_tool_photo_normal.png"
+            appTip:"图片"
+        }
+        ListElement{
+            appTYpe:"qrc:/res/chat_tool_file_normal.png"
+            appTip:"文件"
+        }
+        ListElement{
+            appTYpe:"qrc:/res/chat_tool_takephoto_normal.png"
+            appTip:"相机"
+        }
     }
 }

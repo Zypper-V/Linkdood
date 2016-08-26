@@ -81,7 +81,7 @@ bool CDoodSessionListManager::checkFileExists(const QString &path)
 void CDoodSessionListManager::removeChatItem(QString id)
 {
     qDebug() << Q_FUNC_INFO;
-    CDoodSessionListItem *tmpItem  = sessionListMap.value(id);
+    CDoodSessionListItem *tmpItem  = sessionListMap.value(id,NULL);
     if(tmpItem != NULL){
         removeItem(tmpItem);
         m_pClient->removeChat(id);
@@ -110,12 +110,20 @@ void CDoodSessionListManager::entrySysMsgPage()
 {
     qDebug()<<Q_FUNC_INFO;
     mIsSysMsgPage = true;
+    QString path = APP_DATA_PATH;
+    QString fileName = path+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("isSysPage",true);
 }
 
 void CDoodSessionListManager::exitSysMsgPage()
 {
     qDebug()<<Q_FUNC_INFO;
     mIsSysMsgPage = false;
+    QString path = APP_DATA_PATH;
+    QString fileName = path+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("isSysPage",false);
 }
 
 int CDoodSessionListManager::unreadCount() const
@@ -136,6 +144,7 @@ void CDoodSessionListManager::setUnreadCount(int count)
 
 void CDoodSessionListManager::onAvatarChanged(QString targetId, QString avatar)
 {
+    qDebug() << Q_FUNC_INFO <<targetId;
     if(avatar != ""){
         CDoodSessionListItem *item = sessionListMap.value(targetId);
         if(item != NULL){
@@ -157,6 +166,7 @@ void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
             tmpItem->setName(historysession.name);
             tmpItem->setMsgTime(historysession.msg_time);
             tmpItem->setChatType(m_pClient->userType(historysession.id));
+            tmpItem->setLastMsgid(QString::number(historysession.last_msgid));
             if(historysession.unread_count!=0){
                 if(historysession.unread_count<100){
                     tmpItem->setUnReadCount(QString::number(historysession.unread_count));
@@ -169,7 +179,9 @@ void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
             }
             tmpItem->setThumbAvatar(historysession.thumb_avatar);
             qDebug() << Q_FUNC_INFO << "session unreadcount.......:" << QString::number(historysession.unread_count);
-            addItem(tmpItem);
+            //int index = indexOfNewItem(tmpItem->dateTime());
+            //insertItem(index,tmpItem);
+            addItemBegin(tmpItem);
             sessionListMap[historysession.id] = tmpItem;
             updateItemInfor(historysession.id,tmpItem->name(),tmpItem->thumbAvatar());
         }
@@ -215,6 +227,7 @@ QString CDoodSessionListManager::updateItemInfor(QString targetId,QString name,Q
     }
     QString chatType = m_pClient->userType(targetId);
     if(name == "" ||avater == ""){
+
         if(chatType=="1"){
             QString name1(""),avater1("");
             m_pUiManager->getContactInforFromList(targetId,name1,avater1);
@@ -226,6 +239,7 @@ QString CDoodSessionListManager::updateItemInfor(QString targetId,QString name,Q
                 }
             }else{
                 m_pClient->getUserInfo(targetId);
+                //m_pClient->getOrgUserInfo(targetId);
             }
         }else if(chatType=="2"){
             QString name1(""),avater1("");
@@ -286,6 +300,8 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
                 if(index>0 && index <itemCount()){
                     item = (CDoodSessionListItem*)takeItemAt(index);
                     addItemBegin(item);
+                    //                    int pos = indexOfNewItem(item->dateTime());
+                    //                    insertItem(pos,item);
                 }
                 setUnreadCount(1);
             }
@@ -307,6 +323,8 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
         }
         tmpItem->setLastMsgid(msgId);
         addItemBegin(tmpItem);
+        // int pos = indexOfNewItem(tmpItem->dateTime());
+        // insertItem(pos,tmpItem);
         sessionListMap[targetId] = tmpItem;
         qDebug() << Q_FUNC_INFO << "name:" << name;
     }
@@ -344,6 +362,8 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
                 {
                     item = (CDoodSessionListItem*)takeItemAt(index);
                     addItemBegin(item);
+                    //int pos = indexOfNewItem(item->dateTime());
+                    // insertItem(pos,item);
                 }
                 setUnreadCount(offMsg.count);
             }
@@ -366,6 +386,9 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
             }
             tmpItem->setLastMsgid(offMsg.msgId);
             addItemBegin(tmpItem);
+            //int pos = indexOfNewItem(tmpItem->dateTime());
+            //insertItem(pos,tmpItem);
+
             sessionListMap[offMsg.targetId] = tmpItem;
             updateItemInfor(offMsg.targetId,offMsg.name,"");
         }
@@ -376,42 +399,19 @@ void CDoodSessionListManager::onSysMessageNotice(IMSysMsg sysMsg)
 {
     qDebug() << Q_FUNC_INFO;
     //
+    addSysMessage(sysMsg);
+    qDebug()<<Q_FUNC_INFO<<"name:"<<sysMsg.name<<"info:"<<sysMsg.info;
+}
+
+void CDoodSessionListManager::onRemoveSysMsg(QString msgtype, QString msgid)
+{
     if(sessionListMap.contains(SYSMSG_ID)){
         CDoodSessionListItem*item = sessionListMap.value(SYSMSG_ID);
-
-        item->setId(SYSMSG_ID);
-        item->setChatType(SYSMSG_ID);
-        item->setLastMsg(sysMsg.info);
-        item->setLastMsgid(sysMsg.msgid);
-        item->setMsgTime(sysMsg.time);
-        qDebug() << Q_FUNC_INFO << "sysMsg.isread:" << sysMsg.isread;
-        if(!mIsSysMsgPage && sysMsg.isread == "0"){
-            item->setUnReadCount("1");
-            setUnreadCount(1);
-            item->setUnreadMsgCOunt(1);
+        if(msgtype=="0"||msgid==item->lastMsgid()){
+            removeItem(item);
         }
-        removeItem(item);
-        addItemBegin(item);
-
-    }else{
-        CDoodSessionListItem*item = new CDoodSessionListItem(this);
-        item->setId(SYSMSG_ID);
-        item->setChatType(SYSMSG_ID);
-        item->setLastMsg(sysMsg.info);
-        item->setLastMsgid(sysMsg.msgid);
-        item->setMsgTime(sysMsg.time);
-        item->setName("系统消息");
-
-        if(!mIsSysMsgPage && sysMsg.isread == "0"){
-            item->setUnReadCount("1");
-            setUnreadCount(1);
-            item->setUnreadMsgCOunt(1);
-        }
-
-        addItemBegin(item);
-        sessionListMap[SYSMSG_ID] = item;
     }
-    qDebug()<<Q_FUNC_INFO<<"name:"<<sysMsg.name<<"info:"<<sysMsg.info;
+
 }
 
 void CDoodSessionListManager::onGroupInfoChanged(QString type, Group gp)
@@ -425,11 +425,18 @@ void CDoodSessionListManager::onGroupInfoChanged(QString type, Group gp)
     }
 }
 
-
+void CDoodSessionListManager::onGetOrgUserInfoResult(int code, OrgUser orguser)
+{
+    CDoodSessionListItem*item =  sessionListMap.value(orguser.id,NULL);
+    if(item != NULL){
+        item->setName(orguser.name);
+    }
+}
 
 void CDoodSessionListManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
+    connect(m_pClient,SIGNAL(getOrgUserInfoResult(int,OrgUser)),this,SLOT(onGetOrgUserInfoResult(int,OrgUser)));
     connect(m_pClient,SIGNAL(groupInfoChanged(QString,Group)),this,SLOT(onGroupInfoChanged(QString,Group)));
     connect(m_pClient,SIGNAL(chatAvatarChanged(QString,QString)),this,SLOT(onAvatarChanged(QString,QString)));
     connect(m_pClient, SIGNAL(sysMessageNotice(IMSysMsg)), this, SLOT(onSysMessageNotice(IMSysMsg)));
@@ -438,4 +445,73 @@ void CDoodSessionListManager::initConnect()
     connect(m_pClient,SIGNAL(offlineMsgNotice(IMOfflineMsgList)), this, SLOT(onOfflineMsgNotice(IMOfflineMsgList)));
     connect(m_pClient,SIGNAL(getUserInfoResult(int,Contact)), this, SLOT(onGetUserInfo(int,Contact)));
     connect(m_pClient,SIGNAL(getGroupInfoResult(QString,Group)), this, SLOT(onGetGroupInfo(QString,Group)));
+}
+
+void CDoodSessionListManager::addSysMessage(IMSysMsg sysMsg)
+{
+    if(sessionListMap.contains(SYSMSG_ID)){
+        CDoodSessionListItem*item = sessionListMap.value(SYSMSG_ID);
+
+        item->setId(SYSMSG_ID);
+        item->setChatType(SYSMSG_ID);
+        item->setLastMsg(sysMsg.info);
+        item->setLastMsgid(sysMsg.msgid);
+        item->setMsgTime(sysMsg.time);
+        qDebug() << Q_FUNC_INFO << "sysMsg.isread:" << sysMsg.time;
+        if(!mIsSysMsgPage && sysMsg.isread == "0"){
+            int count = item->unReadMsgCount()+1;
+            item->setUnReadCount(QString::number(count));
+            setUnreadCount(1);
+            item->setUnreadMsgCOunt(count);
+        }
+        removeItem(item);
+        addItemBegin(item);
+        // int pos = indexOfNewItem(item->dateTime());
+        // insertItem(pos,item);
+
+    }else{
+        CDoodSessionListItem*item = new CDoodSessionListItem(this);
+        item->setId(SYSMSG_ID);
+        item->setChatType(SYSMSG_ID);
+        item->setLastMsg(sysMsg.info);
+        item->setLastMsgid(sysMsg.msgid);
+        item->setMsgTime(sysMsg.time);
+        item->setName("系统消息");
+
+        if(!mIsSysMsgPage && sysMsg.isread == "0"){
+            int count = item->unReadMsgCount()+1;
+            item->setUnReadCount(QString::number(count));
+            setUnreadCount(1);
+            item->setUnreadMsgCOunt(count);
+        }
+
+        addItemBegin(item);
+        //int pos = indexOfNewItem(item->dateTime());
+        //  insertItem(pos,item);
+        sessionListMap[SYSMSG_ID] = item;
+    }
+}
+
+int CDoodSessionListManager::indexOfNewItem(qint64 time)
+{
+
+    if(sessionListMap.size() ==0){
+        return 0;
+    }
+
+    int index = 0;
+    QList<CDoodSessionListItem*> list = sessionListMap.values();
+    int len = list.size();
+
+    for(int i = 0;i<len;++i){
+        CDoodSessionListItem* item =  list.at(i);
+        if(item !=NULL){
+            qint64 curItemTime = item->dateTime();
+            if(curItemTime<=time){
+                index = i;
+                break;
+            }
+        }
+    }
+    return index;
 }

@@ -40,9 +40,11 @@ QString CDoodEnterPriseItem::isChoose() const
 QString CDoodEnterPriseItem::setIsChoose(const QString &data)
 {
     if(mIsChoose==data){
+        qDebug() << Q_FUNC_INFO<<data<<"11";
         return data;
     }
     mIsChoose=data;
+     qDebug() << Q_FUNC_INFO<<data;
     emit isChooseChanged();
     return mIsChoose;
 }

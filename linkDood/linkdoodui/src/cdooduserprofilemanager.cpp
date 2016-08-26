@@ -19,6 +19,7 @@ CDoodUserProfileManager::~CDoodUserProfileManager()
 
 void CDoodUserProfileManager::initConnect()
 {
+    connect(m_pClient,SIGNAL(uploadAvatarResult(QString,QString,int)),this,SLOT(onUploadAvatarResult(QString,QString,int)));
     connect(m_pClient, SIGNAL(accountInfoChanged(Contact)), this, SLOT(onAccountInfoChanged(Contact)));
     connect(m_pClient, SIGNAL(connectChanged(QString)), this, SLOT(onConnectChanged(QString)));
     connect(m_pClient, SIGNAL(anthAvatarChanged(QString)), this, SLOT(onAvatarChanged(QString)));
@@ -37,6 +38,14 @@ QString CDoodUserProfileManager::setId(const QString &data)
     mId = data;
     emit idChanged();
     return mId;
+}
+
+qint64 CDoodUserProfileManager::birthMScon()
+{
+    if(mBirth !=""){
+        return mBirth.toLongLong();
+    }
+    return 0;
 }
 
 QString CDoodUserProfileManager::name() const
@@ -74,7 +83,7 @@ void CDoodUserProfileManager::getAccountInfo()
     m_pClient->getAccountInfo();
 }
 
-void CDoodUserProfileManager::updateAccountInfo(QString _name, QString _avater, QString _gender, QString _nickid)
+void CDoodUserProfileManager::updateAccountInfo(QString _name, QString _avater, QString _gender, QString _nickid,QString birth)
 {
     Contact user;
 
@@ -90,6 +99,9 @@ void CDoodUserProfileManager::updateAccountInfo(QString _name, QString _avater, 
     }
     if(_nickid != "" && _nickid != nickId()){
         user.nick_id = _nickid;
+    }
+    if(birth != ""){
+        user.birthday = birth;
     }
     m_pClient->updateAccountInfo(user);
 }
@@ -143,11 +155,25 @@ void CDoodUserProfileManager::onAccountInfoChanged(Contact user)
     if(user.thumbAvatar != ""){
         setThumbAvatar(user.thumbAvatar);
     }
-    if(user.nick_id != ""){
+    if(user.id == id()){
+        if(user.nick_id != ""){
+            setNickId(user.nick_id);
+        }
+        if(user.birthday != ""){
+            setBirth(user.birthday);
+        }
+        if(user.phone != ""){
+            setPhone(user.phone);
+        }
+        if(user.email != ""){
+            setEmail(user.email);
+        }
+    }else{
         setNickId(user.nick_id);
+        setBirth(user.birthday);
+        setPhone(user.phone);
+        setEmail(user.email);
     }
-    //setNickId("");
-    //setNickId(user.nick_id);
     setId(user.id);
 }
 
@@ -155,6 +181,7 @@ void CDoodUserProfileManager::onConnectChanged(QString flag)
 {
     qDebug() << Q_FUNC_INFO<<"asasasasasaassa"<<flag;
     setConnectFlag(flag);
+    emit connectChanged(flag);
 }
 
 void CDoodUserProfileManager::onAvatarChanged(QString avatar)
@@ -166,7 +193,8 @@ void CDoodUserProfileManager::onAvatarChanged(QString avatar)
 
 void CDoodUserProfileManager::onUploadAvatarResult(QString orgijson, QString thumbjson, int code)
 {
-
+    qDebug()<<Q_FUNC_INFO<<code;
+    emit uploadAvataerFinished();
 }
 
 void CDoodUserProfileManager::onSetPrivateSetting(int code)
@@ -185,6 +213,44 @@ void CDoodUserProfileManager::onGetPrivateSetting(int code, IMPrivateSetting ps)
     setVipNoticetype(ps.vip_noticetype);
     setAtNoticetype(ps.at_noticetype);
     setGlobalNoticetype(ps.global_noticetype);
+}
+
+QString CDoodUserProfileManager::birth() const
+{
+    QString tmp = mBirth;
+    if(tmp != ""){
+        QDateTime time = QDateTime::fromMSecsSinceEpoch(tmp.toLongLong());
+        tmp = time.toString("yyyy年MM月dd日");
+    }
+    return tmp;
+}
+
+void CDoodUserProfileManager::setBirth(const QString &birth)
+{
+    mBirth = birth;
+    emit birthChanged();
+}
+
+QString CDoodUserProfileManager::phone() const
+{
+    return mPhone;
+}
+
+void CDoodUserProfileManager::setPhone(const QString &phone)
+{
+    mPhone = phone;
+    emit phoneChanged();
+}
+
+QString CDoodUserProfileManager::email() const
+{
+    return mEmail;
+}
+
+void CDoodUserProfileManager::setEmail(const QString &email)
+{
+    mEmail = email;
+    emit emailChanged();
 }
 
 QString CDoodUserProfileManager::gender() const

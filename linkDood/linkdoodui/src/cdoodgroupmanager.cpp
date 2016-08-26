@@ -10,6 +10,7 @@ CDoodGroupManager::CDoodGroupManager(LinkDoodClient *client, QObject *parent) :
     qRegisterMetaType<CDoodGroupManager*>();
     initConnect();
     mGetGroupInfo=0;
+    mNewGroupInfo=false;
     m_pUiManager = (linkdoodui_Workspace*)parent;
 }
 
@@ -223,11 +224,16 @@ void CDoodGroupManager::onGroupListChanged(GroupList groupList)
     clearGroupList();
     qDebug() << Q_FUNC_INFO<<"okokokokok";
     Group historygroup;
+    QString MyId=getMyId();
     foreach (historygroup, groupList) {
         if(!groupListMap.contains(historygroup.id)) {
             CDoodGroupItem *tmpItem = new CDoodGroupItem(this);
             tmpItem->setId(historygroup.id);
             tmpItem->setName(historygroup.name);
+            tmpItem->setIsLeader(false);
+            if(historygroup.createrid==MyId){
+                tmpItem->setIsLeader(true);
+            }
             tmpItem->setThumbAvatar(historygroup.thumbAvatar);
             tmpItem->setSection(historygroup.pinyin);
             insertItem(indexOfSection(tmpItem->sectionKey()),tmpItem);
@@ -238,7 +244,21 @@ void CDoodGroupManager::onGroupListChanged(GroupList groupList)
 
 void CDoodGroupManager::onGetGroupInfoResult(QString result,Group group)
 {
+    qDebug() << Q_FUNC_INFO<<"okokokokok1";
+    if(mNewGroupInfo){
+        qDebug() << Q_FUNC_INFO<<"okokokokok2";
+        mNewGroupInfo=false;
+        if(result=="获取群信息成功"){
+
+            emit newGroupToChat(group.id,group.name);
+        }
+        else{
+            emit newGroupToChat("","");
+        }
+        return;
+    }
     if(mGetGroupInfo==1){
+        qDebug() << Q_FUNC_INFO<<"okokokokok3";
         if(result=="获取群信息成功"){
             qDebug() << Q_FUNC_INFO<<"okokokokok"<<group.id;
             qDebug() << Q_FUNC_INFO<<"okokokokok"<<group.createrid;
@@ -263,22 +283,27 @@ void CDoodGroupManager::onGetGroupInfoResult(QString result,Group group)
 
 void CDoodGroupManager::onGroupInfoChanged(QString type, Group gp)
 {
-    //群解散,被踢出群
-    if(type=="31"||type=="32"){
+    //群解散,被踢出群,主动退群解散群
+    if(type=="31"||type=="32"||type=="33"){
         CDoodGroupItem *item = groupListMap.value(gp.id,NULL);
         if(item != NULL){
             removeItem(indexOf(item));
             groupListMap.remove(gp.id);
             delete item;
         }
+        emit groupRemoveOrExitResult(gp.id);
         return;
     }
-    qDebug() << Q_FUNC_INFO<<"okokokokok"<<gp.name<<"    "<<"gp.pinyin:"<<gp.pinyin<<"1111";
+    qDebug() << Q_FUNC_INFO<<"okokokokok"<<type<<"   "<<gp.createrid<<"    "<<"gp.pinyin:"<<gp.pinyin<<"1111";
     if(!groupListMap.contains(gp.id)) {
         CDoodGroupItem *tmpItem = new CDoodGroupItem(this);
         tmpItem->setId(gp.id);
         tmpItem->setName(gp.name);
+        tmpItem->setIsLeader(false);
         tmpItem->setThumbAvatar(gp.thumbAvatar);
+        if(gp.createrid==getMyId()){
+            tmpItem->setIsLeader(true);
+        }
         tmpItem->setSection(gp.pinyin);
         insertItem(indexOfSection(tmpItem->sectionKey()),tmpItem);
         groupListMap[gp.id] = tmpItem;
@@ -290,7 +315,7 @@ void CDoodGroupManager::onGroupInfoChanged(QString type, Group gp)
             setBulletin(gp.bulletin);
             setName(gp.name);
             setId(gp.id);
-//            setThumbAvatar(gp.thumbAvatar);
+            //            setThumbAvatar(gp.thumbAvatar);
         }
         tmpItem->setId(gp.id);
         tmpItem->setName(gp.name);
@@ -299,6 +324,19 @@ void CDoodGroupManager::onGroupInfoChanged(QString type, Group gp)
         removeItem(indexOf(tmpItem));
         insertItem(indexOfSection(tmpItem->sectionKey()),tmpItem);
         groupListMap[gp.id] = tmpItem;
+    }
+}
+
+void CDoodGroupManager::onGroupLeaderChanged(QString userid, QString username, QString groupid, QString groupname)
+{
+    CDoodGroupItem *tmpItem = groupListMap.value(groupid);
+    if(tmpItem!=NULL){
+        if(userid==getMyId()){
+            tmpItem->setIsLeader(true);
+        }
+        else{
+            tmpItem->setIsLeader(false);
+        }
     }
 }
 
@@ -321,7 +359,10 @@ void CDoodGroupManager::onTransferGroupResult(QString result)
 {
     qDebug() << Q_FUNC_INFO<<"ssss"<<result;
     if(result=="转让群成功"){
-    setIsGroupLeader(false);
+        setIsGroupLeader(false);
+    }
+    else{
+        emit transferGroupResult(result);
     }
 
 }
@@ -375,7 +416,7 @@ void CDoodGroupManager::onUploadGroupAvatarResult(QString thum_url, QString src_
 
 void CDoodGroupManager::onGroupAvatarChanged(QString id, QString avatar)
 {
-    qDebug() << Q_FUNC_INFO<<avatar;
+    qDebug() << Q_FUNC_INFO<<id;
     if(groupListMap.contains(id)){
         CDoodGroupItem *tmpItem = groupListMap.value(id);
         tmpItem->setThumbAvatar(avatar);
@@ -415,7 +456,32 @@ void CDoodGroupManager::selectmember(QString id)
         setMemberCount("");
     }
     else{
-    setMemberCount(QString::number(m_memberList.size()));
+        setMemberCount(QString::number(m_memberList.size()));
+    }
+}
+
+QString CDoodGroupManager::getSize(QString type,QString size1, QString size2)
+{
+    QString size;
+    size=QString::number(size1.toInt()+size2.toInt());
+    if(type=="1"){
+        return size;
+    }
+    size="("+size+"/1000)";
+    return size;
+}
+
+void CDoodGroupManager::selectMemberName(QString id, QString name)
+{
+    for(int i = 0;i<m_memberList.size();++i){
+        if(m_memberList.at(i).id == id){
+            m_memberList.removeAt(i);
+            Member mem;
+            mem.id = id;
+            mem.name = name;
+            m_memberList.push_back(mem);
+            return;
+        }
     }
 }
 
@@ -426,6 +492,10 @@ MemberList CDoodGroupManager::returnmember()
 
 void CDoodGroupManager::createGroup(QString name)
 {
+    if(m_memberList.size()==0){
+        emit noMemberInvited("请选择群成员");
+        return;
+    }
     m_pClient->createGroup("2",name,m_memberList);
     m_memberList.clear();
 }
@@ -434,23 +504,37 @@ void CDoodGroupManager::getGroupInfo(QString id)
 {
     qDebug()<<Q_FUNC_INFO;
     mGetGroupInfo=1;
+    setId("");
+    setName("");
+    setBrief("");
+    setBulletin("");
+    setThumbAvatar("");
     m_pClient->getGroupInfo(id);
 }
 
-void CDoodGroupManager::removeGroup(QString groupid)
+void CDoodGroupManager::removeGroup(QString operate,QString groupid)
 {
     qDebug()<<Q_FUNC_INFO;
-    if(isGroupLeader()){
-        m_pClient->removeGroup("1",groupid);
+    if(operate!=""){
+        m_pClient->removeGroup(operate,groupid);
     }
-    else {
-        m_pClient->removeGroup("2",groupid);
+    else{
+        if(isGroupLeader()){
+            m_pClient->removeGroup("1",groupid);
+        }
+        else {
+            m_pClient->removeGroup("2",groupid);
+        }
     }
 }
 
 void CDoodGroupManager::inviteMember()
 {
     qDebug()<<Q_FUNC_INFO;
+    if(m_memberList.size()==0){
+        emit noMemberInvited("请选择成员");
+        return;
+    }
     m_pClient->inviteMember(mId,m_memberList);
     m_memberList.clear();
 }
@@ -458,12 +542,13 @@ void CDoodGroupManager::inviteMember()
 void CDoodGroupManager::clearMemberCount()
 {
     setMemberCount("");
+    m_memberList.clear();
 }
 
-void CDoodGroupManager::addGroup(QString groupid)
+void CDoodGroupManager::addGroup(QString groupid,QString info)
 {
     qDebug()<<Q_FUNC_INFO;
-    m_pClient->addGroup(groupid,"");
+    m_pClient->addGroup(groupid,info);
 }
 
 void CDoodGroupManager::getGroupList()
@@ -479,16 +564,24 @@ void CDoodGroupManager::setGroupInfo(int type, QString remark)
     mType=type;
     mTemp=remark;
     if(type==1){
-       //TODO::avatar
+        //TODO::avatar
     }
     if(type==2){
-        group.name=remark;
-        if(remark.size()>16){
-            emit wordsOutOfLimited();
+        if(remark.size()==0){
+            emit wordsOutOfLimited("群名称不能为空");
             return;
         }
+        if(remark.size()>25){
+            emit wordsOutOfLimited("群名称字数不能超过25");
+            return;
+        }
+        group.name=remark;
     }
     if(type==3){
+        if(remark.size()>40){
+            emit wordsOutOfLimited("群简介字数不能超过40");
+            return;
+        }
         group.brief=remark;
     }
     if(type==4){
@@ -500,6 +593,8 @@ void CDoodGroupManager::setGroupInfo(int type, QString remark)
 void CDoodGroupManager::getGroupSet(QString groupid)
 {
     qDebug()<<Q_FUNC_INFO;
+    setVerify_type("");
+    setIs_allow("");
     m_pClient->getGroupSet(groupid);
 }
 
@@ -530,10 +625,12 @@ void CDoodGroupManager::transMessage(QString localId)
 {
     QList<QString> list;
     for(int i=0;i<m_memberList.size();++i){
-        list.push_back(m_memberList.at(i).id);
+        QString value = m_memberList.at(i).id +":"+m_memberList.at(i).name;
+        list.push_back(value);
     }
     qDebug()<<Q_FUNC_INFO<<"transMessageSelectContactList:"<<list.size();
     emit transMessageSelectContactList(list,localId);
+    m_memberList.clear();
 
 }
 
@@ -563,7 +660,7 @@ void CDoodGroupManager::onSetGroupInfoResult(QString result)
     qDebug() << Q_FUNC_INFO<<result;
     if(result=="设置群信息成功"){
         if(mType==1){
-           //TODO::avatar
+            //TODO::avatar
         }
         if(mType==2){
             setName(mTemp);
@@ -580,7 +677,13 @@ void CDoodGroupManager::onSetGroupInfoResult(QString result)
 void CDoodGroupManager::onCreateGroupResult(QString result)
 {
     qDebug() << Q_FUNC_INFO;
-    emit createGroupResult(result);
+    if(result=="创建群失败(群数量超过限制)"||result=="创建群失败"){
+        emit createGroupResult(result);
+    }
+    else{
+        mNewGroupInfo=true;
+        m_pClient->getGroupInfo(result);
+    }
 }
 void CDoodGroupManager::initConnect()
 {
@@ -588,6 +691,7 @@ void CDoodGroupManager::initConnect()
     connect(m_pClient,SIGNAL(groupListChanged(GroupList)),this,SLOT(onGroupListChanged(GroupList)));
     connect(m_pClient,SIGNAL(createGroupResult(QString)),this,SLOT(onCreateGroupResult(QString)));
     connect(m_pClient,SIGNAL(getGroupInfoResult(QString,Group)),this,SLOT(onGetGroupInfoResult(QString,Group)));
+    connect(m_pClient,SIGNAL(groupLeaderChanged(QString,QString,QString,QString)),this,SLOT(onGroupLeaderChanged(QString,QString,QString,QString)));
     connect(m_pClient,SIGNAL(groupInfoChanged(QString,Group)),this,SLOT(onGroupInfoChanged(QString,Group)));
     connect(m_pClient,SIGNAL(removeGroupResult(QString)),this,SLOT(onRemoveGroupResult(QString)));
     connect(m_pClient,SIGNAL(inviteMemberResult(QString)),this,SLOT(onInviteMemberResult(QString)));
@@ -609,6 +713,10 @@ int CDoodGroupManager::indexOfSection(QString sectnion)
     //    }
     for(;index < itemCount();++index){
         CDoodGroupItem *tmpItem = (CDoodGroupItem *)itemOfIndex(index);
+        if(tmpItem == NULL ||sectnion == "" || tmpItem->sectionKey() == ""){
+            qDebug()<<Q_FUNC_INFO<<"tmpItem == NULL ||sectnion == NULL || tmpItem->sectionKey()==NULL";
+            return 0;
+        }
         if(tmpItem->sectionKey() == sectnion||tmpItem->sectionKey()=="#"){
             return index;
         }

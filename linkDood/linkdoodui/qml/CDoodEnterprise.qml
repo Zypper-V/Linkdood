@@ -3,15 +3,19 @@ import com.syberos.basewidgets 2.0
 Item {
     Connections {
         target: enterpriseManager
-        onGetFarOrgResult: {
+        onFarOrgResult: {
+            console.log("farOrgsssssssssssss.");
           enterpriseManager.getSonOrgs(id);
           orgManager.addOrg(id,name);
-            loadingDialog.show();
+//            loadingDialog.show();
         }
         onGetSonOrgsResult:{
-            console.log("ogr change.")
-            loadingDialog.hide();
+            console.log("ogr change.");
             orgTitleListView.positionViewAtEnd();
+             loadingDialog.hide();
+        }
+        onGetOrgUserInfoResult:{
+            userdataManager.setThumbAvatar(thumbAvatar);
         }
     }
     id: contactEnterprise
@@ -32,7 +36,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         width: parent.width
-        height: 101
+        height: 51
         color:"#F2F2F2"
         ListView{
             id: orgTitleListView
@@ -57,7 +61,7 @@ Item {
                 height: 50
                 anchors.top:parent.top
                 color:"#F2F2F2"
-                anchors.topMargin: 21
+                anchors.topMargin: 0
                 BorderImage{
                     width: parent.width
                     height: parent.height
@@ -94,22 +98,49 @@ Item {
     Rectangle{
         id:memberRec
         anchors.top: orgTitleListViewbackground.bottom
-        height: 43
+        height: enterpriseManager.isOrg?0:43
+        visible: enterpriseManager.isOrg?false:true
         anchors.left: parent.left
         anchors.right: parent.right
         color:"#EAEEF2"
         Text{
             //            anchors.top: parent.top
-            anchors.left:parent.left
+//            anchors.left:parent.left
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: enterpriseManager.isOrg?45:245
+            anchors.horizontalCenter: parent.horizontalCenter
+//            anchors.leftMargin: 245
             //            color:"black"
-            text:enterpriseManager.isOrg?qsTr("成员"):qsTr("暂未加入任何组织")
+            text:enterpriseManager.tip
             font.pixelSize: 26
         }
     }
+    CLine {
+        id:line
+        width: parent.width
+        anchors.top: orgTitleListViewbackground.bottom
+        anchors.left:parent.left
+        z: parent.z+2
+        visible: enterpriseManager.isOrg?true:false
+    }
+//    Rectangle{
+//        id:memberRec
+//        anchors.top: orgTitleListViewbackground.bottom
+//        height: 43
+//        anchors.left: parent.left
+//        anchors.right: parent.right
+//        color:"#EAEEF2"
+//        Text{
+//            //            anchors.top: parent.top
+//            anchors.left:parent.left
+//            anchors.verticalCenter: parent.verticalCenter
+//            anchors.leftMargin: enterpriseManager.isOrg?45:245
+//            //            color:"black"
+//            text:enterpriseManager.isOrg?qsTr("成员"):qsTr("暂未加入任何组织")
+//            font.pixelSize: 26
+//        }
+//    }
     Rectangle{
-        anchors.top: memberRec.bottom
+        anchors.top:enterpriseManager.isOrg? line.bottom:memberRec.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -157,15 +188,20 @@ Item {
                         if(model.modelData.gender===""){
                         console.log(" model.modelData.id: ",model.modelData.id)
                         console.log(" model.modelData.name: ",model.modelData.name)
+                            loadingDialog.show();
                         orgManager.addOrg(model.modelData.id, model.modelData.name);
 
                         enterpriseManager.getSonOrgs(model.modelData.id)
-                         loadingDialog.show();
+
                         }
                         else{
                             background.color = "#F2F2F2"
                             mousePressBackgroud.visible = false
+                            userdataManager.clearData();
+
+                            enterpriseManager.getOrgUserInfo(model.model.id);
                             userdataManager.setName(model.modelData.name);
+                            userdataManager.setRemark(model.modelData.name);
                             userdataManager.setGender(model.modelData.gender);
                             userdataManager.setThumbAvatar("");
                             userdataManager.setId(model.modelData.id);
@@ -234,7 +270,7 @@ Item {
                             width: 1
                             anchors.left: parent.left
                             color:"#cdcdcd"
-                            //                        anchors.leftMargin: 150
+                            anchors.leftMargin: 25
                             anchors.right: parent.right
                             anchors.bottom: parent.bottom
                             z: parent.z+2
@@ -248,6 +284,9 @@ Item {
         id:loadingDialog
         //            indicatorDirection: Qt.Horizontal
         messageText: os.i18n.ctr(qsTr("正在获取中...")) // qsTr("正在获取中...")
+        onBackKeyReleased: {
+            loadingDialog.hide();
+        }
     }
 }
 

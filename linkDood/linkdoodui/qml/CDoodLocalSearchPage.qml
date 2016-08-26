@@ -8,12 +8,12 @@ CDoodPopWndLayer{
     property string name: ""
     contentItemBackGroundOpacity:0.73
 
-    onOutAreaClicked:{
-        editContactId.text=""
-        localSearchManager.contactListClear();
-        searchMenu.hide();
-        editContactId.text = "";
-    }
+//    onOutAreaClicked:{
+//        editContactId.text=""
+//        localSearchManager.contactListClear();
+//        searchMenu.hide();
+//        editContactId.text = "";
+//    }
 
     onBackKeyReleased:{
         editContactId.text=""
@@ -104,10 +104,29 @@ CDoodPopWndLayer{
 
             clip: true
             model:localSearchManager
+            section.property: "modelData.searchKey"
+            section.criteria: ViewSection.FullString
+            section.delegate: Rectangle {
+                width: contactListView.width
+                height: 35
+                color: "#F2F2F2"
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 25
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: section
+                    font.pixelSize: 22
+                    color: "#333333"
+                    onTextChanged: {
+                        console.log("xxxxxx:"+text)
+                    }
+                }
+            }
 
             function getHeight() {
-                var maxLen = 1184;
-                var len = contactListView.count*104;
+                var maxLen = 1042;
+                var len = contactListView.count*104+localSearchManager.searchKeyCount*35;
                 if(len >= maxLen){
                     len = maxLen;
                 }
@@ -134,10 +153,11 @@ CDoodPopWndLayer{
                         }
                         onCanceled: background.color = "#FFFFFF"
                         onClicked: {
+                            editContactId.text = "";
                             if(model.modelData.userOrGroup === "2"){
-                                chatManager.switchToChatPage(model.modelData.id,model.modelData.name,"2",0,model.modelData.thumbAvatar);
+                                chatManager.switchToChatPage(model.modelData.id,model.modelData.name,"2","0",0,model.modelData.thumbAvatar);
                             }else{
-                                chatManager.switchToChatPage(model.modelData.id,model.modelData.name,"1",0,model.modelData.thumbAvatar);
+                                chatManager.switchToChatPage(model.modelData.id,model.modelData.name,"1","0",0,model.modelData.thumbAvatar);
                             }
 
                             localSearchManager.contactListClear();

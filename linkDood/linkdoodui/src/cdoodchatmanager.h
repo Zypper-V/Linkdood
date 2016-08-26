@@ -32,8 +32,10 @@ public:
     Q_INVOKABLE  void showUiFinished();
     Q_INVOKABLE  void clearList();
     Q_INVOKABLE  void getMoreHistoryMessage();
-
+    Q_INVOKABLE  void getGroupMemsList(QString groupId);
     Q_INVOKABLE  CDoodChatManagerModel* chatModel ()const;
+    Q_INVOKABLE  void isTextOnClipboard();
+    Q_INVOKABLE  bool isTextOnly(QString text);
     void updateMsgToListView(Msg msg);
 
     void startPushChatPage();
@@ -44,7 +46,8 @@ public:
     Q_INVOKABLE void setSelectImageCount(int oper,QString url);
     Q_INVOKABLE bool imageExisted(QString url);
     Q_INVOKABLE void startSendPicture();
-
+    Q_INVOKABLE QString cameraFilePath();
+    Q_INVOKABLE void sendPictrue(QString path);
     //选择文件
     int selectFileCount();
     void setSelectFileCount(int count);
@@ -55,6 +58,8 @@ public:
     //发送消息
     Q_INVOKABLE void sendText(QQuickTextDocument* item,QString oriText);
     Q_INVOKABLE void resendMessage(QString localId);
+    Q_INVOKABLE QString handleEmojiText(QQuickTextDocument* item);
+
     void sendText(QString text,QString oriText);
     void sendMessage(Msg msg);
     //发送动态表情
@@ -74,9 +79,11 @@ public:
     Q_INVOKABLE void transforMessage(QString targetid,QString targetName,QString avatar, QString msgId);
     Q_INVOKABLE void entryChat(const QString &targetid);
     Q_INVOKABLE void exitChat();
+    Q_INVOKABLE QString chatPageId();
     Q_INVOKABLE void downloadFile(QString localId, QString targetId);
     Q_INVOKABLE QString judgeFileFromat(QString filePath);
     Q_INVOKABLE void getUserInfo(QString userid);
+    Q_INVOKABLE void downloadMainImage(QString main_url,QString encryptkey,QString targetId);
 
     //上传图片
     void uploadAndSendImageMsg(Msg);
@@ -94,7 +101,9 @@ public:
     //获取文件列表
     void getFileList(int64 targetid, int64 fileid, int count, int flag);
 
+    void groupMemsChanged(QString groupid,int size);
 signals:
+    void removeCurrentChat();
     //会话列表头像更新
     void chatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
@@ -109,7 +118,7 @@ signals:
     void removeChatResult(bool);
     void getUserInfoResult(int code, Contact contact);
     void transforMessageBack(int code);
-
+    void downloadMainImageResult(QString main_url,QString localpath);
     void updateSessionPageMsgReaded(QString targetId);
 
     void idChanged();
@@ -123,12 +132,17 @@ signals:
                           QString targetid,
                           QString chatType);
 private slots:
+    void onDeleteMessage(QString targetId,QStringList msgs);
+    void onGetOrgUserInfoResult(int code,OrgUser orguser);
+    void onUploadImageProgess(QString targetId,QString localId,int progress);
     void onGetGroupMemberListReslut(int code, QString id, MemberList list);
+    void onGroupMemberListChanged(QString operType,QString GroupId,MemberList memberlist);
     void onAccountInfoChanged(Contact user);
     void onAnthAvatarChanged(QString avatar);
     void onContactInfoChanged(int oper,Contact user);
     void onDownloadImage(QString targetId,QString localId,QString url,QString enkey);
     //会话列表头像更新
+    void onDownloadMainImageResult(QString main_url,QString localpath);
     void onChatAvatarChanged(QString id,QString avatar);
     //监听离线消息通知
     void onChatOfflineMsgNotice(IMOfflineMsgList msgList);

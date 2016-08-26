@@ -90,7 +90,7 @@ void LinkDoodServiceThread::bcNotify(const QString senderId,
     // gGetAllUnreadMsgNum获取到的是已经写入数据库的未读消息总数
     //CSystemBadge badge;
     //badge.setValue("com.vrv.linkDood", "linkdoodui", unReadNumber);
-
+    //QObject::connect(&notificationService,SIGNAL(removeNotification(const QString &)),this,SLOT(onRemoveNotification(const QString &)));
     QTimer::singleShot(2000, this, SLOT(releaseWakelockSlot()));
 }
 
@@ -99,3 +99,8 @@ void LinkDoodServiceThread::releaseWakelockSlot()
     qDebug() << "linkDood : " << Q_FUNC_INFO;
     m_pPowerManager->releaseWakelock();
 }
+
+//void LinkDoodServiceThread::onRemoveNotification(const QString &updateId)
+//{
+//    qDebug()<<Q_FUNC_INFO<<"clicked:"<<updateId;
+//}

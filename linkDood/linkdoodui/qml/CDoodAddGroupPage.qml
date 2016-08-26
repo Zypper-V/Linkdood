@@ -134,7 +134,7 @@ CPage {
                 }
             onClicked: {
                 //TODO: handle group-adding management
-                groupManager.addGroup(userdataManager.id);
+                groupManager.addGroup(userdataManager.id,"我是"+userProfileManager.name);
                 }
             }
 

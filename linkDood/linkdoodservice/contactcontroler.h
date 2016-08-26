@@ -17,7 +17,6 @@ public:
 
     //获取会话列表
     void getContactList();
-
     //更新联系人信息
     void updateContactInfo(QString userId,QString operStar,QString remark="");
 
@@ -56,11 +55,12 @@ private:
     ContactList sort(const ContactList& contactList);
     //更新联系人信息
     void _updateContactInfo(service::ErrorInfo&info);
-    void _searchFromNet(service::ErrorInfo info, SearchResult res);
-    void _searchFromLocal(service::ErrorInfo info, SearchResult res);
+    void _searchFromNet(service::ErrorInfo& info, SearchResult& res);
+    void _searchFromLocal(service::ErrorInfo& info, SearchResult& res);
     void _addContact(service::ErrorInfo info);
     void _removeContact(service::ErrorInfo info);
     void _getVerifyType(service::ErrorInfo info, ContactVerifyType verify);
     void _getContactInfo(service::ErrorInfo&info, service::User&contact);
+    void _getContactOnline(std::vector<OnlineState>& status);
 };
 #endif // CONTACTCONTROLER_H

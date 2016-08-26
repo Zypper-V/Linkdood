@@ -39,6 +39,14 @@ namespace utils {
 			int64 encryptUser;
 			std::string enc_dec_key;
 		};
+		struct TipProperty{
+			int tipType;
+			int operType;
+			std::string time;
+			std::string operUser;
+			std::string userInfo;
+			std::string tipMsg;
+		};
 		static std::string MsgFormat(std::string body);
 		static std::string MsgFormat(ImageProperty imageporperty);
 		static std::string MsgFormat(FileProperty fileproperty);
@@ -46,5 +54,6 @@ namespace utils {
 		static std::string getText(std::string json);
 		static FileProperty  getFile(std::string json);
 		static ImageProperty getImg(std::string json);
+		static TipProperty getTip(std::string json);
 	};
 }

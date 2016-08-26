@@ -92,6 +92,10 @@ void Msg::toImMassage(QVariantMap map)
         if(iter.key() == "isTransMsg"){
             isTransMsg = iter.value().toBool();
         }
+        if(iter.key() == "fromName"){
+            fromName = iter.value().toString();
+        }
+
         if (iter.key() == "related_users") {
             // related_users.clear();
             // related_users.append(iter.value());
@@ -108,6 +112,7 @@ void Msg::init()
     body = QString();// 消息内容
     targetName = "";
     isTransMsg = false;
+    fromName = "";
 }
 
 QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
@@ -118,7 +123,8 @@ QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
              << msg.localid << msg.relatedMsgid << msg.time << msg.body
              <<msg.encrypt_key<<msg.encrypt_user<<msg.filename<<msg.f_id
             <<msg.f_path<<msg.f_size<<msg.f_state<<msg.f_url<<msg.i_height
-           <<msg.i_width<<msg.main_url<<msg.thumb_url<< msg.msgProperties<<msg.targetName<<msg.isTransMsg;
+           <<msg.i_width<<msg.main_url<<msg.thumb_url<< msg.msgProperties
+           <<msg.targetName<<msg.isTransMsg<<msg.fromName;
     argument.endStructure();
     return argument;
 }
@@ -131,7 +137,8 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Msg &msg)
             >> msg.localid >> msg.relatedMsgid >> msg.time >> msg.body
             >>msg.encrypt_key>>msg.encrypt_user>>msg.filename>>msg.f_id
             >>msg.f_path>>msg.f_size>>msg.f_state>>msg.f_url>>msg.i_height
-            >>msg.i_width>>msg.main_url>>msg.thumb_url>> msg.msgProperties>>msg.targetName>>msg.isTransMsg;
+            >>msg.i_width>>msg.main_url>>msg.thumb_url>> msg.msgProperties
+            >>msg.targetName>>msg.isTransMsg>>msg.fromName;
     argument.endStructure();
     return argument;
 }
@@ -280,6 +287,15 @@ void Contact::toImContact(QVariantMap map)
         if(iter.key() == "team"){
             this->team = iter.value().toInt();
         }
+        if(iter.key() == "birthday"){
+            this->birthday = iter.value().toString();
+        }
+        if(iter.key() == "email"){
+            this->email = iter.value().toString();
+        }
+        if(iter.key() == "phone"){
+            this->phone = iter.value().toString();
+        }
     }
 }
 
@@ -300,6 +316,7 @@ void Contact::init()
     this->timeZone = 0;
     nick_id = "";
     team = 0;
+    email = birthday = phone = "";
 }
 
 QDBusArgument &operator << (QDBusArgument &argument, const Contact &contact)
@@ -309,7 +326,8 @@ QDBusArgument &operator << (QDBusArgument &argument, const Contact &contact)
              << contact.gender << contact.id << contact.isStar
              << contact.isVip <<  contact.name << contact.name
              << contact.pinyin << contact.remark << contact.server
-             << contact.thumbAvatar << contact.timeZone <<contact.team;
+             << contact.thumbAvatar << contact.timeZone <<contact.team
+             << contact.email << contact.phone << contact.birthday;
     argument.endStructure();
     return argument;
 }
@@ -321,7 +339,8 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Contact &contac
             >> contact.gender >> contact.id >> contact.isStar
             >> contact.isVip >>  contact.name >> contact.name
             >> contact.pinyin >> contact.remark >> contact.server
-            >> contact.thumbAvatar >> contact.timeZone >> contact.team;
+            >> contact.thumbAvatar >> contact.timeZone >> contact.team
+            >> contact.email >> contact.phone >> contact.birthday;
     argument.endStructure();
     return argument;
 }

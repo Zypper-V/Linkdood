@@ -114,6 +114,15 @@ Component {
                     if(pictrueMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
                         pictrueMessage.width = chatDelegateRoot.maxMessageLength
                 }
+
+                Text{
+                    font.pixelSize: 36
+                    color:"white"
+                    text:model.modelData.progress+"%"
+                    visible: model.modelData.loading
+
+                    anchors.centerIn: parent
+                }
             }
         }
 
@@ -140,7 +149,7 @@ Component {
                     anchors.fill: parent
                     onPressed: {
                         console.log("zhangp to resend 1111111111111111111111111111111!!!")
-                        chatManager.resendMessage(model.modelData.msgId);
+                        chatManager.resendMessage(model.modelData.localId);
                     }
                 }
             }

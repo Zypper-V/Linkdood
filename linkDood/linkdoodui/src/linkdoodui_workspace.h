@@ -48,14 +48,20 @@ public:
     void openByUrl(const QUrl& url);
     void getGroupInfoFromList(QString groupId,QString&name,QString&avatar);
     void getContactInforFromList(QString id,QString& name,QString& avater);
+signals:
+    void switchLoginByUrl();
+    void switchChatPageByUrl();
 private:
-    void showLinkDood(const QString &id, const QString &pwd);
+    void showLinkDood( QString &id,  QString &pwd);
+    void showLinkDoodByUrl( QString id);
     void setActiveWindow();
 protected slots:
     void onChatPageChanged();
     void onTransMessageSelectContactList(QList<QString>list,QString localId);
     void onGroupRemoveOrExitResult(QString groupId);
     void onUpdateSessionPageMsgReaded(QString targetId);
+    void onGroupMemsChanged(QString groupid,int size);
+    void onRemoveContactOper(QString id);
 private:
     QSharedPointer<CDoodLoginManager> m_pLoginManager;
     QSharedPointer<CDoodSessionListManager> m_pSessionListManager;

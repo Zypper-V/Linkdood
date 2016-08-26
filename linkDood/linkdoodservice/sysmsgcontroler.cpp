@@ -4,18 +4,26 @@
 #include "INotifyService.h"
 #include <QDebug>
 #include "common.h"
-SysMsgControler::SysMsgControler(QObject *parent) : QObject(parent)
+void SysMsgControler::init()
 {
     service::IMClient::getClient()->getNotify()->setSysMsgObserver(this);
+}
+
+SysMsgControler::SysMsgControler(QObject *parent) : QObject(parent)
+{
+
 }
 
 void SysMsgControler::onSysMessageNotice(SysMsg &msg)
 {
     qDebug()<<Q_FUNC_INFO;
+    if(msg.opertype == 5 && msg.name ==""){
+        return;
+    }
     IMSysMsg sysMsg;
     sysMsg.msgid = QString::number(msg.msgid);
     sysMsg.targetid = QString::number(msg.targetid);
-    sysMsg.time = Common:: dealTime(msg.time, 1);
+    sysMsg.time =QString::number(msg.time)/* Common:: dealTime(msg.time, 1)*/;
     sysMsg.respons.clear();
     sysMsg.info = QString::fromStdString(msg.info);
     sysMsg.name =QString::fromStdString(msg.name);
@@ -23,6 +31,8 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
     sysMsg.msgType = QString::number(msg.msgtype);
     sysMsg.operUser = QString::fromStdString(msg.operUser);
     sysMsg.isread = QString::number(msg.isread);
+
+    qDebug()<<Q_FUNC_INFO<<msg.msgtype<<":"<<msg.subtype<<":"<<msg.opertype;
     if(msg.msgtype == 1)
     {
         sysMsg.msgtypeText = "好友申请";
@@ -32,10 +42,20 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
     {
         sysMsg.msgtypeText = "好友验证信息";
         sysMsg.isShowButton = false;
+        if(msg.subtype ==0 && msg.opertype==2){
+            sysMsg.info = sysMsg.operUser + "拒绝了您的好友申请";
+        }
     }
     else if(msg.msgtype == 3)
     {
-        sysMsg.msgtypeText = "群请求";
+        if(msg.subtype == 1)
+        {
+            sysMsg.msgtypeText = "群邀请";
+            sysMsg.info = sysMsg.operUser + "邀请您加入" + sysMsg.name;
+        }
+        else if(msg.subtype == 2){
+            sysMsg.msgtypeText = "群请求";
+        }
         sysMsg.isShowButton = true;
     }
     else
@@ -53,14 +73,20 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
 
         else if(msg.opertype == 5)
         {
-            sysMsg.name = sysMsg.targetid;
+            if(sysMsg.name.size() == 0)
+            {
+                sysMsg.name = sysMsg.targetid;
+            }
             sysMsg.info = sysMsg.operUser + "解散了群" + sysMsg.name;
              qDebug()<<Q_FUNC_INFO << "  sysMsg.info:" << sysMsg.info;
         }
         else if(msg.opertype == 6)
         {
-            sysMsg.name = sysMsg.targetid;
-            sysMsg.info = "您被" + sysMsg.operUser + "移出了群" + sysMsg.targetid;
+            if(sysMsg.name.size() == 0)
+            {
+                sysMsg.name = sysMsg.targetid;
+            }
+            sysMsg.info = "您被" + sysMsg.operUser + "移出了群" + sysMsg.name;
         }
         else if(msg.opertype == 7)
         {
@@ -73,12 +99,20 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
 
     qDebug() << Q_FUNC_INFO << "  msgid:" << sysMsg.msgid << "   targetid:" << sysMsg.targetid << "  time:" << sysMsg.time << "   msgtypeText:" << sysMsg.msgtypeText << "   respons:" << sysMsg.respons << "   name:" << sysMsg.name << "   avatar:" << sysMsg.avatar  << "operUser:" << sysMsg.operUser << "   info:" << sysMsg.info << "   operUser:" << sysMsg.operUser << "sysMsg.isRead:" << sysMsg.isread;
     emit sysMessageNotice(sysMsg);
-    //setSysMessagRead(msg.msgtype,sysMsg.msgid);
+
+    QString path = APP_DATA_PATH;
+    QString fileName = path+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+
+    bool ret = settings.value("isSysPage",false).toBool();
+    if(!ret){
+        emit systemMessageNotice(sysMsg.info,msg.time);
+    }
 }
 
 void SysMsgControler::response(IMSysMsgRespInfo info)
 {
-    qDebug()<<Q_FUNC_INFO;
+    qDebug()<<Q_FUNC_INFO<<info.info<<" "<<info.msgid<<" "<<info.msgtype<<" "<<info.targetid;
     SysMsgRespInfo item;
     item.info = info.info.toStdString();
     item.msgid = info.msgid.toLongLong();
@@ -90,6 +124,7 @@ void SysMsgControler::response(IMSysMsgRespInfo info)
             item.opertype = 1;  //同意
         else if(info.opertype == 0)
             item.opertype = 2;  //拒绝
+        item.msgtype=1;
     }
     if(item.msgtype == 3 || item.msgtype == 4)
     {
@@ -97,9 +132,10 @@ void SysMsgControler::response(IMSysMsgRespInfo info)
             item.opertype = 2;  //同意
         else if(info.opertype == 0)
             item.opertype = 3;   //拒绝
+        item.msgtype=2;
     }
     qDebug()<<Q_FUNC_INFO << "info:" << item.info.c_str() << " msgid:" << item.msgid << "  msgtype:" << item.msgtype << "  targetid:" << item.targetid << "  opertype:" << item.opertype;
-    setSysMessagRead(item.msgtype, info.msgid);
+    setSysMessagRead(info.msgtype, info.msgid);
     service::IMClient::getClient()->getSysMsg()->response(item,std::bind(&SysMsgControler::_response,this,std::placeholders::_1));
 }
 
@@ -109,9 +145,23 @@ void SysMsgControler::getSysMessages(int type, int count, QString msgid, int fla
     service::IMClient::getClient()->getSysMsg()->getMessages(type,count,msgid.toLongLong(),flag,std::bind(&SysMsgControler::_getSysMessages,this,std::placeholders::_1,std::placeholders::_2));
 }
 
+void SysMsgControler::removeSysMessage(QString type,QString msgid)
+{
+    qDebug()<<Q_FUNC_INFO<<msgid;
+    std::vector<int64> msgs;
+    msgs.push_back(msgid.toLongLong());
+    service::IMClient::getClient()->getSysMsg()->removeMessages(type.toInt(),msgs,std::bind(&SysMsgControler::_removeSysMessage,this,std::placeholders::_1));
+}
+
+void SysMsgControler::_removeSysMessage(service::ErrorInfo info)
+{
+    qDebug()<<Q_FUNC_INFO<<info.code();
+    emit removeSysMessageResult(QString::number(info.code()));
+}
+
 void SysMsgControler::_response(service::ErrorInfo &info)
 {
-    qDebug()<<Q_FUNC_INFO;
+    qDebug()<<Q_FUNC_INFO<<"code:"<<info.code();
 //    emit responseResult(info.code());
 }
 
@@ -122,11 +172,14 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
     IMSysMsg sysMsg;
     for(int i = 0; i < sysmsgs.size(); i++)
     {       
+        if(sysmsgs[i].opertype == 5 && sysmsgs[i].name ==""){
+            continue;
+        }
         sysMsg.respons.clear();
         sysMsg.isShowButton = false;
         sysMsg.msgid = QString::number(sysmsgs[i].msgid);
         sysMsg.targetid = QString::number(sysmsgs[i].targetid);
-        sysMsg.time = Common::dealTime(sysmsgs[i].time, 1);
+        sysMsg.time = QString::number(sysmsgs[i].time)/*Common::dealTime(sysmsgs[i].time, 1)*/;
         sysMsg.respons.clear();      
         sysMsg.name =QString::fromStdString(sysmsgs[i].name);
         sysMsg.avatar = QString::fromStdString(sysmsgs[i].avatar);
@@ -135,7 +188,7 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
         sysMsg.operUser = QString::fromStdString(sysmsgs[i].operUser);
         sysMsg.isread = QString::number(sysmsgs[i].isread);
 
-        qDebug() << Q_FUNC_INFO << "msgtype:" << sysmsgs[i].msgtype << "   opertype:" << sysmsgs[i].opertype << "isread:" << sysMsg.isread;
+        qDebug() << Q_FUNC_INFO << "msgtype:" << sysmsgs[i].msgtype << "   opertype:" << sysmsgs[i].opertype << "isread:" << sysMsg.isread<<"name:"<<sysMsg.name;
         if(sysmsgs[i].msgtype == 1)
         {
             sysMsg.msgtypeText = "好友申请";
@@ -147,11 +200,17 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
                     sysMsg.respons = "已同意";
                 else if(sysmsgs[i].opertype == 2)
                     sysMsg.respons = "已拒绝";
+                else{
+                    sysMsg.respons = "已处理";
+                }
             }
         }
         else if(sysmsgs[i].msgtype == 2)
         {
             sysMsg.msgtypeText = "好友验证信息";
+            if(sysmsgs[i].subtype ==0 && sysmsgs[i].opertype==2){
+                sysMsg.info = sysMsg.operUser + "拒绝了您的好友申请";
+            }
         }
         else if(sysmsgs[i].msgtype == 3)
         {
@@ -179,14 +238,20 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
             }
             else if(sysmsgs[i].opertype == 5)
             {
-                sysMsg.name = sysMsg.targetid;
-                sysMsg.info = sysMsg.operUser + "解散了群" + sysMsg.targetid;
+                if(sysMsg.name.size() == 0)
+                {
+                     sysMsg.name = sysMsg.targetid;
+                }
+                sysMsg.info = sysMsg.operUser + "解散了群" + sysMsg.name;
                  qDebug()<<Q_FUNC_INFO << "  sysMsg.info:" << sysMsg.info;
             }
             else if(sysmsgs[i].opertype == 6)
             {
-                sysMsg.name = sysMsg.targetid;
-                sysMsg.info = "您被" + sysMsg.operUser + "移出了群" + sysMsg.targetid;
+                if(sysMsg.name.size() == 0)
+                {
+                    sysMsg.name = sysMsg.targetid;
+                }
+                sysMsg.info = "您被" + sysMsg.operUser + "移出了群" + sysMsg.name;
             }
             else if(sysmsgs[i].opertype == 7)
             {

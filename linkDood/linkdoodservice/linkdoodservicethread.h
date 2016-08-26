@@ -25,7 +25,7 @@ public slots:
                   int unReadNumber=1);
 private slots:
     void releaseWakelockSlot();
-
+   // void onRemoveNotification(const QString &updateId);
 private:
     CSystemPowerManager * m_pPowerManager;
     QMap<QString,QString> mMapUppdateId;

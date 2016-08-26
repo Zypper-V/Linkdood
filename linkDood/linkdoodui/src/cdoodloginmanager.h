@@ -34,22 +34,26 @@ class CDoodLoginManager : public CDoodListModel
 public:
     explicit CDoodLoginManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
+    void text(QString param);
     ~CDoodLoginManager();
     Q_INVOKABLE void logout();
     Q_INVOKABLE void changepassword(QString oldpsw,QString newpsw);
     Q_INVOKABLE void login(const QString &server,
                            const QString &userId,
                            const QString &password);
+    Q_INVOKABLE void loginByUrl();
     Q_INVOKABLE void autoLogin(QString id,QString service);
     Q_INVOKABLE void getVerifyImg( QString userid,
                             QString code);
-
     Q_INVOKABLE void openUrl(QString url);
     // 从配置文件读取登录状态
 //    Q_INVOKABLE void autoLoginLastAccount();
     Q_INVOKABLE int getAppLoginStatus();
     //向配置文件写入登录状态
     Q_INVOKABLE void setAppLoginStatus(const int status);
+
+    Q_INVOKABLE void setLoginInfoByUrl(QString loginInfo);
+    Q_INVOKABLE QString loginInfoByUrl();
 
     Q_INVOKABLE void setLoginPhone(QString phone);
     Q_INVOKABLE void setLoginService(QString service);
@@ -60,11 +64,8 @@ public:
     Q_INVOKABLE QString getLoginPhoneId();
     Q_INVOKABLE QString getLoginServiceId();
 
-
-
-//    Q_INVOKABLE void setLastLoginAccount(QString service,QString id,QString psw);
-//    Q_INVOKABLE void getLastLoginAccount(QString& service,QString& id,QString& psw);
-
+    Q_INVOKABLE bool isStartupByUrl();
+    Q_INVOKABLE void setIsStartupByUrl(bool isByUrl);
     //用户信息UserId    
     Q_INVOKABLE QString verifyImg();
     Q_INVOKABLE void setVerifyImg(QString verifyImg);
@@ -86,14 +87,19 @@ public:
     Q_INVOKABLE void setLoginInfo(int flag, QString userid, QString username, QString avatar);
     Q_INVOKABLE int loginStatus();
 signals:
+    void siwtchLoginout();
+    void textPareams(QString param);
+    void switchLoginByUrl();
+    void switchChatPageByUrl();
     void loginStatusChanged();
     void autoLogin();
-    void getVerifyImgResult(QString result);
+    void getVerifyImgResult(QString judge,QString result);
     void loginSucceeded();
     void loginFailed(QString err);
     void loginoutRelust(bool loginout);
     void changePasswordResult(QString result);
     void elsewhereLogin(QString tip);
+    void illegalPassword(QString tip);
     //获取登录历史记录
     void getLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送
@@ -103,10 +109,13 @@ signals:
     void verifyImgChanged();
     void nVerifyImgCountChanged();
 
+
     //servie重启信号
     void serviceRestart();
     void getLoginHistoryResult(QString userid,QString service);
 private slots:
+    void onSwitchLoginByUrl();
+    void onSwitchChatPageByUrl();
     void onElsewhereLogin(QString tip);
     void onLoginSucceeded();
     void onGetVerifyImgResult(QString code,QString img);
