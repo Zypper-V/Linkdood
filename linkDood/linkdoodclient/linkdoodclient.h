@@ -72,6 +72,7 @@ signals:
     void deleteGroupFileResilt(QString result);
     void getGroupMemberListReslut(int code, QString id, MemberList list);
     void uploadGroupAvatarResult(QString thum_url,QString src_url);
+    void groupMemberExit(QString groupId);
     //servie重启信号
     void serviceRestart();
 

@@ -5,6 +5,7 @@
 CDoodUserDataManage::CDoodUserDataManage(LinkDoodClient *client,QObject *parent) : QObject(parent),m_pClient(client)
 {
     initConnect();
+    mPhone = "";
 }
 
 void CDoodUserDataManage::clearData()
@@ -14,6 +15,7 @@ void CDoodUserDataManage::clearData()
     setName("");
     setRemark("");
     setThumbAvatar("");
+    setPhone("");
 }
 
 void CDoodUserDataManage::setRemark(QString remark)
@@ -25,6 +27,17 @@ void CDoodUserDataManage::setRemark(QString remark)
 QString CDoodUserDataManage::remark()
 {
     return mRemark;
+}
+
+QString CDoodUserDataManage::phone()
+{
+    return mPhone;
+}
+
+void CDoodUserDataManage::setPhone(QString phone)
+{
+    mPhone = phone;
+    emit phoneChanged();
 }
 
 QString CDoodUserDataManage::id() const

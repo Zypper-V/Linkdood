@@ -551,6 +551,7 @@ private:
     CSystemPackageManager *m_pPackageManager;
     QString m_sInstallPath;
     QString m_userid;
+    bool    m_hasSetObserver;
 
     std::shared_ptr<AuthControler>  m_pAuth;
     std::shared_ptr<SysMsgControler>  m_pSysMsg;

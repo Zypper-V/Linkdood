@@ -425,6 +425,11 @@ void CDoodGroupManager::onGroupAvatarChanged(QString id, QString avatar)
         setThumbAvatar(avatar);
     }
 }
+
+void CDoodGroupManager::onGroupMemberExit(QString groupId)
+{
+     emit groupRemoveOrExitResult(groupId);
+}
 void CDoodGroupManager::clearGroupList()
 {
     qDebug() << Q_FUNC_INFO;
@@ -688,6 +693,7 @@ void CDoodGroupManager::onCreateGroupResult(QString result)
 void CDoodGroupManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
+    connect(m_pClient,SIGNAL(groupMemberExit(QString)),this,SLOT(onGroupMemberExit(QString)));
     connect(m_pClient,SIGNAL(groupListChanged(GroupList)),this,SLOT(onGroupListChanged(GroupList)));
     connect(m_pClient,SIGNAL(createGroupResult(QString)),this,SLOT(onCreateGroupResult(QString)));
     connect(m_pClient,SIGNAL(getGroupInfoResult(QString,Group)),this,SLOT(onGetGroupInfoResult(QString,Group)));

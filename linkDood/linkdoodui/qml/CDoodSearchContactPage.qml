@@ -18,6 +18,12 @@ CPage {
             anchors.fill: parent
             color: "#f2f2f2"
         }
+
+        Keys.onReleased: {
+            if (event.key === Qt.Key_Back){
+                addContactManager.contactListClear();
+            }
+        }
         Rectangle{
             id:inputBox
 

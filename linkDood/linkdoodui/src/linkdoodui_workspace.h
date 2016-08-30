@@ -19,6 +19,7 @@ class CDoodSessionListManager;
 class LinkDoodClient;
 class CDoodContactManager;
 class CDoodChatManager;
+class CDoodChatManagerModel;
 class CDoodUserDataManage;
 class CDoodEnterpriseManager;
 class CDoodOrgManager;
@@ -67,6 +68,7 @@ private:
     QSharedPointer<CDoodSessionListManager> m_pSessionListManager;
     QSharedPointer<CDoodContactManager> m_pContactManager;
     QSharedPointer<CDoodChatManager> m_pChatManager;
+    QSharedPointer<CDoodChatManagerModel> m_pChatManagerModel;
     QSharedPointer<CDoodUserDataManage> m_pUserDataManager;
     QSharedPointer<CDoodEnterpriseManager> m_pEnterPriseManager;
     QSharedPointer<CDoodOrgManager> m_pOrgManager;

@@ -144,7 +144,7 @@ void CDoodSessionListManager::setUnreadCount(int count)
 
 void CDoodSessionListManager::onAvatarChanged(QString targetId, QString avatar)
 {
-    qDebug() << Q_FUNC_INFO <<targetId;
+//    qDebug() << Q_FUNC_INFO <<targetId;
     if(avatar != ""){
         CDoodSessionListItem *item = sessionListMap.value(targetId);
         if(item != NULL){

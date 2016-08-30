@@ -70,7 +70,7 @@ Item {
                         if(model.modelData.chatType !== "-5"){
 
                             if(unreadCount>0){
-
+                                chatManager.setMessageRead(model.modelData.id,model.modelData.lastMsgid);
                                 console.log("sdgfsdfgsdgasfsasfsf:"+unreadCount)
                                 chatManager.switchToChatPage(model.modelData.id,model.modelData.name,model.modelData.chatType,model.modelData.lastMsgid,unreadCount,model.modelData.thumbAvatar);
                             }else{

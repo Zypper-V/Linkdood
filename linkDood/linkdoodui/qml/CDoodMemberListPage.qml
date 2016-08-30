@@ -154,17 +154,14 @@ CPage {
                                 pressTimer.stop();
                                 userdataManager.setName(model.modelData.name);
                                 memberManager.getMemberInfo(model.modelData.groupid,model.modelData.id);
+                                userdataManager.clearData();
+                                userdataManager.setRemark(model.modelData.name);
+                                userdataManager.setGender(model.modelData.gender);
+                                userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
+                                userdataManager.setId(model.modelData.id);
+                                userdataManager.setIsFriend("1");
+                                pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
 
-                                if(!memberManager.isMyself(model.modelData.id)){
-                                    userdataManager.clearData();
-
-                                    userdataManager.setRemark(model.modelData.name);
-                                    userdataManager.setGender(model.modelData.gender);
-                                    userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
-                                    userdataManager.setId(model.modelData.id);
-                                    userdataManager.setIsFriend("1");
-                                    pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
-                                }
                             }
                             //pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
                         }

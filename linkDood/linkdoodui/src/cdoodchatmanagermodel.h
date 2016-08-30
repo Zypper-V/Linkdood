@@ -29,7 +29,7 @@ class CDoodChatManagerModel : public CDoodListModel
 
 public:
     explicit CDoodChatManagerModel(QObject *parent = 0);
-
+    Q_INVOKABLE QString getLastMsgid();
     void updateGroupMems(MemberList list);
     void updateGroupSize(int size);
     int msgCount();
@@ -39,6 +39,7 @@ public:
     void clearList();
     void removeItemById(QString id);
     void removeItemsByFromId(QString fromId);
+    void deleteAllMessage();
     void analyzeHistoryMsg(MsgList msgList);
     void updateAvatar(QString id,QString avater);
     void updateLastMsgId(QString lastMsgId);
@@ -77,6 +78,7 @@ signals:
     void reqestUserInfo(QString uerId);
     void downloadImage(QString targetId,QString localId,QString url,QString enkey);
     void updateDataFinished();
+    void setMsgRead(QString msgid);
     void deleteMessage(QString targetId,QStringList msgs);
 protected:
     void judgeAddTimeTip(QDateTime date);
@@ -89,6 +91,7 @@ public:
 private:
     QMap<QString, CDoodChatItem*> m_pChatMap;
     MemberList mGroupMemList;
+    LinkDoodClient *m_pClient;
 
     QString mId;
     QString mName;

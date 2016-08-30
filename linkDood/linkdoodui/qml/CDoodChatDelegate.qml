@@ -203,6 +203,11 @@ CEditListViewDelegate {
                 msgOptions.isVisibleCopy = false;
                 console.log("msgOptions.isVisibleCopy:false");
             }
+            if(model.modelData.msgType === "8"){
+                msgOptions.isCanTrans = false;
+            }else{
+                msgOptions.isCanTrans = true;
+            }
 
             msgOptions.show();
         }

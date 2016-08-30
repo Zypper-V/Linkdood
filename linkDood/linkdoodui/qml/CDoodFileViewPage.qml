@@ -80,7 +80,7 @@ CPage {
                 anchors.fill: parent
                 onClicked: {
                     if(fileViewManager.status === 3){
-                        openTextFile(fileViewManager.path,"");
+                        openTextFile(fileViewManager.path,fileViewManager.fileName);
                     }else if(fileViewManager.status === 1){
                         fileViewManager.downloadFile();
                     }else if(fileViewManager.status === 2){
@@ -164,23 +164,27 @@ CPage {
         }
     }
     function openTextFile(filepath, filename) {
-        var mimeType = fileViewManager.getMimeType(filepath)
-        var comp = Qt.createComponent("qrc:/qml/CDoodMimePage.qml");
-        if (comp.status === Component.Ready) {
-            var mimeDialog = comp.createObject(fileViewPage);
+        var mimeType = fileViewManager.getMimeType(filepath);
+        var tmp = ""+mimeType;
+        var isImage = tmp.search("image/");
+
+        console.log("mimeType:"+mimeType+"isImage:"+isImage)
+        if(mimeType === "text/plain"){
+            pageStack.push("qrc:/CDoodTextViewer.qml", { fullfilepath: filepath ,
+                                               fileName: filename })
+        }else if(isImage !== -1){
+            var myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodViewImage.qml"),"CDoodViewImage");
+            myChatPage.imageSource = "file://"+filepath;
+            pageStack.push(myChatPage);
+        }else{
+            var comp = Qt.createComponent("qrc:/qml/CDoodMimePage.qml");
+            if (comp.status === Component.Ready) {
+                var mimeDialog = comp.createObject(fileViewPage);
+            }
+            var ret = mimeDialog.open(filepath, CMIMEDialogTool.View,mimeType)
+            if(!ret){
+                gToast.requestToast("不支持打开此类型文件("+filepath+")","","");
+            }
         }
-        mimeDialog.open(filepath, CMIMEDialogTool.View,mimeType);
-
-        //        if (mimeType === "application/vnd.ms-excel" || mimeType === "application/pdf" ||
-        //                mimeType === "application/msword" || mimeType === "application/vnd.ms-powerpoint"
-        //                ||mimeType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || mimeType === "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-        //                ||mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-
-        //            var comp = Qt.createComponent("qrc:/qml/CDoodMimePage.qml");
-        //            if (comp.status === Component.Ready) {
-        //                var mimeDialog = comp.createObject(fileViewPage);
-        //            }
-        //            mimeDialog.open(filepath, CMIMEDialogTool.View,mimeType)
-        //        }
     }
 }

@@ -70,7 +70,7 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
         user.pinyin  = QString::fromStdString(i.pinyin);
         user.remark  = QString::fromStdString(i.remark);
         if(user.remark !=""){
-            user.name  = QString::fromStdString(i.name);
+            user.name  = QString::fromStdString(i.remark);
         }
         user.server  = QString::fromStdString(i.server);
         user.thumbAvatar  = QString::fromStdString(i.thumb_avatar);
@@ -142,8 +142,14 @@ void ContactControler::onContactInfoChanged(int operType, service::User &users)
     if(contact._user_isset.time_zone){
         user.timeZone     = contact.time_zone;
     }
-    qDebug() << Q_FUNC_INFO << "end ssssssssssssssssssssssoperType:" << operType<< "name:"<< contact.name.c_str() << "isStar:"<<contact.isStar;
+
     emit contactInfoChanged(operType,user);
+
+    if(operType == 1){
+        std::vector<int64> list;
+        list.push_back(users.id);
+        service::IMClient::getClient()->getContact()->getContactOnline(list,std::bind(&ContactControler::_getContactOnline,this,std::placeholders::_1));
+    }
 }
 
 void ContactControler::onOnlineChanged(OnlineState &status)
@@ -327,7 +333,7 @@ void ContactControler::_getContactInfo(service::ErrorInfo &info, service::User &
     item.name = QString::fromStdString(contact.name);
     item.remark = QString::fromStdString(contact.remark);
     item.id   = QString::number(user.id);
-
+    item.phone = QString::fromStdString(user.phone);
     emit getContactInfo(item);
 }
 

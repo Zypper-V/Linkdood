@@ -181,6 +181,7 @@ CPage {
             }
             Rectangle{
                 id:phone
+                visible: userdataManager.phone !== ""
                 width: parent.width
                 anchors.top:sex.bottom
                 height: 83
@@ -195,13 +196,15 @@ CPage {
                     font.pixelSize: 30
                 }
                 Text{
+                    id:phoneText
+
                     anchors{
                         right:parent.right
                         rightMargin:20
                         verticalCenter: parent.verticalCenter
                     }
 
-                    text:qsTr("")
+                    text:userdataManager.phone
                     font.pixelSize: 30
                 }
                 CLine {

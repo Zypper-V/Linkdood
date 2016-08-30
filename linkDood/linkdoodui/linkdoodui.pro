@@ -15,6 +15,7 @@ TEMPLATE = app
 CONFIG += link_pkgconfig qml_debug
 PKGCONFIG += syberos-application syberos-application-cache
 PKGCONFIG += syberos-qt
+
 INCLUDEPATH += ../linkdoodclient
 LIBS += -L../linkdoodclient
 LIBS += -llinkdoodclient
@@ -51,7 +52,8 @@ HEADERS += src/linkdoodui_workspace.h \
     src/cdoodlocalsearchmanager.h \
     src/cdoodchatmanagermodel.h \
     src/cdoodfileviewmanager.h \
-    src/cdoodenterpriseitem.h
+    src/cdoodenterpriseitem.h \
+    src/ctxteditor.h
 
 SOURCES += src/main.cpp \
     src/linkdoodui_workspace.cpp \
@@ -82,7 +84,8 @@ SOURCES += src/main.cpp \
     src/cdoodlocalsearchmanager.cpp \
     src/cdoodchatmanagermodel.cpp \
     src/cdoodfileviewmanager.cpp \
-    src/cdoodenterpriseitem.cpp
+    src/cdoodenterpriseitem.cpp \
+    src/ctxteditor.cpp
 
 OTHER_FILES += qml/*.qml
 

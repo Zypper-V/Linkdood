@@ -16,6 +16,18 @@ CDoodChatManagerModel::CDoodChatManagerModel(QObject *parent):
     mGroupSize = 0;
 }
 
+QString CDoodChatManagerModel::getLastMsgid()
+{
+    if(_list->count()>0){
+        QString msgid;
+        msgid=qobject_cast<CDoodChatItem*>(_list->at(_list->count()-1))->msgId();
+        qDebug() << Q_FUNC_INFO<<msgid;
+        return msgid;
+    }
+    qDebug() << Q_FUNC_INFO<<"msgid";
+    return "";
+}
+
 void CDoodChatManagerModel::updateGroupMems(MemberList list)
 {
     int len = list.size();
@@ -74,11 +86,11 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
     for(int i = 0; i<len;++i){
 
         Msg msg = msgList.at(i);
-        if(msg.msgtype.toInt() == MSG_TYPE_IMG || msg.fromid =="0"||msg.fromid == ""){
+        if(/*msg.msgtype.toInt() == MSG_TYPE_IMG ||*/ msg.fromid =="0"||msg.fromid == ""){
             continue;
         }
         if(msg.localid == "" ||msg.localid == "0"){
-           msg.localid = createLocalId();
+            msg.localid = createLocalId();
         }
         if(!m_pChatMap.contains(msg.localid)&&!msgIsExitById(msg.msgid)) {
 
@@ -147,6 +159,11 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
     if(isUpdate){
         emit updateDataFinished();
     }
+    if(_list->count()>0){
+        QString msgid;
+        msgid=qobject_cast<CDoodChatItem*>(_list->at(_list->count()-1))->msgId();
+        emit setMsgRead(msgid);
+    }
 }
 
 void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgContent,bool isHistory)
@@ -197,12 +214,12 @@ void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgConten
             else{
                 msg.body = "qrc:/res/chat_tool_photo_normal.png";
             }
-//            if(msg.main_url!=""){
-//                pChatItem->setBodyBig("file://"+msg.main_url);
-//            }
-//            else{
-//                pChatItem->setBodyBig(msg.body);
-//            }
+            //            if(msg.main_url!=""){
+            //                pChatItem->setBodyBig("file://"+msg.main_url);
+            //            }
+            //            else{
+            //                pChatItem->setBodyBig(msg.body);
+            //            }
             qDebug()<< Q_FUNC_INFO<<"msg.main_url:"<<msg.main_url<<"msg.encrypt_key:"<<msg.encrypt_key;
             pChatItem->setBodyBig(msg.main_url);
             pChatItem->setBody(msg.body);
@@ -296,6 +313,22 @@ void CDoodChatManagerModel::removeItemsByFromId(QString fromId)
         emit deleteMessage(id(),msgs);
     }
 
+}
+
+void CDoodChatManagerModel::deleteAllMessage()
+{
+    QList<CDoodChatItem*> list = m_pChatMap.values();
+    QStringList msgs;
+    int len = list.size();
+    for(int i =0;i<len;i++){
+        CDoodChatItem* item = list.at(i);
+        if(item != NULL){
+            msgs.push_back(item->msgId());
+        }
+    }
+    if(msgs.size()>0){
+        emit deleteMessage(id(),msgs);
+    }
 }
 
 void CDoodChatManagerModel::analyzeHistoryMsg(MsgList msgList)

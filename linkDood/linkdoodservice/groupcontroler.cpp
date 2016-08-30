@@ -257,6 +257,7 @@ void GroupControler::_getGroupInfo(service::ErrorInfo &info, service::Group grou
             gp.brief="";
         }
         qDebug() << Q_FUNC_INFO<<"33333333333"<<gp.brief<<gp.bulletin;
+        qDebug() << Q_FUNC_INFO<<"member_num:"<<group.member_nums;
         emit getGroupInfoResult("获取群信息成功",gp);
     }
 }
@@ -607,7 +608,7 @@ void GroupControler::onMemberListChanged(int operType, long long groupid, std::v
 {
     qDebug() << Q_FUNC_INFO<<members.size()<<"operType:"<<operType<<"groupid:"<<groupid;
     QString curGgroupId = QString::number(groupid);
-    if(operType!=8&&operType!=32&&operType!=1){
+    if(operType!=8&&operType!=32&&operType!=33&&operType!=1){
         return;
     }
     if(members.size()<1){

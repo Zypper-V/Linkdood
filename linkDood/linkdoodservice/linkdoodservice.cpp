@@ -119,7 +119,7 @@ void LinkDoodService::login(const QString &server,
                             const QString &password)
 {
     qDebug() << Q_FUNC_INFO;
-    //initControl();
+    initControl();
     if(m_pAuth != NULL){
         m_pAuth->login(server,userId,password);
     }
@@ -1171,7 +1171,7 @@ void LinkDoodService::initSdk()
         m_pPackageManager = new CSystemPackageManager(this);
         qDebug() << Q_FUNC_INFO<<"m_pPackageManager";
     }
-
+    m_hasSetObserver = false;
     m_sInstallPath = m_pPackageManager->packageInfo(LINKDOOD_SOPID)->installPath();
     qDebug() << Q_FUNC_INFO << "installPath = " << m_sInstallPath;
 
@@ -1190,43 +1190,38 @@ void LinkDoodService::initSdk()
         qDebug() << Q_FUNC_INFO <<"init sdk";
         initObserver();
     }
-
-    //    login("vrv","008615829282366","chengcy2015");
 }
 
 void LinkDoodService::unInitSdk()
 {
     qDebug()<<Q_FUNC_INFO;
-    return;
     m_pIMClient->getNotify()->removeAuthObserver(m_pAuth.get());
     m_pIMClient->getNotify()->removeChatObserver(m_pChatObserver.get());
     m_pIMClient->getNotify()->removeContactObserver(m_pContactObserver.get());
     m_pIMClient->getNotify()->removeGroupObserver(m_pGroupControler.get());
     m_pIMClient->getNotify()->removeEnterpriseObserver(m_pEnterpriseControler.get());
     m_pIMClient->getNotify()->removeSysMsgObserver(m_pSysMsg.get());
+    m_hasSetObserver = false;
 }
 
 void LinkDoodService::initControl()
 {
-    qDebug()<<Q_FUNC_INFO;
-    m_pAuth->init();
-    m_pChatObserver->init();
-    m_pContactObserver->init();
-    m_pGroupControler->init();
-    m_pEnterpriseControler->init();
-    m_pSysMsg->init();
+    qDebug()<<Q_FUNC_INFO<<"m_hasSetObserver:"<<m_hasSetObserver;
+    if(!m_hasSetObserver){
+         qDebug()<<Q_FUNC_INFO<<"init observer.";
+        m_pAuth->init();
+        m_pChatObserver->init();
+        m_pContactObserver->init();
+        m_pGroupControler->init();
+        m_pEnterpriseControler->init();
+        m_pSysMsg->init();
+        m_hasSetObserver = true;
+    }
 }
 
 void LinkDoodService::initObserver()
 {
     qDebug() << Q_FUNC_INFO;
-    //    m_pSysMsg          = std::make_shared<SysMsgControler>();
-    //    m_pAuth            = std::make_shared<AuthControler>();
-    //    m_pContactObserver = std::make_shared<ContactControler>();
-    //    m_pChatObserver    = std::make_shared<ChatControler>();
-    //    m_pEnterpriseControler = std::make_shared<EnterpriseControler>();
-    //    m_pGroupControler      =std::make_shared<GroupControler>();
-
     m_pSysMsg.reset(new SysMsgControler);
     m_pAuth.reset(new AuthControler);
     m_pContactObserver.reset(new ContactControler);

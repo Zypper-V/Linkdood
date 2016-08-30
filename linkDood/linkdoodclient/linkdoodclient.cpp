@@ -965,6 +965,9 @@ void LinkDoodClient::onMemberListChanged(QString operType, QString groupid, Memb
 {
     qDebug()<<Q_FUNC_INFO;
     emit memberListChanged(operType,groupid,memberList);
+    if(operType == "33"){
+        emit groupMemberExit(groupid);
+    }
 }
 
 void LinkDoodClient::onCreateGroupResult(QString result)

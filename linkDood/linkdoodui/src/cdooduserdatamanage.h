@@ -15,7 +15,7 @@ class CDoodUserDataManage : public QObject
     Q_PROPERTY(QString avatar READ avatar WRITE setAvatar NOTIFY avatarChanged)
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
     Q_PROPERTY(bool isFriend READ isFriend WRITE setIsFriend NOTIFY isFriendChanged)
-
+    Q_PROPERTY(QString phone READ phone WRITE setPhone NOTIFY phoneChanged)
 public:
     explicit CDoodUserDataManage(LinkDoodClient *client = 0,QObject *parent = 0);
 
@@ -23,7 +23,8 @@ public:
 
     Q_INVOKABLE void setRemark(QString remark);
     QString remark();
-
+    QString phone();
+    void    setPhone(QString phone);
     QString id() const;
     Q_INVOKABLE QString setId(const QString &data);
 
@@ -52,7 +53,7 @@ signals:
     void thumbAvatarChanged();
     void isFriendChanged();
     void remarkChanged();
-
+    void phoneChanged();
 public slots:
     void onGetContactInfoResult(Contact contact);
 private:
@@ -63,6 +64,7 @@ private:
     QString mAvatar;
     bool mIsFriend;
     QString mRemark;
+    QString mPhone;
     LinkDoodClient *m_pClient;
     void initConnect();
 };

@@ -89,8 +89,11 @@ Component {
                 }
                 onClicked: {
 
+                    chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.targetId);
                     myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodViewImage.qml"),"CDoodViewImage");
                     myChatPage.imageSource = model.modelData.body;
+                    myChatPage.tip="(图片加载中...)";
+                    myChatPage.url=model.modelData.bodyBig
                     pageStack.push(myChatPage);
                 }
             }

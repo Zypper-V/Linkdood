@@ -63,5 +63,6 @@
         <file>qml/CDoodCameraView.qml</file>
         <file>qml/CDoodTakePotoPage.qml</file>
         <file>qml/CDoodMimePage.qml</file>
+        <file>CDoodTextViewer.qml</file>
     </qresource>
 </RCC>

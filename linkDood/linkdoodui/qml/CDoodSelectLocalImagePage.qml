@@ -107,7 +107,7 @@ CPage {
                 height: 160
                 width: parent.width
                 color: "#ffffff"
-
+                //visible: !chatManager.isMySentFile(filePath)
                 property bool imageSelectState :chatManager.imageExisted(filePath)
                 MouseArea {
                     anchors.fill: parent

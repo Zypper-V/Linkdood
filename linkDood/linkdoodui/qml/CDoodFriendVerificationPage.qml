@@ -83,6 +83,7 @@ CPage {
                     MouseArea{
                         anchors.fill: parent
                         onClicked: {
+                            gToast.requestToast(qsTr("请求已发出，等待对方处理"),"","");
                             addContactManager.addContact(friendVericationManager.id,inputRemark.text,inputTextArea.text);
                             var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodRootTabView.qml"),"CDoodRootTabView");
                             pageStack.clear();

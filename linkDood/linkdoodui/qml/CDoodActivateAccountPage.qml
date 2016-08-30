@@ -127,6 +127,7 @@ CPage {
                 //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
+                validator:RegExpValidator{regExp:/^[a-zA-Z0-9][a-zA-Z0-9]*$/}
                 placeholderText:os.i18n.ctr(qsTr("请输入旧密码"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
@@ -174,6 +175,7 @@ CPage {
                 //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
+                validator:RegExpValidator{regExp:/^[a-zA-Z0-9][a-zA-Z0-9]*$/}
                 placeholderText:os.i18n.ctr(qsTr("请输入新密码"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
@@ -222,6 +224,7 @@ CPage {
                 //              horizontalAlignment: srvLineEdit.text ==="" ? TextInput.AlignLeft: TextInput.AlignHCenter
                 textColor:"#787777"
                 font.pixelSize: 30
+                validator:RegExpValidator{regExp:/^[a-zA-Z0-9][a-zA-Z0-9]*$/}
                 placeholderText:os.i18n.ctr(qsTr("请输入新密码"))
 
                 inputMethodHints: Qt.ImhHiddenText/*|Qt.ImhPreferNumbers*/
@@ -248,22 +251,32 @@ CPage {
                 }
 
                 onClicked: {
-                    console.log("login onClicked !!!")
-                    if(userLineEdit.text ==="" || passWordEdit.text ==="")
+                    if(srvLineEdit.text === "") {
+                        srvLineEdit.focus = true
+                        gToast.requestToast("旧密码不能为空","","");
                         return;
+                    }
+                    if(userLineEdit.text ===""){
+                        gToast.requestToast("新密码不能为空","","");
+                        return;
+                    }
                     if(userLineEdit.text!==passWordEdit.text) {
                         gToast.requestToast("两次输入的新密码不一致","","");
                         return
                     }
+                    if(srvLineEdit.text==userLineEdit.text){
+                        gToast.requestToast("新密码不能与旧密码相同","","");
+                        return
+                    }
 
-                    if(userLineEdit.text === "") {
-                        userLineEdit.focus = true
+                    if(srvLineEdit.text === "") {
+                        srvLineEdit.focus = true
                         gToast.requestToast("旧密码不能为空","","");
 
                     } else if(passWordEdit.text === "") {
                         passWordEdit.focus = true
                         gToast.requestToast("新密码不能为空","","");
-                    } else {
+                    }else {
                         loadingDialog.show();
                         console.log("changepassword onClicked !!!")
                         loginManager.changepassword(srvLineEdit.text, userLineEdit.text);
@@ -273,6 +286,15 @@ CPage {
                 Behavior on opacity {
                     PropertyAnimation { duration: 200 }
                 }
+            }
+            Text{
+                anchors.left: parent.left
+                anchors.leftMargin: 20
+                anchors.top:loginButton.bottom
+                anchors.topMargin: 20
+                text:qsTr("密码规则:新密码长度为6~32,数字和字母组成")
+                font.pixelSize: 28
+                color:"#cdcdcd"
             }
 
             CIndicatorDialog {

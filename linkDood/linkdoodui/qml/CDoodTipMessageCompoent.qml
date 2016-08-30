@@ -7,6 +7,7 @@ Component {
     Item {
         id: tipMessageCompoentRoot
 
+        signal showMenu
         width: chatListView.width
         height: tipMessage.height
         Rectangle{
@@ -17,6 +18,13 @@ Component {
             width:tipText.width+20
             height: tipText.height+20
             radius: 6
+            MouseArea{
+                anchors.fill: parent
+                onPressAndHold: {
+                    emit: showMenu();
+                }
+            }
+
             CLabel{
                 id:tipText
 
@@ -24,7 +32,7 @@ Component {
                 font.pixelSize: 28
                 text:model.modelData.body
                 height: 30 * lineCount
-                width: setWidth()
+                width: tipMessage.setWidth()
                 wrapMode: TextInput.WrapAnywhere
                 clip:true
                 anchors.centerIn: parent

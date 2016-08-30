@@ -11,13 +11,10 @@ CPageStackWindow {
             event.accepted =true
             return
         }
-
-        console.log("mainPageView.pageStack.depth:"+mainPageView.pageStack.depth)
         if(mainPageView.pageStack.depth > 1) {
             mainPageView.pageStack.pop();
-            console.log("mainPageView.pageStack.depth:"+mainPageView.pageStack.depth)
+
         } else {
-            console.log("1234:")
             winHide()
         }
     }

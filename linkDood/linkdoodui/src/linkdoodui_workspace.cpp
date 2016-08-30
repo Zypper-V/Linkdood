@@ -5,6 +5,7 @@
 #include "cdoodcontactmanager.h"
 #include "linkdoodclient.h"
 #include "cdoodchatmanager.h"
+#include "cdoodchatmanagermodel.h"
 #include "cdooduserdatamanage.h"
 #include "cdoodenterprisemanager.h"
 #include "cdoodorgmanager.h"
@@ -18,6 +19,7 @@
 #include "cdoodlocalsearchmanager.h"
 #include "cdoodfileviewmanager.h"
 #include "cdoodcontactitem.h"
+#include "ctxteditor.h"
 
 #include <QQmlContext>
 #include <QUrl>
@@ -31,6 +33,7 @@ linkdoodui_Workspace::linkdoodui_Workspace()
 {
     qmlRegisterType<CDoodListModel>("CDoodListModel", 1, 0, "CDoodListModel");
     qRegisterMetaType<QList<QString> >("QList<QString>");
+    qmlRegisterType<CTxtEditor>("com.syberos.filemanager",1,0,"CTxtEditor");
     m_pClient = QSharedPointer<LinkDoodClient>(new LinkDoodClient());
     if (!m_pClient.data()) {
         qDebug() << Q_FUNC_INFO << "m_pClient init error !!!";
@@ -63,6 +66,10 @@ linkdoodui_Workspace::linkdoodui_Workspace()
 
     m_pChatManager = QSharedPointer<CDoodChatManager>(new CDoodChatManager(m_pClient.data()));
     if (!m_pChatManager.data()) {
+        qDebug() << Q_FUNC_INFO << "m_pChatManager init error !!!";
+    }
+    m_pChatManagerModel = QSharedPointer<CDoodChatManagerModel>(new CDoodChatManagerModel(m_pClient.data()));
+    if (!m_pChatManagerModel.data()) {
         qDebug() << Q_FUNC_INFO << "m_pChatManager init error !!!";
     }
     m_pUserDataManager = QSharedPointer<CDoodUserDataManage>(new CDoodUserDataManage(m_pClient.data()));
@@ -131,6 +138,7 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     m_view->engine()->rootContext()->setContextProperty("sessionListManager", m_pSessionListManager.data());
     m_view->engine()->rootContext()->setContextProperty("contactManager", m_pContactManager.data());
     m_view->engine()->rootContext()->setContextProperty("chatManager", m_pChatManager.data());
+    m_view->engine()->rootContext()->setContextProperty("chatManagerModel", m_pChatManagerModel.data());
     m_view->engine()->rootContext()->setContextProperty("userdataManager", m_pUserDataManager.data());
     m_view->engine()->rootContext()->setContextProperty("enterpriseManager", m_pEnterPriseManager.data());
     m_view->engine()->rootContext()->setContextProperty("orgManager", m_pOrgManager.data());

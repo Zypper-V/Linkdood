@@ -6,9 +6,13 @@ CDoodPopWndLayer{
     property string id: ""
     property int    index:-1
     property bool   isVisibleCopy :false
+    property bool   isCanTrans:true
 
     onIsVisibleCopyChanged: {
-        backItem.height = isVisibleCopy ? 330:230;
+        backItem.height = isVisibleCopy ? 330:(isCanTrans ? 230:130);
+    }
+    onIsCanTransChanged: {
+        backItem.height = isCanTrans ? (isVisibleCopy ? 330:230):130;
     }
 
     contentItemBackGroundOpacity:0.73
@@ -61,37 +65,19 @@ CDoodPopWndLayer{
             leftText: qsTr("转发") ;
             radius: 4
             showLine:false
-
+            visible: isCanTrans
             anchors.top: btnDel.bottom
             anchors.topMargin: 10
             onClicked: {
                 index = 2;
                 inerClicked();
-                //pageStack.replace(Qt.resolvedUrl("qrc:/qml/CDoodGroupAddMemberPage.qml"), {state:"forwordMsg" }, true);
             }
         }
-        //        UserProfileButton{
-        //            id:btnMore
-
-        //            width:parent.width
-        //            height:100
-        //            leftText: qsTr("更多") ;
-        //            radius: 4
-        //            showLine:false
-
-        //            anchors.top: btnRepost.bottom
-        //            anchors.topMargin: 10
-        //            onClicked: {
-        //                menu.hide();
-        //            }
-        //        }
     }
     onBackKeyReleased: {
-        console.log("11111111111111111111111111111111111")
         menu.hide();
     }
     onOutAreaClicked: {
-        console.log("222222222222222222222222222222")
         menu.hide();
     }
 }

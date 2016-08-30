@@ -89,25 +89,10 @@ Item {
                         mousePressBackgroud.visible = true
                     }
 
-                    //                    bMove  = false;
-                    //                    bPress = true;
-                    //                    pressTimer.start();
                 }
-
-                //                onPositionChanged: {
-                //                    bMove = true;
-                //                }
-
                 onClicked: {
                     background.color = "#ffffff"
                     mousePressBackgroud.visible = false
-
-                    //                    bPress = false;
-                    //                    bMove  = false;
-                    //                    if(pressTimer.running){
-                    //                        pressTimer.stop();
-
-
                     if(model.modelData.id==="2"){
                         pageStack.push(Qt.resolvedUrl("CDoodGroupListPage.qml"));
                         return;
@@ -129,7 +114,6 @@ Item {
                     userdataManager.setIsFriend(contactManager.isFriend(model.modelData.id));
                     contactManager.getContactInfo(model.modelData.id);
                     pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
-                    // }
                 }
 
                 onCanceled: {

@@ -87,7 +87,7 @@ void ChatControler::removeChat(QString targetid)
 
 void ChatControler::setMessageRead(QString targetid, QString msgid)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<"targetid:"<<targetid<<"msgid:"<<msgid;
     service::IMClient::getClient()->getChat()->setMessageRead(targetid.toLongLong(),msgid.toLongLong());
 }
 
@@ -607,11 +607,12 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
         chatData.avatar =  QString::fromStdString(ch->avatar);
         chatData.msg_time = QString::number(ch->msg_time)/*dealTime(ch->msg_time,1)*/;
         chatData.id = QString::number(ch->id);
-        qDebug() << Q_FUNC_INFO << "name" << chatData.name<<"th:"<<chatData.thumb_avatar<<" ava:"<<chatData.avatar;
+        chatData.last_msgid = ch->last_msgid;
+        qDebug() << Q_FUNC_INFO << "name" << chatData.name<<"tarid:"<<chatData.id<<" lastid:"<<chatData.last_msgid;
         chatData.chat_type = ch->chat_type;
         chatData.thumb_avatar = QString::fromStdString(ch->thumb_avatar);
         chatData.unread_count=ch->unread_count;
-        chatData.last_msgid = ch->last_msgid;
+        qDebug()<<Q_FUNC_INFO<<"unread_count:"<<chatData.unread_count;
         chatList.push_back(chatData);
     }
     emit chatListChanged(chatList);
@@ -1016,7 +1017,7 @@ void ChatControler::handleNotification(std::shared_ptr<service::Msg> msg)
 
 void ChatControler::_deleteMessage(service::ErrorInfo &info)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<info.code();
     emit deleteMessagesBack(info.code());
 }
 

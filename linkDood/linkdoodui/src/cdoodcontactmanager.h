@@ -66,7 +66,7 @@ private:
 
     LinkDoodClient *m_pClient;
 
-    void addContact(Contact user);
+    void addContact(Contact user,bool isInit=true);
     void modifyContact(Contact user);
     void removeContact(Contact user);
 };

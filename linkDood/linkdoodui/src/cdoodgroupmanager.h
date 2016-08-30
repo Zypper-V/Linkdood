@@ -104,6 +104,7 @@ private slots:
     void onGetGroupSetResult(QString result,QString verify_type,QString is_allow);
     void onUploadGroupAvatarResult(QString thum_url,QString src_url);
     void onGroupAvatarChanged(QString id,QString avatar);
+    void onGroupMemberExit(QString GroupId);
 signals:
     void idChanged();
     void nameChanged();

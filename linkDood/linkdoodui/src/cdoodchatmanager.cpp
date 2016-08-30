@@ -363,6 +363,11 @@ bool CDoodChatManager::isTextOnly(QString text)
     return true;
 }
 
+bool CDoodChatManager::isMySentFile(QString filePath)
+{
+    return filePath.contains(APP_SAVE_DATA_PATH);
+}
+
 void CDoodChatManager::updateMsgToListView(Msg msg)
 {
     bool isFromPC = false;
@@ -784,6 +789,8 @@ void CDoodChatManager::removeChat(QString targetid)
     }
     QMap<QString,CDoodChatManagerModel*>::iterator iter= mMsgListModel.find(targetid);
     if(iter != mMsgListModel.end()){
+        iter.value()->deleteAllMessage();
+
         iter.value()->clearList();
         delete iter.value();
         mMsgListModel.remove(targetid);
@@ -793,10 +800,10 @@ void CDoodChatManager::removeChat(QString targetid)
     }
 }
 
-void CDoodChatManager::setMessageRead(QString targetid)
+void CDoodChatManager::setMessageRead(QString targetid,QString msgid)
 {
     qDebug() << Q_FUNC_INFO;
-    m_pClient->setMessageRead(targetid,"0");
+    m_pClient->setMessageRead(targetid,msgid);
 }
 
 void CDoodChatManager::getUnReadMessages()
@@ -805,14 +812,17 @@ void CDoodChatManager::getUnReadMessages()
     m_pClient->getUnReadMessages();
 }
 
-void CDoodChatManager::deleteMessage(QString targetid, QString msgid)
+void CDoodChatManager::deleteMessage(QString targetid, QString localId)
 {
     qDebug() << Q_FUNC_INFO;
     QStringList msgs;
-    msgs.push_back(msgid);
-    m_pClient->deleteMessage(targetid,msgs);
     if(mChatModel != NULL){
-        mChatModel->removeItemById(msgid);
+        CDoodChatItem*item = mChatModel->itemById(localId);
+        if(item != NULL){
+            msgs.push_back(item->msgId());
+        }
+        m_pClient->deleteMessage(targetid,msgs);
+        mChatModel->removeItemById(localId);
     }
 
 }
@@ -1348,6 +1358,8 @@ void CDoodChatManager::onUploadImgeBackUrl(QString targetId, QString localId, QS
             chatItem->mImageThumbUrl = thumbUrl;
             chatItem->mEnkey = enkey;
             chatItem->mEnkeyUser = targetId;
+            chatItem->setEncrypt_key(enkey);
+            chatItem->setBodyBig(mainUrl);
         }
     }
 }

@@ -90,6 +90,9 @@ CPage {
         onUpdateDataFinished:{
             chatListView.positionViewAtEnd();
         }
+        onSetMsgRead:{
+//            chatManager.setMessageRead(chatPage.targetid,msgid);
+        }
     }
 
     Keys.onReleased: {
@@ -107,7 +110,7 @@ CPage {
 
     onActiveChanged: {
         if (active) {
-            chatManager.setMessageRead(chatPage.targetid)
+//            chatManager.setMessageRead(chatPage.targetid,chatManagerModel.getLastMsgid());
         }
     }
 
@@ -135,6 +138,7 @@ CPage {
             chatManager.entryChat(chatPage.targetid)
         } else {
             chatManager.exitChat()
+
         }
     }
 
@@ -374,9 +378,9 @@ CPage {
                 width: chatListView.width
                 height: chatPage.getMessageHeight
             }
-
             onFlickEnded: {
                 chatListView.ifSessionListAtEnd = atYEnd
+                console.log("atYEnd:"+verticalVelocity)
             }
 
             onDraggingChanged: {

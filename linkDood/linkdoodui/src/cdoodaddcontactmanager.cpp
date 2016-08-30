@@ -108,8 +108,9 @@ void CDoodAddContactManager::contactListClear()
 
 void CDoodAddContactManager::getVerifyType(QString userid)
 {
-    qDebug() << Q_FUNC_INFO << "userid:" << userid;
-    m_pClient->getVerifyType(userid);
+    if(userid !=""&& userid !="0"){
+        m_pClient->getVerifyType(userid);
+    }
 }
 
 

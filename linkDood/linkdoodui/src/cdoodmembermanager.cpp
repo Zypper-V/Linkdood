@@ -328,7 +328,7 @@ void CDoodMemberManager::onGroupLeaderChanged(QString userid, QString username, 
 void CDoodMemberManager::onMemberListChanged(QString operType, QString GroupId, MemberList memberlist)
 {
     qDebug() << Q_FUNC_INFO<<"sss";
-    if(operType=="32"){
+    if(operType=="32"||operType=="33"){
         for(size_t i=0;i<memberlist.size();++i){
             qDebug() << Q_FUNC_INFO<<"sss1"<<memberlist[i].id<<memberlist[i].name;
             CDoodMemberItem *item = memberListMap.value(memberlist[i].id,NULL);
@@ -400,18 +400,18 @@ void CDoodMemberManager::clearMemberList()
 void CDoodMemberManager::addMember(Member mem)
 {
     //TODO
-//    CDoodMemberItem *item = memberListMap.value(mem.id,NULL);
-//    if(item!=NULL){
-//        return;
-//    }
-//    item=groupLeaderListMap.value(mem.id,NULL);
-//    if(item!=NULL){
-//        return;
-//    }
-//    item=groupAdminListMap.value(mem.id,NULL);
-//    if(item!=NULL){
-//        return;
-//    }
+    CDoodMemberItem *item = memberListMap.value(mem.id,NULL);
+    if(item!=NULL){
+        return;
+    }
+    item=groupLeaderListMap.value(mem.id,NULL);
+    if(item!=NULL){
+        return;
+    }
+    item=groupAdminListMap.value(mem.id,NULL);
+    if(item!=NULL){
+        return;
+    }
     CDoodMemberItem *tmpItem = new CDoodMemberItem(this);
     CDoodMemberItem *groupLeaderItem = NULL;
     CDoodMemberItem *groupAdminItem=NULL;

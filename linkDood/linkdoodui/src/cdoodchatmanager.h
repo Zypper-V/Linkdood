@@ -36,6 +36,7 @@ public:
     Q_INVOKABLE  CDoodChatManagerModel* chatModel ()const;
     Q_INVOKABLE  void isTextOnClipboard();
     Q_INVOKABLE  bool isTextOnly(QString text);
+    Q_INVOKABLE  bool isMySentFile(QString filePath);
     void updateMsgToListView(Msg msg);
 
     void startPushChatPage();
@@ -71,11 +72,11 @@ public:
     //移除会话
     Q_INVOKABLE void removeChat(QString targetid);
     //设置消息已读
-    Q_INVOKABLE void setMessageRead(QString targetid);
+    Q_INVOKABLE void setMessageRead(QString targetid,QString msgid);
     //获取未读消息列表
     Q_INVOKABLE void getUnReadMessages(void);
     //删除消息
-    Q_INVOKABLE void deleteMessage(QString targetid, QString msgs);
+    Q_INVOKABLE void deleteMessage(QString targetid, QString localId);
     Q_INVOKABLE void transforMessage(QString targetid,QString targetName,QString avatar, QString msgId);
     Q_INVOKABLE void entryChat(const QString &targetid);
     Q_INVOKABLE void exitChat();

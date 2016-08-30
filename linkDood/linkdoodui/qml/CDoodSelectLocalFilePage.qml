@@ -108,6 +108,7 @@ CPage {
                 color: "#ffffff"
 
                 property bool imageSelectState :chatManager.fileExisted(filePath)
+                //visible: !chatManager.isMySentFile(filePath)
                 MouseArea {
                     anchors.fill: parent
 
@@ -120,20 +121,6 @@ CPage {
                         chatManager.setSelectFileCount(1,filePath);
                         chatManager.startSendFile();
                         pageStack.pop();
-//                        if(imageDelegate.imageSelectState) {
-//                            imageSelectImage.source = "qrc:/res/picture_unselected.png"
-//                            imageDelegate.imageSelectState = false
-//                            chatManager.setSelectFileCount(-1,filePath);
-//                        } else {
-
-//                            if(chatManager.selectFileCount>=selectLocalFilePage.maxSelectCount){
-//                                gToast.requestToast("最多选择"+selectLocalFilePage.maxSelectCount+"张文件","","");
-//                                return;
-//                            }
-//                            imageSelectImage.source = "qrc:/res/pictures_selected.png"
-//                            imageDelegate.imageSelectState = true;
-//                            chatManager.setSelectFileCount(1,filePath);
-//                        }
                     }
 
                     onCanceled: {

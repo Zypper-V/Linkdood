@@ -17,9 +17,6 @@ SysMsgControler::SysMsgControler(QObject *parent) : QObject(parent)
 void SysMsgControler::onSysMessageNotice(SysMsg &msg)
 {
     qDebug()<<Q_FUNC_INFO;
-    if(msg.opertype == 5 && msg.name ==""){
-        return;
-    }
     IMSysMsg sysMsg;
     sysMsg.msgid = QString::number(msg.msgid);
     sysMsg.targetid = QString::number(msg.targetid);
@@ -70,15 +67,12 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
         {
             sysMsg.info = sysMsg.operUser + "拒绝您加入" + sysMsg.name;
         }
-
-        else if(msg.opertype == 5)
-        {
-            if(sysMsg.name.size() == 0)
-            {
-                sysMsg.name = sysMsg.targetid;
+        else if(msg.opertype == 5){
+            if(msg.name == "#" || msg.name == ""){
+                return;
             }
             sysMsg.info = sysMsg.operUser + "解散了群" + sysMsg.name;
-             qDebug()<<Q_FUNC_INFO << "  sysMsg.info:" << sysMsg.info;
+            qDebug()<<Q_FUNC_INFO << "  sysMsg.info:" << sysMsg.info;
         }
         else if(msg.opertype == 6)
         {
@@ -95,7 +89,7 @@ void SysMsgControler::onSysMessageNotice(SysMsg &msg)
             sysMsg.info = sysMsg.operUser + "主动退出了群" +sysMsg.name;
         }
         sysMsg.isShowButton = false;
-    }  
+    }
 
     qDebug() << Q_FUNC_INFO << "  msgid:" << sysMsg.msgid << "   targetid:" << sysMsg.targetid << "  time:" << sysMsg.time << "   msgtypeText:" << sysMsg.msgtypeText << "   respons:" << sysMsg.respons << "   name:" << sysMsg.name << "   avatar:" << sysMsg.avatar  << "operUser:" << sysMsg.operUser << "   info:" << sysMsg.info << "   operUser:" << sysMsg.operUser << "sysMsg.isRead:" << sysMsg.isread;
     emit sysMessageNotice(sysMsg);
@@ -162,25 +156,23 @@ void SysMsgControler::_removeSysMessage(service::ErrorInfo info)
 void SysMsgControler::_response(service::ErrorInfo &info)
 {
     qDebug()<<Q_FUNC_INFO<<"code:"<<info.code();
-//    emit responseResult(info.code());
+    //    emit responseResult(info.code());
 }
 
 void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMsg> sysmsgs)
 {
     qDebug()<<Q_FUNC_INFO;
     IMSysMsgList msgList;
-    IMSysMsg sysMsg;
+
     for(int i = 0; i < sysmsgs.size(); i++)
-    {       
-        if(sysmsgs[i].opertype == 5 && sysmsgs[i].name ==""){
-            continue;
-        }
+    {
+        IMSysMsg sysMsg;
         sysMsg.respons.clear();
         sysMsg.isShowButton = false;
         sysMsg.msgid = QString::number(sysmsgs[i].msgid);
         sysMsg.targetid = QString::number(sysmsgs[i].targetid);
         sysMsg.time = QString::number(sysmsgs[i].time)/*Common::dealTime(sysmsgs[i].time, 1)*/;
-        sysMsg.respons.clear();      
+        sysMsg.respons.clear();
         sysMsg.name =QString::fromStdString(sysmsgs[i].name);
         sysMsg.avatar = QString::fromStdString(sysmsgs[i].avatar);
         sysMsg.msgType = QString::number(sysmsgs[i].msgtype);
@@ -188,7 +180,6 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
         sysMsg.operUser = QString::fromStdString(sysmsgs[i].operUser);
         sysMsg.isread = QString::number(sysmsgs[i].isread);
 
-        qDebug() << Q_FUNC_INFO << "msgtype:" << sysmsgs[i].msgtype << "   opertype:" << sysmsgs[i].opertype << "isread:" << sysMsg.isread<<"name:"<<sysMsg.name;
         if(sysmsgs[i].msgtype == 1)
         {
             sysMsg.msgtypeText = "好友申请";
@@ -238,12 +229,12 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
             }
             else if(sysmsgs[i].opertype == 5)
             {
-                if(sysMsg.name.size() == 0)
+                if(sysMsg.name == "#" || sysMsg.name =="")
                 {
-                     sysMsg.name = sysMsg.targetid;
+                    continue;
                 }
                 sysMsg.info = sysMsg.operUser + "解散了群" + sysMsg.name;
-                 qDebug()<<Q_FUNC_INFO << "  sysMsg.info:" << sysMsg.info;
+                qDebug()<<Q_FUNC_INFO << "  sysMsg.info:" << sysMsg.info;
             }
             else if(sysmsgs[i].opertype == 6)
             {
@@ -260,7 +251,6 @@ void SysMsgControler::_getSysMessages(service::ErrorInfo info, std::vector<SysMs
                 sysMsg.info = sysMsg.operUser + "主动退出了群" +sysMsg.name;
             }
         }
-
         if(!sysMsg.isShowButton){
             setSysMessagRead(sysMsg.msgType.toInt(),sysMsg.msgid);
         }
