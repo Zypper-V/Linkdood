@@ -71,13 +71,13 @@ Item {
                 property bool bPress
                 property bool bMove
                 onPressAndHold: {
-                    if(model.modelData.id==="2"||model.modelData.id==="3"||model.modelData.id==="6"){
-                        return;
-                    }
-                    menu.id = model.modelData.id;
-                    menu.isStar= model.modelData.isStar;
-                    menu.name  = model.modelData.name;
-                    menu.show();
+//                    if(model.modelData.id==="2"||model.modelData.id==="3"||model.modelData.id==="6"){
+//                        return;
+//                    }
+//                    menu.id = model.modelData.id;
+//                    menu.isStar= model.modelData.isStar;
+//                    menu.name  = model.modelData.name;
+//                    menu.show();
                 }
 
                 onPressed: {
@@ -108,11 +108,14 @@ Item {
                     }
                     userdataManager.clearData();
                     userdataManager.setName(model.modelData.name);
+                    userdataManager.setRemark(model.modelData.name);
+                    contactManager.getContactInfo(model.modelData.id);
+                    userdataManager.setButtonType("3");
+                    userdataManager.setMemberType(model.modelData.isStar);
                     userdataManager.setGender(model.modelData.gender);
                     userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
                     userdataManager.setId(model.modelData.id);
                     userdataManager.setIsFriend(contactManager.isFriend(model.modelData.id));
-                    contactManager.getContactInfo(model.modelData.id);
                     pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
                 }
 

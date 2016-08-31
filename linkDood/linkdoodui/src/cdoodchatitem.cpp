@@ -1,6 +1,6 @@
 #include "cdoodchatitem.h"
 #include "common.h"
-
+#include <QImage>
 CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
 {
     mLoading = false;
@@ -23,7 +23,34 @@ CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
     mShowTime = false;
     mEnkey = mEnkeyUser=mFileUrl=mImageMainUrl=mImageThumbUrl="";
     mIsImageChange = true;
+    mImgW = 400;
+    mImgH = 300;
+}
 
+int CDoodChatItem::imgWidth()
+{
+    return mImgW;
+}
+
+void CDoodChatItem::setImgWidth(int w)
+{
+    if(w != 0){
+        mImgW = w;
+    }
+    emit imgWidthChanged();
+}
+
+int CDoodChatItem::imgHeight()
+{
+    return mImgH;
+}
+
+void CDoodChatItem::setImgHeight(int h)
+{
+    if(h != 0){
+        mImgH = h;
+    }
+    emit imgHeightChanged();
 }
 
 long long CDoodChatItem::fileSize() const
@@ -108,6 +135,12 @@ bool CDoodChatItem::setStatus(const bool &data)
 bool CDoodChatItem::isImageChange()
 {
     return mIsImageChange;
+}
+
+void CDoodChatItem::setIsImageChange(bool data)
+{
+    mIsImageChange = !mIsImageChange;
+    emit isImageChangeChanged();
 }
 
 QString CDoodChatItem::name() const
@@ -264,8 +297,9 @@ QDateTime CDoodChatItem::setTime(const QDateTime &data)
     return mTime;
 }
 
-QString CDoodChatItem::body() const
+QString CDoodChatItem::body()
 {
+    //setIsImageChange();
     return mBody;
 }
 
@@ -276,6 +310,13 @@ QString CDoodChatItem::setBody(const QString &data)
         emit bodyChanged();
         if(msgType() == "5"){
             mIsImageChange = !mIsImageChange;
+            QString path = mBody;
+            if(path.startsWith("file://")){
+                path.remove("file://");
+            }
+            QImage img(path);
+            setImgWidth(img.width());
+            setImgHeight(img.height());
             emit isImageChangeChanged();
         }
     }

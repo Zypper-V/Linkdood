@@ -59,7 +59,7 @@ void GroupControler::_addGroup(service::ErrorInfo &info)
     qDebug() << Q_FUNC_INFO<<"2222222"<<info.code();
     switch (info.code()) {
     case 0:
-        emit addGroupResult("发送申请成功");
+        emit addGroupResult("请求已发出，等待对方处理");
         break;
     case 333:
         emit addGroupResult("您已在该群中");
@@ -546,7 +546,7 @@ void GroupControler::onGroupInfoChanged(int8 operType, service::Group &group)
     gp.createrid=QString::number(group.info.createrid);
     gp.thumbAvatar=QString::fromStdString(group.info.thumb_avatar);
     gp.avatar=QString::fromStdString(group.info.avatar);
-    qDebug() << Q_FUNC_INFO<<gp.thumbAvatar;
+    qDebug() << Q_FUNC_INFO<<"gp.createrid"<<gp.createrid;
     gp.brief=QString::fromStdString(group.brief);
     gp.bulletin=QString::fromStdString(group.bulletin);
     gp.level=QString::number(group.info.level);

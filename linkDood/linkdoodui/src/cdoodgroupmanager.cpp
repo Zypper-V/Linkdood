@@ -246,15 +246,16 @@ void CDoodGroupManager::onGetGroupInfoResult(QString result,Group group)
 {
     qDebug() << Q_FUNC_INFO<<"okokokokok1";
     if(mNewGroupInfo){
-        qDebug() << Q_FUNC_INFO<<"okokokokok2";
+        qDebug() << Q_FUNC_INFO<<"okokokokok2"<<group.id<<group.name;
         mNewGroupInfo=false;
-        if(result=="获取群信息成功"){
-
-            emit newGroupToChat(group.id,group.name);
+        if(group.id=="0"||group.name==""){
+            if(groupListMap.contains(mNewGroupId)){
+                CDoodGroupItem *tmpItem = groupListMap.value(mNewGroupId);
+                group.id=mNewGroupId;
+                group.name=tmpItem->name();
+            }
         }
-        else{
-            emit newGroupToChat("","");
-        }
+        emit newGroupToChat(group.id,group.name);
         return;
     }
     if(mGetGroupInfo==1){
@@ -361,10 +362,7 @@ void CDoodGroupManager::onTransferGroupResult(QString result)
     if(result=="转让群成功"){
         setIsGroupLeader(false);
     }
-    else{
-        emit transferGroupResult(result);
-    }
-
+    emit transferGroupResult(result);
 }
 
 void CDoodGroupManager::onInviteMemberResult(QString result)
@@ -428,7 +426,7 @@ void CDoodGroupManager::onGroupAvatarChanged(QString id, QString avatar)
 
 void CDoodGroupManager::onGroupMemberExit(QString groupId)
 {
-     emit groupRemoveOrExitResult(groupId);
+    emit groupRemoveOrExitResult(groupId);
 }
 void CDoodGroupManager::clearGroupList()
 {
@@ -514,6 +512,7 @@ void CDoodGroupManager::getGroupInfo(QString id)
     setBrief("");
     setBulletin("");
     setThumbAvatar("");
+    mNewGroupInfo=false;
     m_pClient->getGroupInfo(id);
 }
 
@@ -574,6 +573,10 @@ void CDoodGroupManager::setGroupInfo(int type, QString remark)
     if(type==2){
         if(remark.size()==0){
             emit wordsOutOfLimited("群名称不能为空");
+            return;
+        }
+        if(remark.toStdString().substr(0,1)==" "){
+            emit wordsOutOfLimited("群名称首字符不能为空格");
             return;
         }
         if(remark.size()>25){
@@ -681,12 +684,13 @@ void CDoodGroupManager::onSetGroupInfoResult(QString result)
 
 void CDoodGroupManager::onCreateGroupResult(QString result)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<result;
     if(result=="创建群失败(群数量超过限制)"||result=="创建群失败"){
         emit createGroupResult(result);
     }
     else{
         mNewGroupInfo=true;
+        mNewGroupId=result;
         m_pClient->getGroupInfo(result);
     }
 }

@@ -28,6 +28,66 @@ QString CDoodChatManagerModel::getLastMsgid()
     return "";
 }
 
+QString CDoodChatManagerModel::bigImageExisted(QString localId)
+{
+    CDoodChatItem* item = m_pChatMap.value(localId,NULL);
+    if(item != NULL){
+        QFileInfo file(item->mImageMainUrl);
+        QString path = QString::fromStdString(APP_DATA_PATH)+m_pClient->UserId()+"/image/bigimage/"+file.fileName();
+        if(file.exists(path)){
+            return path;
+        }else{
+            file.setFile(item->mImageThumbUrl);
+            path = QString::fromStdString(APP_DATA_PATH)+m_pClient->UserId()+"/image/bigimage/"+file.fileName();
+            if(file.exists(path)){
+                return path;
+            }
+        }
+    }
+
+    return "";
+}
+
+bool CDoodChatManagerModel::fileExistAtLocal(QString fullPath)
+{
+    if(fullPath.startsWith("file://")){
+        fullPath.remove("file://");
+    }
+    QFileInfo file(fullPath);
+    bool ret = file.exists();
+    return ret;
+}
+
+int CDoodChatManagerModel::imageWidth(QString path)
+{
+    if(path.startsWith("file://")){
+        path.remove("file://");
+    }
+    QImage img(path);
+    return img.width();
+}
+
+int CDoodChatManagerModel::imageHeight(QString path)
+{
+    if(path.startsWith("file://")){
+        path.remove("file://");
+    }
+    QImage img(path);
+    return img.height();
+}
+
+void CDoodChatManagerModel::reloadImageMsg()
+{
+    QList<CDoodChatItem*> model = m_pChatMap.values();
+
+    int len = model.length();
+    for(int i =0;i<len;++i){
+        CDoodChatItem* item = model.at(i);
+        if(item != NULL &&item->msgType() == "5"){
+            item->setIsImageChange();
+        }
+    }
+}
 void CDoodChatManagerModel::updateGroupMems(MemberList list)
 {
     int len = list.size();
@@ -86,7 +146,7 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
     for(int i = 0; i<len;++i){
 
         Msg msg = msgList.at(i);
-        if(/*msg.msgtype.toInt() == MSG_TYPE_IMG ||*/ msg.fromid =="0"||msg.fromid == ""){
+        if(/*msg.msgtype.toInt() == MSG_TYPE_IMG || */msg.fromid =="0"||msg.fromid == ""){
             continue;
         }
         if(msg.localid == "" ||msg.localid == "0"){
@@ -123,17 +183,18 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
                 pChatItem->mFileUrl = msg.f_url;
             }
             else if(msg.msgtype.toInt() == MSG_TYPE_IMG){
-                if(msg.body != ""){
+                if(msg.body != ""&& fileExistAtLocal(msg.body)){
                     msg.body = "file://"+msg.body;
                 }else{
-                    msg.body = "qrc:/res/chat_tool_photo_normal.png";
+                    msg.body = "qrc:/res/control/defaultimage.png";
                 }
                 pChatItem->setBody(msg.body);
                 pChatItem->setTar_thumbAvatar(msg.thumb_url);
                 pChatItem->setTextMsg(msg.main_url);
-
+                pChatItem->setBodyBig(msg.main_url);
                 pChatItem->mImageMainUrl = msg.main_url;
                 pChatItem->mImageThumbUrl = msg.thumb_url;
+
             }
             else{
                 pChatItem->setBody(msg.body);
@@ -149,11 +210,12 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
             updateItemNameAndAvatar(msg.localid,msg.fromid);
             pChatItem->mEnkey = msg.encrypt_key;
             pChatItem->mEnkeyUser = msg.encrypt_user;
-            if(msg.body == "qrc:/res/chat_tool_photo_normal.png" && msg.msgtype.toInt() == MSG_TYPE_IMG){
-                pChatItem->setLoading(true);
-                emit downloadImage(id(),msg.localid,msg.thumb_url,msg.encrypt_key);
+            if(msg.msgtype.toInt() == MSG_TYPE_IMG){
+                if(msg.body == "qrc:/res/control/defaultimage.png"|| !fileExistAtLocal(msg.body)){
+                    pChatItem->setLoading(true);
+                    emit downloadImage(id(),msg.localid,msg.thumb_url,msg.encrypt_key);
+                }
             }
-
         }
     }
     if(isUpdate){
@@ -212,15 +274,8 @@ void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgConten
             if(msg.thumb_url != "")
                 msg.body = "file://"+msg.thumb_url;
             else{
-                msg.body = "qrc:/res/chat_tool_photo_normal.png";
+                msg.body = "qrc:/res/control/defaultimage.png";
             }
-            //            if(msg.main_url!=""){
-            //                pChatItem->setBodyBig("file://"+msg.main_url);
-            //            }
-            //            else{
-            //                pChatItem->setBodyBig(msg.body);
-            //            }
-            qDebug()<< Q_FUNC_INFO<<"msg.main_url:"<<msg.main_url<<"msg.encrypt_key:"<<msg.encrypt_key;
             pChatItem->setBodyBig(msg.main_url);
             pChatItem->setBody(msg.body);
             pChatItem->setTar_thumbAvatar(msg.thumb_url);
@@ -229,7 +284,6 @@ void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgConten
 
             pChatItem->mImageMainUrl = msg.main_url;
             pChatItem->mImageThumbUrl = msg.thumb_url;
-
         }
         else{
             pChatItem->setBody(msg.body);

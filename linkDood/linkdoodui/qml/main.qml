@@ -107,6 +107,7 @@ CPageStackWindow {
         onServiceRestart:{
 
             if(loginManager.isStartupByUrl() === false){
+                console.log("onServiceRestart:222222222222222")
                 loginManager.getLoginHistory();
                 pageStack.replace(Qt.resolvedUrl("CDoodWelcomePage.qml"), "", true);
             }

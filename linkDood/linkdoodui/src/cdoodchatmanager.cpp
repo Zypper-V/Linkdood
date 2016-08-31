@@ -368,9 +368,8 @@ bool CDoodChatManager::isMySentFile(QString filePath)
     return filePath.contains(APP_SAVE_DATA_PATH);
 }
 
-void CDoodChatManager::updateMsgToListView(Msg msg)
+void CDoodChatManager::updateMsgToListView(Msg msg,bool isFromPC)
 {
-    bool isFromPC = false;
     if(msg.thumb_avatar.startsWith("qrc")){
         isFromPC = true;
     }
@@ -457,25 +456,23 @@ void CDoodChatManager::sendPictrue(QString path)
     msg.localid = msg.msgid;
 
     //保存原图
-    QImage srcImg(imgPath);
-    QString tempImagePath =  APP_DATA_PATH +m_pClient->UserId() + "/cache/";
-    qDebug() <<"QDir tempDir;before  tempImagePath:" << tempImagePath;
-    QDir tempDir;
-    if (!tempDir.exists(tempImagePath))
-    {
-        tempDir.mkdir(tempImagePath);
-    }
-    QFileInfo fileInfo(imgPath);
-    tempImagePath = tempImagePath+fileInfo.baseName()+ ".jpg";
-    qDebug() <<"srcImg.save;before  tempImagePath:" << tempImagePath;
-    srcImg.save(tempImagePath, "JPEG", 99);
-    qDebug() <<"srcImg.save;end  tempImagePath:" << tempImagePath;
+    //    QImage srcImg(imgPath);
+    //    QString tempImagePath =  APP_DATA_PATH +m_pClient->UserId() + "/cache/";
+    //    qDebug() <<"QDir tempDir;before  tempImagePath:" << tempImagePath;
+    //    QDir tempDir;
+    //    if (!tempDir.exists(tempImagePath))
+    //    {
+    //        tempDir.mkdir(tempImagePath);
+    //    }
+    //    QFileInfo fileInfo(imgPath);
+    //    tempImagePath = tempImagePath+fileInfo.baseName()+ ".jpg";
+    //    srcImg.save(tempImagePath, "JPEG", 99);
+    //    msg.main_url  = tempImagePath;
 
-
-
-    msg.main_url  = tempImagePath;
+    msg.main_url = path;
     mChatModel->addItemToListViewModel(msg);
 
+    QFileInfo fileInfo(imgPath);
     msg.filename  = fileInfo.fileName();
     msg.i_height  = QString::number(THUMP_PIC_HEIGHT);
     msg.i_width   = QString::number(THUMP_PIC_WIDTH);
@@ -1144,6 +1141,7 @@ void CDoodChatManager::onChatOfflineMsgNotice(IMOfflineMsgList msgList)
 
 void CDoodChatManager::onChatMessageNotice(Msg msg)
 {
+    bool isFromPC = false;
     if(msg.localid =="" || msg.localid =="0"){
         msg.localid = m_pClient->createMsgId();
     }
@@ -1152,8 +1150,9 @@ void CDoodChatManager::onChatMessageNotice(Msg msg)
         if(item != NULL && item->chatType() =="6"){
             msg.thumb_avatar = "qrc:/res/icon_pc.png";
         }
+        isFromPC = true;
     }
-    updateMsgToListView(msg);
+    updateMsgToListView(msg,isFromPC);
 
     emit newMessageNotice();
 }
@@ -1348,7 +1347,7 @@ void CDoodChatManager::onUploadFileBackUrl(QString targetId, QString localId, QS
     }
 }
 
-void CDoodChatManager::onUploadImgeBackUrl(QString targetId, QString localId, QString mainUrl, QString thumbUrl, QString enkey)
+void CDoodChatManager::onUploadImgeBackUrl(QString targetId, QString localId, QString thumbUrl,QString mainUrl, QString enkey)
 {
     CDoodChatManagerModel* item = mMsgListModel.value(targetId,NULL);
     if(item != NULL){

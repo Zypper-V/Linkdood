@@ -22,6 +22,7 @@ class CDoodChatItem : public QObject
     Q_PROPERTY(QString encrypt_key READ encrypt_key WRITE setEncrypt_key NOTIFY encrypt_keyChanged)
     Q_PROPERTY(QString body READ body WRITE setBody NOTIFY bodyChanged)
     Q_PROPERTY(QString bodyBig READ bodyBig WRITE setBodyBig NOTIFY bodyBigChanged)
+
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
     Q_PROPERTY(QString tar_thumbAvatar READ tar_thumbAvatar WRITE setTar_thumbAvatar NOTIFY tar_thumbAvatarChanged)
     Q_PROPERTY(bool loading READ loading WRITE setLoading NOTIFY loadingChanged)
@@ -32,18 +33,27 @@ class CDoodChatItem : public QObject
     Q_PROPERTY(QString contactThumbAvatar READ contactThumbAvatar WRITE setContactThumbAvatar NOTIFY contactThumbAvatarChanged)
     Q_PROPERTY(bool showTime READ showTime WRITE setShowTime NOTIFY showTimeChanged)
     Q_PROPERTY(QString timeText READ timeText NOTIFY timeTextChanged /*WRITE setTimeText NOTIFY timeTextChanged*/)
-    Q_PROPERTY(bool isImageChange READ isImageChange NOTIFY isImageChangeChanged)
+    Q_PROPERTY(bool isImageChange READ isImageChange WRITE setIsImageChange NOTIFY isImageChangeChanged)
+
+    Q_PROPERTY(int imgWidth READ imgWidth WRITE setImgWidth NOTIFY imgWidthChanged)
+    Q_PROPERTY(int imgHeight READ imgHeight WRITE setImgHeight NOTIFY imgHeightChanged)
+
 
 public:
 
     explicit CDoodChatItem(QObject *parent = 0);
 
+
+    int imgWidth();
+    void setImgWidth(int w);
+
+    int imgHeight();
+    void setImgHeight(int h);
+
     long long fileSize() const;
     long long setFileSize(const long long data);
 
-//    void setTimeText(QString& data);
     QString timeText();
-
 
     void setShowTime(bool show);
     bool showTime();
@@ -58,6 +68,7 @@ public:
     bool setStatus(const bool &data);
 
     bool isImageChange();
+    void setIsImageChange(bool data=true);
     QString name() const;
     QString setName(const QString &data);
 
@@ -88,7 +99,7 @@ public:
     QDateTime time() const;
     QDateTime setTime(const QDateTime &data);
 
-    QString body() const;
+    QString body();
     QString setBody(const QString &data);
 
     QString encrypt_key() const;
@@ -111,6 +122,9 @@ public:
 
     void setIsMyselft(bool isMyselft);
 signals:
+    void imgWidthChanged();
+    void imgHeightChanged();
+
     void thumbAvatarChanged();
     void tar_thumbAvatarChanged();
     void msgTypeChanged();
@@ -135,6 +149,7 @@ signals:
     void showTimeChanged();
     void timeTextChanged();
     void isImageChangeChanged();
+    void bigImageChanged();
 private:
     QString mName;
     QString mThumbAvatar;    //为位图片时表示图片缩略图地址，为文件时表示文件下载地址
@@ -160,6 +175,7 @@ private:
     QString mFilePath;
     bool    mShowTime;
     bool    mIsImageChange;
+    int     mImgW,mImgH;
    public:
     QString mEnkey,mEnkeyUser,mFileUrl,mImageMainUrl,mImageThumbUrl;
 };

@@ -195,10 +195,11 @@ QString CDoodLoginManager::getLoginServiceId()
 
 bool CDoodLoginManager::isStartupByUrl()
 {
-    qDebug() << Q_FUNC_INFO;
+
     QString fileName = "/data/data/com.vrv.linkDood/config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
     bool value = settings.value("startupByUrl",false).toBool();
+    qDebug() << Q_FUNC_INFO<<":"<<value;
     return value;
 }
 

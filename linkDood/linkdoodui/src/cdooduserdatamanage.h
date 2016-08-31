@@ -16,6 +16,9 @@ class CDoodUserDataManage : public QObject
     Q_PROPERTY(QString thumbAvatar READ thumbAvatar WRITE setThumbAvatar NOTIFY thumbAvatarChanged)
     Q_PROPERTY(bool isFriend READ isFriend WRITE setIsFriend NOTIFY isFriendChanged)
     Q_PROPERTY(QString phone READ phone WRITE setPhone NOTIFY phoneChanged)
+    Q_PROPERTY(QString buttonType READ buttonType WRITE setButtonType NOTIFY buttonTypeChanged)
+    Q_PROPERTY(QString groupid READ groupid WRITE setGroupid NOTIFY groupidChanged)
+    Q_PROPERTY(QString memberType READ memberType WRITE setMemberType NOTIFY memberTypeChanged)
 public:
     explicit CDoodUserDataManage(LinkDoodClient *client = 0,QObject *parent = 0);
 
@@ -35,9 +38,17 @@ public:
     Q_INVOKABLE QString setGender(const QString &data);
 
 
+    QString buttonType() const;
+    Q_INVOKABLE QString setButtonType(const QString &data);
+
+    QString groupid() const;
+    Q_INVOKABLE QString setGroupid(const QString &data);
+
+    QString memberType() const;
+    Q_INVOKABLE QString setMemberType(const QString &data);
+
     QString avatar() const;
     Q_INVOKABLE QString setAvatar(const QString &data);
-
 
     QString thumbAvatar() const;
     Q_INVOKABLE QString setThumbAvatar(const QString &data);
@@ -52,6 +63,9 @@ signals:
     void avatarChanged();
     void thumbAvatarChanged();
     void isFriendChanged();
+    void buttonTypeChanged();
+    void groupidChanged();
+    void memberTypeChanged();
     void remarkChanged();
     void phoneChanged();
 public slots:
@@ -65,6 +79,9 @@ private:
     bool mIsFriend;
     QString mRemark;
     QString mPhone;
+    QString mButtonType;  //1.群成员点击自己 2.群主/管理员点其他成员 3.点击好友
+    QString mGroupid;
+    QString mMemberType;
     LinkDoodClient *m_pClient;
     void initConnect();
 };

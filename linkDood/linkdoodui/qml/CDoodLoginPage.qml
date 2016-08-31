@@ -43,6 +43,18 @@ CPage {
 
         onLoginFailed: {console.log("onLoginFailed !!!!")
             loadingDialog.hide();
+
+            if(err === "帐号已经登录"){
+                sessionListManager.getChatList();
+                contactManager.getContactList();
+                userProfileManager.getAccountInfo();
+                groupManager.getGroupList();
+                enterpriseManager.setFarOrg();
+                orgManager.resetOrgList();
+                chatManager.clearList();
+                pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+                return;
+            }
             gToast.requestToast(err,"","");
             if(err==="首次登录，请激活帐号")
             {

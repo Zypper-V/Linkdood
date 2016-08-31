@@ -84,8 +84,16 @@ Component {
             anchors.leftMargin: 10
             anchors.top: receiveTextMsgHeadImageViewLoader.top
 
-            property var pictrueMessageWidth: pictrueMessage.width + 55
-            property var pictrueMessageHeight: pictrueMessage.height + 40
+            property var pictrueMessageWidth: caluWidth() + 55
+            property var pictrueMessageHeight: model.modelData.imgHeight + 40
+
+            function caluWidth(){
+                var w = model.modelData.imgWidth;
+                if(w > chatDelegateRoot.maxMessageLength){
+                    w = chatDelegateRoot.maxMessageLength
+                }
+                return w;
+            }
 
             width: pictrueMessageWidth
             height: pictrueMessageHeight
@@ -117,39 +125,39 @@ Component {
                     pictrueMessageBg.source = "qrc:/res/receive/message.png"
                 }
                 onClicked: {
-                    console.log("sseeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
-                    chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.targetId);
+                    var tmp = ""+chatManagerModel.bigImageExisted(model.modelData.localId);
                     myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodViewImage.qml"),"CDoodViewImage");
-                    myChatPage.imageSource = model.modelData.body;
-                    myChatPage.tip="(图片加载中...)";
+                    if(tmp ===""){
+                        myChatPage.tip="(图片加载中...)";
+                        myChatPage.imageSource = model.modelData.body;
+                        chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.targetId);
+                    }else{
+                        myChatPage.tip = "";
+                        myChatPage.imageSource = "file://"+tmp;
+                    }
+
                     myChatPage.url=model.modelData.bodyBig
-                    console.log("xxxx1224:"+model.modelData.body)
                     pageStack.push(myChatPage);
                     if (chatListView.editing)
                         return;
                 }
             }
-
             Image{
                 id: pictrueMessage
-                property bool bChange:model.modelData.isImageChange
-                anchors.right: parent.right
-                anchors.rightMargin: 30
-                anchors.top: parent.top
-                anchors.topMargin: 25
-                source: model.modelData.body
-                asynchronous:true
-                visible: true
-                clip: true
-                onBChangeChanged: {
-                    width = bChange?width+1:width-1;
-                    console.log("imag:"+width)
-                }
 
-                Component.onCompleted: {
-                    if(pictrueMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
-                        pictrueMessage.width = chatDelegateRoot.maxMessageLength
-                }
+                anchors.fill:parent
+
+                anchors.leftMargin: 30
+                anchors.rightMargin: 30
+                anchors.topMargin: 25
+                anchors.bottomMargin: 25
+
+                source: model.modelData.body
+                sourceSize: Qt.size(pictrueMessage.width,pictrueMessage.height)
+
+                asynchronous:true
+                clip: true
+                cache: false
             }
         }
 

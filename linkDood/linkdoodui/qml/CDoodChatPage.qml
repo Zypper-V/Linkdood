@@ -366,7 +366,7 @@ CPage {
                 if(!moving && chatListScrollbbar.y >=0 && chatListScrollbbar.y < chatPage.getMessageHeight * 4) {
                     chatPage.bNeedViewToEnd = false
                     // todo
-                    chatManager.getMoreHistoryMessage();
+                    //chatManager.getMoreHistoryMessage();
                     console.log("22222222222222222222222:"+chatListScrollbbar.y);
                 }
                 btnEmotion.isKeyboard = true;

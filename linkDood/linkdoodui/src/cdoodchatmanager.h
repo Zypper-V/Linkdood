@@ -37,7 +37,7 @@ public:
     Q_INVOKABLE  void isTextOnClipboard();
     Q_INVOKABLE  bool isTextOnly(QString text);
     Q_INVOKABLE  bool isMySentFile(QString filePath);
-    void updateMsgToListView(Msg msg);
+    void updateMsgToListView(Msg msg,bool isFromPC=false);
 
     void startPushChatPage();
 
@@ -49,6 +49,7 @@ public:
     Q_INVOKABLE void startSendPicture();
     Q_INVOKABLE QString cameraFilePath();
     Q_INVOKABLE void sendPictrue(QString path);
+
     //选择文件
     int selectFileCount();
     void setSelectFileCount(int count);
@@ -174,7 +175,7 @@ private slots:
     void onDownloadHistoryImage(int code, QString localpath, QString targetid, QString localid);
     void onTransMessageFinishBack(int code,QString info);
     void onUploadFileBackUrl(QString targetId,QString localId,QString fileUrl,QString enkey);
-    void onUploadImgeBackUrl(QString targetId,QString localId,QString mainUrl,QString thumbUrl,QString enkey);
+    void onUploadImgeBackUrl(QString targetId,QString localId,QString thumbUrl,QString mainUrl,QString enkey);
     //获取文件列表返回
     void onChatGetFileList(int code, FileInfoList files);
     void onGetUserInfo(int code, Contact contact);

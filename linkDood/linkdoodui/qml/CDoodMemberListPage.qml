@@ -12,21 +12,21 @@ CPage {
             gScreenInfo.setStatusBarStyle("black")
         }
     }
-    Connections {
-        target: memberManager
-        onWordsOutOfLimited:{
-            gToast.requestToast(tip,"","");
-        }
-        onGetMemberInfoResult:{
-            userdataManager.setName(name);
-        }
-    }
-    Connections {
-        target: groupManager
-        onTransferGroupResult:{
-            gToast.requestToast(result,"","");
-        }
-    }
+//    Connections {
+//        target: memberManager
+//        onWordsOutOfLimited:{
+//            gToast.requestToast(tip,"","");
+//        }
+//        onGetMemberInfoResult:{
+//            userdataManager.setName(name);
+//        }
+//    }
+//    Connections {
+//        target: groupManager
+//        onTransferGroupResult:{
+//            gToast.requestToast(result,"","");
+//        }
+//    }
     contentAreaItem:Item {
         anchors.fill :parent
         Rectangle {
@@ -110,21 +110,21 @@ CPage {
                         interval: 500
                         repeat: false
                         onTriggered:{
-                            if(mousea.bPress && !mousea.bMove){
-                                menu.id = model.modelData.id;
-                                menu.member_type= model.modelData.member_type;
-                                menu.name  = model.modelData.remark;
-                                menu.groupid=model.modelData.groupid;
-                                if(memberManager.isTip==="1"){
-                                    menu.show();
-                                }
-                                if(memberManager.isMyself(model.modelData.id)){
-                                    menu1.id=model.modelData.id;
-                                    menu1.groupid=model.modelData.groupid;
-                                    menu1.name=model.modelData.remark;
-                                    menu1.show();
-                                }
-                            }
+//                            if(mousea.bPress && !mousea.bMove){
+//                                menu.id = model.modelData.id;
+//                                menu.member_type= model.modelData.member_type;
+//                                menu.name  = model.modelData.remark;
+//                                menu.groupid=model.modelData.groupid;
+//                                if(memberManager.isTip==="1"){
+//                                    menu.show();
+//                                }
+//                                if(memberManager.isMyself(model.modelData.id)){
+//                                    menu1.id=model.modelData.id;
+//                                    menu1.groupid=model.modelData.groupid;
+//                                    menu1.name=model.modelData.remark;
+//                                    menu1.show();
+//                                }
+//                            }
                             pressTimer.stop();
                         }
                     }
@@ -152,14 +152,24 @@ CPage {
                             bMove  = false;
                             if(pressTimer.running){
                                 pressTimer.stop();
+                                userdataManager.clearData();
+                                userdataManager.setIsFriend(true);
                                 userdataManager.setName(model.modelData.name);
                                 memberManager.getMemberInfo(model.modelData.groupid,model.modelData.id);
-                                userdataManager.clearData();
                                 userdataManager.setRemark(model.modelData.name);
                                 userdataManager.setGender(model.modelData.gender);
                                 userdataManager.setThumbAvatar(model.modelData.thumbAvatar);
                                 userdataManager.setId(model.modelData.id);
-                                userdataManager.setIsFriend("1");
+                                userdataManager.setGroupid(model.modelData.groupid);
+                                userdataManager.setMemberType(model.modelData.member_type);
+                                userdataManager.setButtonType("m");
+                                if(memberManager.isMyself(model.modelData.id)){
+                                    userdataManager.setButtonType("1");
+                                }
+                                if(memberManager.isTip==="1"){
+                                    userdataManager.setButtonType("2");
+                                }
+
                                 pageStack.push(Qt.resolvedUrl("CDoodUserDataPage.qml"));
 
                             }

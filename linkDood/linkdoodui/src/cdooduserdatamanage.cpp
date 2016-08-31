@@ -10,12 +10,17 @@ CDoodUserDataManage::CDoodUserDataManage(LinkDoodClient *client,QObject *parent)
 
 void CDoodUserDataManage::clearData()
 {
+    setButtonType("");
+    setGroupid("");
+    setMemberType("");
+    setId("");
     setAvatar("");
     setGender("");
     setName("");
     setRemark("");
     setThumbAvatar("");
     setPhone("");
+    setIsFriend(false);
 }
 
 void CDoodUserDataManage::setRemark(QString remark)
@@ -102,6 +107,7 @@ bool CDoodUserDataManage::setIsFriend(const bool &data)
 
 void CDoodUserDataManage::onGetContactInfoResult(Contact contact)
 {
+    qDebug()<<Q_FUNC_INFO<<"contact.name:"<<contact.name<<"contact.remark:"<<contact.remark;
     setName(contact.name);
     setRemark(contact.remark);
 }
@@ -126,6 +132,51 @@ QString CDoodUserDataManage::setGender(const QString &data)
     mGender = data;
     emit genderChanged();
     return mGender;
+}
+
+QString CDoodUserDataManage::buttonType() const
+{
+    return mButtonType;
+}
+
+QString CDoodUserDataManage::setButtonType(const QString &data)
+{
+    if(mButtonType == data) {
+        return data;
+    }
+    mButtonType = data;
+    emit buttonTypeChanged();
+    return mButtonType;
+}
+
+QString CDoodUserDataManage::groupid() const
+{
+    return mGroupid;
+}
+
+QString CDoodUserDataManage::setGroupid(const QString &data)
+{
+    if(mGroupid == data) {
+        return data;
+    }
+    mGroupid = data;
+    emit groupidChanged();
+    return mGroupid;
+}
+
+QString CDoodUserDataManage::memberType() const
+{
+    return mMemberType;
+}
+
+QString CDoodUserDataManage::setMemberType(const QString &data)
+{
+    if(mMemberType == data) {
+        return data;
+    }
+    mMemberType = data;
+    emit memberTypeChanged();
+    return mMemberType;
 }
 
 

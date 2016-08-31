@@ -40,6 +40,7 @@ signals:
     void removeContactResult(int code);
     void addContactReslut(QString userId);
     void removeContactOper(QString id);
+    void contactInfoChanged();
 private slots:
     void onAvatarChanged(QString userid, QString avatar);
     void onContactListChanged(int oper,ContactList contacts);

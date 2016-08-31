@@ -38,6 +38,9 @@ void ContactControler::updateContactInfo(QString userId, QString operStar, QStri
     if(remark != ""){
         user.__set_remark(remark.toStdString());
     }
+    if(operStar ==""&&remark==""){
+        user.__set_remark(remark.toStdString());
+    }
     service::IMClient::getClient()->getContact()->updateContactInfo(user,
                                                                     std::bind(&ContactControler::_updateContactInfo,this,std::placeholders::_1));
 }

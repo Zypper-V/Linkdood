@@ -19,7 +19,7 @@ CPage {
     Connections {
         target: groupManager
         onNoMemberInvited:{
-           loadingDialog.hide();
+            loadingDialog.hide();
             gToast.requestToast(tip,"","");
         }
         onCreateGroupResult: {
@@ -38,8 +38,8 @@ CPage {
             enterpriseManager.clearMember();
             groupManager.clearMemberCount();
             gToast.requestToast(result,"","");
-             pageStack.pop();
-//            pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
+            pageStack.pop();
+            //            pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
         }
         onNewGroupToChat:{
             console.log("!1111!")
@@ -49,12 +49,12 @@ CPage {
             enterpriseManager.clearMember();
             groupManager.clearMemberCount();
             memberManager.clearMemberList();
-            if(id===""){
+            if(id==="0"){
                 gToast.requestToast("获取新群信息时出错","","");
-               pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
+                pageStack.replace(Qt.resolvedUrl("CDoodGroupListPage.qml"), "", true);
             }
             else{
-            chatManager.switchToChatPage(id,name,"2","0",0,"");
+                chatManager.switchToChatPage(id,name,"2","0",0,"");
             }
         }
 
@@ -127,12 +127,15 @@ CPage {
                     text:qsTr("确定")+size()
                     color:"white"
                     font.pixelSize: 32
-//                    anchors.centerIn: parent
+                    //                    anchors.centerIn: parent
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 20
                     function size(){
                         var size;
+                        if(groupAddMainPage.isTransMessage){
+                            return "("+groupManager.memberCount+")";
+                        }
                         if(groupManager.isCreateGroup){
                             if(groupManager.memberCount===""){
                                 size="";

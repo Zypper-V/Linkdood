@@ -12,6 +12,42 @@ CPage {
             gScreenInfo.setStatusBarStyle("black")
         }
     }
+    Connections {
+        target: contactManager
+        onContactInfoChanged:{
+            if(userdataManager.buttonType==="3"){
+                contactManager.getContactInfo(userdataManager.id);
+            }
+        }
+    }
+    Connections{
+        target: memberManager
+        onWordsOutOfLimited:{
+            gToast.requestToast(tip,"","");
+        }
+        onGetMemberInfoResult:{
+            userdataManager.setName(name);
+        }
+        onRemoveMemberResult:{
+            gToast.requestToast(result,"","");
+            if(result==="移除群成员成功"){
+                userdataManager.clearData();
+                pageStack.pop();
+            }
+        }
+        onSetMemberInfoResult:{
+            if(id===userdataManager.id){
+                userdataManager.setRemark(remark);
+                gToast.requestToast("设置成功","","");
+            }
+        }
+    }
+    Connections {
+        target: groupManager
+        onTransferGroupResult:{
+            gToast.requestToast(result,"","");
+        }
+    }
     contentAreaItem:Item {
         anchors.fill :parent
         Rectangle {
@@ -35,6 +71,7 @@ CPage {
                 anchors.leftMargin: 30
                 anchors.verticalCenter: parent.verticalCenter
                 onClicked: {
+                    userdataManager.clearData();
                     pageStack.pop();
                 }
             }
@@ -43,6 +80,60 @@ CPage {
                 color:"white"
                 font.pixelSize: 36
                 anchors.centerIn: parent
+            }
+            Image{
+                id:settingButton
+                anchors.right: parent.right
+                anchors.rightMargin: 30
+                visible: userdataManager.buttonType===""?false:true
+                anchors.verticalCenter: parent.verticalCenter
+                source: "qrc:/res/main_title_setting_button.png"
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: {
+                        settingButton.source="qrc:/res/main_title_setting_button_press.png"
+                    }
+                    onReleased: {
+                        settingButton.source="qrc:/res/main_title_setting_button.png"
+                    }
+
+                    onClicked: {
+                      if(userdataManager.buttonType==="1"){
+                          menu1.id=userdataManager.id;
+                          menu1.groupid=userdataManager.groupid;
+                          if(userdataManager.remark!==""){
+                          menu1.name=userdataManager.remark;
+                          }
+                          else{
+                              menu1.name=userdataManager.name;
+                          }
+                          menu1.show();
+                      }
+                      else if(userdataManager.buttonType==="2"){
+                          menu.id = userdataManager.id;
+                          menu.member_type= userdataManager.memberType;
+                          if(userdataManager.remark!==""){
+                          menu.name=userdataManager.remark;
+                          }
+                          else{
+                              menu.name=userdataManager.name;
+                          }
+                          menu.groupid=userdataManager.groupid;
+                          menu.show()
+                      }
+                      else if(userdataManager.buttonType==="3"){
+                          menu2.id = userdataManager.id;
+                          menu2.isStar= userdataManager.memberType;
+                          if(userdataManager.remark!==""){
+                          menu2.name=userdataManager.remark;
+                          }
+                          else{
+                              menu2.name=userdataManager.name;
+                          }
+                          menu2.show();
+                      }
+                    }
+                }
             }
         }
         Rectangle{
@@ -67,9 +158,23 @@ CPage {
                         leftMargin: 210
                         bottomMargin: 24
                     }
-                    text:userdataManager.remark !=="" ?userdataManager.remark :userdataManager.name
+                    text:getname()
+                    function getname(){
+                        if(userdataManager.buttonType==="m"||userdataManager.buttonType==="1"||userdataManager.buttonType==="2"){
+                            if(userdataManager.remark===""){
+                               return "群名片："+userdataManager.name;
+                            }
+                            return "群名片："+userdataManager.remark;
+                        }
+                        else{
+                            if(userdataManager.remark===""){
+                                return "备注："+userdataManager.name
+                            }
+                            return "备注："+userdataManager.remark;
+                        }
+                    }
                     color:"white"
-                    font.pixelSize: 36
+                    font.pixelSize: 32
                 }
             }
             CDoodHeaderImage {
@@ -292,6 +397,402 @@ CPage {
                  gToast.requestToast("添加好友成功","","");
                  pageStack.pop();
             }
+        }
+    }
+    CDoodPopWndLayer{
+        id:menu
+        property string member_type
+        property string id: ""
+        property string name: ""
+        property string groupid: ""
+        contentItemBackGroundOpacity:0.73
+        contentItem:Rectangle{
+
+            color: "white"
+            radius: 10
+            width:489
+            height: memberManager.my_Type==="3"?510:310
+            Text{
+                id:title
+
+                text:qsTr("提示")
+                font.pixelSize: 36
+                color:"#333333"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 20
+            }
+            CLine{
+                id:line
+
+                anchors.top:title.bottom
+                anchors.topMargin: 10
+                height: 2
+            }
+            UserProfileButton{
+                id:btnStar
+                visible: memberManager.my_Type==="3" ? true : false
+                width:parent.width
+                height: 100
+                leftText: menu.member_type ==="1"?qsTr("提升为管理员") :qsTr("取消管理员") ;
+                radius: 4
+
+                anchors.top: line.bottom
+                anchors.topMargin: 10
+
+                onClicked: {
+                    menu.hide();
+
+                    console.log("33333333333333333333333333")
+                    alertDialog_Mem.id=menu.id;
+                    alertDialog_Mem.groupid=menu.groupid;
+                    alertDialog_Mem.member_type=menu.member_type;
+                    if(menu.member_type == "1"){
+                        alertDialog_Mem.operate="是否提升 "+menu.name+" 为管理员"
+                        //                        memberManager.setMemberInfo(menu.groupid,menu.id,"管理员设置","2");
+                    }else{
+                        alertDialog_Mem.operate="是否取消 "+menu.name+" 管理员权限"
+                        //                        memberManager.setMemberInfo(menu.groupid,menu.id,"管理员设置","1");
+                    }
+                    alertDialog_Mem.show();
+                    //                    indicatorDialog.show();
+                }
+            }
+            UserProfileButton{
+                id:btntran
+
+                width:parent.width
+                height: 100
+                leftText: qsTr("修改群名片")
+                radius: 4
+
+                anchors.top: memberManager.my_Type==="3" ?btnStar.bottom:line.bottom
+                anchors.topMargin: 10
+                onClicked: {
+                    menu.hide();
+
+                    inputDialog.id=menu.id;
+                    inputDialog.groupid=menu.groupid;
+                    inputDialog.setText(menu.name);
+                    inputDialog.show();
+                }
+            }
+            UserProfileButton{
+                id:btnDel
+
+                width:parent.width
+                height: 100
+                leftText: qsTr("移除群成员")
+                radius: 4
+                showLine:memberManager.my_Type==="3" ? true : false
+                anchors.top: btntran.bottom
+                anchors.topMargin: 10
+                onClicked: {
+                    menu.hide();
+                    alertDialog_deleMem.operate="是否移除群成员 "+menu.name;
+                    alertDialog_deleMem.id=menu.id;
+                    alertDialog_deleMem.groupid=menu.groupid;
+                    alertDialog_deleMem.show();
+                }
+            }
+            UserProfileButton{
+                id:btnRemark
+                visible: memberManager.my_Type==="3" ? true : false
+                width:parent.width
+                height:100
+                leftText: qsTr("转让该群") ;
+                radius: 4
+                showLine:false
+
+                anchors.top: btnDel.bottom
+                anchors.topMargin: 10
+                onClicked: {
+                    menu.hide();
+                    alertDialog_trans.operate="是否将本群转让给 "+menu.name;
+                    alertDialog_trans.id=menu.id;
+                    alertDialog_trans.groupid=menu.groupid;
+                    alertDialog_trans.show();
+                }
+            }
+        }
+
+        onBackKeyReleased: {
+            console.log("11111111111111111111111111111111111")
+            menu.hide();
+        }
+        onOutAreaClicked: {
+            console.log("222222222222222222222222222222")
+            menu.hide();
+        }
+    }
+    CDoodPopWndLayer{
+        id:menu1
+        property string id: ""
+        property string groupid: ""
+        property string name: ""
+        contentItemBackGroundOpacity:0.73
+        contentItem:Rectangle{
+
+            color: "white"
+            radius: 10
+            width:489
+            height: 190
+            Text{
+                id:title1
+
+                text:qsTr("提示")
+                font.pixelSize: 36
+                color:"#333333"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 20
+            }
+            CLine{
+                id:line1
+
+                anchors.top:title1.bottom
+                anchors.topMargin: 10
+                height: 2
+            }
+            UserProfileButton{
+                id:btntran1
+
+                width:parent.width
+                height: 100
+                leftText: qsTr("修改群名片")
+                radius: 4
+
+                anchors.top: line1.bottom
+                anchors.topMargin: 10
+                showLine:false
+                onClicked: {
+                    menu1.hide();
+
+                    inputDialog.id=menu1.id;
+                    inputDialog.groupid=menu1.groupid;
+                    inputDialog.setText(menu1.name);
+                    inputDialog.show();
+                }
+            }
+        }
+        onBackKeyReleased: {
+            console.log("11111111111111111111111111111111111")
+            menu1.hide();
+        }
+        onOutAreaClicked: {
+            console.log("222222222222222222222222222222")
+            menu1.hide();
+        }
+    }
+    CInputDialog{
+        id:inputDialog
+        property string id: ""
+        property string groupid: ""
+        titleText: qsTr("修改群名片")
+        messageTextColor:"#777777"
+        onAccepted: {
+            memberManager.setMemberInfo(inputDialog.groupid,inputDialog.id,"修改备注",inputDialog.text());
+        }
+    }
+    CDialog {
+        property string operate: ""
+        property string id: ""
+        property string groupid: ""
+        id: alertDialog_deleMem
+
+        titleText: qsTr("提示")
+        messageText: alertDialog_deleMem.operate
+        onAccepted: {
+            memberManager.removeMember(alertDialog_deleMem.groupid,alertDialog_deleMem.id);
+
+        }
+        onCanceled: {
+            console.log("onCanceled")
+        }
+    }
+    CDialog {
+        property string operate: ""
+        property string id: ""
+        property string groupid: ""
+        id: alertDialog_trans
+
+        titleText: qsTr("提示")
+        messageText: alertDialog_trans.operate
+        onAccepted: {
+
+            groupManager.transferGroup(menu.groupid,menu.id);
+        }
+        onCanceled: {
+            console.log("onCanceled")
+        }
+    }
+    CDialog {
+        property string operate: ""
+        property string id: ""
+        property string groupid: ""
+        property string member_type: ""
+        id: alertDialog_Mem
+
+        titleText: qsTr("提示")
+        messageText: alertDialog_Mem.operate
+        onAccepted: {
+            if(alertDialog_Mem.member_type == "1"){
+                memberManager.setMemberInfo(menu.groupid,menu.id,"管理员设置","2");
+            }else{
+                memberManager.setMemberInfo(menu.groupid,menu.id,"管理员设置","1");
+            }
+
+        }
+        onCanceled: {
+            console.log("onCanceled")
+        }
+    }
+
+
+
+
+
+
+
+
+    IndicatorDialog{
+        id:indicatorDialog
+
+        messageText:qsTr("操作正在执行...")
+        onBackKeyReleased: {
+            indicatorDialog.hide();
+        }
+    }
+
+    CDoodPopWndLayer{
+        id:menu2
+
+        property string isStar
+        property string id: ""
+        property string name: ""
+        contentItemBackGroundOpacity:0.73
+        contentItem:Rectangle{
+
+            color: "white"
+            radius: 10
+            width:489
+            height: 410
+            Text{
+                id:title2
+
+                text:qsTr("好友操作")
+                font.pixelSize: 36
+                color:"#333333"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: 20
+            }
+            CLine{
+                id:line2
+
+                anchors.top:title2.bottom
+                anchors.topMargin: 10
+                height: 2
+            }
+            UserProfileButton{
+                id:btnStar2
+
+                width:parent.width
+                height: 100
+                leftText: menu2.isStar ==="1"?qsTr("取消V标好友") :qsTr("标为V标好友") ;
+                radius: 4
+
+                anchors.top: line2.bottom
+                anchors.topMargin: 10
+
+                onClicked: {
+                    menu2.hide();
+
+                    console.log("33333333333333333333333333")
+                    if(menu2.isStar == "1"){
+                        contactManager.updateContactInfo(menu2.id,"2");
+                    }else{
+                        contactManager.updateContactInfo(menu2.id,"1");
+                    }
+                    indicatorDialog.show();
+                }
+            }
+            UserProfileButton{
+                id:btnDel2
+
+                width:parent.width
+                height: 100
+                leftText: qsTr("删除好友") ;
+                radius: 4
+
+                anchors.top: btnStar2.bottom
+                anchors.topMargin: 10
+                onClicked: {
+                    menu2.hide();
+                    alertDialog.show();
+                }
+            }
+            UserProfileButton{
+                id:btnRemark2
+
+                width:parent.width
+                height:100
+                leftText: qsTr("修改备注") ;
+                radius: 4
+                showLine:false
+
+                anchors.top: btnDel2.bottom
+                anchors.topMargin: 10
+                onClicked: {
+                    menu2.hide();
+                    inputDialog2.setText(menu2.name);
+                    inputDialog2.show();
+                }
+            }
+        }
+
+        onBackKeyReleased: {
+            console.log("11111111111111111111111111111111111")
+            menu2.hide();
+        }
+        onOutAreaClicked: {
+            console.log("222222222222222222222222222222")
+            menu2.hide();
+        }
+    }
+    Connections{
+        target: contactManager
+        onRemoveContactResult:{
+            indicatorDialog.hide();
+            pageStack.pop();
+        }
+        onUpdateContactInfoResult:{
+            indicatorDialog.hide();
+        }
+    }
+
+    CInputDialog{
+        id:inputDialog2
+
+        titleText: qsTr("修改备注")
+        messageTextColor:"#777777"
+        maximumLength:20
+        onAccepted: {
+            contactManager.updateContactInfo(menu2.id,"",inputDialog2.text());
+            indicatorDialog.show();
+        }
+    }
+    CDialog {
+        id: alertDialog
+
+        titleText: qsTr("提示")
+        messageText: qsTr("您确定要删除该好友？")
+        onAccepted: {
+            contactManager.removeContact(menu2.id);
+            indicatorDialog.show();
+        }
+        onCanceled: {
+            console.log("onCanceled")
         }
     }
 }

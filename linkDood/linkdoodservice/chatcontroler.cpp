@@ -487,7 +487,7 @@ void ChatControler::handleReciveUnSurportMsg(std::shared_ptr<service::Msg> msg)
     Msg msgTip;
     msgTip.msgtype      = QString::number(MSG_TYPE_TEXT);
     msgTip.activeType   =QString::number(msg->active_type);
-   // msgTip.msgtype      =QString::number(msg->msgtype);
+    // msgTip.msgtype      =QString::number(msg->msgtype);
     msgTip.msgid        =QString::number(msg->msgid);
     msgTip.targetid     =QString::number(msg->targetid);
     msgTip.fromid       =QString::number(msg->fromid);
@@ -952,14 +952,14 @@ void ChatControler::handleHistoryImgMsg(Msg &imMsg, std::shared_ptr<service::Msg
     qDebug()<<Q_FUNC_INFO<<"10 img path:"<<imMsg.thumb_url;
     if(judgeFileExist(fileName,MSG_TYPE_IMG)){
 
-        QString tempImagePath =  APP_DATA_PATH +LinkDoodService::instance()->UserId()+"/cache/"+fileName;
+        QString tempImagePath =  QString::fromStdString(APP_SAVE_IAMGE_APTH)+"/"+fileName;
         QFileInfo file(tempImagePath);
         if(file.exists()){
             imMsg.body = tempImagePath;
             qDebug()<<Q_FUNC_INFO<<"1 img path:"<<imMsg.body;
         }else{
             tempImagePath = APP_DATA_PATH +LinkDoodService::instance()->UserId()+"/image/"+fileName;
-            QString outPath = APP_DATA_PATH +LinkDoodService::instance()->UserId()+"/cache/"+fileName;
+            QString outPath = QString::fromStdString(APP_SAVE_IAMGE_APTH)+"/"+fileName;
             bool ret = service::IMClient::getClient()->getFile()->decryptFile(msgImg->encrypt_key,tempImagePath.toStdString(),outPath.toStdString());
             if(ret){
                 imMsg.body = outPath;
@@ -1010,7 +1010,7 @@ void ChatControler::handleNotification(std::shared_ptr<service::Msg> msg)
     if(!IS_MSG_GROUP(msg->targetid)){
         getUserProfile(QString::number(msg->fromid),msg);
     }else{
-         service::IMClient::getClient()->getGroup()->getGroupInfo(msg->targetid,std::bind(&ChatControler::_getGroupInfo,this,std::placeholders::_1,std::placeholders::_2,msg));
+        service::IMClient::getClient()->getGroup()->getGroupInfo(msg->targetid,std::bind(&ChatControler::_getGroupInfo,this,std::placeholders::_1,std::placeholders::_2,msg));
     }
 
 }
@@ -1080,7 +1080,7 @@ void ChatControler::_downloadFile(service::ErrorInfo &info, std::string localpat
         if (!tempDir.exists(path))
         {
             bool ret = tempDir.mkdir(path);
-             qDebug()<<Q_FUNC_INFO <<"makedir:"<<path<<"ret:"<<ret;
+            qDebug()<<Q_FUNC_INFO <<"makedir:"<<path<<"ret:"<<ret;
         }
         qDebug()<<Q_FUNC_INFO << " localpath:" << localpath.c_str() << "  tagetid:" << tagetid << "  encryFilePath:" << encryFilePath << "  encryKey:" << encryKey;
         if(decryptFile(encryKey, QString::fromStdString(localpath), encryFilePath))
@@ -1093,11 +1093,11 @@ void ChatControler::_downloadFile(service::ErrorInfo &info, std::string localpat
 
 void ChatControler::_uploadImage(int64 tagetid, std::string orgijson, std::string thumbjson, int code,Msg msg)
 {
-    qDebug()<<Q_FUNC_INFO<<"msg:"<<msg.thumb_url;
     msg.thumb_url = QString::fromStdString(utils::FileUtils::getFile(thumbjson,"url"));
     msg.main_url  = QString::fromStdString(utils::FileUtils::getFile(orgijson,"url"));
     sendMessage(msg);
 
+    qDebug()<<Q_FUNC_INFO<<"big img:"<<msg.main_url<<"th img:"<<msg.thumb_url;
     emit uploadImgeBackUrl(msg.targetid,msg.localid,msg.thumb_url,msg.main_url,msg.encrypt_key);
 }
 
@@ -1114,31 +1114,21 @@ void ChatControler::_downloadImage(service::ErrorInfo &info, std::string localpa
     QString imgPath = QString::fromStdString(localpath);
 
     if(judgeFileExist(imgPath,MSG_TYPE_IMG)){
-        qDebug() << Q_FUNC_INFO<< "if(judgeFileExist(imgPath,MSG_TYPE_IMG)){ end";
+        QString fileName = QString::fromStdString(localpath);
+        QString srcPath = appDataPath +"image/"+ fileName;
+        QString outPath = (QString::fromStdString(APP_SAVE_IAMGE_APTH) +"/"+ fileName);
         QDir tempDir;
-        if (!tempDir.exists(appDataPath))
+        if (!tempDir.exists(APP_SAVE_IAMGE_APTH))
         {
-            tempDir.mkdir(appDataPath);
+            tempDir.mkdir(APP_SAVE_IAMGE_APTH);
         }
-        QStringList strList = imgPath.split("/");
-        qDebug() << Q_FUNC_INFO<< "strList.size = " << strList.size();
-        if (strList.size() > 0)
-        {
-            QString fileName = strList.at(strList.size() - 1);
-            QString srcPath = appDataPath +"image/"+ fileName;
-            QString outPath = (QString::fromStdString(APP_SAVE_IAMGE_APTH) +"/"+ fileName);
-            if (!tempDir.exists(APP_SAVE_IAMGE_APTH))
-            {
-                tempDir.mkdir(APP_SAVE_IAMGE_APTH);
-            }
 
-            bool ret = service::IMClient::getClient()->getFile()->decryptFile(msgImg.encrypt_key.toStdString(),srcPath.toStdString(),outPath.toStdString());
-            qDebug()<<Q_FUNC_INFO<<"decryptFile:"<<outPath<<":ret:"<<ret;
-            if(ret){
-                msgImg.thumb_url = outPath;
-                msgImg.body = "[图片]";
-                sendSessionMsg(msgImg);
-            }
+        bool ret = service::IMClient::getClient()->getFile()->decryptFile(msgImg.encrypt_key.toStdString(),srcPath.toStdString(),outPath.toStdString());
+        qDebug()<<Q_FUNC_INFO<<"decryptFile:"<<outPath<<":ret:"<<ret;
+        if(ret){
+            msgImg.thumb_url = outPath;
+            msgImg.body = "[图片]";
+            sendSessionMsg(msgImg);
         }
     }
 }
@@ -1154,18 +1144,19 @@ void ChatControler::_downloadMainImage(service::ErrorInfo &info, std::string loc
         {
             tempDir.mkdir(appDataPath);
         }
-        QStringList strList = imgPath.split("/");
-        qDebug() << Q_FUNC_INFO<< "strList.size = " << strList.size();
-        if (strList.size() > 0)
-        {
-            QString fileName = strList.at(strList.size() - 1);
-            QString srcPath = appDataPath +"image/"+ fileName;
-            QString outPath = (appDataPath +"cache/"+ fileName);
-            bool ret = service::IMClient::getClient()->getFile()->decryptFile(encryptKey.toStdString(),srcPath.toStdString(),outPath.toStdString());
-            qDebug()<<Q_FUNC_INFO<<"decryptFile:"<<outPath<<":ret:"<<ret;
-            if(ret){
-             emit downloadMainImageResult(main_url,outPath);
-            }
+        qDebug()<<Q_FUNC_INFO<<"main img:"<<localpath.c_str();
+
+        QString fileName = QString::fromStdString(localpath);
+        QString srcPath = appDataPath +"image/"+ fileName;
+
+        QString outPath = (appDataPath +"image/bigimage/"+ fileName);
+        if(!tempDir.exists(appDataPath +"image/bigimage")){
+            tempDir.mkdir(appDataPath +"image/bigimage");
+        }
+        bool ret = service::IMClient::getClient()->getFile()->decryptFile(encryptKey.toStdString(),srcPath.toStdString(),outPath.toStdString());
+        qDebug()<<Q_FUNC_INFO<<"decryptFile:"<<outPath<<":ret:"<<ret;
+        if(ret){
+            emit downloadMainImageResult(main_url,outPath);
         }
     }
 }
@@ -1176,23 +1167,12 @@ void ChatControler::_downloadHistoryImage(service::ErrorInfo &info, std::string 
     QString imgPath = QString::fromStdString(localpath);
 
     if(judgeFileExist(imgPath,MSG_TYPE_IMG)){
-        QDir tempDir;
-        if (!tempDir.exists(appDataPath+"cache/"))
-        {
-            tempDir.mkdir(appDataPath+"cache/");
-        }
-        QStringList strList = imgPath.split("/");
-        qDebug() << Q_FUNC_INFO<< "strList.size = " << strList.size();
-        if (strList.size() > 0)
-        {
-            QString fileName = strList.at(strList.size() - 1);
-            QString srcPath = appDataPath +"image/"+ fileName;
-            QString outPath = (appDataPath +"cache/"+ fileName);
-            qDebug() << Q_FUNC_INFO << "decryptFile(...) start";
-            bool ret = service::IMClient::getClient()->getFile()->decryptFile(encryptKey.toStdString(),srcPath.toStdString(),outPath.toStdString());
-            if(ret){
-                emit downloadHistoryImageResult(info.code(), outPath, targetid, localid);
-            }
+        QString fileName = QString::fromStdString(localpath);
+        QString srcPath = appDataPath +"image/"+ fileName;
+        QString outPath = QString::fromStdString(APP_SAVE_IAMGE_APTH) +"/"+ fileName;
+        bool ret = service::IMClient::getClient()->getFile()->decryptFile(encryptKey.toStdString(),srcPath.toStdString(),outPath.toStdString());
+        if(ret){
+            emit downloadHistoryImageResult(info.code(), outPath, targetid, localid);
         }
     }
 }

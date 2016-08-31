@@ -324,6 +324,7 @@ void CDoodContactManager::removeContact(Contact user)
 void CDoodContactManager::onContactInfoChanged(int oper, Contact user)
 {
     qDebug() << Q_FUNC_INFO;
+    emit contactInfoChanged();
     switch(oper){
     case 1://add
         addContact(user,false);

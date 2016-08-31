@@ -56,6 +56,8 @@ signals:
     void wordsOutOfLimited(QString tip);
     void groupMemsChanged(QString groupid,int size);
     void getMemberInfoResult(QString name);
+    void removeMemberResult(QString result);
+    void setMemberInfoResult(QString id,QString remark);
 private:
 
     void initConnect();

@@ -7,7 +7,7 @@ Component {
     Item {
         id: sendpictrueMessageRoot
 
-        width: chatListView.editing ? chatListView.width - 100 : chatListView.width
+        width: parent.width
         height: pictrueMessageBg.height
         signal showMenu()
         property int sendEditMessageModel: 0
@@ -31,19 +31,6 @@ Component {
                 name:""
                 headerColor: sessionListManager.getHeaderColor(model.modelData.id)
                 iconSource: setIcon("1", model.modelData.contactThumbAvatar)
-                //                    "qrc:/res/headerDefault.png"/*"file://"+ model.modelData.thumbAvatar*/
-
-                //                MouseArea {
-                //                    anchors.fill: parent
-
-                //                    onClicked: {
-                //                        console.log("todo show MyInfo Pagesssssssssss !!!")
-                //                        console.log(model.modelData.name)
-                //                        console.log(model.modelData.fromId)
-                //                        if (chatListView.editing)
-                //                            return;
-                //                    }
-                //                }
             }
         }
 
@@ -53,9 +40,16 @@ Component {
             anchors.rightMargin: 10
             anchors.top: sendpictrueMessageHeadImageViewLoader.top
 
-            property var pictrueMessageWidth: pictrueMessage.width + 55
-            property var pictrueMessageHeight: pictrueMessage.height + 40
+            property var pictrueMessageWidth: caluWidth() + 55
+            property var pictrueMessageHeight: model.modelData.imgHeight + 40
 
+            function caluWidth(){
+                var w = model.modelData.imgWidth;
+                if(w > chatDelegateRoot.maxMessageLength){
+                    w = chatDelegateRoot.maxMessageLength
+                }
+                return w;
+            }
             width: pictrueMessageWidth
             height: pictrueMessageHeight
             asynchronous : true
@@ -88,11 +82,17 @@ Component {
                     pictrueMessageBg.source = "qrc:/res/send/message.png"
                 }
                 onClicked: {
-
-                    chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.targetId);
+                    var tmp = ""+chatManagerModel.bigImageExisted(model.modelData.localId);
                     myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodViewImage.qml"),"CDoodViewImage");
-                    myChatPage.imageSource = model.modelData.body;
-                    myChatPage.tip="(图片加载中...)";
+                    if(tmp ===""){
+                        myChatPage.tip="(图片加载中...)";
+                        myChatPage.imageSource = model.modelData.body;
+                        chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.targetId);
+                    }else{
+                        myChatPage.tip = "";
+                        myChatPage.imageSource = "file://"+tmp;
+                    }
+
                     myChatPage.url=model.modelData.bodyBig
                     pageStack.push(myChatPage);
                 }
@@ -101,22 +101,18 @@ Component {
             Image{
                 id: pictrueMessage
 
-                property bool bChange:model.modelData.isImageChange
-                anchors.right: parent.right
+                anchors.fill:parent
+
+                anchors.leftMargin: 30
                 anchors.rightMargin: 30
-                anchors.top: parent.top
                 anchors.topMargin: 25
+                anchors.bottomMargin: 25
+
                 source: model.modelData.body
+                sourceSize: Qt.size(model.modelData.imgWidth,model.modelData.imgHeight)
                 visible: true
                 asynchronous:true
-                onBChangeChanged: {
-                    width = bChange?width+1:width-1;
-                    console.log("imag:"+width)
-                }
-                Component.onCompleted: {
-                    if(pictrueMessage.implicitWidth > chatDelegateRoot.maxMessageLength)
-                        pictrueMessage.width = chatDelegateRoot.maxMessageLength
-                }
+                cache: false
 
                 Text{
                     font.pixelSize: 36

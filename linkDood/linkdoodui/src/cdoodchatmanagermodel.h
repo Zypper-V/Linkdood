@@ -30,6 +30,13 @@ class CDoodChatManagerModel : public CDoodListModel
 public:
     explicit CDoodChatManagerModel(QObject *parent = 0);
     Q_INVOKABLE QString getLastMsgid();
+    Q_INVOKABLE QString bigImageExisted(QString localId);
+    Q_INVOKABLE bool    fileExistAtLocal(QString fullPath);
+
+    Q_INVOKABLE int imageWidth(QString path);
+    Q_INVOKABLE int imageHeight(QString path);
+
+    void reloadImageMsg();
     void updateGroupMems(MemberList list);
     void updateGroupSize(int size);
     int msgCount();

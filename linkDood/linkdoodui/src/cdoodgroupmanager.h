@@ -149,6 +149,7 @@ private:
     bool mIsCreateGroup;
     int mGetGroupInfo;
     bool mNewGroupInfo;
+    QString mNewGroupId;
 
     void initConnect();
     int  indexOfSection(QString sectnion);//从map开头找第一个section相同item位置

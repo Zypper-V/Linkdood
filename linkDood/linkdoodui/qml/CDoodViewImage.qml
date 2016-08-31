@@ -16,10 +16,8 @@ CPage {
     Connections {
         target: chatManager
         onDownloadMainImageResult:{
-            console.log("123");
-            if(imagePreView.url==main_url){
-                console.log("234")
-                imagePreView.tip="";
+            imagePreView.tip="";
+            if(imagePreView.url==main_url && chatManagerModel.fileExistAtLocal(localpath)){
                 imagePreView.imageSource="file://"+localpath;
             }
         }
@@ -78,44 +76,28 @@ CPage {
                     contentItem.x: (imageArea.width - width) / 2
                     Image {
                         id: img
-                        width: imageArea.width
-                        height: width / refRetio.retio
+//                        width: imageArea.width
+//                        height: width / refRetio.retio
+                        width:chatManagerModel.imageWidth(imageSource);
+                        height:chatManagerModel.imageHeight(imageSource);
                         source:imageSource
                         MouseArea{
                             anchors.fill: parent
                         }
+//                        onSourceChanged: {
+//                            img.width = chatManagerModel.imageWidth(imageSource);
+//                            img.height = chatManagerModel.imageHeight(imageSource);
+//                            console.log("view image w:"+img.width+",h:"+img.height);
+//                        }
                     }
                     PinchArea{
                         id: thePinchArea
-                        pinch.minimumScale:0.7
+                        pinch.minimumScale:0.5
                         anchors.fill: parent
-                        pinch.maximumScale:1.3
+                        pinch.maximumScale:2.0
                         pinch.target: imageArea
-                        //   property real globalScale: 1
-                        onPinchUpdated: {
-                            if((img.width <= imageArea.width * 3 || pinch.scale < 1) &&
-                                    (img.width >= imageArea.width || pinch.scale > 1)
-                                    ) {
-                                //                     //          globalScale *= pinch.scale
-                                img.width *= pinch.scale
-                                img.height *= pinch.scale
-                            }
-                            //                            if((img.height <= imageArea.height * 3 || pinch.scale < 1) &&
-                            //                                (img.height >= imageArea.height || pinch.scale > 1)
-                            //                                    ) {
-                            ////                     //          globalScale *= pinch.scale
-                            //                                img.width *= pinch.scale
-                            //                                img.height *= pinch.scale
-                            //                            }
-                            //flick.contentItem.y = (imageArea.height - height) / 2
-                            //flick.contentItem.x = (imageArea.width - width) / 2
-                        }
-                        onPinchStarted: {
-                            img.width = imageArea.width
-                            img.height = img.width / refRetio.retio
-                        }
+//                        onPinchUpdated: {
 
-                        onPinchFinished: {
 //                            if((img.width <= imageArea.width * 3 || pinch.scale < 1) &&
 //                                    (img.width >= imageArea.width || pinch.scale > 1)
 //                                    ) {
@@ -123,30 +105,33 @@ CPage {
 //                                img.width *= pinch.scale
 //                                img.height *= pinch.scale
 //                            }
-                            img.width = imageArea.width
-                            img.height = img.width / refRetio.retio
-                            if(img.width <imageArea.width){
-                                img.width = imageArea.width
-                                img.height = img.width / refRetio.retio
-                            }
+//                        }
+//                        onPinchStarted: {
+//                            img.width = imageArea.width
+//                            img.height = img.width / refRetio.retio
+//                        }
 
-                            //                            if(img.height < imageArea.height){
-                            //                                img.height = imageArea.height
-                            //                                img.width = img.width / refRetio.retio
-                            //                            }
-                            //flick.contentItem.y = (imageArea.height - height) / 2
-                            //flick.contentItem.x = (imageArea.width - width) / 2
-                            //                            flick.returnToBounds()
-                        }
+//                        onPinchFinished: {
+
+//                            img.width = imageArea.width
+//                            img.height = img.width / refRetio.retio
+//                            if(img.width <imageArea.width){
+//                                img.width = imageArea.width
+//                                img.height = img.width / refRetio.retio
+//                            }
+//                        }
                     }
                 }
 
-                Image{
-                    id: refRetio
-                    property real retio: sourceSize.width / sourceSize.height
-                    visible: false
-                    source:imageSource
-                }
+//                Image{
+//                    id: refRetio
+//                    property real retio: sourceSize.width / sourceSize.height
+//                    visible: false
+//                    source:imageSource
+//                    onSourceChanged: {
+//                        refRetio.retio = sourceSize.width / sourceSize.height;
+//                    }
+//                }
             }
         }
     }

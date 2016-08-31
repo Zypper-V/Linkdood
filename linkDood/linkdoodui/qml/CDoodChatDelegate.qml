@@ -183,7 +183,7 @@ CEditListViewDelegate {
         anchors.top: sessionTimeBgLoader.bottom
         anchors.topMargin: messageTopMarginValue
         asynchronous: false
-
+        width: parent.width
         sourceComponent: chatDelegateRoot.loaderComponent()
     }
     onEditingChanged: {

@@ -11,6 +11,13 @@ CPage {
             gScreenInfo.setStatusBarStyle("black")
         }
     }
+
+    Keys.onReleased: {
+        if (event.key === Qt.Key_Back || event.key === Qt.Key_Escape) {
+            addContactManager.contactListClear()
+        }
+    }
+
     contentAreaItem:Item {
         anchors.fill :parent
         Rectangle {

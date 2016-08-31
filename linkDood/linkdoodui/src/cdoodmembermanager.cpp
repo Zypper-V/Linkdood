@@ -142,8 +142,12 @@ void CDoodMemberManager::setMemberInfo(QString groupid, QString memberid, QStrin
         }
     }
     if(operate=="修改备注"){
+        if(remark.toStdString().substr(0,1)==" "){
+            emit wordsOutOfLimited("群名片首字符不能为空格");
+            return;
+        }
         if(remark.size()>16){
-            emit wordsOutOfLimited("备注字数不能超过16");
+            emit wordsOutOfLimited("群名片字数不能超过16");
             return;
         }
         qDebug() << Q_FUNC_INFO<<remark;
@@ -206,6 +210,7 @@ void CDoodMemberManager::onRemoveMemberResult(QString result)
         size=memberSize().toInt()-1;
         setMemberSize(QString::number(size));
     }
+    emit removeMemberResult(result);
 }
 
 void CDoodMemberManager::onSetMemberInfoResult(QString result)
@@ -238,6 +243,7 @@ void CDoodMemberManager::onMemberInfoChanged(QString groupid, Member member)
             if(member.member_type=="0"){
                 member.member_type=item->member_type();
             }
+            emit setMemberInfoResult(member.id,member.remark);
         }
         removeMemberItem(member.id);
         addMember(member);
@@ -281,11 +287,31 @@ void CDoodMemberManager::onGroupLeaderChanged(QString userid, QString username, 
             mem.member_type="1";
             mem.team=itemList[0]->team();
             removeItem(itemList.value(0));
+            groupLeaderListMap.remove(mem.id);
             //            addMember(mem);
             qDebug() << Q_FUNC_INFO<<"sss";
 
         }
-        CDoodMemberItem *item = memberListMap.value(userid,NULL);
+        CDoodMemberItem *item=groupAdminListMap.value(userid,NULL);
+        if(item!=NULL){
+//            Member mem;
+//            mem.name=item->name();
+//            mem.id=item->id();
+//            if(userid==mMy_Id){
+//                setMy_Type("3");
+//            }
+//            mem.thumbAvatar=item->thumbAvatar();
+//            mem.gender=item->gender();
+//            mem.groupid=item->groupid();
+//            mem.remark=item->remark();
+//            mem.member_type="3";
+//            mem.team=item->team();
+            removeItem(item);
+            groupAdminListMap.remove(userid);
+            //            addMember(mem);
+            qDebug() << Q_FUNC_INFO<<"sss";
+        }
+        item = memberListMap.value(userid,NULL);
         if(item!=NULL){
             Member mem;
             mem.name=item->name();
@@ -300,28 +326,10 @@ void CDoodMemberManager::onGroupLeaderChanged(QString userid, QString username, 
             mem.member_type="3";
             mem.team=item->team();
             removeItem(item);
+            memberListMap.remove(userid);
             addMember(mem);
             qDebug() << Q_FUNC_INFO<<"sss";
         }
-        item=groupAdminListMap.value(userid,NULL);
-        if(item!=NULL){
-            Member mem;
-            mem.name=item->name();
-            mem.id=item->id();
-            if(userid==mMy_Id){
-                setMy_Type("3");
-            }
-            mem.thumbAvatar=item->thumbAvatar();
-            mem.gender=item->gender();
-            mem.groupid=item->groupid();
-            mem.remark=item->remark();
-            mem.member_type="3";
-            mem.team=item->team();
-            removeItem(item);
-            //            addMember(mem);
-            qDebug() << Q_FUNC_INFO<<"sss";
-        }
-
     }
 }
 
