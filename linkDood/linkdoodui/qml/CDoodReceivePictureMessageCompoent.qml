@@ -130,7 +130,7 @@ Component {
                     if(tmp ===""){
                         myChatPage.tip="(图片加载中...)";
                         myChatPage.imageSource = model.modelData.body;
-                        chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.targetId);
+                        chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.enkeyUser);
                     }else{
                         myChatPage.tip = "";
                         myChatPage.imageSource = "file://"+tmp;

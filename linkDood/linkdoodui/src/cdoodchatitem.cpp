@@ -27,6 +27,17 @@ CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
     mImgH = 300;
 }
 
+void CDoodChatItem::setEnkeyUser(QString data)
+{
+    mEnkeyUser = data;
+    emit enkeyUserChanged();
+}
+
+QString CDoodChatItem::enkeyUser()
+{
+    return mEnkeyUser;
+}
+
 int CDoodChatItem::imgWidth()
 {
     return mImgW;
@@ -48,6 +59,7 @@ int CDoodChatItem::imgHeight()
 void CDoodChatItem::setImgHeight(int h)
 {
     if(h != 0){
+        h = h>600 ? 600 :h;
         mImgH = h;
     }
     emit imgHeightChanged();

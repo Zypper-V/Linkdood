@@ -194,6 +194,7 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
                 pChatItem->setBodyBig(msg.main_url);
                 pChatItem->mImageMainUrl = msg.main_url;
                 pChatItem->mImageThumbUrl = msg.thumb_url;
+                pChatItem->setEnkeyUser(msg.encrypt_user);
 
             }
             else{
@@ -281,7 +282,7 @@ void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgConten
             pChatItem->setTar_thumbAvatar(msg.thumb_url);
             pChatItem->setTextMsg(msg.main_url);
             pChatItem->setEncrypt_key(msg.encrypt_key);
-
+            pChatItem->setEnkeyUser(msg.encrypt_user);
             pChatItem->mImageMainUrl = msg.main_url;
             pChatItem->mImageThumbUrl = msg.thumb_url;
         }

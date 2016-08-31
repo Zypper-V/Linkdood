@@ -11,6 +11,8 @@ CPage {
             gScreenInfo.setStatusBar(imagePreView.statusBarHoldEnabled)
             imagePreView.statusBarHoldItemColor = "#edf0f0"
             gScreenInfo.setStatusBarStyle("black")
+        }else if(status === CPageStatus.Hide){
+            thePinchArea.pinch.scale = 1.0
         }
     }
     Connections {
@@ -68,70 +70,23 @@ CPage {
                 focus: true
                 Flickable{
                     id:flick
-                    width: Math.min(parent.width, img.width)
-                    height:Math.min(parent.height, img.height)
-                    contentWidth: img.width
-                    contentHeight: img.height
-                    contentItem.y: (imageArea.height - height) / 2
-                    contentItem.x: (imageArea.width - width) / 2
+                    anchors.fill: parent
                     Image {
                         id: img
-//                        width: imageArea.width
-//                        height: width / refRetio.retio
                         width:chatManagerModel.imageWidth(imageSource);
                         height:chatManagerModel.imageHeight(imageSource);
                         source:imageSource
-                        MouseArea{
-                            anchors.fill: parent
-                        }
-//                        onSourceChanged: {
-//                            img.width = chatManagerModel.imageWidth(imageSource);
-//                            img.height = chatManagerModel.imageHeight(imageSource);
-//                            console.log("view image w:"+img.width+",h:"+img.height);
-//                        }
+                        anchors.centerIn: parent
                     }
                     PinchArea{
                         id: thePinchArea
-                        pinch.minimumScale:0.5
+                        pinch.minimumScale:0.2
                         anchors.fill: parent
-                        pinch.maximumScale:2.0
-                        pinch.target: imageArea
-//                        onPinchUpdated: {
+                        pinch.maximumScale:20
+                        pinch.target: img
 
-//                            if((img.width <= imageArea.width * 3 || pinch.scale < 1) &&
-//                                    (img.width >= imageArea.width || pinch.scale > 1)
-//                                    ) {
-//                                //                     //          globalScale *= pinch.scale
-//                                img.width *= pinch.scale
-//                                img.height *= pinch.scale
-//                            }
-//                        }
-//                        onPinchStarted: {
-//                            img.width = imageArea.width
-//                            img.height = img.width / refRetio.retio
-//                        }
-
-//                        onPinchFinished: {
-
-//                            img.width = imageArea.width
-//                            img.height = img.width / refRetio.retio
-//                            if(img.width <imageArea.width){
-//                                img.width = imageArea.width
-//                                img.height = img.width / refRetio.retio
-//                            }
-//                        }
                     }
                 }
-
-//                Image{
-//                    id: refRetio
-//                    property real retio: sourceSize.width / sourceSize.height
-//                    visible: false
-//                    source:imageSource
-//                    onSourceChanged: {
-//                        refRetio.retio = sourceSize.width / sourceSize.height;
-//                    }
-//                }
             }
         }
     }

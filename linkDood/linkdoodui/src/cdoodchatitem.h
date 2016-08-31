@@ -37,12 +37,15 @@ class CDoodChatItem : public QObject
 
     Q_PROPERTY(int imgWidth READ imgWidth WRITE setImgWidth NOTIFY imgWidthChanged)
     Q_PROPERTY(int imgHeight READ imgHeight WRITE setImgHeight NOTIFY imgHeightChanged)
+    Q_PROPERTY(QString enkeyUser READ enkeyUser WRITE setEnkeyUser NOTIFY enkeyUserChanged)
 
 
 public:
 
     explicit CDoodChatItem(QObject *parent = 0);
 
+    void setEnkeyUser(QString data);
+    QString enkeyUser();
 
     int imgWidth();
     void setImgWidth(int w);
@@ -124,6 +127,7 @@ public:
 signals:
     void imgWidthChanged();
     void imgHeightChanged();
+    void enkeyUserChanged();
 
     void thumbAvatarChanged();
     void tar_thumbAvatarChanged();
