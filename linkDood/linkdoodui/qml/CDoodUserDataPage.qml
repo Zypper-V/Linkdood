@@ -473,6 +473,7 @@ CPage {
 
                     inputDialog.id=menu.id;
                     inputDialog.groupid=menu.groupid;
+                    inputDialog.remark=menu.name;
                     inputDialog.setText(menu.name);
                     inputDialog.show();
                 }
@@ -570,6 +571,7 @@ CPage {
 
                     inputDialog.id=menu1.id;
                     inputDialog.groupid=menu1.groupid;
+                    inputDialog.remark=menu1.name;
                     inputDialog.setText(menu1.name);
                     inputDialog.show();
                 }
@@ -588,9 +590,13 @@ CPage {
         id:inputDialog
         property string id: ""
         property string groupid: ""
+        property string remark: ""
         titleText: qsTr("修改群名片")
         messageTextColor:"#777777"
         onAccepted: {
+            if(inputDialog.text()===inputDialog.remark){
+                return;
+            }
             memberManager.setMemberInfo(inputDialog.groupid,inputDialog.id,"修改备注",inputDialog.text());
         }
     }
@@ -774,11 +780,13 @@ CPage {
 
     CInputDialog{
         id:inputDialog2
-
         titleText: qsTr("修改备注")
         messageTextColor:"#777777"
         maximumLength:20
         onAccepted: {
+            if(inputDialog2.text()===menu2.name){
+                return;
+            }
             contactManager.updateContactInfo(menu2.id,"",inputDialog2.text());
             indicatorDialog.show();
         }
