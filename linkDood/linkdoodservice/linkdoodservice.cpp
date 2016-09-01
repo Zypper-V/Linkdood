@@ -216,8 +216,11 @@ void LinkDoodService::onOnlineChanged(QString id, QString deviceType,int flag)
     if(id==m_userid&&flag==(-1)){
         setAppLoginStatus(0);
         emit elsewhereLogin("您的帐号已在别处登录");
+        unInitSdk();
     }
     emit contactOnlineChanged(id, deviceType);
+
+
 }
 
 QString LinkDoodService::UserId()

@@ -72,7 +72,7 @@ void ContactControler::onListChanged(int operType, std::vector<service::Contact>
         user.isVip  = i.isVip;
         user.pinyin  = QString::fromStdString(i.pinyin);
         user.remark  = QString::fromStdString(i.remark);
-        if(user.remark !=""){
+        if(user.remark !="" && user.remark !="#" ){
             user.name  = QString::fromStdString(i.remark);
         }
         user.server  = QString::fromStdString(i.server);
@@ -118,7 +118,7 @@ void ContactControler::onContactInfoChanged(int operType, service::User &users)
     if(contact.__isset.isVip){
         user.isVip = contact.isVip;
     }
-    if(contact.__isset.remark && contact.remark !=""){
+    if(contact.__isset.remark && (contact.remark !=""&& contact.remark !="#")){
         user.remark  = QString::fromStdString(contact.remark);
         user.name  = user.remark;
     }

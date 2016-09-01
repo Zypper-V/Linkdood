@@ -85,9 +85,9 @@ Component {
                     var tmp = ""+chatManagerModel.bigImageExisted(model.modelData.localId);
                     myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodViewImage.qml"),"CDoodViewImage");
                     if(tmp ===""){
-                        myChatPage.tip="(图片加载中...)";
+                        //myChatPage.tip="(图片加载中...)";
                         myChatPage.imageSource = model.modelData.body;
-                        chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.enkeyUser);
+                        //chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.enkeyUser);
                     }else{
                         myChatPage.tip = "";
                         myChatPage.imageSource = "file://"+tmp;
