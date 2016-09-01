@@ -386,7 +386,7 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
             if(offMsg.offlineType == 1)
             {
                 if(offMsg.count >99){
-                    item->setUnReadCount("99+");
+                    tmpItem->setUnReadCount("99+");
                 }else{
                      tmpItem->setUnReadCount(QString::number(offMsg.count));
                 }
