@@ -136,23 +136,20 @@ void CDoodContactManager::selectMember(QString id)
         if(tmpItem->isChoose()==""){
             m_member.push_back(id);
             tmpItem->setIsChoose("1");
-            qDebug() << Q_FUNC_INFO<<"ssss1";
         }
         else{
-            qDebug() << Q_FUNC_INFO<<"ssss2";
             tmpItem->setIsChoose("");
         }
     }
-    //    tmpItem->clearIsChoose("");
     CDoodContactItem *item = starContactListMap.value(id);
     if(item != NULL){
         if(item->isChoose()==""){
+            m_member.push_back(id);
             item->setIsChoose("1");
         }
         else{
             item->setIsChoose("");
         }
-        //        item->clearIsChoose("");
     }
 }
 
@@ -160,9 +157,11 @@ void CDoodContactManager::clearMember()
 {
 
     for(size_t i=0;i<m_member.size();++i){
-        CDoodContactItem *tmpItem = contactListMap.value(m_member[i]);
-        tmpItem->setIsChoose("");
-        CDoodContactItem *item = starContactListMap.value(tmpItem->id(),NULL);
+        CDoodContactItem *tmpItem = contactListMap.value(m_member[i],NULL);
+        if(tmpItem != NULL){
+            tmpItem->setIsChoose("");
+        }
+        CDoodContactItem *item = starContactListMap.value(m_member[i],NULL);
         if(item != NULL){
             item->setIsChoose("");
         }
@@ -172,15 +171,14 @@ void CDoodContactManager::clearMember()
 
 void CDoodContactManager::onAvatarChanged(QString userid, QString avatar)
 {
-//    qDebug() << Q_FUNC_INFO<<userid;
     if(avatar != ""){
         CDoodContactItem *item = contactListMap.value(userid);
         if(item != NULL){
             item->setThumbAvatar(avatar);
-            item = starContactListMap.value(userid);
-            if(item != NULL){
-                item->setThumbAvatar(avatar);
-            }
+        }
+        item = starContactListMap.value(userid);
+        if(item != NULL){
+            item->setThumbAvatar(avatar);
         }
     }
 }
