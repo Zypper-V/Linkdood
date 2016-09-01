@@ -355,7 +355,12 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
                     count=URC.toInt() + offMsg.count;
                 else
                     count=offMsg.count;
-                item->setUnReadCount(QString::number(count));
+                if(count >99){
+                    item->setUnReadCount("99+");
+                }else{
+                    item->setUnReadCount(QString::number(count));
+                }
+
                 item->setUnreadMsgCOunt(count);
                 int index = indexOf(item);
                 if(index>0 && index <itemCount())
@@ -380,7 +385,11 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
             tmpItem->setChatType(m_pClient->userType(offMsg.targetId));
             if(offMsg.offlineType == 1)
             {
-                tmpItem->setUnReadCount(QString::number(offMsg.count));
+                if(offMsg.count >99){
+                    item->setUnReadCount("99+");
+                }else{
+                     tmpItem->setUnReadCount(QString::number(offMsg.count));
+                }
                 setUnreadCount(offMsg.count);
                 tmpItem->setUnreadMsgCOunt(offMsg.count);
             }
