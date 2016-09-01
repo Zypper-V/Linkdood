@@ -85,7 +85,7 @@ CPage {
                 id:settingButton
                 anchors.right: parent.right
                 anchors.rightMargin: 30
-                visible: userdataManager.buttonType===""?false:true
+                visible: userdataManager.buttonType===""||userdataManager.buttonType==="m"?false:true
                 anchors.verticalCenter: parent.verticalCenter
                 source: "qrc:/res/main_title_setting_button.png"
                 MouseArea{
@@ -768,6 +768,7 @@ CPage {
         }
         onUpdateContactInfoResult:{
             indicatorDialog.hide();
+            gToast.requestToast(qsTr("设置成功"),"","");
         }
     }
 

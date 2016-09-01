@@ -11,5 +11,5 @@ CameraPlugin {
 
     enablePostPreview: true  //必要设置
     enableCut: false //必要设置
-    apertureShape: false
+    apertureShape: true
 }
