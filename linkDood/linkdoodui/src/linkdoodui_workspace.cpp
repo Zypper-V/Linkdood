@@ -28,6 +28,20 @@
 #include <qpa/qplatformnativeinterface.h>
 #include <QDebug>
 
+void linkdoodui_Workspace::initConnects()
+{
+    QObject::connect(m_pSysmsgManager.data(),SIGNAL(removeSysMsg(QString,QString)),m_pSessionListManager.data(),SLOT(onRemoveSysMsg(QString,QString)));
+    QObject::connect(m_pMemberManager.data(),SIGNAL(groupMemsChanged(QString,int)),this,SLOT(onGroupMemsChanged(QString,int)));
+    QObject::connect(m_pChatManager.data(),SIGNAL(chatPageChanged()),this,SLOT(onChatPageChanged()));
+    QObject::connect(m_pChatManager.data(),SIGNAL(updateSessionPageMsgReaded(QString)),this,SLOT(onUpdateSessionPageMsgReaded(QString)));
+    QObject::connect(m_pGroupManager.data(),SIGNAL(transMessageSelectContactList(QList<QString>,QString)),this,SLOT(onTransMessageSelectContactList(QList<QString>,QString)));
+    QObject::connect(m_pGroupManager.data(),SIGNAL(groupRemoveOrExitResult(QString)),this,SLOT(onGroupRemoveOrExitResult(QString)));
+    QObject::connect(m_pContactManager.data(),SIGNAL(removeContactOper(QString)),this,SLOT(onRemoveContactOper(QString)));
+    QObject::connect(this,SIGNAL(switchLoginByUrl()),m_pLoginManager.data(),SLOT(onSwitchLoginByUrl()));
+    QObject::connect(this,SIGNAL(switchChatPageByUrl()),m_pLoginManager.data(),SLOT(onSwitchChatPageByUrl()));
+    QObject::connect(m_pChatManager.data(),SIGNAL(draftChanged(QString , QString ,QString ,QString ,QString)),m_pSessionListManager.data(),SLOT(onDraftChanged(QString , QString ,QString ,QString ,QString )));
+}
+
 linkdoodui_Workspace::linkdoodui_Workspace()
     : CWorkspace()
 {
@@ -122,15 +136,7 @@ linkdoodui_Workspace::linkdoodui_Workspace()
     if(!m_pLocalSearchManager.data()){
         qDebug() << Q_FUNC_INFO << "m_pLocalSearchManager init error !!!";
     }
-    QObject::connect(m_pSysmsgManager.data(),SIGNAL(removeSysMsg(QString,QString)),m_pSessionListManager.data(),SLOT(onRemoveSysMsg(QString,QString)));
-    QObject::connect(m_pMemberManager.data(),SIGNAL(groupMemsChanged(QString,int)),this,SLOT(onGroupMemsChanged(QString,int)));
-    QObject::connect(m_pChatManager.data(),SIGNAL(chatPageChanged()),this,SLOT(onChatPageChanged()));
-    QObject::connect(m_pChatManager.data(),SIGNAL(updateSessionPageMsgReaded(QString)),this,SLOT(onUpdateSessionPageMsgReaded(QString)));
-    QObject::connect(m_pGroupManager.data(),SIGNAL(transMessageSelectContactList(QList<QString>,QString)),this,SLOT(onTransMessageSelectContactList(QList<QString>,QString)));
-    QObject::connect(m_pGroupManager.data(),SIGNAL(groupRemoveOrExitResult(QString)),this,SLOT(onGroupRemoveOrExitResult(QString)));
-    QObject::connect(m_pContactManager.data(),SIGNAL(removeContactOper(QString)),this,SLOT(onRemoveContactOper(QString)));
-    QObject::connect(this,SIGNAL(switchLoginByUrl()),m_pLoginManager.data(),SLOT(onSwitchLoginByUrl()));
-    QObject::connect(this,SIGNAL(switchChatPageByUrl()),m_pLoginManager.data(),SLOT(onSwitchChatPageByUrl()));
+    initConnects();
 
     m_view = SYBEROS::SyberosGuiCache::qQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), qApp, SLOT(quit()));
@@ -172,7 +178,7 @@ void linkdoodui_Workspace::onLaunchComplete(Option option, const QStringList& pa
     switch (option) {
     case CWorkspace::HOME:
         qDebug()<< "Start by Home";
-       m_pLoginManager->getLoginHistory();
+       //m_pLoginManager->getLoginHistory();
         break;
     case CWorkspace::URL:
         qDebug() << "Start by URL";

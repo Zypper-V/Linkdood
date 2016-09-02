@@ -8,6 +8,7 @@ class CDoodSessionListItem : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString id READ id WRITE setId NOTIFY idChanged)
+    Q_PROPERTY(QString draft READ draft WRITE setDraft NOTIFY draftChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString msgType READ msgType WRITE setMsgType NOTIFY msgTypeChanged)
     Q_PROPERTY(QString chatType READ chatType WRITE setChatType NOTIFY chatTypeChanged)
@@ -29,6 +30,9 @@ public:
 
     QString id() const;
     QString setId(const QString &data);
+
+    void    setDraft(QString data);
+    QString draft();
 
     QString name() const;
     Q_INVOKABLE QString setName(const QString &data);
@@ -63,6 +67,7 @@ public:
 
 
 signals:
+    void draftChanged();
     void idChanged();
     void nameChanged();
     void msgTypeChanged();
@@ -91,5 +96,6 @@ private:
     QString mLastMsg;
     QString mThumbAvatar;
     int     mUnreadMsgCount;
+    QString mdraft;
 };
 #endif // CDOODSESSIONLISTITEM_H

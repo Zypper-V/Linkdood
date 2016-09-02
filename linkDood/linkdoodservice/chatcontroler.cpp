@@ -529,8 +529,9 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
         imMsg.fromId =QString::number(msg.msg->fromid);
         imMsg.msgId  = QString::number(msg.msg->msgid);
         //imMsg.time   = QDateTime::fromMSecsSinceEpoch(msg.msg->time).toString("yyyy-MM-dd hh:mm:ss");
-        imMsg.time =QString::number(msg.msg->time) /*dealTime(msg.msg->time,1)*/;
+        imMsg.time =QString::number(msg.msg->time);
         imMsg.targetId =QString::number(msg.msg->targetid);
+        qDebug()<<Q_FUNC_INFO<<"targetId:"<<msg.msg->targetid;
         if(msg.msg->msgtype == MSG_TYPE_TEXT){
             std::string target("");
             std::string msgBody = utils::MsgUtils::getText(msg.msg->body);

@@ -71,12 +71,24 @@ CPage {
                 Flickable{
                     id:flick
                     anchors.fill: parent
-                    Image {
-                        id: img
-                        width:chatManagerModel.imageWidth(imageSource);
-                        height:chatManagerModel.imageHeight(imageSource);
-                        source:imageSource
-                        anchors.centerIn: parent
+                    Rectangle{
+                        id:rect
+                        anchors.fill: parent
+
+                        width:chatManagerModel.imageWidth(imageSource)
+                        height:chatManagerModel.imageHeight(imageSource)
+                        color: "transparent"
+                        Image {
+                            id: img
+                            source:imageSource
+                            onSourceChanged: {
+                                rect.width = chatManagerModel.imageWidth(imageSource);
+                                rect.height= chatManagerModel.imageHeight(imageSource);
+                                console.log("view imag:w:"+rect.width+",h:"+rect.height)
+                            }
+
+                            anchors.fill: parent
+                        }
                     }
                     PinchArea{
                         id: thePinchArea

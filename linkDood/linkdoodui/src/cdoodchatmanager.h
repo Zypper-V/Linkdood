@@ -57,6 +57,7 @@ public:
     Q_INVOKABLE bool fileExisted(QString url);
     Q_INVOKABLE void startSendFile();
     void sendFile(QString path);
+    Q_INVOKABLE void setDraft(QString targetId,QQuickTextDocument* item);
     //发送消息
     Q_INVOKABLE void sendText(QQuickTextDocument* item,QString oriText);
     Q_INVOKABLE void resendMessage(QString localId);
@@ -127,13 +128,14 @@ signals:
     void nameChanged();
     void chatTypeChanged();
     void chatPageChanged();
-
+    void draftChanged(QString id, QString avater,QString name,QString chatType,QString draft);
     void selectImageCountChanged();
     void selectFileCountChanged();
     void sendShowChatPage(QString chatName,
                           QString targetid,
                           QString chatType);
 private slots:
+    void onDraftChanged(QString draft);
     void onDeleteMessage(QString targetId,QStringList msgs);
     void onGetOrgUserInfoResult(int code,OrgUser orguser);
     void onUploadImageProgess(QString targetId,QString localId,int progress);
@@ -202,6 +204,7 @@ private:
     //图片缩放
     void scaledImage(QString sourceImagePath, float scaledWidth, float scaledHeight, QString &outImagePath);
     void setFileFormat();
+    void initModelConnects(CDoodChatManagerModel* model);
 };
 
 #endif // CDOODCHATMANAGER_H

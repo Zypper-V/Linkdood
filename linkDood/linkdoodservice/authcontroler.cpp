@@ -230,19 +230,11 @@ void AuthControler::onAccountInfoChanged(service::User& info)
 {
     qDebug() << Q_FUNC_INFO;
 
-//    mpUserInfo->__set_avatar(info.avatar);
-//    mpUserInfo->__set_gender(info.gender);
-//    mpUserInfo->__set_extends(info.extends);
-//    mpUserInfo->__set_id(info.id);
-//    mpUserInfo->__set_name(info.name);
-//    mpUserInfo->__set_thumb_avatar(info.thumb_avatar);
-//    mpUserInfo->__set_time_zone(info.time_zone);
-
     QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
     settings.setValue("myName",QString::fromStdString(info.name));
     settings.setValue("myId",QString::number(info.id));
-    emit loginResultObserver(0,QString::number(info.id));
+    //emit loginResultObserver(0,QString::number(info.id));
     //推送用户信息
     service::Account& account = dynamic_cast<service::Account&>(info);
     Contact user;
@@ -397,7 +389,7 @@ void AuthControler::_getLoginHistory(std::vector<service::LoginInfo> list)
         loginItem.lastLoginTime = item.last_login_time;
 
         historyList.insert(historyList.size(),loginItem);
-        qDebug() << Q_FUNC_INFO<<loginItem.userId<<loginItem.name<<loginItem.server;
+        qDebug() << Q_FUNC_INFO<<loginItem.userId<<"time:"<<item.last_login_time;
     }
     emit getLoginHistoryResult(historyList);
 }
@@ -406,7 +398,7 @@ void AuthControler::_loginResult(service::ErrorInfo &info, long long userId)
 {
     qDebug() << Q_FUNC_INFO << info.code() << userId;
     qDebug() << Q_FUNC_INFO << info.code() << "sssssssssssssssssss";
-    if(info.code() == 0)
+    if(info.code() == 0 )
     {
         qDebug() << Q_FUNC_INFO << "loginSucceeded";
 
@@ -414,6 +406,8 @@ void AuthControler::_loginResult(service::ErrorInfo &info, long long userId)
         QSettings settings(fileName, QSettings::IniFormat);
         settings.setValue("myId",QString::number(userId));
         emit loginSucceeded(QString::number(userId));
+
+        emit loginResultObserver(0,QString::number(userId));
     }
     else
     {

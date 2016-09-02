@@ -64,9 +64,9 @@ CPage {
     Connections {
         target: groupManager
         onGetGroupInfoResult: {
-//            memberManager.clearMemberList();
-//            groupManager.getMemberList(groupManager.id);
-//            pageStack.push(Qt.resolvedUrl("CDoodGroupSetPage.qml"));
+            //            memberManager.clearMemberList();
+            //            groupManager.getMemberList(groupManager.id);
+            //            pageStack.push(Qt.resolvedUrl("CDoodGroupSetPage.qml"));
 
         }
     }
@@ -91,7 +91,7 @@ CPage {
             chatListView.positionViewAtEnd();
         }
         onSetMsgRead:{
-//            chatManager.setMessageRead(chatPage.targetid,msgid);
+            //            chatManager.setMessageRead(chatPage.targetid,msgid);
         }
     }
 
@@ -110,7 +110,7 @@ CPage {
 
     onActiveChanged: {
         if (active) {
-//            chatManager.setMessageRead(chatPage.targetid,chatManagerModel.getLastMsgid());
+            //            chatManager.setMessageRead(chatPage.targetid,chatManagerModel.getLastMsgid());
         }
     }
 
@@ -220,8 +220,8 @@ CPage {
                 anchors.right: parent.right
                 anchors.rightMargin:40
                 onClicked:{
-//                    memberManager.clearMemberList();
-//                    groupManager.getMemberList(chatPage.id);
+                    //                    memberManager.clearMemberList();
+                    //                    groupManager.getMemberList(chatPage.id);
                     groupManager.getGroupInfo(chatPage.targetid);
                     groupManager.getGroupSet(chatPage.targetid);
                     pageStack.push(Qt.resolvedUrl("CDoodGroupSetPage.qml"));
@@ -252,7 +252,7 @@ CPage {
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                     addContactManager.getVerifyType(chatManagerModel.id)
+                    addContactManager.getVerifyType(chatManagerModel.id)
                 }
             }
         }
@@ -278,7 +278,7 @@ CPage {
                 }
                 else if(type === 3) //3:允许任何人添加
                 {
-                     addContactManager.addContact(chatManagerModel.id,"","");
+                    addContactManager.addContact(chatManagerModel.id,"","");
                 }
             }
         }
@@ -312,8 +312,7 @@ CPage {
             flickDeceleration: 3000
             cacheBuffer: 500
             onModelChanged:{
-                console.log("chat model changed")
-                //chatManager.updateUnreadMsg()
+                   inputTextArea.text = chatManagerModel.draft;
             }
 
             delegate: CDoodChatDelegate {
@@ -519,8 +518,7 @@ CPage {
                         return args;
                     }
                     onTextChanged: {
-                        console.log("text:"+inputTextArea.text);
-                         console.log("textFormat:"+inputTextArea.textFormat);
+                        chatManagerModel.setDraft(inputTextArea.plainText());
                     }
 
                     onFocusChanged: {

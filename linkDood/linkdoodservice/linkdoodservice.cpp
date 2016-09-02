@@ -128,6 +128,7 @@ void LinkDoodService::login(const QString &server,
 void LinkDoodService::autoLogin(QString id, QString service)
 {
     qDebug() << Q_FUNC_INFO;
+    initControl();
     if(m_pAuth != NULL){
         m_pAuth->autoLogin(id,service);
     }
@@ -762,7 +763,7 @@ void LinkDoodService::onLoginFailed(int errCode)
         err = "帐号密码不匹配";
         break;
     case 113:
-        err = "帐号已经登录";
+        err = "已经登录";
         break;
     case 117:
         err="输入错误次数过多,请输入验证码";

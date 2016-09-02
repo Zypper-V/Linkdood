@@ -585,6 +585,23 @@ CDoodChatManagerModel::~CDoodChatManagerModel()
     clearList();
 }
 
+QString CDoodChatManagerModel::draft()
+{
+    return mDraft;
+}
+
+void CDoodChatManagerModel::setDraft(QString data)
+{
+    mDraft = data;
+    emit draftChanged();
+    if(mDraft != ""&& mDraft != "\n"){
+       emit draftChanged("[草稿]"+mDraft);//
+    }else{
+        emit draftChanged("");
+    }
+
+}
+
 QString CDoodChatManagerModel::id() const
 {
     qDebug() << Q_FUNC_INFO;

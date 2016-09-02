@@ -136,6 +136,7 @@ Component {
 //                        myChatPage.imageSource = "file://"+tmp;
 //                    }
 
+                    console.log("view img:"+model.modelData.body)
                     myChatPage.imageSource = model.modelData.body;
                     myChatPage.url=model.modelData.bodyBig
                     pageStack.push(myChatPage);

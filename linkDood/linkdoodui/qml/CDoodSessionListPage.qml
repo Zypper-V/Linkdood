@@ -185,15 +185,17 @@ Item {
                                     anchors.bottom: parent.bottom
                                     anchors.bottomMargin: 10
                                     anchors.top: nameText.bottom
-                                    anchors.topMargin: 20
+                                    anchors.topMargin: 10
 
-                                    font.pixelSize: 24
+                                    font.pixelSize: 26
                                     height: 60
                                     clip: true
                                     width:460
                                     elide: Text.ElideRight
+                                    textFormat:TextEdit.RichText
+                                    maximumLineCount:1
                                     color: "#777777"
-                                    text: model.modelData.lastMsg
+                                    text: model.modelData.draft !== ""?model.modelData.draft:model.modelData.lastMsg
                                 }
 
                                 Text {

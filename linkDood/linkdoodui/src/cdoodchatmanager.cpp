@@ -103,6 +103,14 @@ CDoodChatManager::~CDoodChatManager()
     exitChat();
 }
 
+void CDoodChatManager::initModelConnects(CDoodChatManagerModel* model)
+{
+    connect(model,SIGNAL(draftChanged(QString)),this,SLOT(onDraftChanged(QString)));
+    connect(model,SIGNAL(deleteMessage(QString,QStringList)),this,SLOT(onDeleteMessage(QString,QStringList)));
+    connect(model,SIGNAL(downloadImage(QString,QString,QString,QString)),this,SLOT(onDownloadImage(QString,QString,QString,QString)));
+    connect(model,SIGNAL(reqestUserInfo(QString)),this,SLOT(onReqestUserInfo(QString)));
+}
+
 void CDoodChatManager::switchToChatPage(QString targetId, QString name, QString chatType, QString lastMsgId, int unReadCount, QString icon)
 {
     qDebug()<<Q_FUNC_INFO<<"targetId:"<<targetId<<"name:"<<name<<"chatType:"<<chatType<<"lastMsgId:"<<lastMsgId<<"unReadCount:"<<unReadCount<<"icon:"<<icon;
@@ -116,9 +124,7 @@ void CDoodChatManager::switchToChatPage(QString targetId, QString name, QString 
         model = new CDoodChatManagerModel(this);
         model->setId(targetId);
         model->setAccountId(m_pClient->UserId());
-        connect(model,SIGNAL(deleteMessage(QString,QStringList)),this,SLOT(onDeleteMessage(QString,QStringList)));
-        connect(model,SIGNAL(downloadImage(QString,QString,QString,QString)),this,SLOT(onDownloadImage(QString,QString,QString,QString)));
-        connect(model,SIGNAL(reqestUserInfo(QString)),this,SLOT(onReqestUserInfo(QString)));
+        initModelConnects(model);
         mChatModel = model;
         m_sTargetid = targetId;
         mMsgListModel[targetId] = mChatModel;
@@ -381,10 +387,7 @@ void CDoodChatManager::updateMsgToListView(Msg msg,bool isFromPC)
             item->addItemToListViewModel(msg,"",isFromPC);
         }else{
             CDoodChatManagerModel* item = new CDoodChatManagerModel(this);
-            connect(item,SIGNAL(deleteMessage(QString,QStringList)),this,SLOT(onDeleteMessage(QString,QStringList)));
-            connect(item,SIGNAL(downloadImage(QString,QString,QString,QString)),this,SLOT(onDownloadImage(QString,QString,QString,QString)));
-            connect(item,SIGNAL(reqestUserInfo(QString)),this,SLOT(onReqestUserInfo(QString)));
-
+            initModelConnects(item);
             item->setId(msg.targetid);
             item->setName(msg.targetName);
             item->setAccountId(m_pClient->UserId());
@@ -559,6 +562,11 @@ void CDoodChatManager::sendFile(QString path)
     uploadAndSendFileMsg(fileMsg);
 }
 
+void CDoodChatManager::setDraft(QString targetId, QQuickTextDocument *item)
+{
+
+}
+
 void CDoodChatManager::sendText(QString targetText ,QString oriText)
 {
     Msg msgText;
@@ -582,52 +590,6 @@ void CDoodChatManager::sendText(QString targetText ,QString oriText)
 
 void CDoodChatManager::sendText(QQuickTextDocument *item,QString oriText)
 {
-    //    QTextDocument* textDocu = item->textDocument();
-    //    QString newLineStr = "";    //区分html和普通文本换行
-    //    if (textDocu->toHtml().contains("<!DOCTYPE HTML PUBLIC"))
-    //    {
-    //        newLineStr = "\n";
-    //    }
-    //    else
-    //    {
-    //        newLineStr = "\n";
-    //    }
-    //    QTextBlock block = textDocu->begin();
-    //    QString tempStr = "";
-    //    QString textContent = "";
-    //    QString imgPath = "";
-    //    QTextImageFormat imageFormat;
-    //    for (int index = 0; index < textDocu->blockCount(); index++)
-    //    {
-    //        imgPath = "";
-    //        tempStr = "";
-    //        block = textDocu->findBlockByNumber(index);
-    //        QTextBlock::iterator itBlock = block.begin();
-    //        for (; !(itBlock.atEnd()); itBlock++)
-    //        {
-    //            imgPath = "";
-    //            tempStr = "";
-
-    //            QTextFragment currentFragment = itBlock.fragment();
-    //            tempStr = currentFragment.text();
-    //            if (currentFragment.isValid() && currentFragment.charFormat().isImageFormat() && (!tempStr.isSimpleText() && (1 == tempStr.size())))
-    //            {
-    //                //处理图片
-    //                imageFormat = currentFragment.charFormat().toImageFormat();
-    //                imgPath = imageFormat.name();
-    //                if (imgPath.contains("qrc:/"))
-    //                {
-    //                    //是表情，直接嵌入到文本中
-    //                    textContent = textContent +EMOJI_IMAGE+ imgPath+EMOJI_IMAGE;
-    //                    continue;
-    //                }
-    //            }
-    //            textContent = textContent + tempStr;
-    //        }
-    //        textContent = textContent + newLineStr;
-    //    }
-
-    //    textContent = textContent.trimmed();
     QString textContent = handleEmojiText(item);
     sendText(textContent,oriText);
 }
@@ -996,6 +958,12 @@ void CDoodChatManager::groupMemsChanged(QString groupid, int size)
     }
 }
 
+void CDoodChatManager::onDraftChanged(QString draft)
+{
+
+    emit draftChanged(m_sTargetid,mChatModel->avatar(),mChatModel->name(),mChatModel->chatType(),draft);
+}
+
 void CDoodChatManager::onDeleteMessage(QString targetId, QStringList msgs)
 {
     qDebug()<<Q_FUNC_INFO;
@@ -1277,9 +1245,7 @@ void CDoodChatManager::onTransMessageFinishBack(int code, QString info)
             CDoodChatManagerModel* model = mMsgListModel.value(targetId);
             if(model == NULL){
                 model = new CDoodChatManagerModel(this);
-                connect(model,SIGNAL(deleteMessage(QString,QStringList)),this,SLOT(onDeleteMessage(QString,QStringList)));
-                connect(model,SIGNAL(downloadImage(QString,QString,QString,QString)),this,SLOT(onDownloadImage(QString,QString,QString,QString)));
-                connect(model,SIGNAL(reqestUserInfo(QString)),this,SLOT(onReqestUserInfo(QString)));
+                initModelConnects(model);
                 model->setId(targetId);
                 model->setName(name);
                 model->setChatType("1");

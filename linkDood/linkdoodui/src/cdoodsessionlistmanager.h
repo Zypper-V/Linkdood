@@ -76,6 +76,7 @@ private slots:
                                 QString unreadmsg);
     //监听离线消息通知
     void onOfflineMsgNotice(IMOfflineMsgList msgList);
+    void onDraftChanged(QString id, QString avater,QString name,QString chatType,QString draft);
 
     //系统消息推送
     void onSysMessageNotice(IMSysMsg sysMsg);

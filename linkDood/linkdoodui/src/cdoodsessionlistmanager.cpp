@@ -144,7 +144,7 @@ void CDoodSessionListManager::setUnreadCount(int count)
 
 void CDoodSessionListManager::onAvatarChanged(QString targetId, QString avatar)
 {
-//    qDebug() << Q_FUNC_INFO <<targetId;
+    //    qDebug() << Q_FUNC_INFO <<targetId;
     if(avatar != ""){
         CDoodSessionListItem *item = sessionListMap.value(targetId);
         if(item != NULL){
@@ -388,7 +388,7 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
                 if(offMsg.count >99){
                     tmpItem->setUnReadCount("99+");
                 }else{
-                     tmpItem->setUnReadCount(QString::number(offMsg.count));
+                    tmpItem->setUnReadCount(QString::number(offMsg.count));
                 }
                 setUnreadCount(offMsg.count);
                 tmpItem->setUnreadMsgCOunt(offMsg.count);
@@ -402,6 +402,28 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
             updateItemInfor(offMsg.targetId,offMsg.name,"");
         }
     }
+}
+
+void CDoodSessionListManager::onDraftChanged(QString id, QString avater,QString name,QString chatType,QString draft)
+{
+    CDoodSessionListItem* item = sessionListMap.value(id,NULL);
+    if(item == NULL && draft == ""){
+        return;
+    }
+    if(item == NULL){
+        item = new CDoodSessionListItem(this);
+        item->setChatType(chatType);
+        item->setId(id);
+        item->setName(name);
+        item->setLastMsg("");
+        item->setThumbAvatar(avater);
+        item->setLastMsgid("0");
+        sessionListMap[id] = item;
+        addItemBegin(item);
+    }
+    QString time = QString::number( QDateTime::currentMSecsSinceEpoch());
+    item->setMsgTime(time);
+    item->setDraft(draft);
 }
 
 void CDoodSessionListManager::onSysMessageNotice(IMSysMsg sysMsg)

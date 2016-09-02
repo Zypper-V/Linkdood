@@ -85,6 +85,7 @@ private:
     QSharedPointer<CDoodFileViewManager> m_pFileViewManager;
 
     CDoodChatManagerModel* m_pChatModel;
+    void initConnects();
 };
 
 

@@ -39,28 +39,6 @@ CPage {
                 }
             }
         }
-        onLoginSucceeded: {
-            console.log("onLoginSuccess !!!!")
-            sessionListManager.getChatList();
-            enterpriseManager.setFarOrg();
-            orgManager.resetOrgList();
-            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
-        }
-        onLoginFailed: {
-            if(err === "帐号已经登录"){
-                sessionListManager.getChatList();
-                contactManager.getContactList();
-                userProfileManager.getAccountInfo();
-                groupManager.getGroupList();
-                enterpriseManager.setFarOrg();
-                orgManager.resetOrgList();
-                chatManager.clearList();
-                pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
-                return;
-            }
-            gToast.requestToast("自動登錄失敗:"+err,"","");
-            pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
-        }
     }
     contentAreaItem:Item {
         anchors.fill :parent

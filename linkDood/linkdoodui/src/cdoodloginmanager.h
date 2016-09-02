@@ -35,6 +35,9 @@ public:
     explicit CDoodLoginManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
     void text(QString param);
+    QString lastLoginAccountName();
+    void    setLastLoginAccountName(QString accountName);
+
     ~CDoodLoginManager();
     Q_INVOKABLE void logout();
     Q_INVOKABLE void changepassword(QString oldpsw,QString newpsw);
@@ -86,6 +89,7 @@ public:
     //设置登录信息
     Q_INVOKABLE void setLoginInfo(int flag, QString userid, QString username, QString avatar);
     Q_INVOKABLE int loginStatus();
+
 signals:
     void siwtchLoginout();
     void textPareams(QString param);

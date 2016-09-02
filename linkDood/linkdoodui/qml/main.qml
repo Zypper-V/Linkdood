@@ -55,7 +55,7 @@ CPageStackWindow {
         target: userProfileManager
         onConnectChanged:{
             if(flag === ""){
-               loadingDialog.hide();
+                loadingDialog.hide();
             }
             else{
                 var code = loginManager.getAppLoginStatus();
@@ -112,30 +112,42 @@ CPageStackWindow {
                 pageStack.replace(Qt.resolvedUrl("CDoodWelcomePage.qml"), "", true);
             }
         }
+        onLoginResultObserver:{
+            console.log("onLoginResultObserver !!!!");
+            //loginManager.setLoginInfo(2,userID,srvUsr.text,"");
+        }
+
         onLoginSucceeded: {
             console.log("onLoginSuccess !!!!")
-            if(loginManager.isStartupByUrl()){
+            sessionListManager.getChatList();
+            enterpriseManager.setFarOrg();
+            orgManager.resetOrgList();
+            loginManager.setIsStartupByUrl(false);
+            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+        }
+        onLoginFailed: {
+            console.log("main loginFail:"+err)
+
+            if(err === "已经登录"){
                 sessionListManager.getChatList();
+                contactManager.getContactList();
+                userProfileManager.getAccountInfo();
+                groupManager.getGroupList();
                 enterpriseManager.setFarOrg();
                 orgManager.resetOrgList();
                 pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
-                loginManager.setIsStartupByUrl(false);
+                return;
             }
-        }
-        onLoginFailed: {
-            console.log("onLoginFailed !!!!")
-            if(loginManager.isStartupByUrl()){
-                gToast.requestToast(err,"","");
-                if(err==="首次登录，请激活帐号")
-                {
-                    pageStack.replace(Qt.resolvedUrl("CDoodActivateAccountPage.qml"), "", true);
-                }else if(err==="输入错误次数过多,请输入验证码")
-                {
-                    pageStack.replace(Qt.resolvedUrl("CDoodVerifyImgPage.qml"), "", true);
-                }else{
-                    loginManager.setIsStartupByUrl(false);
-                    pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
-                }
+            gToast.requestToast(err,"","");
+            if(err==="首次登录，请激活帐号")
+            {
+                pageStack.replace(Qt.resolvedUrl("CDoodActivateAccountPage.qml"), "", true);
+            }else if(err==="输入错误次数过多,请输入验证码")
+            {
+                pageStack.replace(Qt.resolvedUrl("CDoodVerifyImgPage.qml"), "", true);
+            }else{
+                loginManager.setIsStartupByUrl(false);
+                pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
             }
         }
     }
@@ -218,7 +230,7 @@ CPageStackWindow {
     CIndicatorDialog {
         id:loadingDialog
 
-//        canceledOnBackKeyReleased:true
+        //        canceledOnBackKeyReleased:true
         property string flag: ""
         messageText: os.i18n.ctr(flag)
     }

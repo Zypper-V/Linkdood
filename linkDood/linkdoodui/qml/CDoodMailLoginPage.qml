@@ -18,54 +18,62 @@ CPage {
         }
     }
 
-    Connections {
-        target: loginManager
+//    Connections{
+//        target: loginManager
+//        onLoginResultObserver:{
+//            console.log("onLoginResultObserver !!!!");
+//            loginManager.setLoginInfo(2,userID,userLineEdit.text,"");
+//        }
+//    }
 
-        //        onAutoLogin: {
-        //            loadingDialog.show();
-        //        }
+    //    Connections {
+    //        target: loginManager
 
-        onLoginSucceeded: {
-            console.log("onLoginSuccess !!!!")
-            loadingDialog.hide();
-            sessionListManager.getChatList();
-            enterpriseManager.setFarOrg();
-            orgManager.resetOrgList();
-            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+    //        //        onAutoLogin: {
+    //        //            loadingDialog.show();
+    //        //        }
 
-            //            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
-        }
-        onLoginResultObserver:{
-            console.log("onLoginResultObserver !!!!");
-            loginManager.setLoginInfo(2,userID,srvUsr.text,"");
-        }
+    ////        onLoginSucceeded: {
+    ////            console.log("onLoginSuccess !!!!")
+    ////            loadingDialog.hide();
+    ////            sessionListManager.getChatList();
+    ////            enterpriseManager.setFarOrg();
+    ////            orgManager.resetOrgList();
+    ////            pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
 
-        onLoginFailed: {
-            console.log("onLoginFailed !!!!")
-            loadingDialog.hide();
-            if(err === "帐号已经登录"){
-                sessionListManager.getChatList();
-                contactManager.getContactList();
-                userProfileManager.getAccountInfo();
-                groupManager.getGroupList();
-                enterpriseManager.setFarOrg();
-                orgManager.resetOrgList();
-                chatManager.clearList();
-                pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
-                return;
-            }
+    ////            //            var component = pageStack.getCachedPage(Qt.resolvedUrl("CDoodChatPage.qml"),"CDoodChatPage");
+    ////        }
+    ////        onLoginResultObserver:{
+    ////            console.log("onLoginResultObserver !!!!");
+    ////            loginManager.setLoginInfo(2,userID,srvUsr.text,"");
+    ////        }
 
-            gToast.requestToast(err,"","");
-            if(err==="首次登录，请激活帐号")
-            {
-                pageStack.replace(Qt.resolvedUrl("CDoodActivateAccountPage.qml"), "", true);
-            }
-            if(err==="输入错误次数过多,请输入验证码")
-            {
-                pageStack.replace(Qt.resolvedUrl("CDoodVerifyImgPage.qml"), "", true);
-            }
-        }
-    }
+    ////        onLoginFailed: {
+    ////            console.log("onLoginFailed !!!!")
+    ////            loadingDialog.hide();
+    ////            if(err === "帐号已经登录"){
+    ////                sessionListManager.getChatList();
+    ////                contactManager.getContactList();
+    ////                userProfileManager.getAccountInfo();
+    ////                groupManager.getGroupList();
+    ////                enterpriseManager.setFarOrg();
+    ////                orgManager.resetOrgList();
+    ////                //chatManager.clearList();
+    ////                pageStack.replace(Qt.resolvedUrl("CDoodRootTabView.qml"), "", true);
+    ////                return;
+    ////            }
+
+    ////            gToast.requestToast(err,"","");
+    ////            if(err==="首次登录，请激活帐号")
+    ////            {
+    ////                pageStack.replace(Qt.resolvedUrl("CDoodActivateAccountPage.qml"), "", true);
+    ////            }
+    ////            if(err==="输入错误次数过多,请输入验证码")
+    ////            {
+    ////                pageStack.replace(Qt.resolvedUrl("CDoodVerifyImgPage.qml"), "", true);
+    ////            }
+    ////        }
+    //    }
 
     contentAreaItem: Item {
         anchors.fill :parent

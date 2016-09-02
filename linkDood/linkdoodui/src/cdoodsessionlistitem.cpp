@@ -5,6 +5,7 @@ CDoodSessionListItem::CDoodSessionListItem(QObject *parent) : QObject(parent)
 {
     mUnReadCount = "0";
     mUnreadMsgCount = 0;
+    mdraft = "";
 }
 
 void CDoodSessionListItem::setUnreadMsgCOunt(int count)
@@ -35,6 +36,17 @@ QString CDoodSessionListItem::setId(const QString &data)
     mId = data;
     emit idChanged();
     return mId;
+}
+
+void CDoodSessionListItem::setDraft(QString data)
+{
+    mdraft = data;
+    emit draftChanged();
+}
+
+QString CDoodSessionListItem::draft()
+{
+    return mdraft;
 }
 
 QString CDoodSessionListItem::name() const
@@ -168,6 +180,7 @@ QString CDoodSessionListItem::lastMsg() const
 
 QString CDoodSessionListItem::setLastMsg(const QString &data)
 {
+    setDraft("");
     if(mLastMsg == data) {
         return data;
     }

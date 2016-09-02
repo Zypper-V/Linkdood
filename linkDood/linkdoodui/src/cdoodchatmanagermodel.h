@@ -23,6 +23,8 @@ class CDoodChatManagerModel : public CDoodListModel
     Q_OBJECT
 
     Q_PROPERTY(QString id READ id WRITE setId NOTIFY idChanged)
+    Q_PROPERTY(QString draft READ draft WRITE setDraft NOTIFY draftChanged)
+
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString avatar READ avatar WRITE setAvatar NOTIFY avatarChanged)
     Q_PROPERTY(QString chatType READ chatType WRITE setChatType NOTIFY chatTypeChanged)
@@ -66,6 +68,9 @@ public:
 
     ~CDoodChatManagerModel();
 
+    QString draft();
+    Q_INVOKABLE void setDraft(QString data);
+
     QString id()const;
     QString name()const;
     QString avatar()const;
@@ -78,6 +83,8 @@ public:
 
 
 signals:
+    void draftChanged(QString draft);
+    void draftChanged();
     void idChanged();
     void nameChanged();
     void chatTypeChanged();
@@ -110,6 +117,7 @@ private:
     QString mAccountUserId;
     QString mAccountAvater;
     QString mAccountName;
+    QString mDraft;
 
 };
 

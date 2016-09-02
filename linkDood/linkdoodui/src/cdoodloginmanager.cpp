@@ -17,6 +17,24 @@ void CDoodLoginManager::text(QString param)
     emit textPareams(param);
 }
 
+QString CDoodLoginManager::lastLoginAccountName()
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName =QString::fromStdString(APP_DATA_PATH)+"config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    return  settings.value("lastLoginAccountName","").toString();
+}
+
+void CDoodLoginManager::setLastLoginAccountName(QString accountName)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName =QString::fromStdString(APP_DATA_PATH)+"config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    accountName.remove(":1");
+    accountName.remove(":7");
+    settings.setValue("lastLoginAccountName",accountName);
+}
+
 CDoodLoginManager::~CDoodLoginManager()
 {
 
@@ -62,8 +80,8 @@ void CDoodLoginManager::login(const QString &server,
     id=userId.toStdString();
     mVerifyId=QString::fromStdString((id.substr(0,id.size()-2)));
     m_pClient->login(server, userId, password);
-    //    m_pClient->installPath();
-    //getLoginHistory();
+
+    setLastLoginAccountName(userId);
 }
 
 void CDoodLoginManager::loginByUrl()
@@ -369,6 +387,8 @@ void CDoodLoginManager::onLoginSucceeded()
     setNVerifyImgCount(0);
     emit loginSucceeded();
     setAppLoginStatus(1);
+
+    setLoginInfo(4,m_pClient->UserId(),lastLoginAccountName(),"");
 }
 
 void CDoodLoginManager::onGetVerifyImgResult(QString code, QString img)
@@ -432,8 +452,9 @@ void CDoodLoginManager::onGetLoginHistoryResult(LoginInfoList list)
 {
     qDebug() << Q_FUNC_INFO << "LoginHistorySize:" << list.size();
     if(list.size()>0){
-        qDebug() << Q_FUNC_INFO << list[0].userId<<list[0].server;
-        emit getLoginHistoryResult(QString::number(list[0].userId),list[0].server);
+        //qDebug() << Q_FUNC_INFO << list[0].userId<<list[0].server;
+        int last = 0;
+        emit getLoginHistoryResult(QString::number(list[last].userId),list[last].server);
     }
     else{
         emit getLoginHistoryResult("","");
@@ -444,12 +465,8 @@ void CDoodLoginManager::onGetLoginHistoryResult(LoginInfoList list)
         QString id;
         name=list[i].name;
         id=QString::number(list[i].userId);
-        qDebug()<< Q_FUNC_INFO<<name<<id;
+        qDebug()<< Q_FUNC_INFO<<"lasthistroty:"<<id;
     }
-    //    if(list.size()>0){
-    //        //setUser(list[0].name);
-    //        //setServer(list[0].areaNum);
-    //    }
 }
 
 void CDoodLoginManager::onLoginResultObserver(int code, QString userID)
