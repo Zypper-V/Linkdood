@@ -1305,7 +1305,11 @@ Msg ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
 
     Qmsgtext.body         =QString::fromStdString(utils::MsgUtils::getText(msgtext->body));
     if(Qmsgtext.body == ""){
-        Qmsgtext.body = QString::fromStdString(msgtext->body);
+        std::string str=msgtext->body;
+        if(str.size()>10){
+            str=str.substr(9,str.size()-11);
+        }
+        Qmsgtext.body = QString::fromStdString(str);
     }
     qDebug()<<Q_FUNC_INFO<<"msg body:"<<Qmsgtext.body;
     return Qmsgtext;
