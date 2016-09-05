@@ -532,6 +532,9 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
         imMsg.time =QString::number(msg.msg->time);
         imMsg.targetId =QString::number(msg.msg->targetid);
         qDebug()<<Q_FUNC_INFO<<"targetId:"<<msg.msg->targetid;
+        if(msg.msg->from_name !=""&&msg.msg->from_name !="#"){
+            imMsg.name = QString::fromStdString(msg.msg->from_name);
+        }
         if(msg.msg->msgtype == MSG_TYPE_TEXT){
             std::string target("");
             std::string msgBody = utils::MsgUtils::getText(msg.msg->body);
@@ -747,7 +750,7 @@ void ChatControler::onSystemMessageNotice(QString info, int64 time)
 void ChatControler::onHandleRevMsg(std::shared_ptr<service::Msg> msg)
 {
     if(msg != NULL){
-        qDebug()<<Q_FUNC_INFO<<"mesage:targetId:"<<msg->targetid<<"fromId:"<<msg->fromid<<"body:"<<msg->body.c_str();
+        qDebug()<<Q_FUNC_INFO<<"mesage:targetId:"<<msg->targetid<<"fromId:"<<msg->fromid<<"name:"<<msg->from_name.c_str();
         if(msg->msgtype == MSG_TYPE_TEXT)
         {
             handleRecevieTextMsg(msg);
@@ -1008,12 +1011,15 @@ void ChatControler::handleNotification(std::shared_ptr<service::Msg> msg)
     if(sessionId != ""){
         return;
     }
-    if(!IS_MSG_GROUP(msg->targetid)){
-        getUserProfile(QString::number(msg->fromid),msg);
+    if(msg->from_name !=""&& msg->from_name !="#"){
+        notificationMsg(QString::fromStdString(msg->from_name),msg);
     }else{
-        service::IMClient::getClient()->getGroup()->getGroupInfo(msg->targetid,std::bind(&ChatControler::_getGroupInfo,this,std::placeholders::_1,std::placeholders::_2,msg));
+        if(!IS_MSG_GROUP(msg->targetid)){
+            getUserProfile(QString::number(msg->fromid),msg);
+        }else{
+            service::IMClient::getClient()->getGroup()->getGroupInfo(msg->targetid,std::bind(&ChatControler::_getGroupInfo,this,std::placeholders::_1,std::placeholders::_2,msg));
+        }
     }
-
 }
 
 void ChatControler::_deleteMessage(service::ErrorInfo &info)
@@ -1213,9 +1219,8 @@ void ChatControler::_getUserInfo(service::ErrorInfo& info, service::User& user)
     emit getUserInfoBack(info.code(), contact);
 }
 
-void ChatControler::_getUserProfile(service::ErrorInfo& info, service::User& user, std::shared_ptr<service::Msg> msg)
+void ChatControler::notificationMsg(QString title, std::shared_ptr<service::Msg> msg)
 {
-    qDebug()<<Q_FUNC_INFO<<"1111111111111";
     QString senderId, msgType,content,msgId, sendTime, displayName,icon("");
     if(msg->msgtype == MSG_TYPE_FILE){
         content= "[文件]";
@@ -1246,47 +1251,21 @@ void ChatControler::_getUserProfile(service::ErrorInfo& info, service::User& use
     msgId    = QString::number(msg->msgid);
     sendTime = QString::number(msg->time);
 
-    displayName = QString::fromStdString(user.name);
+    displayName =title;
     qDebug()<<Q_FUNC_INFO<<"555555555555555555555:"<<displayName;
     emit bcNotify(senderId,msgType,content,msgId,sendTime,displayName,icon,"",1);
+}
+
+void ChatControler::_getUserProfile(service::ErrorInfo& info, service::User& user, std::shared_ptr<service::Msg> msg)
+{
+    qDebug()<<Q_FUNC_INFO<<"1111111111111";
+    notificationMsg(QString::fromStdString(user.name), msg);
 }
 
 void ChatControler::_getGroupInfo(service::ErrorInfo &info, service::Group group,std::shared_ptr<service::Msg> msg)
 {
     qDebug()<<Q_FUNC_INFO;
-    QString senderId, msgType,content,msgId, sendTime, displayName,icon("");
-    if(msg->msgtype == MSG_TYPE_FILE){
-        content= "[文件]";
-    }else if(msg->msgtype == MSG_TYPE_IMG){
-        content= "[图片]";
-    }else if(msg->msgtype == MSG_TYPE_TEXT){
-        std::string target("");
-        std::string msgBody = utils::MsgUtils::getText(msg->body);
-        if(msgBody == ""){
-            msgBody = msg->body;
-        }
-
-        EmojiExplain::EmojiParseFrom(msgBody,target);
-        content = QString::fromStdString(target);
-        qDebug()<<Q_FUNC_INFO<<"22222222222";
-    }else if(msg->msgtype == MEDIA_MSG_DYNAMIC_EMOJI){
-        QString explian(""),target("");
-        std::string msgBody = utils::MsgUtils::getText(msg->body);
-        if(msgBody == ""){
-            msgBody = msg->body;
-        }
-        EmojiExplain::dyEmojiParseFrom(QString::fromStdString(msgBody),target,explian);
-        content = explian;
-    }
-    qDebug()<<Q_FUNC_INFO<<"33333333333333";
-    senderId = QString::number(msg->targetid);
-    msgType  = QString::number(msg->msgtype);
-    msgId    = QString::number(msg->msgid);
-    sendTime = QString::number(msg->time);
-
-    displayName = QString::fromStdString(group.info.name);
-    qDebug()<<Q_FUNC_INFO<<"555555555555555555555:"<<displayName;
-    emit bcNotify(senderId,msgType,content,msgId,sendTime,displayName,icon,"",1);
+    notificationMsg(QString::fromStdString(group.info.name),msg);
 }
 
 
@@ -1306,9 +1285,9 @@ Msg ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
     Qmsgtext.body         =QString::fromStdString(utils::MsgUtils::getText(msgtext->body));
     if(Qmsgtext.body == ""){
         std::string str=msgtext->body;
-        if(str.size()>10){
-            str=str.substr(9,str.size()-11);
-        }
+        //        if(str.size()>10){
+        //            str=str.substr(9,str.size()-11);
+        //        }
         Qmsgtext.body = QString::fromStdString(str);
     }
     qDebug()<<Q_FUNC_INFO<<"msg body:"<<Qmsgtext.body;

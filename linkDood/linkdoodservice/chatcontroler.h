@@ -304,6 +304,7 @@ private:
     void handleNotification(std::shared_ptr<service::Msg> msg);
     void handleReciveTipMsg(std::shared_ptr<service::Msg> msg);
     void handleReciveUnSurportMsg(std::shared_ptr<service::Msg> msg);
+    void notificationMsg(QString title, std::shared_ptr<service::Msg> msg);
 };
 
 template<typename T>

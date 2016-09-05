@@ -23,8 +23,8 @@ CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
     mShowTime = false;
     mEnkey = mEnkeyUser=mFileUrl=mImageMainUrl=mImageThumbUrl="";
     mIsImageChange = true;
-    mImgW = 400;
-    mImgH = 300;
+    mImgW = 80;
+    mImgH = 80;
 }
 
 void CDoodChatItem::setEnkeyUser(QString data)

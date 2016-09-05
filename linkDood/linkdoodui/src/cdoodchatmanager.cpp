@@ -865,6 +865,7 @@ void CDoodChatManager::exitChat()
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->exitChat(m_sTargetid);
+    mChatModel->exitChat();
 }
 
 QString CDoodChatManager::chatPageId()
@@ -961,7 +962,7 @@ void CDoodChatManager::groupMemsChanged(QString groupid, int size)
 void CDoodChatManager::onDraftChanged(QString draft)
 {
 
-    emit draftChanged(m_sTargetid,mChatModel->avatar(),mChatModel->name(),mChatModel->chatType(),draft);
+    emit draftChanged(m_sTargetid,mChatModel->avatar(),mChatModel->getChatName(),mChatModel->chatType(),draft);
 }
 
 void CDoodChatManager::onDeleteMessage(QString targetId, QStringList msgs)

@@ -127,6 +127,7 @@ CPageStackWindow {
         }
         onLoginFailed: {
             console.log("main loginFail:"+err)
+            //gToast.requestToast("main loginFail:"+err,"","");
 
             if(err === "已经登录"){
                 sessionListManager.getChatList();

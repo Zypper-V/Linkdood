@@ -35,6 +35,21 @@ void CDoodLoginManager::setLastLoginAccountName(QString accountName)
     settings.setValue("lastLoginAccountName",accountName);
 }
 
+QString CDoodLoginManager::lastLoginAccountUserId()
+{
+    qDebug() << Q_FUNC_INFO;
+    QString fileName =QString::fromStdString(APP_DATA_PATH)+"config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    return  settings.value("lastLoginAccountUserId","").toString();
+}
+
+void CDoodLoginManager::setLastLoginAccountUserId(QString userId)
+{
+    QString fileName =QString::fromStdString(APP_DATA_PATH)+"config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    settings.setValue("lastLoginAccountUserId",userId);
+}
+
 CDoodLoginManager::~CDoodLoginManager()
 {
 
@@ -389,6 +404,7 @@ void CDoodLoginManager::onLoginSucceeded()
     setAppLoginStatus(1);
 
     setLoginInfo(4,m_pClient->UserId(),lastLoginAccountName(),"");
+    setLastLoginAccountUserId(m_pClient->UserId());
 }
 
 void CDoodLoginManager::onGetVerifyImgResult(QString code, QString img)
@@ -452,9 +468,22 @@ void CDoodLoginManager::onGetLoginHistoryResult(LoginInfoList list)
 {
     qDebug() << Q_FUNC_INFO << "LoginHistorySize:" << list.size();
     if(list.size()>0){
-        //qDebug() << Q_FUNC_INFO << list[0].userId<<list[0].server;
         int last = 0;
-        emit getLoginHistoryResult(QString::number(list[last].userId),list[last].server);
+        QString lastId = QString::number(list[last].userId);
+        QString iniUserId = lastLoginAccountUserId();
+
+        if(iniUserId != "" && lastId != iniUserId){
+
+            for(int i=0;i<list.size();++i){
+                if(iniUserId.toLongLong() == list.at(i).userId){
+                    emit getLoginHistoryResult(iniUserId,list[i].server);
+                    return;
+                }
+            }
+        }else{
+          emit getLoginHistoryResult(lastId,list[last].server);
+        }
+
     }
     else{
         emit getLoginHistoryResult("","");

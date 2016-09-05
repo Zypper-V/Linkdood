@@ -59,7 +59,7 @@ public:
     QString setMsgTime(const QString &data);
 
     QString lastMsg() const;
-    QString setLastMsg(const QString &data);
+    QString setLastMsg(QString data);
 
     QString thumbAvatar() const;
     QString setThumbAvatar(const QString &data);

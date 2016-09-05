@@ -517,6 +517,18 @@ CPage {
                         args["enterKeyText"] = "send"
                         return args;
                     }
+                    onCursorPositionChanged: {
+                        if(chatListView.model.chatType ==="2"){
+                            if(inputTextArea.textFormat===1){
+                                var str=inputTextArea.getText(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
+                                var str1=inputTextArea.getText(inputTextArea.cursorPosition,inputTextArea.cursorPosition+1);
+                                if(str==="@"&&str1===""){
+                                    inputTextArea.remove(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
+                                    pageStack.push(Qt.resolvedUrl("CDoodMemberTipPage.qml"));
+                                }
+                            }
+                        }
+                    }
                     onTextChanged: {
                         chatManagerModel.setDraft(inputTextArea.plainText());
                     }
@@ -541,11 +553,31 @@ CPage {
 
                     onKeyPressed: {
                         console.log("dood === onKeyPressed: key = ", key)
-
+                        if(key===16777219){
+                            var str=inputTextArea.getText(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
+                            var str1=inputTextArea.getText(inputTextArea.cursorPosition-2,inputTextArea.cursorPosition-1);
+                            console.log("str1:"+str);
+                            if(str===" "&&str1!==" "){
+                                deleteMember();
+                            }
+                        }
                         if (key === Qt.Key_Return)
                         {
                             console.log("dood === Key_Return !!!!")
                             sendTextMsg()
+                        }
+                        function deleteMember(){
+                            var i;
+                            for(i=2;;i++){
+                                var str=inputTextArea.getText(inputTextArea.cursorPosition-1-i,inputTextArea.cursorPosition-i);
+                                if(str===""){
+                                    return;
+                                }
+                                else if(str==="@"){
+                                    inputTextArea.remove(inputTextArea.cursorPosition-1-i,inputTextArea.cursorPosition);
+                                    return;
+                                }
+                            }
                         }
                     }
                 }

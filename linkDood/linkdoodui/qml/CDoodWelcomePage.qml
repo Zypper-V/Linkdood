@@ -17,7 +17,9 @@ CPage {
 
         onGetLoginHistoryResult: {
             var code = loginManager.getAppLoginStatus();
+            //gToast.requestToast("auto login:"+code,"","");
             if(code===0){
+                //gToast.requestToast("auto login","","");
                 pageStack.replace(Qt.resolvedUrl("CDoodMailLoginPage.qml"), "", true);
             }
             if(code===1){

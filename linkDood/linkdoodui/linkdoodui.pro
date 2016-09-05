@@ -127,4 +127,5 @@ DISTFILES += \
     qml/CDoodGroupViewImagePage.qml \
     qml/CDoodGroupAddMainPage.qml \
     qml/CDoodGroupAddOrgPage.qml \
-    qml/CDoodListDialog.qml
+    qml/CDoodListDialog.qml \
+    qml/CDoodMemberTipPage.qml

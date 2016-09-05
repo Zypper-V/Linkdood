@@ -60,6 +60,8 @@ public:
     void updateGroupChatInfo(QString userId,QString name,QString thum);
     int  indexOfNewItem(QDateTime date);
     void addGroupMems(MemberList mems);
+    QString getChatName();
+
     QString lastMsgId();
     QString firstMsgId();
     int  groupMemsCount();
@@ -70,6 +72,7 @@ public:
 
     QString draft();
     Q_INVOKABLE void setDraft(QString data);
+    Q_INVOKABLE void exitChat();
 
     QString id()const;
     QString name()const;

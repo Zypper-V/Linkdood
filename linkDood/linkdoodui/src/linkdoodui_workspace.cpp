@@ -178,7 +178,7 @@ void linkdoodui_Workspace::onLaunchComplete(Option option, const QStringList& pa
     switch (option) {
     case CWorkspace::HOME:
         qDebug()<< "Start by Home";
-       //m_pLoginManager->getLoginHistory();
+        m_pLoginManager->getLoginHistory();
         break;
     case CWorkspace::URL:
         qDebug() << "Start by URL";

@@ -536,17 +536,16 @@ int CDoodChatManagerModel::indexOfNewItem(QDateTime date)
 {
     qDebug()<<Q_FUNC_INFO<<"date:"<< date.toMSecsSinceEpoch();
 
-    if(m_pChatMap.size() ==0){
+    if(_list==NULL || _list->size() ==0){
         return 0;
     }
 
     int index = 0;
-    QList<CDoodChatItem*> list = m_pChatMap.values();
-    int len = list.size();
+    int len = _list->size();
     qint64 time = date.toMSecsSinceEpoch();
 
     for(int i = len-1;i>=0;--i){
-        CDoodChatItem* item =  list.at(i);
+        CDoodChatItem* item = (CDoodChatItem*) _list->at(i);
         if(item !=NULL){
             qint64 curItemTime = item->time().toMSecsSinceEpoch();
             if(curItemTime<=time){
@@ -568,6 +567,11 @@ void CDoodChatManagerModel::addGroupMems(MemberList mems)
             mGroupMemList.push_back(mems[i]);
         }
     }
+}
+
+QString CDoodChatManagerModel::getChatName()
+{
+    return mName;
 }
 
 CDoodChatItem *CDoodChatManagerModel::itemById(QString id)
@@ -594,12 +598,15 @@ void CDoodChatManagerModel::setDraft(QString data)
 {
     mDraft = data;
     emit draftChanged();
+}
+
+void CDoodChatManagerModel::exitChat()
+{
     if(mDraft != ""&& mDraft != "\n"){
-       emit draftChanged("[草稿]"+mDraft);//
+        emit draftChanged("[草稿]"+mDraft);
     }else{
         emit draftChanged("");
     }
-
 }
 
 QString CDoodChatManagerModel::id() const

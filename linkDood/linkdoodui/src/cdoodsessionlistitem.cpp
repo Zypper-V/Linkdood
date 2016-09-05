@@ -178,8 +178,11 @@ QString CDoodSessionListItem::lastMsg() const
     return mLastMsg;
 }
 
-QString CDoodSessionListItem::setLastMsg(const QString &data)
+QString CDoodSessionListItem::setLastMsg(QString data)
 {
+    data.replace("height=\"36\"","height=\"24\"");
+    data.replace("width=\"36\"","width=\"24\"");
+
     setDraft("");
     if(mLastMsg == data) {
         return data;

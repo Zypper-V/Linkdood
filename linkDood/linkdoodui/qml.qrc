@@ -64,5 +64,6 @@
         <file>qml/CDoodTakePotoPage.qml</file>
         <file>qml/CDoodMimePage.qml</file>
         <file>CDoodTextViewer.qml</file>
+        <file>qml/CDoodMemberTipPage.qml</file>
     </qresource>
 </RCC>

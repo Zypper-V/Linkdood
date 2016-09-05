@@ -185,7 +185,7 @@ Item {
                                     anchors.bottom: parent.bottom
                                     anchors.bottomMargin: 10
                                     anchors.top: nameText.bottom
-                                    anchors.topMargin: 10
+                                    anchors.topMargin: 20
 
                                     font.pixelSize: 26
                                     height: 60

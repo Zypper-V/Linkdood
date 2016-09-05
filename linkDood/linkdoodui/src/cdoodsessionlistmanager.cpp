@@ -423,6 +423,8 @@ void CDoodSessionListManager::onDraftChanged(QString id, QString avater,QString 
     }
     QString time = QString::number( QDateTime::currentMSecsSinceEpoch());
     item->setMsgTime(time);
+    draft.replace("height=\"36\"","height=\"24\"");
+    draft.replace("width=\"36\"","width=\"24\"");
     item->setDraft(draft);
 }
 
