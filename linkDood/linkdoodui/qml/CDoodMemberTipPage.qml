@@ -12,6 +12,7 @@ CPage {
             gScreenInfo.setStatusBarStyle("black")
         }
     }
+
     contentAreaItem:Item {
         anchors.fill :parent
         Rectangle {
@@ -99,6 +100,9 @@ CPage {
                         }
                         onReleased: {
                             background.color = "white"
+                            chatManager.groupChatTipMember(model.modelData.groupid,model.modelData.id,model.modelData.name);
+                            groupManager.addTipMember(model.modelData.groupid,model.modelData.id);
+                            pageStack.pop();
                         }
 
                         onCanceled: {

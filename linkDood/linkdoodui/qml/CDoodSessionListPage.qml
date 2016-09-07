@@ -63,6 +63,9 @@ Item {
                     onClicked: {
 
                         var unreadCount = parseInt(model.modelData.unReadCount, 10);
+                        if(unreadCount >0){
+                            sessionListManager.removeNitification(model.modelData.id);
+                        }
 
                         delegateRoot.toInitState();
                         sessionListView.unsetSelectedItem();
@@ -111,8 +114,14 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
+
                                 var targetId = model.modelData.id;
+                                var unreadCount = parseInt(model.modelData.unReadCount, 10);
+                                if(unreadCount >0){
+                                    sessionListManager.removeNitification(model.modelData.id);
+                                }
                                 sessionListManager.removeChatItem(targetId);
+                                groupManager.removeTipList(targetId);
                                 chatManager.removeChat(targetId);
                             }
                         }
@@ -177,25 +186,47 @@ Item {
                                     elide: Text.ElideRight
                                     text: model.modelData.name
                                 }
-                                CLabel{
-                                    id: contentText
-
+                                Text{
+                                    id:tipText
                                     anchors.left: headPortraitImage.right
                                     anchors.leftMargin: 30
                                     anchors.bottom: parent.bottom
                                     anchors.bottomMargin: 10
                                     anchors.top: nameText.bottom
-                                    anchors.topMargin: 20
+                                    anchors.topMargin: 10
+                                    color: "red"
 
                                     font.pixelSize: 26
-                                    height: 60
+                                    visible: model.modelData.tipMe===""?false:true
+                                    text:"[有人@我]"
+                                }
+
+                                CLabel{
+                                    id: contentText
+
+                                    anchors.left: model.modelData.tipMe===""?headPortraitImage.right:tipText.right
+                                    anchors.leftMargin: model.modelData.tipMe===""?30:10
+                                    anchors.bottom: parent.bottom
+                                    anchors.bottomMargin: 10
+                                    anchors.top: nameText.bottom
+                                    anchors.topMargin: 10
+
+                                    font.pixelSize: 26
+                                    //height: 60
                                     clip: true
                                     width:460
                                     elide: Text.ElideRight
-                                    textFormat:TextEdit.RichText
-                                    maximumLineCount:1
                                     color: "#777777"
-                                    text: model.modelData.draft !== ""?model.modelData.draft:model.modelData.lastMsg
+                                    text: con()
+                                    function con(){
+                                        if(model.modelData.tipMe!==""){
+                                            return model.modelData.lastMsg;
+                                        }
+                                        if(model.modelData.draft !== ""){
+                                            return model.modelData.draft;
+                                        }
+                                        return model.modelData.lastMsg;
+                                    }
                                 }
 
                                 Text {

@@ -30,6 +30,7 @@ public:
 
     Q_INVOKABLE  void switchToChatPage(QString targetId, QString name,QString chatType,QString lastMsgId="",int unReadCount=0,QString icon="");
     Q_INVOKABLE  void showUiFinished();
+    Q_INVOKABLE  void groupChatTipMember(QString groupid,QString memberid,QString membername);
     Q_INVOKABLE  void clearList();
     Q_INVOKABLE  void getMoreHistoryMessage();
     Q_INVOKABLE  void getGroupMemsList(QString groupId);
@@ -59,11 +60,11 @@ public:
     void sendFile(QString path);
     Q_INVOKABLE void setDraft(QString targetId,QQuickTextDocument* item);
     //发送消息
-    Q_INVOKABLE void sendText(QQuickTextDocument* item,QString oriText);
+    Q_INVOKABLE void sendText(QQuickTextDocument* item,QString oriText,QList<QString> list);
     Q_INVOKABLE void resendMessage(QString localId);
     Q_INVOKABLE QString handleEmojiText(QQuickTextDocument* item);
 
-    void sendText(QString text,QString oriText);
+    void sendText(QString text,QString oriText,QList<QString> list);
     void sendMessage(Msg msg);
     //发送动态表情
     Q_INVOKABLE void sendDyEmojiMsg(QString path);
@@ -79,6 +80,8 @@ public:
     Q_INVOKABLE void getUnReadMessages(void);
     //删除消息
     Q_INVOKABLE void deleteMessage(QString targetid, QString localId);
+    Q_INVOKABLE void revokeMessage(QString targetId,QString localId);
+
     Q_INVOKABLE void transforMessage(QString targetid,QString targetName,QString avatar, QString msgId);
     Q_INVOKABLE void entryChat(const QString &targetid);
     Q_INVOKABLE void exitChat();
@@ -118,6 +121,7 @@ signals:
     //获取消息结果返回
     void getMessagesResult(bool code,QString sessionId,MsgList msgList);
     //移除会话结果返回
+    void groupChatTipMemberResult(QString memberid,QString membername);
     void removeChatResult(bool);
     void getUserInfoResult(int code, Contact contact);
     void transforMessageBack(int code);
@@ -125,6 +129,7 @@ signals:
     void updateSessionPageMsgReaded(QString targetId);
 
     void idChanged();
+    void revokeMessageOutTime();
     void nameChanged();
     void chatTypeChanged();
     void chatPageChanged();

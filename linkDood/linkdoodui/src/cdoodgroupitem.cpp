@@ -149,6 +149,21 @@ QString CDoodGroupItem::setSection(const QString &section)
     return mSection;
 }
 
+QList<QString> CDoodGroupItem::tipList() const
+{
+    return mTipList;
+}
+
+QList<QString> CDoodGroupItem::setTipList(const QList<QString> &list)
+{
+    if(mTipList == list) {
+        return list;
+    }
+    mTipList = list;
+    emit tipListChanged();
+    return mTipList;
+}
+
 QString CDoodGroupItem::f_fileid() const
 {
     return mF_fileid;

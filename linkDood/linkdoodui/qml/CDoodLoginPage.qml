@@ -406,7 +406,7 @@ CPage {
                 width:200
                 visible: false
                 text:os.i18n.ctr(qsTr("忘记密码"))
-                textColor:  "#32c2fe"
+                textColor:"#32c2fe"
                 backgroundComponent: Rectangle {
                     anchors.fill: parent
                     color:"#f2f2f2"

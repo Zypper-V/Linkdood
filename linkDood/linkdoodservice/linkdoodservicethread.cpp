@@ -21,6 +21,16 @@ LinkDoodServiceThread::~LinkDoodServiceThread()
     }
 }
 
+void LinkDoodServiceThread::onRemoveNitification(QString targetId)
+{
+    CSystemNotificationManager notificationService;
+    QString updateId = mMapUppdateId.value(targetId,"");
+    if(updateId != ""){
+        notificationService.removeNotification(updateId);
+    }
+    mMapUppdateId.remove(targetId);
+}
+
 void LinkDoodServiceThread::bcNotify(const QString senderId,
                                      const QString msgType,
                                      const QString content,

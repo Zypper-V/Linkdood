@@ -236,7 +236,7 @@ void CDoodMemberManager::onMemberInfoChanged(QString groupid, Member member)
                 qDebug() << Q_FUNC_INFO<<item->thumbAvatar();
                 member.thumbAvatar=item->thumbAvatar();
             }
-            if(member.remark==""){
+            if(member.remark==""||member.remark=="#"){
                 qDebug() << Q_FUNC_INFO<<item->remark();
                 member.remark=item->remark();
             }

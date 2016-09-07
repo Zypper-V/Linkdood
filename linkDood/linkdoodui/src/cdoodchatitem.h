@@ -10,6 +10,8 @@ class CDoodChatItem : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString filePath READ filePath WRITE setFilePath NOTIFY filePathChanged)
+    Q_PROPERTY(int textFormat READ textFormat WRITE setTextFormat NOTIFY textFormatChanged)
+
     Q_PROPERTY(QString localId READ localId WRITE setLocalId NOTIFY localIdChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString msgType READ msgType WRITE setMsgType NOTIFY msgTypeChanged)
@@ -43,6 +45,9 @@ class CDoodChatItem : public QObject
 public:
 
     explicit CDoodChatItem(QObject *parent = 0);
+
+    void setTextFormat(int format);
+    int  textFormat();
 
     void setEnkeyUser(QString data);
     QString enkeyUser();
@@ -128,6 +133,7 @@ signals:
     void imgWidthChanged();
     void imgHeightChanged();
     void enkeyUserChanged();
+    void textFormatChanged();
 
     void thumbAvatarChanged();
     void tar_thumbAvatarChanged();
@@ -180,6 +186,7 @@ private:
     bool    mShowTime;
     bool    mIsImageChange;
     int     mImgW,mImgH;
+    int     mTextFormat;
    public:
     QString mEnkey,mEnkeyUser,mFileUrl,mImageMainUrl,mImageThumbUrl;
 };

@@ -18,6 +18,7 @@ class CDoodGroupItem : public QObject
     Q_PROPERTY(QString level READ level WRITE setLevel NOTIFY levelChanged)
     Q_PROPERTY(bool isLeader READ isLeader WRITE setIsLeader NOTIFY isLeaderChanged)
     Q_PROPERTY(QString sectionKey READ sectionKey WRITE setSection NOTIFY sectionChanged)
+    Q_PROPERTY(QList<QString> tipList READ tipList WRITE setTipList NOTIFY tipListChanged)
 
 
     Q_PROPERTY(QString f_fileid READ f_fileid WRITE setF_fileid NOTIFY f_fileidChanged)
@@ -62,6 +63,9 @@ public:
     QString sectionKey() const;
     QString setSection(const QString &section);
 
+    QList<QString> tipList() const;
+    QList<QString> setTipList(const QList<QString> &list);
+
     QString f_fileid() const;
     QString setF_fileid(const QString &data);
 
@@ -103,6 +107,7 @@ signals:
     void levelChanged();
     void isLeaderChanged();
     void sectionChanged();
+    void tipListChanged();
 
     void f_fileidChanged();
     void f_useridChanged();
@@ -127,6 +132,7 @@ private:
     QString mLevel;
     QString mSection;
     bool mIsLeader;
+    QList<QString> mTipList;
 
     QString mF_fileid;
     QString mF_userid;

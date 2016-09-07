@@ -84,6 +84,9 @@ CPage {
             btnTool.isPressed = false;
             pageStack.pop();
         }
+        onGroupChatTipMemberResult:{
+            inputTextArea.insert(inputTextArea.cursorPosition,membername);
+        }
     }
     Connections{
         target: chatManagerModel
@@ -152,7 +155,8 @@ CPage {
         }
         if(inputTextArea.plainText().replace(/(\s)|(\r\n)|(\r)|(\n)/g, "") !== "") {
             console.log("dood === sendMsg !!!!")
-            chatManager.sendText(inputTextArea.textDocument,inputTextArea.plainText());
+            chatManager.sendText(inputTextArea.textDocument,inputTextArea.plainText(),groupManager.getTipList(chatPage.targetid));
+            groupManager.removeTipList(chatPage.targetid);
             chatListView.positionViewAtEnd();
         }
         inputTextArea.text = ""
@@ -312,7 +316,7 @@ CPage {
             flickDeceleration: 3000
             cacheBuffer: 500
             onModelChanged:{
-                   inputTextArea.text = chatManagerModel.draft;
+                inputTextArea.text = chatManagerModel.draft;
             }
 
             delegate: CDoodChatDelegate {
@@ -530,6 +534,16 @@ CPage {
                         }
                     }
                     onTextChanged: {
+                        console.log(inputTextArea.text);
+                        if(chatListView.model.chatType ==="2"){
+                            if(inputTextArea.textFormat===1){
+                                var str=inputTextArea.getText(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
+                                if(str==="@"){
+                                    inputTextArea.remove(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
+                                    pageStack.push(Qt.resolvedUrl("CDoodMemberTipPage.qml"));
+                                }
+                            }
+                        }
                         chatManagerModel.setDraft(inputTextArea.plainText());
                     }
 
@@ -540,6 +554,10 @@ CPage {
                             btnEmotion.isKeyboard = true;
                             btnTool.isPressed = false;
                         }
+                    }
+                    Keys.onPressed: {
+                        console.log("222222 ");
+                        console.log("dood === Keys.onPressed: key = ", key)
                     }
 
                     onKeyReleased: {
@@ -553,12 +571,14 @@ CPage {
 
                     onKeyPressed: {
                         console.log("dood === onKeyPressed: key = ", key)
-                        if(key===16777219){
+                        if(key===16777219&&chatListView.model.chatType ==="2"){
                             var str=inputTextArea.getText(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
                             var str1=inputTextArea.getText(inputTextArea.cursorPosition-2,inputTextArea.cursorPosition-1);
                             console.log("str1:"+str);
                             if(str===" "&&str1!==" "){
+                                groupManager.removeTipMember(chatListView.model.id,getIndex());
                                 deleteMember();
+
                             }
                         }
                         if (key === Qt.Key_Return)
@@ -576,6 +596,20 @@ CPage {
                                 else if(str==="@"){
                                     inputTextArea.remove(inputTextArea.cursorPosition-1-i,inputTextArea.cursorPosition);
                                     return;
+                                }
+                            }
+                        }
+                        function getIndex(){
+                            var i;
+                            var index=0;
+                            for(i=2;;i++){
+                                var str=inputTextArea.getText(inputTextArea.cursorPosition-1-i,inputTextArea.cursorPosition-i);
+                                if(str===""){
+
+                                    return index;
+                                }
+                                else if(str==="@"){
+                                   index++;
                                 }
                             }
                         }
@@ -666,6 +700,12 @@ CPage {
         onSignalEmojiChanged:{
             chatManager.sendDyEmojiMsg(path);
             chatListView.positionViewAtEnd();
+        }
+    }
+    Connections{
+        target: chatManager
+        onRevokeMessageOutTime:{
+            gToast.requestToast(qsTr("发送时间超过5分钟的消息，不能被撤回"),"","");
         }
     }
 }

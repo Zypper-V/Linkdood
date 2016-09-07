@@ -145,10 +145,12 @@ signals:
 
     void setPrivateSettingResult(int code);
     void getPrivateSettingResult(int code, IMPrivateSetting ps);
+    //群里有人@我
+    void tipMe(QString groupid);
 
 public slots:
     QString installPath();
-
+    void removeNitification(QString targetId);
     //唯一标识Id
     QString createMsgId();
 
@@ -333,6 +335,7 @@ private slots:
     void onChatGetMessagesResult(bool code,QString sessionId,MsgList msgList);
     //移除会话结果返回
     void onChatRemoveChatResult(bool code);
+    void onTipMe(QString groupid);
     //获取登录历史记录
     void onGetLoginHistoryResult(LoginInfoList list);
     //登录成功自动推送

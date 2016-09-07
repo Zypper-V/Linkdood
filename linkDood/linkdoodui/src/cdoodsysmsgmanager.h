@@ -22,6 +22,7 @@ public:
     Q_INVOKABLE void setSysMessagRead(int type, QString msg);
                 void response(IMSysMsgRespInfo info);
     Q_INVOKABLE void removeSysMessage(QString type,QString msgid);
+
 signals:
     void sysMessageNotice(IMSysMsg sysMsg);
     void isSysMsgChanged();

@@ -130,6 +130,7 @@ public:
 
 public:
 
+    QString revokeMsgId;
     QString name;//名称
     QString thumb_avatar;//缩略图
     QString msgtype;
@@ -167,7 +168,7 @@ public:
     QString main_url;
     bool    isTransMsg;
     // QList<int64> related_users;// 秘聊时相关的用户 ID
-    // QList<int64> limit_range; //@ 人员列表
+     QList<QString> limit_range; //@ 人员列表
 };
 
 // Msg

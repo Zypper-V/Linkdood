@@ -264,6 +264,11 @@ void CDoodChatManager::showUiFinished()
     emit updateSessionPageMsgReaded(m_sTargetid);
 }
 
+void CDoodChatManager::groupChatTipMember(QString groupid, QString memberid, QString membername)
+{
+   emit groupChatTipMemberResult(memberid,"@"+membername+" ");
+}
+
 void CDoodChatManager::clearList()
 {
     qDebug()<<Q_FUNC_INFO;
@@ -567,12 +572,13 @@ void CDoodChatManager::setDraft(QString targetId, QQuickTextDocument *item)
 
 }
 
-void CDoodChatManager::sendText(QString targetText ,QString oriText)
+void CDoodChatManager::sendText(QString targetText ,QString oriText,QList<QString> list)
 {
     Msg msgText;
     msgText.body = oriText;
     msgText.msgtype = QString::number(MSG_TYPE_TEXT);
     msgText.targetid = m_sTargetid;
+    msgText.limit_range=list;
     msgText.fromid = m_pClient->UserId();
     msgText.name = m_pClient->userName();
     msgText.localid = msgText.msgid;
@@ -588,10 +594,10 @@ void CDoodChatManager::sendText(QString targetText ,QString oriText)
     sendMessage(msgText);
 }
 
-void CDoodChatManager::sendText(QQuickTextDocument *item,QString oriText)
+void CDoodChatManager::sendText(QQuickTextDocument *item,QString oriText,QList<QString> list)
 {
     QString textContent = handleEmojiText(item);
-    sendText(textContent,oriText);
+    sendText(textContent,oriText,list);
 }
 
 void CDoodChatManager::resendMessage(QString localId)
@@ -702,11 +708,13 @@ QString CDoodChatManager::handleEmojiText(QQuickTextDocument *item)
 
 void CDoodChatManager::sendMessage(Msg msg)
 {
-    qDebug() << Q_FUNC_INFO;
-
+    qDebug() << Q_FUNC_INFO<<msg.limit_range.size();
+    if(msg.limit_range.size()>0){
+        qDebug() << Q_FUNC_INFO<<msg.limit_range[0];
+    }
     msg.fromid = m_pClient->UserId();
     msg.name = m_pClient->userName();
-    msg.targetName = mChatModel->name();
+    msg.targetName = mChatModel->getChatName();
 
     m_pClient->sendMessage(msg);
 }
@@ -784,6 +792,33 @@ void CDoodChatManager::deleteMessage(QString targetid, QString localId)
         mChatModel->removeItemById(localId);
     }
 
+}
+
+void CDoodChatManager::revokeMessage(QString targetId, QString localId)
+{
+    qDebug()<<Q_FUNC_INFO;
+    CDoodChatManagerModel* model = mMsgListModel.value(targetId,NULL);
+    if(model != NULL){
+        CDoodChatItem*item = model->itemById(localId);
+        if(item != NULL){
+             QDateTime cur = QDateTime::currentDateTime();
+             qint64 dx = cur.secsTo(item->time());
+             if(qFabs(dx)>60*5){
+                emit revokeMessageOutTime();
+             }else{
+                 Msg revokeMsg;
+                 revokeMsg.body = "您撤回了一条消息";
+                 revokeMsg.msgtype = QString::number(MEDIA_MSG_REVOKE);
+                 revokeMsg.targetid = m_sTargetid;
+                 revokeMsg.fromid = m_pClient->UserId();
+                 revokeMsg.name = m_pClient->userName();
+                 revokeMsg.msgid = item->msgId();
+                 revokeMsg.localid = item->localId();
+
+                 sendMessage(revokeMsg);
+             }
+        }
+    }
 }
 
 void CDoodChatManager::transforMessage(QString targetid, QString targetName,QString avatar,QString localId)
@@ -1130,22 +1165,42 @@ void CDoodChatManager::onChatSendMessageResult(bool code, QString sendTime, QStr
 {
     QStringList list = msgId.split(":");
     QString curMsgId= list[0],localId= list[1],targetId= list[2];
+
     CDoodChatItem* item = NULL;
+    CDoodChatManagerModel* model = NULL;
     if(mChatModel->id() == targetId){
         item = mChatModel->itemById(localId);
+        model = mChatModel;
     }else{
         QMap<QString,CDoodChatManagerModel*>::iterator iter  = mMsgListModel.find(targetId);
         if(iter != mMsgListModel.end()){
-            CDoodChatManagerModel* model = iter.value();
+            model = iter.value();
             if(model != NULL){
                 item = model->itemById(localId);
             }
         }
     }
-    if(item != NULL){
-        item->setLoading(false);
-        item->setStatus(code);
-        item->setMsgId(curMsgId);
+    if(list.at(list.size()-1) == "revoke"){
+        deleteMessage(targetId,localId);
+        Msg msg;
+        msg.body = "您撤回了一条消息";
+        msg.msgtype = QString::number(MSG_TYPE_TIP);
+        msg.fromid = m_pClient->UserId();
+        msg.targetid = targetId;
+        msg.localid = localId;
+        msg.msgid = curMsgId;
+        QDateTime time = QDateTime::fromMSecsSinceEpoch(sendTime.toLongLong());
+        msg.time = time.toString("yyyy-MM-dd hh:mm:ss");
+        if(model != NULL){
+            model->addItemToListViewModel(msg);
+        }
+    }else{
+        if(item != NULL){
+            item->setLoading(false);
+            item->setStatus(code);
+            item->setMsgId(curMsgId);
+            //item->setTime(sendTime);
+        }
     }
 }
 
@@ -1267,7 +1322,7 @@ void CDoodChatManager::onTransMessageFinishBack(int code, QString info)
             pChatItem->setTime(msgDate);
             pChatItem->setShowTime(false);
             pChatItem->setLoading(false);
-            pChatItem->setContactThumbAvatar(chatItem->contactThumbAvatar());
+            pChatItem->setContactThumbAvatar(mActAvatar);
             pChatItem->setIsMyselft(true);
             if(chatItem->msgType().toInt() == MSG_TYPE_FILE){
                 pChatItem->setFileSize(chatItem->fileSize());

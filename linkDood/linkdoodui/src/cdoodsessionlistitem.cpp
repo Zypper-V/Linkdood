@@ -1,5 +1,7 @@
 #include "cdoodsessionlistitem.h"
 #include "common.h"
+#include <QJsonObject>
+#include <QJsonDocument>
 
 CDoodSessionListItem::CDoodSessionListItem(QObject *parent) : QObject(parent)
 {
@@ -47,6 +49,21 @@ void CDoodSessionListItem::setDraft(QString data)
 QString CDoodSessionListItem::draft()
 {
     return mdraft;
+}
+
+void CDoodSessionListItem::setTipMe(QString data)
+{
+    if(mTipMe==data){
+        return;
+    }
+    mTipMe=data;
+    emit tipMeChanged();
+
+}
+
+QString CDoodSessionListItem::tipMe()
+{
+    return mTipMe;
 }
 
 QString CDoodSessionListItem::name() const
@@ -175,7 +192,24 @@ QString CDoodSessionListItem::setMsgTime(const QString &data)
 
 QString CDoodSessionListItem::lastMsg() const
 {
-    return mLastMsg;
+    QString tmp = mLastMsg;
+    tmp.replace("<br>","\n");
+    QByteArray bytes = tmp.toLocal8Bit();
+    if(tmp.startsWith("{")){
+        QJsonParseError error;
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(bytes, &error);
+        if (error.error == QJsonParseError::NoError && jsonDocument.isObject()){
+            tmp = jsonDocument.object()["body"].toString();
+        }else{
+            if(tmp.contains("body\":")){
+                tmp.remove(0,9);
+                tmp.remove(tmp.length()-2,2);
+            }
+        }
+
+        return tmp;
+    }
+    return tmp;
 }
 
 QString CDoodSessionListItem::setLastMsg(QString data)

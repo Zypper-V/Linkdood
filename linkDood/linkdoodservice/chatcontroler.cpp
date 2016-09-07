@@ -4,6 +4,8 @@
 #include<QDateTime>
 #include<sstream>
 #include<string>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 #include "IMClient.h"
 #include "IChatService.h"
@@ -47,6 +49,12 @@ void ChatControler::getUserProfile(QString userId, std::shared_ptr<service::Msg>
     service::IMClient::getClient()->getSearch()->getUserInfo(userId.toLongLong(),std::bind(&ChatControler::_getUserProfile,this,std::placeholders::_1,std::placeholders::_2,msg));
 }
 
+void ChatControler::removeNitification(QString targetId)
+{
+    qDebug()<<Q_FUNC_INFO<<targetId;
+    emit removeNitifications(targetId);
+}
+
 void ChatControler::entryChat(const QString targetId)
 {
     qDebug() << Q_FUNC_INFO;
@@ -75,6 +83,15 @@ bool ChatControler::getCurrentSessionId(QString &targetId)
 
     qDebug() << Q_FUNC_INFO << "targetId:" << targetId;
     return targetId.isEmpty();
+}
+
+QString ChatControler::getMyId()
+{
+    QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
+    QSettings settings(fileName, QSettings::IniFormat);
+    QString myId = settings.value("myId","").toString();
+    qDebug() << Q_FUNC_INFO << myId;
+    return myId;
 }
 
 void ChatControler::removeChat(QString targetid)
@@ -117,6 +134,10 @@ void ChatControler::sendMessage(Msg &imMsg)
 
         qDebug() << Q_FUNC_INFO<<"sendMessage:"<< imMsg.body;
         service::MsgText msg = QmsgtextTomsgtext(imMsg);
+        qDebug()<<Q_FUNC_INFO<<"msg.limit_range.size():"<<msg.limit_range.size();
+        if(msg.limit_range.size()>0){
+            qDebug()<<Q_FUNC_INFO<<"ppppppppp:"<<msg.limit_range[0];
+        }
         service::IMClient::getClient()->getChat()->sendMessage(msg,
                                                                std::bind(&ChatControler::_sendMesage,this,
                                                                          std::placeholders::_1,
@@ -144,6 +165,7 @@ void ChatControler::sendMessage(Msg &imMsg)
         EmojiExplain::dyEmojiParseTo(imMsg.body,target,explain);
         msg.body = target.toStdString();
         emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,explain,time,imMsg.targetName,imMsg.thumb_avatar,"0");
+
         service::IMClient::getClient()->getChat()->sendMessage(msg,
                                                                std::bind(&ChatControler::_sendMesage,this,
                                                                          std::placeholders::_1,
@@ -190,6 +212,21 @@ void ChatControler::sendMessage(Msg &imMsg)
                                                                          std::placeholders::_2,
                                                                          std::placeholders::_3,imMsg.localid,imMsg.targetid));
         emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,"[文件]",time,imMsg.targetName,imMsg.thumb_avatar,"0");
+    }else if(imMsg.msgtype.toInt() == MEDIA_MSG_REVOKE){
+        service::MsgRevoke msg;
+        msg.localid = imMsg.localid.toLongLong();
+        msg.fromid = imMsg.fromid.toLongLong();
+        msg.toid = imMsg.toid.toLongLong();
+        msg.targetid = imMsg.targetid.toLongLong();
+        msg.msgtype = MEDIA_MSG_REVOKE;
+        msg.revokemsgid = imMsg.msgid.toLongLong();
+        msg.body = imMsg.name.toStdString();
+        service::IMClient::getClient()->getChat()->sendMessage(msg,
+                                                               std::bind(&ChatControler::_sendMesage,this,
+                                                                         std::placeholders::_1,
+                                                                         std::placeholders::_2,
+                                                                         std::placeholders::_3,imMsg.localid,imMsg.targetid+":revoke"));
+        emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,time,imMsg.targetName,imMsg.thumb_avatar,"0");
     }
 }
 
@@ -227,10 +264,12 @@ ChatControler::ChatControler(QObject* parent):
 {
     qRegisterMetaType<std::shared_ptr<service::Msg> >("std::shared_ptr<service::Msg>");
     connect(this,SIGNAL(handleRevMsg(std::shared_ptr<service::Msg>)),this,SLOT(onHandleRevMsg(std::shared_ptr<service::Msg>)));
+    connect(this,SIGNAL(judgeTipMe(QString,QString)),this,SLOT(onJudgeTipMe(QString,QString)));
 
     mSessionTargetID = "";
     m_pWorkControl = new LinkDoodServiceThread(this);
     m_pWorkControl->moveToThread(&mWorkThread);
+    connect(this,SIGNAL(removeNitifications(QString)),m_pWorkControl,SLOT(onRemoveNitification(QString)));
     connect(this,SIGNAL(bcNotify(QString,QString,QString,QString,QString,QString,QString,QString,int)),m_pWorkControl,SLOT(bcNotify(QString,QString,QString,QString,QString,QString,QString,QString,int)));
     mWorkThread.start();
 }
@@ -380,7 +419,7 @@ void ChatControler::transMessage(Msg imMsg)
         EmojiExplain::EmojiParseTo(src,target);
         bodyText = imMsg.body;
         imMsg.body = QString::fromStdString(target);
-
+        imMsg.body.replace("<br>","\n");
         service::MsgText msg = QmsgtextTomsgtext(imMsg);
         service::IMClient::getClient()->getChat()->sendMessage(msg,
                                                                std::bind(&ChatControler::_transMesage,this,
@@ -458,6 +497,25 @@ void ChatControler::handleRecevieTextMsg(std::shared_ptr<service::Msg> msg)
     }
     std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
     Msg imMsg = msgtextToQmsgtext(msgText);
+    qDebug() << Q_FUNC_INFO << "msgText->related_users.size():"<<msgText->related_users.size()<<"msgText->limit_range.size()"<<msgText->limit_range.size();
+    if(msgText->related_users.size()>0){
+        int64 myid;
+        myid=getMyId().toLongLong();
+        for(int i=0;i<msgText->related_users.size();i++){
+            if(msgText->related_users[i]==myid){
+                emit judgeTipMe(imMsg.targetid,imMsg.body);
+
+                QString sessionId("");
+                getCurrentSessionId(sessionId);
+                if(sessionId!=imMsg.targetid){
+                    emit tipMe(imMsg.targetid);
+                }
+
+
+                break;
+            }
+        }
+    }
     imMsg.fromName = QString::fromStdString(msg->from_name);
     std::string target("");
     EmojiExplain::EmojiParseFrom(imMsg.body.toStdString(),target);
@@ -556,6 +614,8 @@ void ChatControler::onOfflineMsgChanged(std::vector<OfflineMsg> msgs)
             imMsg.body = "文件";
         }else if(msg.msg->msgtype == MSG_TYPE_IMG){
             imMsg.body = "图片";
+        }else if(msg.msg->msgtype == MEDIA_MSG_REVOKE){
+            imMsg.body = QString::fromStdString(utils::MsgUtils::getText(msg.msg->body))+"撤回了一条消息";
         }else{
             continue;
             imMsg.body = "此类型消息暂不支持，请在PC端查看";
@@ -602,6 +662,8 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
         }
         else if(ch->msg_type== MSG_TYPE_FILE){
             chatData.last_msg = "文件";
+        }else if(ch->msg_type== MEDIA_MSG_REVOKE){
+            chatData.last_msg = QString::fromStdString(utils::MsgUtils::getText(ch->last_msg))+"撤回了一条消息";
         }
         else{
             continue;
@@ -703,24 +765,50 @@ void ChatControler::downloadImage(Msg msgImg)
 void ChatControler::downloadMainImage(QString main_url, QString encryptkey, QString targetId)
 {
     qDebug() << Q_FUNC_INFO<<"main_url:"<<main_url<<"encryptkey:"<<encryptkey<<"targetId:"<<targetId;
-    utils::FileUtils::Property p ;
-    p.encryptkey=encryptkey.toStdString();
-    p.targetid=targetId.toLongLong();
-    QString json("");
-    json=json+"{\"encryptkey\":\""+p.encryptkey.c_str()+"\",\"targetid\":"+targetId+"}";
-    service::IMClient::getClient()->getFile()->downloadImage(main_url.toStdString(), json.toStdString(), std::bind(&ChatControler::_downloadMainImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,encryptkey,main_url));
+    QFileInfo file(main_url);
+    QString src =  APP_DATA_PATH +LinkDoodService::instance()->UserId() + "/image/"+file.fileName();
+    QString out =  APP_DATA_PATH +LinkDoodService::instance()->UserId() + "/bigimage/"+file.fileName();
+    if(file.exists(src)){
+        bool ret = service::IMClient::getClient()->getFile()->decryptFile(encryptkey.toStdString(),src.toStdString(),out.toStdString());
+        qDebug()<<Q_FUNC_INFO<<"ret:"<<ret<<",out:"<<out<<",src:"<<src;
+        if(ret){
+            emit downloadMainImageResult(main_url,out);
+        }
+    }else{
+        utils::FileUtils::Property p ;
+        p.encryptkey=encryptkey.toStdString();
+        p.targetid=targetId.toLongLong();
+        QString json("");
+        json=json+"{\"encryptkey\":\""+p.encryptkey.c_str()+"\",\"targetid\":"+targetId+"}";
+        service::IMClient::getClient()->getFile()->downloadImage(main_url.toStdString(), json.toStdString(), std::bind(&ChatControler::_downloadMainImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,encryptkey,main_url));
+    }
 }
 
 void ChatControler::downloadHistoryImage(QString url, QString encryptKey, QString targetid, QString localid)
 {
     qDebug() << Q_FUNC_INFO;
-    utils::FileUtils::Property p ;
-    p.encryptkey = encryptKey.toStdString();
-    p.targetid   = targetid.toLongLong();
-    QString json("");
-    json=json+"{\"encryptkey\":\""+p.encryptkey.c_str()+"\",\"targetid\":"+targetid+"}";
-    service::IMClient::getClient()->getFile()->downloadImage(url.toStdString(), json.toStdString(), std::bind(&ChatControler::_downloadHistoryImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, encryptKey, targetid, localid));
 
+    QDir dir(APP_SAVE_IAMGE_APTH);
+    if(!dir.exists()){
+        dir.mkdir(APP_SAVE_IAMGE_APTH);
+    }
+    QString appDataPath =  APP_DATA_PATH +LinkDoodService::instance()->UserId() + "/";
+    QFileInfo file(url);
+    QString src = appDataPath +"image/"+ file.fileName();
+    QString out = QString::fromStdString(APP_SAVE_IAMGE_APTH) +"/"+ file.fileName();
+    if(file.exists(src)){
+        bool ret = service::IMClient::getClient()->getFile()->decryptFile(encryptKey.toStdString(),src.toStdString(),out.toStdString());
+        if(ret){
+            emit downloadHistoryImageResult(0, out, targetid, localid);
+        }
+    }else{
+        utils::FileUtils::Property p ;
+        p.encryptkey = encryptKey.toStdString();
+        p.targetid   = targetid.toLongLong();
+        QString json("");
+        json=json+"{\"encryptkey\":\""+p.encryptkey.c_str()+"\",\"targetid\":"+targetid+"}";
+        service::IMClient::getClient()->getFile()->downloadImage(url.toStdString(), json.toStdString(), std::bind(&ChatControler::_downloadHistoryImage, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, encryptKey, targetid, localid));
+    }
 }
 
 bool ChatControler::decryptFile(QString encryptkey, QString srcpath, QString destpath)
@@ -747,6 +835,21 @@ void ChatControler::onSystemMessageNotice(QString info, int64 time)
     emit bcNotify("-5","-5",info,"-5",QString::number(time),"系统消息","","",1);
 }
 
+void ChatControler::handleReciveRevokeMsg(std::shared_ptr<service::Msg> msg)
+{
+    std::shared_ptr<service::MsgRevoke> msgRevoke = std::dynamic_pointer_cast<service::MsgRevoke>(msg);
+    Msg imMsg;
+    qDebug()<<Q_FUNC_INFO<<"revoke msg:"<<msgRevoke->body.c_str() <<",id:"<<msgRevoke->revokemsgid;
+    imMsg.body = QString::fromStdString(utils::MsgUtils::getText(msgRevoke->body));
+    imMsg.msgid = QString::number(msgRevoke->msgid);
+    imMsg.revokeMsgId = QString::number(msgRevoke->revokemsgid);
+    imMsg.msgtype = QString::number(MEDIA_MSG_REVOKE);
+    imMsg.targetid = QString::number(msg->targetid);
+    imMsg.fromid = QString::number(msg->fromid);
+    imMsg.time   =  QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss");
+    emit chatMessageNotice(imMsg);
+}
+
 void ChatControler::onHandleRevMsg(std::shared_ptr<service::Msg> msg)
 {
     if(msg != NULL){
@@ -762,13 +865,23 @@ void ChatControler::onHandleRevMsg(std::shared_ptr<service::Msg> msg)
             handleReciveDyEmojiMsg(msg);
         }else if(msg->msgtype == MSG_TYPE_TIP){
             handleReciveTipMsg(msg);
+        }else if(msg->msgtype == MEDIA_MSG_REVOKE){
+            handleReciveRevokeMsg(msg);
         }else{
             //handleReciveUnSurportMsg(msg);
         }
-        if(msg->msgtype != MSG_TYPE_TIP){
+        if(!(msg->msgtype == MSG_TYPE_TIP || msg->msgtype == MEDIA_MSG_REVOKE)){
             handleNotification(msg);
         }
     }
+}
+
+void ChatControler::onJudgeTipMe(QString groupid, QString body)
+{
+    qDebug()<<Q_FUNC_INFO<<groupid;
+    service::IMClient::getClient()->getGroup()->getMemberInfo(groupid.toLongLong(),getMyId().toLongLong(),
+                                                              std::bind(&ChatControler::_getMemberInfo,this,std::placeholders::_1,std::placeholders::_2,body.toStdString()));
+
 }
 
 
@@ -853,7 +966,7 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
     MsgList msgList;
     for(auto msg:msgPtr){
         if(msg->msgtype == MSG_TYPE_TEXT){
-            qDebug()<<Q_FUNC_INFO<<"xxxxxxxxxxxxxxxxx:"<<msg->body.c_str();
+            qDebug()<<Q_FUNC_INFO<<"textHist:"<<msg->body.c_str();
             std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
             Msg imMsg = msgtextToQmsgtext(msgText);
 
@@ -881,12 +994,30 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
             msgList.push_back(imMsg);
 
         }else if(msg->msgtype == MSG_TYPE_TIP){
+            if(msg->body == ""){
+                continue;
+            }
+            qDebug()<<Q_FUNC_INFO<<"histrory msg:"<< msg->body.c_str();
             Msg imMsg;
-            imMsg.body = QString::fromStdString(msg->body);
+            imMsg.body = QString::fromStdString(utils::MsgUtils::getText(msg->body));
+            if(imMsg.body == ""){
+                imMsg.body = QString::fromStdString(msg->body);
+            }
             imMsg.msgid = QString::number(msg->msgid);
             imMsg.msgtype = QString::number(MSG_TYPE_TIP);
             imMsg.targetid = QString::number(msg->targetid);
             imMsg.fromid = QString::number(msg->targetid);
+            imMsg.time   =  QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss");
+            msgList.push_back(imMsg);
+        }else if(msg->msgtype == MEDIA_MSG_REVOKE){
+            std::shared_ptr<service::MsgRevoke> msgRevoke = std::dynamic_pointer_cast<service::MsgRevoke>(msg);
+            Msg imMsg;
+            imMsg.revokeMsgId = QString::number(msgRevoke->revokemsgid);
+            imMsg.body = QString::fromStdString(utils::MsgUtils::getText(msg->body));
+            imMsg.msgid = QString::number(msg->msgid);
+            imMsg.msgtype = QString::number(MEDIA_MSG_REVOKE);
+            imMsg.targetid = QString::number(msg->targetid);
+            imMsg.fromid = QString::number(msg->fromid);
             imMsg.time   =  QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss");
             msgList.push_back(imMsg);
         }
@@ -1026,6 +1157,22 @@ void ChatControler::_deleteMessage(service::ErrorInfo &info)
 {
     qDebug() << Q_FUNC_INFO<<info.code();
     emit deleteMessagesBack(info.code());
+}
+
+void ChatControler::_getMemberInfo(service::ErrorInfo &info, service::User &member, std::string body)
+{
+    qDebug() << Q_FUNC_INFO;
+    if(info.code()==0){
+        service::Member mem=dynamic_cast<service::Member&>(member);
+        qDebug() << Q_FUNC_INFO<<"remark:"<<QString::fromStdString(mem.remark)<<"groupid:"<<mem.groupid<<"body:"<<QString::fromStdString(body);
+        if(body.find("@"+mem.remark)!=std::string::npos){
+            QString sessionId("");
+            getCurrentSessionId(sessionId);
+            if(sessionId!=QString::number(mem.groupid)){
+                emit tipMe(QString::number(mem.groupid));
+            }
+        }
+    }
 }
 
 void ChatControler::_getContactInfo(service::ErrorInfo &info, service::User &user, Msg msg)
@@ -1246,7 +1393,7 @@ void ChatControler::notificationMsg(QString title, std::shared_ptr<service::Msg>
         content = explian;
     }
     qDebug()<<Q_FUNC_INFO<<"33333333333333";
-    senderId = QString::number(msg->fromid);
+    senderId = QString::number(msg->targetid);
     msgType  = QString::number(msg->msgtype);
     msgId    = QString::number(msg->msgid);
     sendTime = QString::number(msg->time);
@@ -1280,17 +1427,13 @@ Msg ChatControler::msgtextToQmsgtext(std::shared_ptr<service::MsgText> msgtext)
     Qmsgtext.toid         =QString::number(msgtext->toid);
     Qmsgtext.localid      =QString::number(msgtext->localid);
     Qmsgtext.time         =QDateTime::fromMSecsSinceEpoch(msgtext->time).toString("yyyy-MM-dd hh:mm:ss");
-    Qmsgtext.msgProperties=QString::fromStdString(msgtext->msg_properties);
+    //Qmsgtext.msgProperties=QString::fromStdString(msgtext->msg_properties);
 
     Qmsgtext.body         =QString::fromStdString(utils::MsgUtils::getText(msgtext->body));
     if(Qmsgtext.body == ""){
-        std::string str=msgtext->body;
-        //        if(str.size()>10){
-        //            str=str.substr(9,str.size()-11);
-        //        }
-        Qmsgtext.body = QString::fromStdString(str);
+        Qmsgtext.body = QString::fromStdString(msgtext->body);
     }
-    qDebug()<<Q_FUNC_INFO<<"msg body:"<<Qmsgtext.body;
+    qDebug()<<Q_FUNC_INFO<<"histmsgbody:"<<Qmsgtext.body;
     return Qmsgtext;
 }
 
@@ -1330,11 +1473,18 @@ service::MsgText ChatControler::QmsgtextTomsgtext(Msg Qmsgtext)
         QDateTime dateTime = QDateTime::fromString(Qmsgtext.time,"yyyy-MM-dd hh:mm:ss");
         msgtext.time = dateTime.toMSecsSinceEpoch();
     }
-    if(Qmsgtext.msgProperties!=""){
-        msgtext.msg_properties =Qmsgtext.msgProperties.toStdString();
-    }
+    //    if(Qmsgtext.msgProperties!=""){
+    //        msgtext.msg_properties =Qmsgtext.msgProperties.toStdString();
+    //    }
     if(Qmsgtext.body!=""){
         msgtext.body           =Qmsgtext.body.toStdString();
+    }
+    if(Qmsgtext.limit_range.size()>0){
+        std::vector<int64> vec;
+        for(int i=0;i<Qmsgtext.limit_range.size();++i){
+            vec.push_back(Qmsgtext.limit_range[i].toLongLong());
+        }
+        msgtext.related_users=vec;
     }
     return msgtext;
 }

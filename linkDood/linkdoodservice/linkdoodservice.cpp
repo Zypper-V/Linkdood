@@ -89,6 +89,13 @@ QString LinkDoodService::dataPath()
     return "/data/data/com.vrv.linkDood/";
 }
 
+void LinkDoodService::removeNitification(QString targetId)
+{
+    if(m_pChatObserver != NULL){
+        m_pChatObserver->removeNitification(targetId);
+    }
+}
+
 LinkDoodService::LinkDoodService(QObject *parent) :
     QObject(parent)
 {
@@ -839,6 +846,12 @@ void LinkDoodService::onChatDeleteMessagesResult(int code)
     emit deleteMessagesResult(code);
 }
 
+void LinkDoodService::onTipMe(QString groupid)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit tipMe(groupid);
+}
+
 void LinkDoodService::onGetLoginHistoryResult(LoginInfoList list)
 {
     qDebug() << Q_FUNC_INFO;
@@ -1279,8 +1292,8 @@ void LinkDoodService::initConnects()
     QObject::connect(m_pChatObserver.get(), SIGNAL(downloadFileBack(int,QString,QString)), this, SLOT(onChatDownloadFile(int,QString,QString)));
     QObject::connect(m_pChatObserver.get(), SIGNAL(downloadMainImageResult(QString,QString)), this, SLOT(onDownloadMainImageResult(QString,QString)));
     QObject::connect(m_pChatObserver.get(), SIGNAL(getUserInfoBack(int,Contact)), this, SLOT(onGetUserInfoResult(int,Contact)));
-
     QObject::connect(m_pChatObserver.get(), SIGNAL(downloadHistoryImageResult(int,QString,QString,QString)), this, SLOT(onDownloadHistoryImage(int,QString,QString,QString)));
+    QObject::connect(m_pChatObserver.get(), SIGNAL(tipMe(QString)), this, SLOT(onTipMe(QString)));
 
 
     QObject::connect(m_pEnterpriseControler.get(),SIGNAL(getSonOrgsResult(int ,OrgList ,OrgUserList )),this,

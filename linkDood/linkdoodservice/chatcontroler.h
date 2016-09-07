@@ -18,14 +18,14 @@ public:
 
     void getContactInfo(QString userId,Msg msg);
     void getUserProfile(QString userId,std::shared_ptr<service::Msg> msg);
-
+    void removeNitification(QString targetId);
     //进入会话UI
     void entryChat(const QString targetId);
     //离开会话UI
     void exitChat(const QString targetId);
     //获取当前SessionId
     bool getCurrentSessionId(QString& targetId);
-
+    QString getMyId();
     /**************************************************
     * @brief removeChat
     * @description: 移除会话
@@ -173,6 +173,10 @@ public:
     void getUserInfo(QString userid);
 
 signals:
+    void removeNitifications(QString targetId);
+    //群里有人@我
+    void tipMe(QString groupid);
+    void judgeTipMe(QString groupid,QString msgbody);
     void handleRevMsg(std::shared_ptr<service::Msg> msg);
     void downloadFileCancelId(QString id,QString cancelId);
     void bcNotify(const QString senderId,
@@ -224,6 +228,7 @@ signals:
 public slots:
     void onSystemMessageNotice(QString info,int64 time);
     void onHandleRevMsg(std::shared_ptr<service::Msg> msg);
+    void onJudgeTipMe(QString groupid,QString body);
 private:
     //处理时间显示
     //type 1 会话列表时间 2聊天界面时间
@@ -252,6 +257,7 @@ private:
     * @description: 删除消息结果回调
     ***************************************************/
     void _deleteMessage(service::ErrorInfo& info);
+    void _getMemberInfo(service::ErrorInfo& info, service::User& member,std::string body);
 
     void _getContactInfo(service::ErrorInfo& info, service::User& user,Msg msg);
 
@@ -305,6 +311,7 @@ private:
     void handleReciveTipMsg(std::shared_ptr<service::Msg> msg);
     void handleReciveUnSurportMsg(std::shared_ptr<service::Msg> msg);
     void notificationMsg(QString title, std::shared_ptr<service::Msg> msg);
+    void handleReciveRevokeMsg(std::shared_ptr<service::Msg> msg);
 };
 
 template<typename T>

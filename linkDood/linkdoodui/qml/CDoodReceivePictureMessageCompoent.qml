@@ -86,6 +86,13 @@ Component {
 
             property var pictrueMessageWidth: caluWidth() + 55
             property var pictrueMessageHeight: model.modelData.imgHeight + 40
+            property string picSource:model.modelData.body
+            onPicSourceChanged: {
+                if(source !== ""){
+                    width = caluWidth() + 55;
+                    height = model.modelData.imgHeight + 40;
+                }
+            }
 
             function caluWidth(){
                 var w = model.modelData.imgWidth;
@@ -125,19 +132,19 @@ Component {
                     pictrueMessageBg.source = "qrc:/res/receive/message.png"
                 }
                 onClicked: {
-                    //var tmp = ""+chatManagerModel.bigImageExisted(model.modelData.localId);
+                    var tmp = ""+chatManagerModel.bigImageExisted(model.modelData.localId);
                     myChatPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodViewImage.qml"),"CDoodViewImage");
-//                    if(tmp ===""){
-//                       // myChatPage.tip="(图片加载中...)";
-//                        myChatPage.imageSource = model.modelData.body;
-//                        //chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.enkeyUser);
-//                    }else{
-//                        myChatPage.tip = "";
-//                        myChatPage.imageSource = "file://"+tmp;
-//                    }
+                    if(tmp ===""){
+                        myChatPage.tip="(图片加载中...)";
+                        myChatPage.imageSource = model.modelData.body;
+                        chatManager.downloadMainImage(model.modelData.bodyBig,model.modelData.encrypt_key,model.modelData.enkeyUser);
+                    }else{
+                        myChatPage.tip = "";
+                        myChatPage.imageSource = "file://"+tmp;
+                    }
 
                     console.log("view img:"+model.modelData.body)
-                    myChatPage.imageSource = model.modelData.body;
+                    //myChatPage.imageSource = model.modelData.body;
                     myChatPage.url=model.modelData.bodyBig
                     pageStack.push(myChatPage);
                     if (chatListView.editing)

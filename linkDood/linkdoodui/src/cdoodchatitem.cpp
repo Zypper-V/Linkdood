@@ -1,6 +1,10 @@
 #include "cdoodchatitem.h"
 #include "common.h"
 #include <QImage>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include "linkdoodtypes.h"
+
 CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
 {
     mLoading = false;
@@ -25,6 +29,23 @@ CDoodChatItem::CDoodChatItem(QObject *parent) : QObject(parent)
     mIsImageChange = true;
     mImgW = 80;
     mImgH = 80;
+    mTextFormat = Qt::PlainText;
+}
+
+void CDoodChatItem::setTextFormat(int format)
+{
+    mTextFormat = format;
+    emit textFormatChanged();
+}
+
+int CDoodChatItem::textFormat()
+{
+    if(mBody.contains("qrc")){
+        return Qt::RichText;
+    }else{
+        return Qt::PlainText;
+    }
+    // return mTextFormat;
 }
 
 void CDoodChatItem::setEnkeyUser(QString data)
@@ -311,7 +332,26 @@ QDateTime CDoodChatItem::setTime(const QDateTime &data)
 
 QString CDoodChatItem::body()
 {
-    //setIsImageChange();
+    if(msgType() == "2"){
+        QString tmp = mBody;
+        QByteArray bytes = tmp.toLocal8Bit();
+        if(tmp.startsWith("{\"body\":")){
+            QJsonParseError error;
+            QJsonDocument jsonDocument = QJsonDocument::fromJson(bytes, &error);
+            if (error.error == QJsonParseError::NoError && jsonDocument.isObject()){
+                tmp = jsonDocument.object()["body"].toString();
+            }else{
+                if(tmp.contains("body\":")){
+                    tmp.remove(0,9);
+                    tmp.remove(tmp.length()-2,2);
+                }
+            }
+            if(tmp.contains("qrc:")){
+                tmp.replace("\n", "<br>");
+            }
+            return tmp;
+        }
+    }
     return mBody;
 }
 
@@ -319,7 +359,7 @@ QString CDoodChatItem::setBody(const QString &data)
 {
     if(data!= "" /*&& mBody != data*/){
         mBody = data;
-        emit bodyChanged();
+
         if(msgType() == "5"){
             mIsImageChange = !mIsImageChange;
             QString path = mBody;
@@ -331,7 +371,9 @@ QString CDoodChatItem::setBody(const QString &data)
             setImgHeight(img.height());
             emit isImageChangeChanged();
         }
+        emit bodyChanged();
     }
+
     return mBody;
 }
 

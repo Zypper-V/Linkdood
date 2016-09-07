@@ -34,7 +34,7 @@ public:
     explicit CDoodSessionListManager(LinkDoodClient *client = 0, QObject *parent = 0);
 
     ~CDoodSessionListManager();
-
+    Q_INVOKABLE void removeNitification(QString targetId);
     //获取会话列表
     Q_INVOKABLE void getChatList();
     //清空会话列表
@@ -62,6 +62,7 @@ signals:
     void chatListChanged(const Chat_UIList& chats);
 
 private slots:
+    void onTipMe(QString groupid);
     void onAvatarChanged(QString targetId,QString avatar);
     void onChatListChanged(const Chat_UIList& chats);
     void onGetUserInfo(int code, Contact contact);
@@ -95,5 +96,6 @@ private:
     linkdoodui_Workspace* m_pUiManager;
     QString updateItemInfor(QString targetId,QString name,  QString avater);
     int indexOfNewItem(qint64 date);
+    void insertItemByTime(CDoodSessionListItem* item);
 };
 #endif // CDOODSESSIONLISTMANAGER_H

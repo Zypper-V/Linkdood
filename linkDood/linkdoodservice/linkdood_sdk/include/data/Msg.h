@@ -16,7 +16,8 @@ namespace service {
 		MSG_TYPE_FILE,
 		MSG_TYPE_CARD,
 		MSG_TYPE_TIP,
-		MSG_TYPE_DYNEXPRESSION=19,
+		MSG_TYPE_REVOKE = 18,
+		MSG_TYPE_DYNEXPRESSION,
 	};
 	class Msg {
 	public:
@@ -51,6 +52,8 @@ namespace service {
 				return false;
 			if (sourceid != rhs.sourceid)
 				return false;
+			if (msgproperity != rhs.msgproperity)
+				return false;
 			return true;
 		}
 	public:
@@ -66,6 +69,7 @@ namespace service {
 		int64 sourceid;	//会话来源ID
 		std::string body;//消息内容
 		std::string from_name;		 //	消息来源者的名称，个人聊天为联系人名称，群聊为群成员名称
+		std::string msgproperity;		 //消息属性
 		std::vector<int64> related_users;//秘聊时相关的用户ID
 		std::vector<int64> limit_range; //@人员列表
 	};
@@ -74,13 +78,7 @@ namespace service {
 	public:
 		MsgText(void){ msgtype = MSG_TYPE_TEXT; }
 		void inti(void){}
-		bool operator == (const MsgText& rhs)const {
-			if (msg_properties != rhs.msg_properties)
-				return false;
-			return true;
-		}
-	public:
-		std::string msg_properties;
+	
 	};
 
 	class MsgFile : public Msg {
@@ -152,13 +150,7 @@ namespace service {
 	public:
 		MsgDynExpression(){ msgtype = MSG_TYPE_DYNEXPRESSION; }
 		void init(void){}
-		bool operator == (const MsgText& rhs)const {
-			if (msg_properties != rhs.msg_properties)
-				return false;
-			return true;
-		}
-	public:
-		std::string msg_properties;
+
 	};
 
 	class MsgTip : public Msg {
@@ -183,6 +175,19 @@ namespace service {
 		std::string tiptime;
 		std::string operUser;
 		std::string userInfo;
+	};
+
+	class MsgRevoke : public Msg {
+	public:
+		MsgRevoke(){ msgtype = MSG_TYPE_REVOKE; }
+		void inti(void){}
+		bool operator == (const MsgRevoke& rhs)const {
+			if (revokemsgid != rhs.revokemsgid)
+				return false;
+			return true;
+		}
+	public:
+		int64 revokemsgid;
 	};
 
 	typedef std::shared_ptr<Msg> MsgPtr;

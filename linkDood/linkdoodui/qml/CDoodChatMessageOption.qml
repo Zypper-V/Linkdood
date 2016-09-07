@@ -7,12 +7,22 @@ CDoodPopWndLayer{
     property int    index:-1
     property bool   isVisibleCopy :false
     property bool   isCanTrans:true
-
-    onIsVisibleCopyChanged: {
-        backItem.height = isVisibleCopy ? 330:(isCanTrans ? 230:130);
-    }
-    onIsCanTransChanged: {
-        backItem.height = isCanTrans ? (isVisibleCopy ? 330:230):130;
+    property bool   isCanRevoke:false
+    function caluHeigth(){
+        var tmp = 130;
+        if(isCanTrans){
+            tmp+=100;
+        }
+        if(isVisibleCopy){
+            tmp+=100;
+        }
+        if(isCanRevoke){
+            if(isVisibleCopy){
+                tmp+=10;
+            }
+            tmp+=100;
+        }
+        return tmp;
     }
 
     contentItemBackGroundOpacity:0.73
@@ -22,7 +32,7 @@ CDoodPopWndLayer{
         color: "white"
         radius: 10
         width: 389
-        height: 230
+        height: caluHeigth()
         anchors.centerIn: parent
         UserProfileButton{
             id:btnCopy
@@ -64,12 +74,28 @@ CDoodPopWndLayer{
             height:100
             leftText: qsTr("转发") ;
             radius: 4
-            showLine:false
+            showLine:isCanRevoke
             visible: isCanTrans
             anchors.top: btnDel.bottom
             anchors.topMargin: 10
             onClicked: {
                 index = 2;
+                inerClicked();
+            }
+        }
+        UserProfileButton{
+            id:btnRevoke
+
+            width:parent.width
+            height:100
+            leftText: qsTr("撤回") ;
+            radius: 4
+            showLine:false
+            visible: isCanRevoke
+            anchors.top: btnRepost.bottom
+            anchors.topMargin: 10
+            onClicked: {
+                index = 3;
                 inerClicked();
             }
         }

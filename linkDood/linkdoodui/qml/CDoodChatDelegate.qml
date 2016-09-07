@@ -173,6 +173,8 @@ CEditListViewDelegate {
 
                 var compoment = pageStack.getCachedPage(Qt.resolvedUrl("CDoodGroupAddMainPage.qml"),"CDoodGroupAddMainPage");
                 pageStack.push(compoment,{localId:msgOptions.id,isTransMessage:true});
+            }else if(msgOptions.index == 3){
+                chatManager.revokeMessage(chatManagerModel.id,msgOptions.id);
             }
             msgOptions.hide();
         }
@@ -207,6 +209,11 @@ CEditListViewDelegate {
                 msgOptions.isCanTrans = false;
             }else{
                 msgOptions.isCanTrans = true;
+            }
+            if(model.modelData.fromId === loginManager.userId && model.modelData.msgType !== "8"){
+                msgOptions.isCanRevoke = true;
+            }else{
+                msgOptions.isCanRevoke = false;
             }
 
             msgOptions.show();

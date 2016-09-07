@@ -152,6 +152,14 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
         if(msg.localid == "" ||msg.localid == "0"){
             msg.localid = createLocalId();
         }
+
+        if(msg.msgtype.toInt() == MEDIA_MSG_REVOKE && msgIsExitById(msg.revokeMsgId)){
+            QStringList msgs;
+            msgs.push_back(msg.revokeMsgId);
+            emit deleteMessage(id(),msgs);
+            removeItemByMsgId(msg.revokeMsgId);
+        }
+
         if(!m_pChatMap.contains(msg.localid)&&!msgIsExitById(msg.msgid)) {
 
             QDateTime msgDate = QDateTime::fromString(msg.time, "yyyy-MM-dd hh:mm:ss");
@@ -194,8 +202,15 @@ void CDoodChatManagerModel::addHistoryMsgToListView(MsgList msgList)
                 pChatItem->setBodyBig(msg.main_url);
                 pChatItem->mImageMainUrl = msg.main_url;
                 pChatItem->mImageThumbUrl = msg.thumb_url;
-                pChatItem->setEnkeyUser(msg.encrypt_user);
+                pChatItem->setEncrypt_key(msg.encrypt_key);
 
+            }else if(msg.msgtype.toInt() == MEDIA_MSG_REVOKE){
+                pChatItem->setMsgType(QString::number(MSG_TYPE_TIP));
+                if(msg.fromid == mAccountUserId){
+                    pChatItem->setBody("您撤回了一条消息");
+                }else{
+                    pChatItem->setBody(msg.body+"撤回了一条消息");
+                }
             }
             else{
                 pChatItem->setBody(msg.body);
@@ -236,6 +251,12 @@ void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgConten
     }
     if(msg.localid == "" ||msg.localid == "0"){
         msg.localid = createLocalId();
+    }
+    if(msg.msgtype.toInt() == MEDIA_MSG_REVOKE && msgIsExitById(msg.revokeMsgId)){
+        QStringList msgs;
+        msgs.push_back(msg.revokeMsgId);
+        emit deleteMessage(id(),msgs);
+        removeItemByMsgId(msg.revokeMsgId);
     }
     if(!m_pChatMap.contains(msg.localid)&&!msgIsExitById(msg.msgid)) {
 
@@ -285,11 +306,18 @@ void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgConten
             pChatItem->setEnkeyUser(msg.encrypt_user);
             pChatItem->mImageMainUrl = msg.main_url;
             pChatItem->mImageThumbUrl = msg.thumb_url;
+        }else if(msg.msgtype.toInt() == MEDIA_MSG_REVOKE){
+            pChatItem->setMsgType(QString::number(MSG_TYPE_TIP));
+            if(msg.fromid == mAccountUserId){
+                pChatItem->setBody("您撤回了一条消息");
+            }else{
+                pChatItem->setBody(msg.body+"撤回了一条消息");
+            }
+
         }
         else{
             pChatItem->setBody(msg.body);
         }
-        //addItem(pChatItem);
         qint64 pos = indexOfNewItem(pChatItem->time());
         if(pos>=0 &&pos<= m_pChatMap.size()){
             insertItem(pos,pChatItem);
@@ -304,7 +332,6 @@ void CDoodChatManagerModel::addItemToListViewModel(Msg msg,QString textMsgConten
         emit updateDataFinished();
     }
 }
-
 void CDoodChatManagerModel::modifyItemToListViewModel(Msg msg,bool isLoading,int progress)
 {
     CDoodChatItem * item = m_pChatMap[msg.localid];
@@ -347,6 +374,23 @@ void CDoodChatManagerModel::removeItemById(QString id)
         removeItem(item);
         delete item;
         m_pChatMap.remove(id);
+    }
+}
+
+void CDoodChatManagerModel::removeItemByMsgId(QString msgId)
+{
+    CDoodChatItem* item = NULL;
+    for(int i = 0;i<_list->size();++i){
+        CDoodChatItem* cur = (CDoodChatItem*)_list->at(i);
+        if(cur != NULL && cur->msgId() == msgId){
+            item = cur;
+            break;
+        }
+    }
+    if(item != NULL){
+        removeItem(item);
+        m_pChatMap.remove(item->localId());
+        delete item;
     }
 }
 
@@ -751,20 +795,13 @@ bool CDoodChatManagerModel::isJudageShowTime(QDateTime date)
     if(m_pChatMap.size() <= 0){
         return true;
     }else{
-        QDateTime lastMsgTime = m_pChatMap.last()->time();
+        CDoodChatItem* last = (CDoodChatItem*)_list->at(_list->size() -1);
+        QDateTime lastMsgTime = last->time();
         QString tmp = Common::dealTime(lastMsgTime.toMSecsSinceEpoch(),1);
         int64 timeDistance = lastMsgTime.secsTo(date);
-        if(qFabs(timeDistance) >= 60 * 3 && m_pChatMap.last()->timeText() != tmp){//60 * 5
+        if(qFabs(timeDistance) >= 60 * 3 && last->timeText() != tmp){//60 * 5
             return true;
-        }/*else{
-            QDateTime curentDate = QDateTime::currentDateTime();
-            timeDistance = curentDate.secsTo(date);
-            if(qFabs(timeDistance) >= 60 * 3){//60 * 5
-                return true;
-            }else{
-                return false;
-            }
-        }*/
+        }
     }
     return false;
 }

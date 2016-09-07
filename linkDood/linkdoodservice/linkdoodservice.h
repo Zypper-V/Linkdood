@@ -51,6 +51,8 @@ signals:
 
     //删除消息
     void deleteMessagesResult(int code);
+    //群里有人@我
+    void tipMe(QString groupid);
     //会话列表(通知栏)新消息更新通知
     void sessionMessageNotice(QString,QString,QString,QString,QString,QString,QString);
 
@@ -169,7 +171,7 @@ public slots:
     QString installPath();
     QString userType(QString userId);
     QString dataPath();
-
+    void removeNitification(QString targetId);
     // 功能		:	登录
     // 返回		:	NULL
     // 返回值    :	void
@@ -447,6 +449,7 @@ protected slots:
     void onChatRemoveChatResult(bool);
     //删除消息
     void onChatDeleteMessagesResult(int code);
+    void onTipMe(QString groupid);
 
     //上传头像返回
     void onChatUploadAvatar(QString orgijson, QString thumbjson, int code);

@@ -44,9 +44,11 @@ public:
     int msgCount();
     void addHistoryMsgToListView(MsgList msgList);
     void addItemToListViewModel(Msg msg,QString textMsgContent="",bool isHistory = false);
+
     void modifyItemToListViewModel(Msg msg,bool isLoading=false,int progress=0);
     void clearList();
     void removeItemById(QString id);
+    void removeItemByMsgId(QString msgId);
     void removeItemsByFromId(QString fromId);
     void deleteAllMessage();
     void analyzeHistoryMsg(MsgList msgList);

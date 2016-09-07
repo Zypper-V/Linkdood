@@ -135,7 +135,8 @@ Component {
                 anchors.topMargin: 25
 
                 wrapMode: Text.Wrap
-                textFormat: TextEdit.AutoText
+                textFormat: model.modelData.textFormat
+                renderType: Text.NativeRendering
                 readOnly:true
                 selectionColor: "transparent"
                 selectedTextColor: "#333333"

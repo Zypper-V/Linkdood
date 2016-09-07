@@ -88,6 +88,14 @@ public:
     Q_INVOKABLE void transferGroup(QString groupid,QString userid);
 
     QString getMyId();
+
+    //群@功能相关
+    Q_INVOKABLE QList<QString> getTipList(QString groupid);
+    Q_INVOKABLE void removeTipList(QString groupid);
+    Q_INVOKABLE void clearTipList();
+    Q_INVOKABLE void addTipMember(QString groupid,QString memberid);
+    Q_INVOKABLE void removeTipMember(QString groupid,int index);
+
 private slots:
     void onSetGroupInfoResult(QString result);
     void onCreateGroupResult(QString);
@@ -155,6 +163,7 @@ private:
     int  indexOfSection(QString sectnion);//从map开头找第一个section相同item位置
     LinkDoodClient *m_pClient;
     QMap<QString, CDoodGroupItem*> groupListMap;
+    QMap<QString, CDoodGroupItem*> tipListMap;//记录群@列表
     MemberList m_memberList;
     linkdoodui_Workspace* m_pUiManager;
 };

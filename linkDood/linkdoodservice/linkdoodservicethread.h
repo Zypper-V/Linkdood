@@ -14,6 +14,7 @@ public:
 signals:
 
 public slots:
+    void onRemoveNitification(QString targetId);
     void bcNotify(const QString senderId,
                   const QString msgType,
                   const QString content,

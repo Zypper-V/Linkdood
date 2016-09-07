@@ -26,7 +26,10 @@ void CDoodSessionListManager::getChatList()
     qDebug() << Q_FUNC_INFO;
     m_pClient->getChatList();
 }
-
+void CDoodSessionListManager::removeNitification(QString targetId)
+{
+    m_pClient->removeNitification(targetId);
+}
 void CDoodSessionListManager::clearChatList()
 {
     qDebug() << Q_FUNC_INFO;
@@ -97,6 +100,8 @@ void CDoodSessionListManager::clickChatItem(QString id)
 {
     CDoodSessionListItem *tmpItem  = sessionListMap.value(id);
     if(tmpItem != NULL){
+        tmpItem->setTipMe("");
+        qDebug() <<Q_FUNC_INFO<<"tmpItem->tipMe():"<<tmpItem->tipMe();
         tmpItem->setUnReadCount("0");
         if(tmpItem->unReadMsgCount()>0){
             setUnreadCount(-tmpItem->unReadMsgCount());
@@ -142,6 +147,14 @@ void CDoodSessionListManager::setUnreadCount(int count)
     emit unreadCountChanged();
 }
 
+void CDoodSessionListManager::onTipMe(QString groupid)
+{
+    CDoodSessionListItem *item = sessionListMap.value(groupid);
+    if(item != NULL){
+        item->setTipMe("1");
+    }
+}
+
 void CDoodSessionListManager::onAvatarChanged(QString targetId, QString avatar)
 {
     //    qDebug() << Q_FUNC_INFO <<targetId;
@@ -179,9 +192,8 @@ void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
             }
             tmpItem->setThumbAvatar(historysession.thumb_avatar);
             qDebug() << Q_FUNC_INFO << "session unreadcount.......:" << QString::number(historysession.unread_count);
-            //int index = indexOfNewItem(tmpItem->dateTime());
-            //insertItem(index,tmpItem);
-            addItemBegin(tmpItem);
+            //addItemBegin(item);
+            insertItemByTime(tmpItem);
             sessionListMap[historysession.id] = tmpItem;
             updateItemInfor(historysession.id,tmpItem->name(),tmpItem->thumbAvatar());
         }
@@ -190,6 +202,8 @@ void CDoodSessionListManager::onChatListChanged(const Chat_UIList &chats)
 
 void CDoodSessionListManager::onGetUserInfo(int code, Contact contact)
 {
+    Q_UNUSED(code);
+
     CDoodSessionListItem* item = sessionListMap.value(contact.id,NULL);
     if(item != NULL)
     {
@@ -203,6 +217,8 @@ void CDoodSessionListManager::onGetUserInfo(int code, Contact contact)
 
 void CDoodSessionListManager::onGetGroupInfo(QString code, Group group)
 {
+    Q_UNUSED(code);
+
     CDoodSessionListItem* item = sessionListMap.value(group.id,NULL);
     if(item != NULL)
     {
@@ -299,9 +315,8 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
                 int index = indexOf(item);
                 if(index>0 && index <itemCount()){
                     item = (CDoodSessionListItem*)takeItemAt(index);
-                    addItemBegin(item);
-                    //                    int pos = indexOfNewItem(item->dateTime());
-                    //                    insertItem(pos,item);
+                    //addItemBegin(item);
+                    insertItemByTime(item);
                 }
                 setUnreadCount(1);
             }
@@ -322,9 +337,8 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
             tmpItem->setUnreadMsgCOunt(1);
         }
         tmpItem->setLastMsgid(msgId);
-        addItemBegin(tmpItem);
-        // int pos = indexOfNewItem(tmpItem->dateTime());
-        // insertItem(pos,tmpItem);
+        //addItemBegin(item);
+        insertItemByTime(tmpItem);
         sessionListMap[targetId] = tmpItem;
         qDebug() << Q_FUNC_INFO << "name:" << name;
     }
@@ -366,9 +380,8 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
                 if(index>0 && index <itemCount())
                 {
                     item = (CDoodSessionListItem*)takeItemAt(index);
-                    addItemBegin(item);
-                    //int pos = indexOfNewItem(item->dateTime());
-                    // insertItem(pos,item);
+                    //addItemBegin(item);
+                    insertItemByTime(item);
                 }
                 setUnreadCount(offMsg.count);
             }
@@ -394,9 +407,8 @@ void CDoodSessionListManager::onOfflineMsgNotice(IMOfflineMsgList msgList)
                 tmpItem->setUnreadMsgCOunt(offMsg.count);
             }
             tmpItem->setLastMsgid(offMsg.msgId);
-            addItemBegin(tmpItem);
-            //int pos = indexOfNewItem(tmpItem->dateTime());
-            //insertItem(pos,tmpItem);
+            //addItemBegin(item);
+            insertItemByTime(tmpItem);
 
             sessionListMap[offMsg.targetId] = tmpItem;
             updateItemInfor(offMsg.targetId,offMsg.name,"");
@@ -421,8 +433,8 @@ void CDoodSessionListManager::onDraftChanged(QString id, QString avater,QString 
         sessionListMap[id] = item;
         addItemBegin(item);
     }
-    QString time = QString::number( QDateTime::currentMSecsSinceEpoch());
-    item->setMsgTime(time);
+    //QString time = QString::number( QDateTime::currentMSecsSinceEpoch());
+    //item->setMsgTime(time);
     draft.replace("height=\"36\"","height=\"24\"");
     draft.replace("width=\"36\"","width=\"24\"");
     item->setDraft(draft);
@@ -449,6 +461,8 @@ void CDoodSessionListManager::onRemoveSysMsg(QString msgtype, QString msgid)
 
 void CDoodSessionListManager::onGroupInfoChanged(QString type, Group gp)
 {
+    Q_UNUSED(type);
+
     CDoodSessionListItem*item =  sessionListMap.value(gp.id);
     if(item != NULL){
         item->setName(gp.name);
@@ -460,6 +474,8 @@ void CDoodSessionListManager::onGroupInfoChanged(QString type, Group gp)
 
 void CDoodSessionListManager::onGetOrgUserInfoResult(int code, OrgUser orguser)
 {
+    Q_UNUSED(code);
+
     CDoodSessionListItem*item =  sessionListMap.value(orguser.id,NULL);
     if(item != NULL){
         item->setName(orguser.name);
@@ -469,6 +485,7 @@ void CDoodSessionListManager::onGetOrgUserInfoResult(int code, OrgUser orguser)
 void CDoodSessionListManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
+    connect(m_pClient,SIGNAL(tipMe(QString)),this,SLOT(onTipMe(QString)));
     connect(m_pClient,SIGNAL(getOrgUserInfoResult(int,OrgUser)),this,SLOT(onGetOrgUserInfoResult(int,OrgUser)));
     connect(m_pClient,SIGNAL(groupInfoChanged(QString,Group)),this,SLOT(onGroupInfoChanged(QString,Group)));
     connect(m_pClient,SIGNAL(chatAvatarChanged(QString,QString)),this,SLOT(onAvatarChanged(QString,QString)));
@@ -498,9 +515,8 @@ void CDoodSessionListManager::addSysMessage(IMSysMsg sysMsg)
             item->setUnreadMsgCOunt(count);
         }
         removeItem(item);
-        addItemBegin(item);
-        // int pos = indexOfNewItem(item->dateTime());
-        // insertItem(pos,item);
+        //addItemBegin(item);
+        insertItemByTime(item);
 
     }else{
         CDoodSessionListItem*item = new CDoodSessionListItem(this);
@@ -518,9 +534,8 @@ void CDoodSessionListManager::addSysMessage(IMSysMsg sysMsg)
             item->setUnreadMsgCOunt(count);
         }
 
-        addItemBegin(item);
-        //int pos = indexOfNewItem(item->dateTime());
-        //  insertItem(pos,item);
+        //addItemBegin(item);
+        insertItemByTime(item);
         sessionListMap[SYSMSG_ID] = item;
     }
 }
@@ -547,4 +562,32 @@ int CDoodSessionListManager::indexOfNewItem(qint64 time)
         }
     }
     return index;
+}
+
+void CDoodSessionListManager::insertItemByTime(CDoodSessionListItem* item)
+{
+    qDebug() << Q_FUNC_INFO << item->msgTime() << item->dateTime()
+             << item->name() << item->lastMsg();
+
+    if (itemCount() == 0)
+    {
+        addItem(item);
+        return;
+    }
+
+    QList<QObject*> *list = getList();
+    int i = 0;
+    for (i = 0; i < list->size(); i++)
+    {
+        CDoodSessionListItem* tmpItem =
+                dynamic_cast<CDoodSessionListItem*>(list->at(i));
+        if (tmpItem != NULL)
+        {
+            if(item->dateTime() >= tmpItem->dateTime())
+            {
+                break;
+            }
+        }
+    }
+    insertItem(i, item);
 }

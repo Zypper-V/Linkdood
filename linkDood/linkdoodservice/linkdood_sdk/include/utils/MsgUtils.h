@@ -47,13 +47,19 @@ namespace utils {
 			std::string userInfo;
 			std::string tipMsg;
 		};
+		struct RevokeProperty {
+			int64 msgid;
+		};
+
 		static std::string MsgFormat(std::string body);
 		static std::string MsgFormat(ImageProperty imageporperty);
 		static std::string MsgFormat(FileProperty fileproperty);
 		static std::string PropertyFormat(int device_type);
+		static std::string PropertyFormat(RevokeProperty p);
 		static std::string getText(std::string json);
 		static FileProperty  getFile(std::string json);
 		static ImageProperty getImg(std::string json);
 		static TipProperty getTip(std::string json);
+		static RevokeProperty getProperty(std::string json);
 	};
 }

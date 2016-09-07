@@ -13,96 +13,96 @@ void Msg::toImMassage(QVariantMap map)
         if (iter.key() == "name") {
             name = iter.value().toString();
         }
-        if (iter.key() == "thumb_avatar") {
+        else if (iter.key() == "thumb_avatar") {
             thumb_avatar = iter.value().toString();
         }
-        if (iter.key() == "msgtype") {
+        else if (iter.key() == "msgtype") {
             msgtype = iter.value().toString();
         }
-        if (iter.key() == "activeType") {
+        else if (iter.key() == "activeType") {
             activeType = iter.value().toString();
         }
-        if (iter.key() == "msgid") {
+        else if (iter.key() == "msgid") {
             msgid = iter.value().toString();
         }
-        if (iter.key() == "targetid") {
+        else if (iter.key() == "targetid") {
             targetid = iter.value().toString();
         }
-        if (iter.key() == "fromid") {
+        else if (iter.key() == "fromid") {
             fromid = iter.value().toString();
         }
-        if (iter.key() == "toid") {
+        else if (iter.key() == "toid") {
             toid = iter.value().toString();
         }
-        if (iter.key() == "localid") {
+        else if (iter.key() == "localid") {
             localid = iter.value().toString();
         }
-        if (iter.key() == "relatedMsgid") {
+        else if (iter.key() == "relatedMsgid") {
             relatedMsgid = iter.value().toString();
         }
-        if (iter.key() == "time") {
+        else if (iter.key() == "time") {
             time = iter.value().toString();
         }
-        if (iter.key() == "body") {
+        else if (iter.key() == "body") {
             body = iter.value().toString();
         }
-        if (iter.key() == "msgProperties") {
+        else if (iter.key() == "msgProperties") {
             msgProperties = iter.value().toString();
         }
-        if (iter.key() == "f_state") {
+        else if (iter.key() == "f_state") {
             f_state = iter.value().toString();
         }
-        if (iter.key() == "f_id") {
+        else if (iter.key() == "f_id") {
             f_id = iter.value().toString();
         }
-        if (iter.key() == "f_size") {
+        else if (iter.key() == "f_size") {
             f_size = iter.value().toString();
         }
-        if (iter.key() == "encrypt_user") {
+        else if (iter.key() == "encrypt_user") {
             encrypt_user = iter.value().toString();
         }
-        if (iter.key() == "encrypt_key") {
+        else if (iter.key() == "encrypt_key") {
             encrypt_key = iter.value().toString();
         }
-        if (iter.key() == "f_path") {
+        else if (iter.key() == "f_path") {
             f_path = iter.value().toString();
         }
-        if (iter.key() == "f_url") {
+        else if (iter.key() == "f_url") {
             f_url = iter.value().toString();
         }
-        if (iter.key() == "filename") {
+        else if (iter.key() == "filename") {
             filename = iter.value().toString();
         }
-        if (iter.key() == "i_width") {
+        else if (iter.key() == "i_width") {
             i_width = iter.value().toString();
         }
-        if (iter.key() == "i_height") {
+        else if (iter.key() == "i_height") {
             i_height = iter.value().toString();
         }
-        if (iter.key() == "thumb_url") {
+        else if (iter.key() == "thumb_url") {
             thumb_url = iter.value().toString();
         }
-        if (iter.key() == "main_url") {
+        else if (iter.key() == "main_url") {
             main_url = iter.value().toString();
         }
-        if (iter.key() == "targetName") {
+        else if (iter.key() == "targetName") {
             targetName = iter.value().toString();
         }
-
-        if(iter.key() == "isTransMsg"){
+        else if(iter.key() == "isTransMsg"){
             isTransMsg = iter.value().toBool();
         }
-        if(iter.key() == "fromName"){
+        else if(iter.key() == "fromName"){
             fromName = iter.value().toString();
+        }else if(iter.key() == "revokeMsgId"){
+            revokeMsgId = iter.value().toString();
         }
-
-        if (iter.key() == "related_users") {
+        else if (iter.key() == "related_users") {
             // related_users.clear();
             // related_users.append(iter.value());
         }
-        if (iter.key() == "limit_range") {
-            // limit_range.clear();
-            // limit_range.append(iter.value());
+        else if (iter.key() == "limit_range") {
+            limit_range.clear();
+            limit_range.append(iter.value().toStringList());
         }
     }
 }
@@ -113,6 +113,7 @@ void Msg::init()
     targetName = "";
     isTransMsg = false;
     fromName = "";
+    revokeMsgId = "";
 }
 
 QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
@@ -124,7 +125,7 @@ QDBusArgument &operator <<(QDBusArgument &argument, const Msg &msg)
              <<msg.encrypt_key<<msg.encrypt_user<<msg.filename<<msg.f_id
             <<msg.f_path<<msg.f_size<<msg.f_state<<msg.f_url<<msg.i_height
            <<msg.i_width<<msg.main_url<<msg.thumb_url<< msg.msgProperties
-           <<msg.targetName<<msg.isTransMsg<<msg.fromName;
+          <<msg.targetName<<msg.isTransMsg<<msg.fromName<<msg.limit_range<<msg.revokeMsgId;
     argument.endStructure();
     return argument;
 }
@@ -138,7 +139,7 @@ const QDBusArgument &operator >>(const QDBusArgument &argument, Msg &msg)
             >>msg.encrypt_key>>msg.encrypt_user>>msg.filename>>msg.f_id
             >>msg.f_path>>msg.f_size>>msg.f_state>>msg.f_url>>msg.i_height
             >>msg.i_width>>msg.main_url>>msg.thumb_url>> msg.msgProperties
-            >>msg.targetName>>msg.isTransMsg>>msg.fromName;
+            >>msg.targetName>>msg.isTransMsg>>msg.fromName>>msg.limit_range>>msg.revokeMsgId;
     argument.endStructure();
     return argument;
 }
@@ -158,50 +159,43 @@ void Chat_UI::toImChat(QVariantMap map)
         if(iter.key() == "msg_type"){
             msg_type = iter.value().toInt();
         }
-        if(iter.key() == "chat_type"){
+        else if(iter.key() == "chat_type"){
             chat_type = iter.value().toInt();
         }
-        if(iter.key() == "oper_type"){
+        else if(iter.key() == "oper_type"){
             oper_type = iter.value().toInt();
         }
-        if(iter.key() == "unread_count"){
+        else if(iter.key() == "unread_count"){
             unread_count = iter.value().toInt();
         }
-        if(iter.key() == "last_msgid"){
+        else if(iter.key() == "last_msgid"){
             last_msgid = iter.value().toInt();
         }
-        if(iter.key() == "msg_time"){
+        else if(iter.key() == "msg_time"){
             msg_time = iter.value().toString();
         }
-        if(iter.key() == "last_msg"){
+        else if(iter.key() == "last_msg"){
             last_msg = iter.value().toString();
         }
-
-        if(iter.key() == "name"){
+        else if(iter.key() == "name"){
             name = iter.value().toString();
         }
-
-        if(iter.key() == "avatar"){
+        else if(iter.key() == "avatar"){
             avatar = iter.value().toString();
         }
-
-        if(iter.key() == "extends"){
+        else if(iter.key() == "extends"){
             extends = iter.value().toString();
         }
-
-        if(iter.key() == "thumb_avatar"){
+        else if(iter.key() == "thumb_avatar"){
             thumb_avatar = iter.value().toString();
         }
-
-        if(iter.key() == "gender"){
+        else if(iter.key() == "gender"){
             gender = iter.value().toInt();
         }
-
-        if(iter.key() == "time_zone"){
+        else if(iter.key() == "time_zone"){
             time_zone = iter.value().toInt();
         }
-
-        if(iter.key() == "id"){
+        else if(iter.key() == "id"){
             id = iter.value().toString();
         }
     }
@@ -245,55 +239,52 @@ void Contact::toImContact(QVariantMap map)
         if(iter.key() == "timeZone"){
             this->timeZone = iter.value().toInt();
         }
-        if(iter.key() == "gender"){
+        else if(iter.key() == "gender"){
             this->gender = iter.value().toString();
         }
-        if(iter.key() == "isStar"){
+        else if(iter.key() == "isStar"){
             this->isStar = iter.value().toInt();
         }
-        if(iter.key() == "isVip"){
+        else if(iter.key() == "isVip"){
             this->isVip = iter.value().toInt();
         }
-        if(iter.key() == "id"){
+        else if(iter.key() == "id"){
             this->id = iter.value().toString();
         }
-        if(iter.key() == "name"){
+        else if(iter.key() == "name"){
             this->name = iter.value().toString();
         }
-        if(iter.key() == "avatar"){
+        else if(iter.key() == "avatar"){
             this->avatar = iter.value().toString();
         }
-        if(iter.key() == "extends"){
+        else if(iter.key() == "extends"){
             this->extends = iter.value().toString();
         }
-        if(iter.key() == "thumbAvatar"){
+        else if(iter.key() == "thumbAvatar"){
             this->thumbAvatar = iter.value().toString();
         }
-
-        if(iter.key() == "pinyin"){
+        else if(iter.key() == "pinyin"){
             this->pinyin = iter.value().toString();
         }
-
-        if(iter.key() == "remark"){
+        else if(iter.key() == "remark"){
             this->remark = iter.value().toString();
         }
-
-        if(iter.key() == "server"){
+        else if(iter.key() == "server"){
             this->server = iter.value().toString();
         }
-        if(iter.key() == "nick_id"){
+        else if(iter.key() == "nick_id"){
             this->nick_id = iter.value().toString();
         }
-        if(iter.key() == "team"){
+        else if(iter.key() == "team"){
             this->team = iter.value().toInt();
         }
-        if(iter.key() == "birthday"){
+        else if(iter.key() == "birthday"){
             this->birthday = iter.value().toString();
         }
-        if(iter.key() == "email"){
+        else if(iter.key() == "email"){
             this->email = iter.value().toString();
         }
-        if(iter.key() == "phone"){
+        else if(iter.key() == "phone"){
             this->phone = iter.value().toString();
         }
     }
@@ -358,57 +349,49 @@ void Group::toImGroup(QVariantMap map)
         if(iter.key() == "timeZone"){
             this->timeZone = iter.value().toString();
         }
-        if(iter.key() == "id"){
+        else if(iter.key() == "id"){
             this->id = iter.value().toString();
         }
-        if(iter.key() == "name"){
+        else if(iter.key() == "name"){
             this->name = iter.value().toString();
         }
-        if(iter.key() == "avatar"){
+        else if(iter.key() == "avatar"){
             this->avatar = iter.value().toString();
         }
-        if(iter.key() == "thumbAvatar"){
+        else if(iter.key() == "thumbAvatar"){
             this->thumbAvatar = iter.value().toString();
         }
-
-        if(iter.key() == "pinyin"){
+        else if(iter.key() == "pinyin"){
             this->pinyin = iter.value().toString();
         }
-
-        if(iter.key() == "level"){
+        else if(iter.key() == "level"){
             this->level = iter.value().toString();
         }
-
-        if(iter.key() == "server"){
+        else if(iter.key() == "server"){
             this->server = iter.value().toString();
         }
-        if(iter.key() == "brief"){
+        else if(iter.key() == "brief"){
             this->brief = iter.value().toString();
         }
-
-        if(iter.key() == "bulletin"){
+        else if(iter.key() == "bulletin"){
             this->bulletin = iter.value().toString();
         }
-
-        if(iter.key() == "extend"){
+        else if(iter.key() == "extend"){
             this->extend = iter.value().toString();
         }
-        if(iter.key() == "createrid"){
+        else if(iter.key() == "createrid"){
             this->createrid = iter.value().toString();
         }
-
-        if(iter.key() == "create_time"){
+        else if(iter.key() == "create_time"){
             this->create_time = iter.value().toString();
         }
-
-        if(iter.key() == "related_groupid"){
+        else if(iter.key() == "related_groupid"){
             this->related_groupid = iter.value().toString();
         }
-        if(iter.key() == "related_entid"){
+        else if(iter.key() == "related_entid"){
             this->related_entid = iter.value().toString();
         }
-
-        if(iter.key() == "member_nums"){
+        else if(iter.key() == "member_nums"){
             this->member_nums = iter.value().toString();
         }
     }
@@ -451,11 +434,11 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Group &group)
 {
     argument.beginStructure();
     argument >> group.avatar >> group.brief
-             >> group.bulletin >> group.createrid >> group.create_time
-             >> group.extend >>  group.id>> group.level
-             >> group.member_nums >> group.name >> group.pinyin
-             >> group.related_entid >> group.related_groupid>>group.server
-             >> group.thumbAvatar>>group.timeZone;
+            >> group.bulletin >> group.createrid >> group.create_time
+            >> group.extend >>  group.id>> group.level
+            >> group.member_nums >> group.name >> group.pinyin
+            >> group.related_entid >> group.related_groupid>>group.server
+            >> group.thumbAvatar>>group.timeZone;
     argument.endStructure();
     return argument;
 }
@@ -473,28 +456,28 @@ void Member::toImMember(QVariantMap map)
         if(iter.key() == "gender"){
             this->gender = iter.value().toString();
         }
-        if(iter.key() == "id"){
+        else if(iter.key() == "id"){
             this->id = iter.value().toString();
         }
-        if(iter.key() == "name"){
+        else if(iter.key() == "name"){
             this->name = iter.value().toString();
         }
-        if(iter.key() == "avatar"){
+        else if(iter.key() == "avatar"){
             this->avatar = iter.value().toString();
         }
-        if(iter.key() == "thumbAvatar"){
+        else if(iter.key() == "thumbAvatar"){
             this->thumbAvatar = iter.value().toString();
         }
-        if(iter.key() == "remark"){
+        else if(iter.key() == "remark"){
             this->remark = iter.value().toString();
         }
-        if(iter.key() == "groupid"){
+        else if(iter.key() == "groupid"){
             this->groupid = iter.value().toString();
         }
-        if(iter.key() == "team"){
+        else if(iter.key() == "team"){
             this->team = iter.value().toString();
         }
-        if(iter.key() == "member_type"){
+        else if(iter.key() == "member_type"){
             this->member_type = iter.value().toString();
         }
     }
@@ -529,9 +512,9 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, Member &member)
 {
     argument.beginStructure();
     argument >> member.avatar >> member.gender
-             >> member.groupid >> member.id >> member.member_type
-             >> member.name >>  member.remark >> member.team
-             >> member.thumbAvatar;
+            >> member.groupid >> member.id >> member.member_type
+            >> member.name >>  member.remark >> member.team
+            >> member.thumbAvatar;
     argument.endStructure();
     return argument;
 }
@@ -549,19 +532,19 @@ void IMOfflineMsg::toImOfflineMsg(QVariantMap map)
     {
         if(iter.key() == "offlineType")
             offlineType = iter.value().toInt();
-        if(iter.key() == "count")
+        else if(iter.key() == "count")
             count = iter.value().toInt();
-        if(iter.key() == "msgId")
+        else if(iter.key() == "msgId")
             msgId = iter.value().toString();
-        if(iter.key() == "body")
+        else if(iter.key() == "body")
             body = iter.value().toString();
-        if(iter.key() == "targetId")
+        else if(iter.key() == "targetId")
             targetId = iter.value().toString();
-        if(iter.key() == "fromId")
+        else if(iter.key() == "fromId")
             fromId = iter.value().toString();
-        if(iter.key() == "time")
+        else if(iter.key() == "time")
             time = iter.value().toString();
-        if(iter.key() == "name")
+        else if(iter.key() == "name")
             name = iter.value().toString();
     }
 }
@@ -607,46 +590,46 @@ void Org::toImOrg(QVariantMap map)
         if(iter.key() == "id"){
             this->id = iter.value().toString();
         }
-        if(iter.key() == "name"){
+        else if(iter.key() == "name"){
             this->name = iter.value().toString();
         }
-        if(iter.key() == "avatar"){
+        else if(iter.key() == "avatar"){
             this->avatar = iter.value().toString();
         }
-        if(iter.key() == "extends"){
+        else if(iter.key() == "extends"){
             this->extends = iter.value().toString();
         }
-        if(iter.key() == "thumbAvatar"){
+        else if(iter.key() == "thumbAvatar"){
             this->thumbAvatar = iter.value().toString();
         }
-        if(iter.key() == "level"){
+        else if(iter.key() == "level"){
             this->level = iter.value().toString();
         }
-        if(iter.key() == "sonorg_count"){
+        else if(iter.key() == "sonorg_count"){
             this->sonorg_count = iter.value().toString();
         }
-        if(iter.key() == "leaf"){
+        else if(iter.key() == "leaf"){
             this->leaf = iter.value().toString();
         }
-        if(iter.key() == "ishidden"){
+        else if(iter.key() == "ishidden"){
             this->ishidden = iter.value().toString();
         }
-        if(iter.key() == "sonuser_count"){
+        else if(iter.key() == "sonuser_count"){
             this->sonuser_count = iter.value().toString();
         }
-        if(iter.key() == "parent_id"){
+        else if(iter.key() == "parent_id"){
             this->parent_id = iter.value().toString();
         }
-        if(iter.key() == "ent_id"){
+        else if(iter.key() == "ent_id"){
             this->ent_id = iter.value().toString();
         }
-        if(iter.key() == "order_num"){
+        else if(iter.key() == "order_num"){
             this->order_num = iter.value().toString();
         }
-        if(iter.key() == "branch_id"){
+        else if(iter.key() == "branch_id"){
             this->branch_id = iter.value().toString();
         }
-        if(iter.key() == "org_code"){
+        else if(iter.key() == "org_code"){
             this->org_code = iter.value().toString();
         }
     }
@@ -711,54 +694,52 @@ void OrgUser::toImOrgUser(QVariantMap map)
         if(iter.key() == "id"){
             this->id = iter.value().toString();
         }
-        if(iter.key() == "name"){
+        else if(iter.key() == "name"){
             this->name = iter.value().toString();
         }
-        if(iter.key() == "avatar"){
+        else if(iter.key() == "avatar"){
             this->avatar = iter.value().toString();
         }
-        if(iter.key() == "extends"){
+        else if(iter.key() == "extends"){
             this->extends = iter.value().toString();
         }
-        if(iter.key() == "thumbAvatar"){
+        else if(iter.key() == "thumbAvatar"){
             this->thumbAvatar = iter.value().toString();
         }
-        if(iter.key() == "gender"){
+        else if(iter.key() == "gender"){
             this->gender = iter.value().toString();
         }
-        if(iter.key() == "timeZone"){
+        else if(iter.key() == "timeZone"){
             this->timeZone = iter.value().toString();
         }
-
-
-        if(iter.key() == "order_num"){
+        else if(iter.key() == "order_num"){
             this->order_num = iter.value().toString();
         }
-        if(iter.key() == "ent_id"){
+        else if(iter.key() == "ent_id"){
             this->ent_id = iter.value().toString();
         }
-        if(iter.key() == "org_id"){
+        else if(iter.key() == "org_id"){
             this->org_id = iter.value().toString();
         }
-        if(iter.key() == "role_id"){
+        else if(iter.key() == "role_id"){
             this->role_id = iter.value().toString();
         }
-        if(iter.key() == "neworg_id"){
+        else if(iter.key() == "neworg_id"){
             this->neworg_id = iter.value().toString();
         }
-        if(iter.key() == "duty"){
+        else if(iter.key() == "duty"){
             this->duty = iter.value().toString();
         }
-        if(iter.key() == "email"){
+        else if(iter.key() == "email"){
             this->email = iter.value().toString();
         }
-        if(iter.key() == "phone"){
+        else if(iter.key() == "phone"){
             this->phone = iter.value().toString();
         }
-        if(iter.key() == "orgname"){
+        else if(iter.key() == "orgname"){
             this->orgname = iter.value().toString();
         }
-        if(iter.key() == "pinyin"){
+        else if(iter.key() == "pinyin"){
             this->pinyin = iter.value().toString();
         }
     }
@@ -826,13 +807,13 @@ void QOnlineState::toImQOnlineState(QVariantMap map)
         if(iter.key() == "userid"){
             this->userid = iter.value().toString();
         }
-        if(iter.key() == "connectId"){
+        else if(iter.key() == "connectId"){
             this->connectId = iter.value().toString();
         }
-        if(iter.key() == "deviceType"){
+        else if(iter.key() == "deviceType"){
             this->deviceType = iter.value().toString();
         }
-        if(iter.key() == "flag"){
+        else if(iter.key() == "flag"){
             this->flag = iter.value().toString();
         }
     }
@@ -886,31 +867,31 @@ void LoginInfo::toImLoginInfo(QVariantMap map)
         if(iter.key() == "account"){
             this->account = iter.value().toString();
         }
-        if(iter.key() == "areaNum"){
+        else if(iter.key() == "areaNum"){
             this->areaNum = iter.value().toString();
         }
-        if(iter.key() == "isAutoLogin"){
+        else if(iter.key() == "isAutoLogin"){
             this->isAutoLogin = iter.value().toLongLong();
         }
-        if(iter.key() == "isRemberPass"){
+        else if(iter.key() == "isRemberPass"){
             this->isRemberPass = iter.value().toLongLong();
         }
-        if(iter.key() == "lastLoginTime"){
+        else if(iter.key() == "lastLoginTime"){
             this->lastLoginTime = iter.value().toLongLong();
         }
-        if(iter.key() == "name"){
+        else if(iter.key() == "name"){
             this->name = iter.value().toString();
         }
-        if(iter.key() == "server"){
+        else if(iter.key() == "server"){
             this->server = iter.value().toString();
         }
-        if(iter.key() == "status"){
+        else if(iter.key() == "status"){
             this->status = iter.value().toLongLong();
         }
-        if(iter.key() == "userIcon"){
+        else if(iter.key() == "userIcon"){
             this->userIcon = iter.value().toString();
         }
-        if(iter.key() == "userId"){
+        else if(iter.key() == "userId"){
             this->userId = iter.value().toLongLong();
         }
 
@@ -949,23 +930,23 @@ void MsgFileInfo::toImMsgFileInfo(QVariantMap map)
     {
         if(iter.key() == "fileid")
             this->fileid = iter.value().toString();
-        if(iter.key() == "userid")
+        else if(iter.key() == "userid")
             this->userid = iter.value().toString();
-        if(iter.key() == "username")
+        else if(iter.key() == "username")
             this->username = iter.value().toString();
-        if(iter.key() == "targetid")
+        else if(iter.key() == "targetid")
             this->targetid = iter.value().toString();
-        if(iter.key() == "size")
+        else if(iter.key() == "size")
             this->size = iter.value().toString();
-        if(iter.key() == "time")
+        else if(iter.key() == "time")
             this->time = iter.value().toString();
-        if(iter.key() == "path")
+        else if(iter.key() == "path")
             this->path = iter.value().toString();
-        if(iter.key() == "name")
+        else if(iter.key() == "name")
             this->name = iter.value().toString();
-        if(iter.key() == "url")
+        else if(iter.key() == "url")
             this->url = iter.value().toString();
-        if(iter.key() == "encrypt_key")
+        else if(iter.key() == "encrypt_key")
             this->encrypt_key = iter.value().toString();
     }
 }
@@ -998,8 +979,8 @@ const QDBusArgument &operator >> (const QDBusArgument &argument, MsgFileInfo &fi
 {
     argument.beginStructure();
     argument >> fileInfo.encrypt_key>> fileInfo.fileid >> fileInfo.name
-             >> fileInfo.path >> fileInfo.size >> fileInfo.targetid
-             >> fileInfo.time >> fileInfo.url >> fileInfo.userid >> fileInfo.username;
+            >> fileInfo.path >> fileInfo.size >> fileInfo.targetid
+            >> fileInfo.time >> fileInfo.url >> fileInfo.userid >> fileInfo.username;
     argument.endStructure();
     return argument;
 }
@@ -1022,16 +1003,16 @@ void IMSysMsgRespInfo::toIMSysMsgRespInfo(QVariantMap map)
         if(iter.key() == "info"){
             this->info = iter.value().toString();
         }
-        if(iter.key() == "msgid"){
+        else if(iter.key() == "msgid"){
             this->msgid = iter.value().toString();
         }
-        if(iter.key() == "targetid"){
+        else if(iter.key() == "targetid"){
             this->targetid = iter.value().toString();
         }
-        if(iter.key() == "msgtype"){
+        else if(iter.key() == "msgtype"){
             this->msgtype = iter.value().toInt();
         }
-        if(iter.key() == "opertype"){
+        else if(iter.key() == "opertype"){
             this->opertype = iter.value().toInt();
         }
     }
@@ -1066,7 +1047,7 @@ IMSysMsg::IMSysMsg()
     this->name = "";
     this->avatar = "";
     this->respons = "";
-    this->info = "";  
+    this->info = "";
     msgType = "";
 }
 
@@ -1077,27 +1058,27 @@ void IMSysMsg::toIMSysMsg(QVariantMap map)
     {
         if(iter.key() == "isShowButton")
             this->isShowButton = iter.value().toBool();
-        if(iter.key() == "msgid")
+        else if(iter.key() == "msgid")
             this->msgid = iter.value().toString();
-        if(iter.key() == "targetid"){
+        else if(iter.key() == "targetid"){
             this->targetid = iter.value().toString();
         }
-        if(iter.key() == "time"){
+        else if(iter.key() == "time"){
             this->time = iter.value().toString();
         }
-        if(iter.key() =="msgtypeText")
+        else if(iter.key() =="msgtypeText")
             this->msgtypeText = iter.value().toString();
-        if(iter.key() == "name"){
+        else if(iter.key() == "name"){
             this->name = iter.value().toString();
         }
-        if(iter.key() == "avatar"){
+        else if(iter.key() == "avatar"){
             this->avatar = iter.value().toString();
         }
-        if(iter.key() == "respons")
+        else if(iter.key() == "respons")
             this->respons = iter.value().toString();
-        if(iter.key() == "info")
+        else if(iter.key() == "info")
             this->info = iter.value().toString();
-        if(iter.key() == "msgType"){
+        else if(iter.key() == "msgType"){
             this->msgType = iter.value().toString();
         }
     }

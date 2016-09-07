@@ -222,6 +222,7 @@ void CDoodGroupManager::getMemberList(QString groupid)
 void CDoodGroupManager::onGroupListChanged(GroupList groupList)
 {
     clearGroupList();
+    clearTipList();
     qDebug() << Q_FUNC_INFO<<"okokokokok";
     Group historygroup;
     QString MyId=getMyId();
@@ -661,6 +662,54 @@ QString CDoodGroupManager::getMyId()
     QString id;
     id = settings.value("myId","").toString();
     return id;
+}
+
+QList<QString> CDoodGroupManager::getTipList(QString groupid)
+{
+    if(tipListMap.contains(groupid)){
+        return tipListMap[groupid]->tipList();
+    }
+    QList<QString> list;
+    return list;
+}
+
+void CDoodGroupManager::removeTipList(QString groupid)
+{
+    if(tipListMap.contains(groupid)){
+        tipListMap.remove(groupid);
+    }
+}
+
+void CDoodGroupManager::clearTipList()
+{
+    tipListMap.clear();
+}
+
+void CDoodGroupManager::addTipMember(QString groupid, QString memberid)
+{
+    QList<QString> list;
+    if(tipListMap.contains(groupid)){
+        list=tipListMap[groupid]->tipList();
+    }
+    else{
+        CDoodGroupItem *tmpItem = new CDoodGroupItem(this);
+        tmpItem->setId(groupid);
+        tipListMap[groupid]=tmpItem;
+    }
+    list.push_back(memberid);
+    tipListMap[groupid]->setTipList(list);
+}
+
+void CDoodGroupManager::removeTipMember(QString groupid, int index)
+{
+    QList<QString> list;
+    if(tipListMap.contains(groupid)){
+        list=tipListMap[groupid]->tipList();
+        if(list.size()>=index){
+            list.erase(list.begin()+(index-1));
+            tipListMap[groupid]->setTipList(list);
+        }
+    }
 }
 
 void CDoodGroupManager::onSetGroupInfoResult(QString result)

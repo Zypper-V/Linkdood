@@ -40,6 +40,16 @@ QString LinkDoodClient::installPath()
     return sTmp;
 }
 
+void LinkDoodClient::removeNitification(QString targetId)
+{
+    qDebug() << Q_FUNC_INFO;
+    QDBusInterface manager(DBUS_DOOD_SERVICE,
+                           DBUS_DOOD_PATH,
+                           DBUS_DOOD_INTERFACE,
+                           QDBusConnection::sessionBus());
+    manager.call("removeNitification",targetId);
+}
+
 QString LinkDoodClient::createMsgId()
 {
     qDebug() << Q_FUNC_INFO;
@@ -1124,6 +1134,12 @@ void LinkDoodClient::onChatRemoveChatResult(bool code)
     emit removeChatResult(code);
 }
 
+void LinkDoodClient::onTipMe(QString groupid)
+{
+    qDebug() << Q_FUNC_INFO;
+    emit tipMe(groupid);
+}
+
 void LinkDoodClient::onGetLoginHistoryResult(LoginInfoList list)
 {
     qDebug() << Q_FUNC_INFO;
@@ -1511,6 +1527,9 @@ void LinkDoodClient::initDBusConnect()
                                           this, SLOT(onGetGroupMemberListReslut(int,QString,MemberList)));
 
 
+    QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
+                                          DBUS_DOOD_INTERFACE, "tipMe",
+                                          this, SLOT(onTipMe(QString)));
     QDBusConnection::sessionBus().connect(DBUS_DOOD_SERVICE, DBUS_DOOD_PATH,
                                           DBUS_DOOD_INTERFACE, "accountInfoChanged",
                                           this, SLOT(onAccountInfoChanged(Contact)));
