@@ -7,7 +7,7 @@ CPage {
     id: chatPage
     anchors.fill: parent
     orientationPolicy: CPageOrientation.LockPortrait
-
+    property var memberTipPage
     property bool loadDataFlag:false
     //    signal prepareFinished()
 
@@ -522,25 +522,29 @@ CPage {
                         return args;
                     }
                     onCursorPositionChanged: {
-                        if(chatListView.model.chatType ==="2"){
-                            if(inputTextArea.textFormat===1){
-                                var str=inputTextArea.getText(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
-                                var str1=inputTextArea.getText(inputTextArea.cursorPosition,inputTextArea.cursorPosition+1);
-                                if(str==="@"&&str1===""){
-                                    inputTextArea.remove(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
-                                    pageStack.push(Qt.resolvedUrl("CDoodMemberTipPage.qml"));
-                                }
-                            }
-                        }
+//                        if(chatListView.model.chatType ==="2"){
+//                            if(inputTextArea.textFormat===1){
+//                                var str=inputTextArea.getText(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
+//                                var str1=inputTextArea.getText(inputTextArea.cursorPosition,inputTextArea.cursorPosition+1);
+//                                if((str==="@"||str==="＠")&&str1===""){
+//                                    inputTextArea.remove(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
+//                                    pageStack.push(Qt.resolvedUrl("CDoodMemberTipPage.qml"));
+//                                }
+//                            }
+//                        }
                     }
                     onTextChanged: {
                         console.log(inputTextArea.text);
                         if(chatListView.model.chatType ==="2"){
                             if(inputTextArea.textFormat===1){
                                 var str=inputTextArea.getText(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
-                                if(str==="@"){
+                                if(str==="@"||str==="＠"){
+                                    groupManager.setInsertIndex(getIndex(1));
                                     inputTextArea.remove(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
-                                    pageStack.push(Qt.resolvedUrl("CDoodMemberTipPage.qml"));
+
+                                    memberTipPage = pageStack.getCachedPage(Qt.resolvedUrl("CDoodMemberTipPage.qml"),"CDoodMemberTipPage");
+                                    memberTipPage.groupid=chatListView.model.id;
+                                    pageStack.push(memberTipPage);
                                 }
                             }
                         }
@@ -575,10 +579,19 @@ CPage {
                             var str=inputTextArea.getText(inputTextArea.cursorPosition-1,inputTextArea.cursorPosition);
                             var str1=inputTextArea.getText(inputTextArea.cursorPosition-2,inputTextArea.cursorPosition-1);
                             console.log("str1:"+str);
-                            if(str===" "&&str1!==" "){
-                                groupManager.removeTipMember(chatListView.model.id,getIndex());
-                                deleteMember();
-
+                            if(str==="\x1D"){
+                                if(deleteMember()===1){
+                                  groupManager.removeTipMember(chatListView.model.id,getIndex(0)+1);
+                                  inputTextArea.insert(inputTextArea.cursorPosition,"8");
+                                }
+                            }
+                            else if(str==="@"||str==="＠"){
+                                console.log("str1ssssssssssssssssssssss:");
+                                 groupManager.removeTipMember(chatListView.model.id,getIndex(1)+1);
+                             }
+                            else if(str1==="@"||str1==="＠"){
+                                console.log("str1ssssssssssssssssssssss:");
+                                groupManager.removeTipMember(chatListView.model.id,getIndex(2)+1);
                             }
                         }
                         if (key === Qt.Key_Return)
@@ -591,26 +604,29 @@ CPage {
                             for(i=2;;i++){
                                 var str=inputTextArea.getText(inputTextArea.cursorPosition-1-i,inputTextArea.cursorPosition-i);
                                 if(str===""){
-                                    return;
+                                    return 0;
                                 }
                                 else if(str==="@"){
+                                    var p;
+                                    p=inputTextArea.getText(inputTextArea.cursorPosition-1-i,inputTextArea.cursorPosition);
+                                    console.log("p:"+p)
                                     inputTextArea.remove(inputTextArea.cursorPosition-1-i,inputTextArea.cursorPosition);
-                                    return;
+                                    return 1;
                                 }
                             }
                         }
-                        function getIndex(){
-                            var i;
-                            var index=0;
-                            for(i=2;;i++){
-                                var str=inputTextArea.getText(inputTextArea.cursorPosition-1-i,inputTextArea.cursorPosition-i);
-                                if(str===""){
+                    }
+                    function getIndex(p){
+                        var i;
+                        var index=0;
+                        for(i=p;;i++){
+                            var str=inputTextArea.getText(inputTextArea.cursorPosition-1-i,inputTextArea.cursorPosition-i);
+                            if(str===""){
 
-                                    return index;
-                                }
-                                else if(str==="@"){
-                                   index++;
-                                }
+                                return index;
+                            }
+                            else if(str==="@"){
+                               index++;
                             }
                         }
                     }

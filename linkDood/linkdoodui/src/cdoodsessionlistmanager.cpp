@@ -151,6 +151,7 @@ void CDoodSessionListManager::onTipMe(QString groupid)
 {
     CDoodSessionListItem *item = sessionListMap.value(groupid);
     if(item != NULL){
+        item->setDraft("");
         item->setTipMe("1");
     }
 }

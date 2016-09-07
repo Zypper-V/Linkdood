@@ -771,6 +771,7 @@ void LinkDoodService::onLoginFailed(int errCode)
         break;
     case 113:
         err = "已经登录";
+        setAppLoginStatus(1);
         break;
     case 117:
         err="输入错误次数过多,请输入验证码";

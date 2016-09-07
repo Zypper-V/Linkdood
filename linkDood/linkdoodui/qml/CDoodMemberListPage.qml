@@ -90,7 +90,7 @@ CPage {
                         anchors.left: parent.left
                         anchors.leftMargin: 25
                         anchors.verticalCenter: parent.verticalCenter
-                        text: section
+                        text:section
                         font.pixelSize: 22
                         color: "#333333"
                         onTextChanged: {
@@ -101,9 +101,8 @@ CPage {
 
                 delegate:Item {
                     id:contactListDelegate
-
                     width: parent.width
-                    height: 100
+                    height:100
                     Timer {
                         id:pressTimer
 

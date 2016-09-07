@@ -148,3 +148,17 @@ QString CDoodMemberItem::setSection(const QString &section)
     emit sectionChanged();
     return mSection;
 }
+QString CDoodMemberItem::isChoose() const
+{
+    return mIsChoose;
+}
+
+QString CDoodMemberItem::setIsChoose(const QString &data)
+{
+    if(mIsChoose==data){
+        return data;
+    }
+    mIsChoose=data;
+    emit isChooseChanged();
+    return mIsChoose;
+}

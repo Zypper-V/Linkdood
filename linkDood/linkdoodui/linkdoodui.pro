@@ -15,6 +15,7 @@ TEMPLATE = app
 CONFIG += link_pkgconfig qml_debug
 PKGCONFIG += syberos-application syberos-application-cache
 PKGCONFIG += syberos-qt
+PKGCONFIG += syberos-qt-system
 INCLUDEPATH += ../linkdoodclient
 LIBS += -L../linkdoodclient
 LIBS += -llinkdoodclient

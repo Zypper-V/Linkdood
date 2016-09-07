@@ -664,6 +664,11 @@ QString CDoodGroupManager::getMyId()
     return id;
 }
 
+void CDoodGroupManager::setInsertIndex(int index)
+{
+    mIndex=index;
+}
+
 QList<QString> CDoodGroupManager::getTipList(QString groupid)
 {
     if(tipListMap.contains(groupid)){
@@ -685,7 +690,27 @@ void CDoodGroupManager::clearTipList()
     tipListMap.clear();
 }
 
-void CDoodGroupManager::addTipMember(QString groupid, QString memberid)
+void CDoodGroupManager::addTipMember(QString groupid, QList<QString> memberid)
+{
+    qDebug()<<Q_FUNC_INFO<<memberid.size();
+    QList<QString> list;
+    if(tipListMap.contains(groupid)){
+        list=tipListMap[groupid]->tipList();
+    }
+    else{
+        CDoodGroupItem *tmpItem = new CDoodGroupItem(this);
+        tmpItem->setId(groupid);
+        tipListMap[groupid]=tmpItem;
+    }
+    for(size_t i=0;i<memberid.size();++i){
+        qDebug()<<Q_FUNC_INFO<<"memberid[i]:"<<memberid[i];
+        list.insert(mIndex,memberid[i]);
+        mIndex++;
+    }
+    tipListMap[groupid]->setTipList(list);
+}
+
+void CDoodGroupManager::addTipAllMember(QString groupid)
 {
     QList<QString> list;
     if(tipListMap.contains(groupid)){
@@ -696,19 +721,29 @@ void CDoodGroupManager::addTipMember(QString groupid, QString memberid)
         tmpItem->setId(groupid);
         tipListMap[groupid]=tmpItem;
     }
-    list.push_back(memberid);
+    list.insert(mIndex,groupid);
     tipListMap[groupid]->setTipList(list);
 }
 
 void CDoodGroupManager::removeTipMember(QString groupid, int index)
 {
+    qDebug()<<Q_FUNC_INFO<<"index:"<<index;
     QList<QString> list;
     if(tipListMap.contains(groupid)){
         list=tipListMap[groupid]->tipList();
-        if(list.size()>=index){
+        qDebug()<<Q_FUNC_INFO<<"list.size:"<<list.size();
+        for(int i=0;i<list.size();i++){
+            qDebug()<<Q_FUNC_INFO<<i<<":"<<list[i];
+        }
+        if(list.size()>=index&&list.size()!=0){
+            qDebug()<<Q_FUNC_INFO<<"111";
             list.erase(list.begin()+(index-1));
             tipListMap[groupid]->setTipList(list);
         }
+        for(int i=0;i<list.size();i++){
+            qDebug()<<Q_FUNC_INFO<<i<<":"<<list[i];
+        }
+         qDebug()<<Q_FUNC_INFO<<"list.size:"<<list.size();
     }
 }
 

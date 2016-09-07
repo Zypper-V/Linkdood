@@ -264,9 +264,9 @@ void CDoodChatManager::showUiFinished()
     emit updateSessionPageMsgReaded(m_sTargetid);
 }
 
-void CDoodChatManager::groupChatTipMember(QString groupid, QString memberid, QString membername)
+void CDoodChatManager::groupChatTipMember(QString membername)
 {
-   emit groupChatTipMemberResult(memberid,"@"+membername+" ");
+   emit groupChatTipMemberResult(membername);
 }
 
 void CDoodChatManager::clearList()
@@ -587,9 +587,11 @@ void CDoodChatManager::sendText(QString targetText ,QString oriText,QList<QStrin
     msgText.msgid = m_pClient->createMsgId();
     msgText.localid = msgText.msgid;
 
+
     if(m_sTargetid == mChatModel->id()){
         mChatModel->addItemToListViewModel(msgText,targetText,true);
     }
+
     msgText.body = targetText;
     sendMessage(msgText);
 }
@@ -597,6 +599,8 @@ void CDoodChatManager::sendText(QString targetText ,QString oriText,QList<QStrin
 void CDoodChatManager::sendText(QQuickTextDocument *item,QString oriText,QList<QString> list)
 {
     QString textContent = handleEmojiText(item);
+    textContent=textContent.replace("\x1D"," ");
+    oriText=oriText.replace("\x1D"," ");
     sendText(textContent,oriText,list);
 }
 
@@ -900,7 +904,9 @@ void CDoodChatManager::exitChat()
 {
     qDebug() << Q_FUNC_INFO;
     m_pClient->exitChat(m_sTargetid);
-    mChatModel->exitChat();
+    if(mChatModel != NULL){
+       mChatModel->exitChat();
+    }
 }
 
 QString CDoodChatManager::chatPageId()

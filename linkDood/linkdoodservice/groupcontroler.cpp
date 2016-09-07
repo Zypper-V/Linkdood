@@ -347,9 +347,9 @@ void GroupControler::_setMemberInfo(service::ErrorInfo &info)
 void GroupControler::getMemberInfo(QString groupid, QString userid)
 {
     qDebug() << Q_FUNC_INFO<<groupid<<" "<<userid;
-    //    service::IMClient::getClient()->getGroup()->getMemberInfo(groupid.toLongLong(),userid.toLongLong(),
-    //                                                              std::bind(&GroupControler::_getMemberInfo,this,
-    //                                                                        std::placeholders::_1,std::placeholders::_2));
+//        service::IMClient::getClient()->getGroup()->getMemberInfo(groupid.toLongLong(),userid.toLongLong(),
+//                                                                  std::bind(&GroupControler::_getMemberInfo,this,
+//                                                                            std::placeholders::_1,std::placeholders::_2));
     service::IMClient::getClient()->getSearch()->getUserInfo(userid.toLongLong(), std::bind(&GroupControler::_getMemberInfo, this, std::placeholders::_1, std::placeholders::_2));
 }
 

@@ -397,11 +397,8 @@ void AuthControler::_getLoginHistory(std::vector<service::LoginInfo> list)
 void AuthControler::_loginResult(service::ErrorInfo &info, long long userId)
 {
     qDebug() << Q_FUNC_INFO << info.code() << userId;
-    qDebug() << Q_FUNC_INFO << info.code() << "sssssssssssssssssss";
     if(info.code() == 0 )
     {
-        qDebug() << Q_FUNC_INFO << "loginSucceeded";
-
         QString fileName = LinkDoodService::instance()->dataPath()+ "config.ini";
         QSettings settings(fileName, QSettings::IniFormat);
         settings.setValue("myId",QString::number(userId));

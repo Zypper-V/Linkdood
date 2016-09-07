@@ -30,7 +30,7 @@ public:
 
     Q_INVOKABLE  void switchToChatPage(QString targetId, QString name,QString chatType,QString lastMsgId="",int unReadCount=0,QString icon="");
     Q_INVOKABLE  void showUiFinished();
-    Q_INVOKABLE  void groupChatTipMember(QString groupid,QString memberid,QString membername);
+    Q_INVOKABLE  void groupChatTipMember(QString membername);
     Q_INVOKABLE  void clearList();
     Q_INVOKABLE  void getMoreHistoryMessage();
     Q_INVOKABLE  void getGroupMemsList(QString groupId);
@@ -121,7 +121,7 @@ signals:
     //获取消息结果返回
     void getMessagesResult(bool code,QString sessionId,MsgList msgList);
     //移除会话结果返回
-    void groupChatTipMemberResult(QString memberid,QString membername);
+    void groupChatTipMemberResult(QString membername);
     void removeChatResult(bool);
     void getUserInfoResult(int code, Contact contact);
     void transforMessageBack(int code);

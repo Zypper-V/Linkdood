@@ -2,6 +2,8 @@
 
 #include <QMetaType>
 #include <QDebug>
+#include "cprocessmanager.h"
+
 
 CDoodLoginManager::CDoodLoginManager(LinkDoodClient *client, QObject *parent) :
     CDoodListModel(parent), m_pClient(client),mLoginCount(0),mNVerifyImgCount(0)
@@ -97,6 +99,13 @@ void CDoodLoginManager::login(const QString &server,
     m_pClient->login(server, userId, password);
 
     setLastLoginAccountName(userId);
+
+//    CProcessManager manager(this);
+//    QList<int> list = manager.processList();
+//    qDebug()<<Q_FUNC_INFO<<"kk:"<<list.size();
+//    for(int i=0;i<list.size();++i){
+//        qDebug()<<Q_FUNC_INFO<<"kk:"<<manager.sopidByPid(list.at(i));
+//    }
 }
 
 void CDoodLoginManager::loginByUrl()

@@ -504,14 +504,14 @@ void ChatControler::handleRecevieTextMsg(std::shared_ptr<service::Msg> msg)
         for(int i=0;i<msgText->related_users.size();i++){
             if(msgText->related_users[i]==myid){
                 emit judgeTipMe(imMsg.targetid,imMsg.body);
-
+                break;
+            }
+            else if(msgText->related_users[i]==imMsg.targetid.toLongLong()){
                 QString sessionId("");
                 getCurrentSessionId(sessionId);
                 if(sessionId!=imMsg.targetid){
                     emit tipMe(imMsg.targetid);
                 }
-
-
                 break;
             }
         }
@@ -1161,10 +1161,11 @@ void ChatControler::_deleteMessage(service::ErrorInfo &info)
 
 void ChatControler::_getMemberInfo(service::ErrorInfo &info, service::User &member, std::string body)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<"ppppppppppppppppppp:"<<info.code();
     if(info.code()==0){
         service::Member mem=dynamic_cast<service::Member&>(member);
         qDebug() << Q_FUNC_INFO<<"remark:"<<QString::fromStdString(mem.remark)<<"groupid:"<<mem.groupid<<"body:"<<QString::fromStdString(body);
+        qDebug() << Q_FUNC_INFO<<"id:"<<QString::number(mem.id)<<"name"<<QString::fromStdString(mem.name)<<"member_type"<<mem.member_type;
         if(body.find("@"+mem.remark)!=std::string::npos){
             QString sessionId("");
             getCurrentSessionId(sessionId);

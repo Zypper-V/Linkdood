@@ -59,6 +59,7 @@ CPageStackWindow {
             }
             else{
                 var code = loginManager.getAppLoginStatus();
+                console.log("onConnectChanged:code:"+code);
                 if(code ===1){
                     loadingDialog.flag=flag;
                     loadingDialog.show();
@@ -130,6 +131,7 @@ CPageStackWindow {
             //gToast.requestToast("main loginFail:"+err,"","");
 
             if(err === "已经登录"){
+                //gToast.requestToast("main loginFail:"+err,"","");
                 sessionListManager.getChatList();
                 contactManager.getContactList();
                 userProfileManager.getAccountInfo();

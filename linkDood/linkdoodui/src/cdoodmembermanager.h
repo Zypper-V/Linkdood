@@ -39,6 +39,11 @@ public:
     Q_INVOKABLE void getMemberInfo(QString groupid,QString memberid);
     Q_INVOKABLE void setMemberInfo(QString memberid,QString groupid,QString operate,QString remark);
     Q_INVOKABLE QString groupId();
+
+    Q_INVOKABLE void selectMember(QString id);
+    Q_INVOKABLE void clearMember();
+    Q_INVOKABLE QList<QString> getTipMember();
+    Q_INVOKABLE QString getTipName();
 private slots:
     void onGetMemberListResult(QString,MemberList);
     void onGetMemberInfoResult(QString result,Member member);
@@ -80,6 +85,7 @@ private:
     Member mTempMember;
     QString mGroupid;
     QString m_ThePresentGroupid;
+    QList<QString> m_TipMember;
 };
 
 #endif // CDOODMEMBERMANAGER_H

@@ -86,13 +86,13 @@ Component {
 
             property var pictrueMessageWidth: caluWidth() + 55
             property var pictrueMessageHeight: model.modelData.imgHeight + 40
-            property string picSource:model.modelData.body
-            onPicSourceChanged: {
-                if(source !== ""){
-                    width = caluWidth() + 55;
-                    height = model.modelData.imgHeight + 40;
-                }
-            }
+//            property string picSource:model.modelData.body
+//            onPicSourceChanged: {
+//                if(source !== ""){
+//                    width = caluWidth() + 55;
+//                    height = model.modelData.imgHeight + 40;
+//                }
+//            }
 
             function caluWidth(){
                 var w = model.modelData.imgWidth;

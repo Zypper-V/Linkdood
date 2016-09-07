@@ -168,7 +168,7 @@ CPage {
                         }
                         else{
                             if(userdataManager.remark===""){
-                                return "备注："+userdataManager.name
+                                return "备注：";/*+userdataManager.name*/
                             }
                             return "备注："+userdataManager.remark;
                         }

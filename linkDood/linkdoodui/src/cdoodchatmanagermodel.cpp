@@ -647,7 +647,7 @@ void CDoodChatManagerModel::setDraft(QString data)
 void CDoodChatManagerModel::exitChat()
 {
     if(mDraft != ""&& mDraft != "\n"){
-        emit draftChanged("[草稿]"+mDraft);
+        emit draftChanged(mDraft);
     }else{
         emit draftChanged("");
     }

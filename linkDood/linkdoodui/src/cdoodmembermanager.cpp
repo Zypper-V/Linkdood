@@ -9,6 +9,7 @@ CDoodMemberManager::CDoodMemberManager(LinkDoodClient *client, QObject *parent) 
 
     qRegisterMetaType<CDoodMemberManager*>();
     initConnect();
+
 }
 
 CDoodMemberManager::~CDoodMemberManager()
@@ -162,6 +163,81 @@ QString CDoodMemberManager::groupId()
     return mGroupid;
 }
 
+void CDoodMemberManager::selectMember(QString id)
+{
+    CDoodMemberItem *tmpItem = memberListMap.value(id);
+    if(tmpItem!=NULL){
+        if(tmpItem->isChoose()==""){
+            m_TipMember.push_back(id);
+            tmpItem->setIsChoose("123");
+        }
+        else{
+            tmpItem->setIsChoose("");
+            for(size_t i=0;i<m_TipMember.size();++i){
+                if(m_TipMember[i]==id){
+                    m_TipMember.erase(m_TipMember.begin()+i);
+                }
+            }
+        }
+    }
+    tmpItem = groupAdminListMap.value(id);
+    if(tmpItem!=NULL){
+        if(tmpItem->isChoose()==""){
+            tmpItem->setIsChoose("123");
+        }
+        else{
+            tmpItem->setIsChoose("");
+        }
+    }
+    tmpItem = groupLeaderListMap.value(id);
+    if(tmpItem!=NULL){
+        if(tmpItem->isChoose()==""){
+            tmpItem->setIsChoose("123");
+        }
+        else{
+            tmpItem->setIsChoose("");
+        }
+    }
+}
+
+void CDoodMemberManager::clearMember()
+{
+    for(size_t i=0;i<m_TipMember.size();++i){
+        CDoodMemberItem *tmpItem = memberListMap.value(m_TipMember[i]);
+        if(tmpItem!=NULL){
+            tmpItem->setIsChoose("");
+        }
+        tmpItem = groupAdminListMap.value(m_TipMember[i]);
+        if(tmpItem!=NULL){
+            tmpItem->setIsChoose("");
+        }
+        tmpItem = groupLeaderListMap.value(m_TipMember[i]);
+        if(tmpItem!=NULL){
+            tmpItem->setIsChoose("");
+        }
+
+    }
+    m_TipMember.clear();
+}
+
+QList<QString> CDoodMemberManager::getTipMember()
+{
+    return m_TipMember;
+}
+
+QString CDoodMemberManager::getTipName()
+{
+    CDoodMemberItem *tmpItem =NULL;
+    QString name;
+    for(size_t i=0;i<m_TipMember.size();++i){
+        tmpItem=memberListMap.value(m_TipMember[i]);
+        if(tmpItem!=NULL){
+            name=name+"@"+tmpItem->remark()+"\x1D";
+        }
+    }
+    return name;
+}
+
 void CDoodMemberManager::onGetMemberListResult(QString result, MemberList memberList)
 {
     qDebug() << Q_FUNC_INFO <<"gao:"<<memberList.size();
@@ -239,6 +315,7 @@ void CDoodMemberManager::onMemberInfoChanged(QString groupid, Member member)
             if(member.remark==""||member.remark=="#"){
                 qDebug() << Q_FUNC_INFO<<item->remark();
                 member.remark=item->remark();
+                member.team=item->team();
             }
             if(member.member_type=="0"){
                 member.member_type=item->member_type();
@@ -253,7 +330,7 @@ void CDoodMemberManager::onMemberInfoChanged(QString groupid, Member member)
 
 void CDoodMemberManager::onMemberAvatarChanged(QString userid, QString avatar)
 {
-//    qDebug() << Q_FUNC_INFO<<userid;
+    //    qDebug() << Q_FUNC_INFO<<userid;
     CDoodMemberItem *item = memberListMap.value(userid,NULL);
     if(item!=NULL){
         item->setThumbAvatar(avatar);
@@ -294,18 +371,18 @@ void CDoodMemberManager::onGroupLeaderChanged(QString userid, QString username, 
         }
         CDoodMemberItem *item=groupAdminListMap.value(userid,NULL);
         if(item!=NULL){
-//            Member mem;
-//            mem.name=item->name();
-//            mem.id=item->id();
-//            if(userid==mMy_Id){
-//                setMy_Type("3");
-//            }
-//            mem.thumbAvatar=item->thumbAvatar();
-//            mem.gender=item->gender();
-//            mem.groupid=item->groupid();
-//            mem.remark=item->remark();
-//            mem.member_type="3";
-//            mem.team=item->team();
+            //            Member mem;
+            //            mem.name=item->name();
+            //            mem.id=item->id();
+            //            if(userid==mMy_Id){
+            //                setMy_Type("3");
+            //            }
+            //            mem.thumbAvatar=item->thumbAvatar();
+            //            mem.gender=item->gender();
+            //            mem.groupid=item->groupid();
+            //            mem.remark=item->remark();
+            //            mem.member_type="3";
+            //            mem.team=item->team();
             removeItem(item);
             groupAdminListMap.remove(userid);
             //            addMember(mem);

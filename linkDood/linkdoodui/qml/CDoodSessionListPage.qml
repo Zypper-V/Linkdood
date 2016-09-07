@@ -197,15 +197,28 @@ Item {
                                     color: "red"
 
                                     font.pixelSize: 26
-                                    visible: model.modelData.tipMe===""?false:true
-                                    text:"[有人@我]"
+                                    visible: setVisible()
+                                    text:setText()
+                                    function setVisible(){
+                                        if(model.modelData.tipMe !=="" || model.modelData.draft !=="" ){
+                                            return true;
+                                        }else{
+                                            return false;
+                                        }
+                                    }
+                                    function setText(){
+                                        if(model.modelData.draft !==""){
+                                            return qsTr("[草稿]");
+                                        }
+                                        return qsTr("[有人@我]");
+                                    }
                                 }
 
                                 CLabel{
                                     id: contentText
 
-                                    anchors.left: model.modelData.tipMe===""?headPortraitImage.right:tipText.right
-                                    anchors.leftMargin: model.modelData.tipMe===""?30:10
+                                    anchors.left: !tipText.visible?headPortraitImage.right:tipText.right
+                                    anchors.leftMargin: !tipText.visible?30:10
                                     anchors.bottom: parent.bottom
                                     anchors.bottomMargin: 10
                                     anchors.top: nameText.bottom

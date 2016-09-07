@@ -19,6 +19,7 @@ class CDoodMemberItem : public QObject
     Q_PROPERTY(QString remark READ remark WRITE setRemark NOTIFY remarkChanged)
     Q_PROPERTY(QString member_type READ member_type WRITE setMember_type NOTIFY member_typeChanged)
     Q_PROPERTY(QString sectionKey READ sectionKey WRITE setSection NOTIFY sectionChanged)
+    Q_PROPERTY(QString isChoose READ isChoose WRITE setIsChoose NOTIFY isChooseChanged)
 
 public:
     explicit CDoodMemberItem(QObject *parent = 0);
@@ -52,6 +53,9 @@ public:
     QString sectionKey() const;
     QString setSection(const QString &section);
 
+    QString isChoose() const;
+    QString setIsChoose(const QString &data);
+
 signals:
     void idChanged();
     void nameChanged();
@@ -63,6 +67,7 @@ signals:
     void remarkChanged();
     void member_typeChanged();
     void sectionChanged();
+    void isChooseChanged();
 public slots:
 
 private:
@@ -76,6 +81,7 @@ private:
     QString mRemark;
     QString mMember_type;
     QString mSection;
+    QString mIsChoose;
 };
 
 #endif // CDOODMEMBERITEM_H
