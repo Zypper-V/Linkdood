@@ -58,7 +58,7 @@ int LinkDoodService::getAppLoginStatus()
 
 void LinkDoodService::setAppLoginStatus(const int status)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO<<status;
     QString fileName = dataPath()+ "config.ini";
     QSettings settings(fileName, QSettings::IniFormat);
     settings.setValue("Status",status);
@@ -1179,7 +1179,7 @@ void LinkDoodService::onGetPrivateSetting(int code, IMPrivateSetting ps)
 LinkDoodService::~LinkDoodService()
 {
     qDebug() << Q_FUNC_INFO <<"sdfdsgdgdfhfghfjg";
-    setAppLoginStatus(0);
+//    setAppLoginStatus(0);
 }
 
 void LinkDoodService::initSdk()

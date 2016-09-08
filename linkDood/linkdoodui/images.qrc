@@ -89,6 +89,6 @@
         <file>res/control/defaultimage.png</file>
         <file>res/main_title_setting_button.png</file>
         <file>res/main_title_setting_button_press.png</file>
-
+        <file>res/conver_combine_icon.png</file>
     </qresource>
 </RCC>

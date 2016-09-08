@@ -2,6 +2,8 @@
 #include "cdoodchatitem.h"
 #include <QDebug>
 #include <QClipboard>
+#include <QMatrix>
+
 void CDoodChatManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
@@ -147,105 +149,6 @@ void CDoodChatManager::switchToChatPage(QString targetId, QString name, QString 
     emit chatPageChanged();
 }
 
-//void CDoodChatManager::switchToChatPage(QString targetId, QString name,QString chatType,QString lastMsgId,int unReadCount,QString icon)
-//{
-//    qDebug() << Q_FUNC_INFO<<"targetId:"<<targetId<<"chatType:"<<chatType <<"name:"<<name<<"lastId:"<<lastMsgId;
-//    if(mChatModel != NULL && mChatModel->id() == targetId){
-//        if(unReadCount != 0){
-//            int flag = lastMsgId !="0"?0:1;
-//            if(mChatModel->msgCount()==0){
-//                getMessages(m_sTargetid,unReadCount+20,lastMsgId,flag);
-//            }else{
-//                getMessages(m_sTargetid,unReadCount,lastMsgId,flag);
-//            }
-
-//        }
-//        if(mChatModel->msgCount()>0){
-//            if(mChatModel->lastMsgId() != lastMsgId){
-//                getMessages(m_sTargetid,unReadCount,lastMsgId,0);
-//            }else{
-//                emit chatPageChanged();
-//                //sendShowChatPage(name,targetId,chatType);
-//            }
-//        }else{
-//            if(lastMsgId != "0"&& lastMsgId !=""){
-//                getMessages(m_sTargetid,unReadCount+20,lastMsgId,0);
-//            }else {
-//                getMessages(m_sTargetid,unReadCount+20,"0",1);
-//            }
-//        }
-//        mChatModel->setId(targetId);
-//        mChatModel->setName(name);
-//        mChatModel->setChatType(chatType);
-//        mChatModel->setAvatar(icon);
-//        mChatModel->updateAccountUserInfo(mActId,mActName,mActAvatar);
-
-//        mCurentChatName = name;
-//        mCurentChatId = targetId;
-//        mCurentChatType = chatType;
-
-//        if(chatType == "2" && mChatModel->groupMemsCount()==0){
-//            m_pClient->getMemberList(targetId);
-//        }
-//        // emit chatPageChanged();
-
-//        // emit sendShowChatPage(name,targetId,chatType);
-//    }else{
-//        m_sTargetid = targetId;
-//        QMap<QString,CDoodChatManagerModel*>::iterator iter = mMsgListModel.find(targetId);
-//        if(iter != mMsgListModel.end() && iter.value() != NULL){
-//            if(mChatModel != NULL){
-//                mMsgListModel[mChatModel->id()] = mChatModel;
-//            }
-//            mChatModel = iter.value();
-//        }else{
-//            CDoodChatManagerModel* item = new CDoodChatManagerModel(this);
-//            item->setId(targetId);
-//            item->setName(name);
-//            item->setChatType(chatType);
-//            item->setAccountId(m_pClient->UserId());
-//            connect(item,SIGNAL(downloadImage(QString,QString,QString,QString)),this,SLOT(onDownloadImage(QString,QString,QString,QString)));
-//            connect(item,SIGNAL(reqestUserInfo(QString)),this,SLOT(onReqestUserInfo(QString)));
-//            if(mChatModel != NULL){
-//                mMsgListModel[mChatModel->id()] = mChatModel;
-//            }
-//            mChatModel = item;
-//            mMsgListModel[targetId] = item;
-//        }
-//        if(mChatModel->msgCount()>0){
-//            if(mChatModel->lastMsgId() != lastMsgId){
-//                getMessages(m_sTargetid,unReadCount,lastMsgId,0);
-//            }else{
-//                emit chatPageChanged();
-//                // emit sendShowChatPage(name,targetId,chatType);
-//            }
-//        }else{
-//            if(lastMsgId != "0"&& lastMsgId !=""){
-//                getMessages(m_sTargetid,unReadCount+20,lastMsgId,0);
-//            }else {
-//                getMessages(m_sTargetid,unReadCount+20,"0",1);
-//            }
-//        }
-//        if(mChatModel != NULL){
-//            mChatModel->setId(targetId);
-//            mChatModel->setName(name);
-//            mChatModel->setChatType(chatType);
-//            mChatModel->setAvatar(icon);
-//            mChatModel->updateAccountUserInfo(mActId,mActName,mActAvatar);
-//        }
-
-//        mCurentChatName = name;
-//        mCurentChatId = targetId;
-//        mCurentChatType = chatType;
-//        if(chatType == "2" && mChatModel->groupMemsCount()==0){
-//            m_pClient->getMemberList(targetId);
-//        }
-
-//        //    emit chatPageChanged();
-//        //        emit sendShowChatPage(name,targetId,chatType);
-//    }
-//}
-
 void CDoodChatManager::showUiFinished()
 {
     if(mChatModel->msgCount()>0){
@@ -266,7 +169,7 @@ void CDoodChatManager::showUiFinished()
 
 void CDoodChatManager::groupChatTipMember(QString membername)
 {
-   emit groupChatTipMemberResult(membername);
+    emit groupChatTipMemberResult(membername);
 }
 
 void CDoodChatManager::clearList()
@@ -442,11 +345,11 @@ bool CDoodChatManager::imageExisted(QString url)
     return false;
 }
 
-void CDoodChatManager::sendPictrue(QString path)
+void CDoodChatManager::sendPictrue(QString path,bool isRotate)
 {
     QString imgPath =  path;
     QString thumpPath("");
-    scaledImage(imgPath,THUMP_PIC_WIDTH,THUMP_PIC_HEIGHT,thumpPath);
+    scaledImage(imgPath,THUMP_PIC_WIDTH,THUMP_PIC_HEIGHT,thumpPath,isRotate);
     Msg msg;
     msg.thumb_url = thumpPath;
     if(!thumpPath.startsWith("file://")){
@@ -805,22 +708,22 @@ void CDoodChatManager::revokeMessage(QString targetId, QString localId)
     if(model != NULL){
         CDoodChatItem*item = model->itemById(localId);
         if(item != NULL){
-             QDateTime cur = QDateTime::currentDateTime();
-             qint64 dx = cur.secsTo(item->time());
-             if(qFabs(dx)>60*5){
+            QDateTime cur = QDateTime::currentDateTime();
+            qint64 dx = cur.secsTo(item->time());
+            if(qFabs(dx)>60*5){
                 emit revokeMessageOutTime();
-             }else{
-                 Msg revokeMsg;
-                 revokeMsg.body = "您撤回了一条消息";
-                 revokeMsg.msgtype = QString::number(MEDIA_MSG_REVOKE);
-                 revokeMsg.targetid = m_sTargetid;
-                 revokeMsg.fromid = m_pClient->UserId();
-                 revokeMsg.name = m_pClient->userName();
-                 revokeMsg.msgid = item->msgId();
-                 revokeMsg.localid = item->localId();
+            }else{
+                Msg revokeMsg;
+                revokeMsg.body = "您撤回了一条消息";
+                revokeMsg.msgtype = QString::number(MEDIA_MSG_REVOKE);
+                revokeMsg.targetid = m_sTargetid;
+                revokeMsg.fromid = m_pClient->UserId();
+                revokeMsg.name = m_pClient->userName();
+                revokeMsg.msgid = item->msgId();
+                revokeMsg.localid = item->localId();
 
-                 sendMessage(revokeMsg);
-             }
+                sendMessage(revokeMsg);
+            }
         }
     }
 }
@@ -905,7 +808,7 @@ void CDoodChatManager::exitChat()
     qDebug() << Q_FUNC_INFO;
     m_pClient->exitChat(m_sTargetid);
     if(mChatModel != NULL){
-       mChatModel->exitChat();
+        mChatModel->exitChat();
     }
 }
 
@@ -1429,7 +1332,7 @@ void CDoodChatManager::onGroupInfoChanged(QString type, Group gp)
     }
 }
 
-void CDoodChatManager::scaledImage(QString sourceImagePath, float scaledWidth, float scaledHeight, QString &outImagePath)
+void CDoodChatManager::scaledImage(QString sourceImagePath, float scaledWidth, float scaledHeight, QString &outImagePath,bool isRotate)
 {
     qDebug()<<Q_FUNC_INFO<<"1111111111111:"<<sourceImagePath;
     QSize sourceSize;
@@ -1440,6 +1343,11 @@ void CDoodChatManager::scaledImage(QString sourceImagePath, float scaledWidth, f
     float scaledNum = 0;      //缩放比例
 
     QImage sourceImage(sourceImagePath);
+    if(isRotate){
+        QMatrix matrix;
+        matrix.rotate(90);
+        sourceImage = sourceImage.transformed(matrix);
+    }
     sourceSize = sourceImage.size();
     sourceWidth = sourceSize.width();
     sourceHeight = sourceSize.height();
@@ -1476,11 +1384,12 @@ void CDoodChatManager::scaledImage(QString sourceImagePath, float scaledWidth, f
         resultWidth = sourceWidth;
         resultHeight = sourceHeight;
     }
-    QImage destinationImage400x300 = sourceImage.scaled(QSize(resultWidth, resultHeight), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+
+    QImage destinationImage400x300 = sourceImage.scaled(QSize(resultWidth, resultHeight), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     QFileInfo fileInfo(sourceImagePath);
 
 
-    QString tempImagePath =  APP_DATA_PATH +m_pClient->UserId() + "/cache";
+    QString tempImagePath = APP_DATA_PATH +m_pClient->UserId() + "/cache";
     QDir tempDir;
     if (!tempDir.exists(tempImagePath))
     {

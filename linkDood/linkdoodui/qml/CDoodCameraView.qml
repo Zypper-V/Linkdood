@@ -7,7 +7,7 @@ CameraPlugin {
 
     property string mySessionId
 
-    outputPath: chatManager.cameraFilePath()
+    outputPath:chatManager.cameraFilePath()
 
     enablePostPreview: true  //必要设置
     enableCut: false //必要设置

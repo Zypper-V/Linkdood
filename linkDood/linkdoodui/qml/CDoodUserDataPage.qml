@@ -38,6 +38,7 @@ CPage {
         onSetMemberInfoResult:{
             if(id===userdataManager.id){
                 userdataManager.setRemark(remark);
+                userdataManager.setMemberType(membertype);
                 gToast.requestToast("设置成功","","");
             }
         }
@@ -124,12 +125,12 @@ CPage {
                       else if(userdataManager.buttonType==="3"){
                           menu2.id = userdataManager.id;
                           menu2.isStar= userdataManager.memberType;
-                          if(userdataManager.remark!==""){
+//                          if(userdataManager.remark!==""){
                           menu2.name=userdataManager.remark;
-                          }
-                          else{
-                              menu2.name=userdataManager.name;
-                          }
+//                          }
+//                          else{
+//                              menu2.name=userdataManager.name;
+//                          }
                           menu2.show();
                       }
                     }
@@ -374,6 +375,7 @@ CPage {
     Connections{
         target: addContactManager
         onGetVerifyResult:{
+            console.log("onGetVerifyResult:"+code)
             if(code !== 0)
             {
                 gToast.requestToast("获取验证方式失败","","");
@@ -389,6 +391,8 @@ CPage {
                 friendVericationManager.setThumbAvatar(userdataManager.thumbAvatar);
                 friendVericationManager.setMyName(userProfileManager.name);
                 friendVericationManager.setId(userdataManager.id);
+                console.log("CDoodFriendVerificationPage start")
+                addContactManager.contactListClear();
                 pageStack.push(Qt.resolvedUrl("CDoodFriendVerificationPage.qml"));
             }
             else if(type === 3) //3:允许任何人添加
@@ -775,6 +779,11 @@ CPage {
         onUpdateContactInfoResult:{
             indicatorDialog.hide();
             gToast.requestToast(qsTr("设置成功"),"","");
+            if(userdataManager.memberType === "1"){
+                userdataManager.setMemberType("2");
+            }else{
+                userdataManager.setMemberType("2");
+            }
         }
     }
 

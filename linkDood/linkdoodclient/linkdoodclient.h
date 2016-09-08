@@ -68,6 +68,7 @@ signals:
     void setMemberInfoResult(QString result);
     void getMemberInfoResult(QString result,Member member);
     void getMemberListResult(QString result,MemberList memberList);
+    void getThePresentGroupid(QString groupid);
     void getGroupFileListResult(FileInfoList fileInfoList);
     void deleteGroupFileResilt(QString result);
     void getGroupMemberListReslut(int code, QString id, MemberList list);

@@ -393,11 +393,7 @@ void LinkDoodClient::getGroupMemsList(QString groupid)
                            DBUS_DOOD_PATH,
                            DBUS_DOOD_INTERFACE,
                            QDBusConnection::sessionBus());
-    MemberList memberList;
-    Member mem;
-    mem.groupid=groupid;
-    memberList.push_back(mem);
-    emit getMemberListResult("ThePresentGroupid",memberList);
+    emit getThePresentGroupid(groupid);
     manager.call("getGroupMemsList",groupid);
 }
 

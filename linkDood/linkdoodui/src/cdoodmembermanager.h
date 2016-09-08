@@ -45,6 +45,7 @@ public:
     Q_INVOKABLE QList<QString> getTipMember();
     Q_INVOKABLE QString getTipName();
 private slots:
+    void onGetThePresentGroupid(QString);
     void onGetMemberListResult(QString,MemberList);
     void onGetMemberInfoResult(QString result,Member member);
     void onRemoveMemberResult(QString result);
@@ -62,7 +63,7 @@ signals:
     void groupMemsChanged(QString groupid,int size);
     void getMemberInfoResult(QString name);
     void removeMemberResult(QString result);
-    void setMemberInfoResult(QString id,QString remark);
+    void setMemberInfoResult(QString id,QString remark,QString membertype);
 private:
 
     void initConnect();

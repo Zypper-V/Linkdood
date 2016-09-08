@@ -111,7 +111,7 @@ CPage {
                 height: 90
                 radius: 6
                 name:""
-                iconSource:setIcon("1","")
+                iconSource:setIcon("1","qrc:/res/conver_combine_icon.png")
             }
             Text {
                 id: nameText1
@@ -119,11 +119,12 @@ CPage {
                 anchors.leftMargin: 30
                 anchors.rightMargin: 20
                 anchors.top: parent.top
-                anchors.topMargin: 25
+                anchors.topMargin: 30
                 font.pixelSize: 28
                 height: 33
                 clip: true
-                color: "#333333"
+//                color: "#333333"
+                color: "red"
                 verticalAlignment: Text.AlignVCenter
                 elide: Text.ElideRight
                 text: "@全体成员"

@@ -640,6 +640,7 @@ void ChatControler::onListChanged(int flag, std::vector<std::shared_ptr<service:
             continue;
         }
         Chat_UI chatData;
+        qDebug()<<Q_FUNC_INFO<<"111111111111111dsf:"<<ch->name.size()<<":"<<ch->name.c_str();
         chatData.name = QString::fromStdString(ch->name);
         qDebug() <<Q_FUNC_INFO<<QString::fromStdString(ch->last_msg);
         if(ch->msg_type== MSG_TYPE_TEXT){

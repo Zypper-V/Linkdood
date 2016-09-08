@@ -229,7 +229,8 @@ void CDoodContactManager::addContact(Contact user,bool isInit)
         if(isInit){
             insertItem(indexOfSection(tmpItem->sectionKey()),tmpItem);
         }else{
-            insertItem(indexofTeam(tmpItem->sectionKey()),tmpItem);
+            int index = indexofTeam(tmpItem->sectionKey());
+            insertItem(index,tmpItem);
         }
 
         contactListMap[user.id] = tmpItem;
@@ -396,33 +397,48 @@ bool CmpByTeam(CDoodContactItem * first, CDoodContactItem * second)
 
 int CDoodContactManager::indexofTeam(QString team)
 {
-    QList<CDoodContactItem *> list = contactListMap.values();
-    int len = list.size();
-    int index = 0;
 
-    qSort(list.begin(),list.end(),CmpByTeam);
-    bool find = false;
-    for(index=0;index<len;++index){
-        CDoodContactItem * item = list.at(index);
-        if(item->sectionKey() == team){
-            find = true;
-            break;
-        }
+    int len = _list->size();
+    if(len == 0 || team == "#"){
+        return len;
     }
-    if(find){
-        return starContactListMap.size()+appListMap.size()+index;
-    }else{
-        if(team == "#"){
-            return list.size()+starContactListMap.size()+appListMap.size();
-        }else{
-            for(index = 0;index<len;++index){
-                CDoodContactItem * item = list.at(index);
-                if(item->sectionKey() > team){
-                    return index+starContactListMap.size()+appListMap.size();
-                }
+    int i = appListMap.size()+starContactListMap.size();
+    for(;i<len;++i){
+        CDoodContactItem * item  = (CDoodContactItem *)_list->at(i);
+        if(item != NULL){
+            if(item->sectionKey() >= team){
+                return i;
             }
         }
     }
+    return len;
+//    QList<CDoodContactItem *> list = contactListMap.values();
+//    int len = list.size();
+//    int index = 0;
+
+//    qSort(list.begin(),list.end(),CmpByTeam);
+//    bool find = false;
+//    for(index=0;index<len;++index){
+//        CDoodContactItem * item = list.at(index);
+//        if(item->sectionKey() == team){
+//            find = true;
+//            break;
+//        }
+//    }
+//    if(find){
+//        return starContactListMap.size()+appListMap.size()+index;
+//    }else{
+//        if(team == "#"){
+//            return list.size()+starContactListMap.size()+appListMap.size();
+//        }else{
+//            for(index = 0;index<len;++index){
+//                CDoodContactItem * item = list.at(index);
+//                if(item->sectionKey() > team){
+//                    return index+starContactListMap.size()+appListMap.size();
+//                }
+//            }
+//        }
+//    }
 }
 
 CDoodContactItem *CDoodContactManager::itemById(QString id)

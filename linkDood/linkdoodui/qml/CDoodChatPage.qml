@@ -263,6 +263,10 @@ CPage {
         Connections{
             target: addContactManager
             onGetVerifyResult:{
+                if(chatPage.status !== CPageStatus.Show){
+                    return;
+                }
+
                 if(code !== 0)
                 {
                     gToast.requestToast("获取验证方式失败","","");
@@ -290,7 +294,7 @@ CPage {
         Connections{
             target: contactManager
             onAddContactReslut:{
-                if(chatManagerModel.id === userId){
+                if( chatPage.status ===CPageStatus.Show && chatManagerModel.id === userId){
                     addFriendTip.visible =  addFriendTip.setVisible();
                     console.log("add contact changed.")
                 }

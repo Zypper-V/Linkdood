@@ -49,7 +49,7 @@ public:
     Q_INVOKABLE bool imageExisted(QString url);
     Q_INVOKABLE void startSendPicture();
     Q_INVOKABLE QString cameraFilePath();
-    Q_INVOKABLE void sendPictrue(QString path);
+    Q_INVOKABLE void sendPictrue(QString path,bool isRotate=false);
 
     //选择文件
     int selectFileCount();
@@ -207,7 +207,7 @@ private:
     QMap<QString, QString> mFileFormat;
 
     //图片缩放
-    void scaledImage(QString sourceImagePath, float scaledWidth, float scaledHeight, QString &outImagePath);
+    void scaledImage(QString sourceImagePath, float scaledWidth, float scaledHeight, QString &outImagePath,bool isRotate=false);
     void setFileFormat();
     void initModelConnects(CDoodChatManagerModel* model);
 };

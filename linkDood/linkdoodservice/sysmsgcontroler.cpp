@@ -14,7 +14,7 @@ SysMsgControler::SysMsgControler(QObject *parent) : QObject(parent)
 
 }
 
-void SysMsgControler::onSysMessageNotice(SysMsg &msg)
+void SysMsgControler::onSysMessageNotice(SysMsg &msg,int unreadcount)
 {
     qDebug()<<Q_FUNC_INFO;
     IMSysMsg sysMsg;

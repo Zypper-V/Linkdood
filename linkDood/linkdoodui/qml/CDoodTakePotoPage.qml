@@ -17,7 +17,7 @@ CPage {
     }
 
     function cameraSavePic (filePath, is_original) {
-        chatManager.sendPictrue(filePath);
+        chatManager.sendPictrue(filePath,true);
         console.log("filePath:"+filePath)
         pageStack.pop();
     }

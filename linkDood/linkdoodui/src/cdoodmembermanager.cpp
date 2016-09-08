@@ -238,16 +238,15 @@ QString CDoodMemberManager::getTipName()
     return name;
 }
 
-void CDoodMemberManager::onGetMemberListResult(QString result, MemberList memberList)
+void CDoodMemberManager::onGetThePresentGroupid(QString groupid)
 {
-    qDebug() << Q_FUNC_INFO <<"gao:"<<memberList.size();
-    clearMemberList();
-    if(result=="ThePresentGroupid"){
-        if(memberList.size()>0){
-            m_ThePresentGroupid=memberList[0].groupid;
-        }
-    }
-    else if(result=="获取成员列表成功"){
+   m_ThePresentGroupid=groupid;
+   clearMemberList();
+}
+
+void CDoodMemberManager::onGetMemberListResult(QString result, MemberList memberList)
+{   
+    if(result=="获取成员列表成功"){
         if(memberList.size()>0){
             if(memberList[0].groupid==m_ThePresentGroupid){
                 setMemberSize(QString::number(memberList.size()));
@@ -256,11 +255,9 @@ void CDoodMemberManager::onGetMemberListResult(QString result, MemberList member
                 for(size_t i=0;i<memberList.size();i++)
                 {
                     mGroupid=memberList[0].groupid;
-                    qDebug() << Q_FUNC_INFO<<memberList[i].name<<memberList[i].team<<memberList[i].member_type;
                     addMember(memberList[i]);
                     emit itemCountChanged();
                 }
-
                 emit getMemberListResult("获取成员列表成功");
             }
         }
@@ -268,8 +265,6 @@ void CDoodMemberManager::onGetMemberListResult(QString result, MemberList member
     else{
         emit getMemberListResult("获取成员列表失败");
     }
-
-
 }
 
 void CDoodMemberManager::onGetMemberInfoResult(QString result, Member member)
@@ -320,7 +315,7 @@ void CDoodMemberManager::onMemberInfoChanged(QString groupid, Member member)
             if(member.member_type=="0"){
                 member.member_type=item->member_type();
             }
-            emit setMemberInfoResult(member.id,member.remark);
+            emit setMemberInfoResult(member.id,member.remark,member.member_type);
         }
         removeMemberItem(member.id);
         addMember(member);
@@ -685,6 +680,7 @@ void CDoodMemberManager::removeMemberItem(QString memberid)
 void CDoodMemberManager::initConnect()
 {
     qDebug() << Q_FUNC_INFO;
+    connect(m_pClient, SIGNAL(getThePresentGroupid(QString)), this, SLOT(onGetThePresentGroupid(QString)));
     connect(m_pClient, SIGNAL(getMemberListResult(QString, MemberList)), this, SLOT(onGetMemberListResult(QString, MemberList)));
     connect(m_pClient, SIGNAL(removeMemberResult(QString)), this, SLOT(onRemoveMemberResult(QString)));
     connect(m_pClient, SIGNAL(setMemberInfoResult(QString)), this, SLOT(onSetMemberInfoResult(QString)));
