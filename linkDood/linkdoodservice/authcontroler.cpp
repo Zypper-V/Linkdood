@@ -239,7 +239,7 @@ void AuthControler::onAccountInfoChanged(service::User& info)
     service::Account& account = dynamic_cast<service::Account&>(info);
     Contact user;
     qDebug()<<Q_FUNC_INFO<<"name:"<<account.name.c_str()<<"gender:"<<account.gender<<"phone:"<<account.phone.c_str()<<"link_id:"<<account.nick_id.c_str();
-    if(account.__isset.nick_id||account.nick_id != ""){
+    if((account.__isset.nick_id||account.nick_id != "") && (account.nick_id != "#")){
         QString tmp = QString::fromStdString(account.nick_id);
         QStringList list = tmp.split("/");
         if(list.size() == 2){
@@ -269,10 +269,10 @@ void AuthControler::onAccountInfoChanged(service::User& info)
         qDebug()<<Q_FUNC_INFO<<"ssssssssssssssssssssss4";
     }
     user.id = QString::number(info.id);
-    if(account.__isset.email){
+    if(account.__isset.email && account.email != "#"){
         user.email = QString::fromStdString(account.email);
     }
-    if(account.__isset.phone){
+    if(account.__isset.phone && account.phone != "#"){
 
         user.phone = QString::fromStdString(account.phone);
         if(user.phone.startsWith("0086")){

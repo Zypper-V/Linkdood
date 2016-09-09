@@ -123,10 +123,8 @@ void CDoodChatManagerModel::updateGroupMems(MemberList list)
 
 void CDoodChatManagerModel::updateGroupSize(int size)
 {
-    if(size>0){
-        mGroupSize = size;
-        emit nameChanged();
-    }
+    mGroupSize = size;
+    emit nameChanged();
 }
 
 int CDoodChatManagerModel::msgCount()

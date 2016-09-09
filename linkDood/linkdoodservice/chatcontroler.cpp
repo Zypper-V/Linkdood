@@ -849,6 +849,18 @@ void ChatControler::handleReciveRevokeMsg(std::shared_ptr<service::Msg> msg)
     imMsg.fromid = QString::number(msg->fromid);
     imMsg.time   =  QDateTime::fromMSecsSinceEpoch(msg->time).toString("yyyy-MM-dd hh:mm:ss");
     emit chatMessageNotice(imMsg);
+
+    QString sessionId("");
+    QString time = QString::number(msg->time);
+    getCurrentSessionId(sessionId);
+    imMsg.body += "撤回了一条消息";
+
+    if(sessionId != ""){
+        emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,time,imMsg.targetName,imMsg.thumb_avatar,"0");
+    }else{
+        emit sessionMessageNotice(imMsg.targetid,imMsg.msgid,imMsg.body,time,imMsg.targetName,imMsg.thumb_avatar,"1");
+    }
+
 }
 
 void ChatControler::onHandleRevMsg(std::shared_ptr<service::Msg> msg)
@@ -966,6 +978,10 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
     qDebug() << Q_FUNC_INFO << "sgdfgdfgfdj:"<<msgPtr.size();
     MsgList msgList;
     for(auto msg:msgPtr){
+        if(msg == NULL){
+            qDebug()<<Q_FUNC_INFO<<"msg null";
+            continue;
+        }
         if(msg->msgtype == MSG_TYPE_TEXT){
             qDebug()<<Q_FUNC_INFO<<"textHist:"<<msg->body.c_str();
             std::shared_ptr<service::MsgText> msgText = std::dynamic_pointer_cast<service::MsgText>(msg);
@@ -1012,6 +1028,7 @@ void ChatControler::_getMesage(service::ErrorInfo &info, int64 targetId, std::ve
             msgList.push_back(imMsg);
         }else if(msg->msgtype == MEDIA_MSG_REVOKE){
             std::shared_ptr<service::MsgRevoke> msgRevoke = std::dynamic_pointer_cast<service::MsgRevoke>(msg);
+
             Msg imMsg;
             imMsg.revokeMsgId = QString::number(msgRevoke->revokemsgid);
             imMsg.body = QString::fromStdString(utils::MsgUtils::getText(msg->body));
