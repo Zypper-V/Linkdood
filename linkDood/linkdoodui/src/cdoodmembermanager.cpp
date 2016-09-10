@@ -147,7 +147,7 @@ void CDoodMemberManager::setMemberInfo(QString groupid, QString memberid, QStrin
             emit wordsOutOfLimited("群名片首字符不能为空格");
             return;
         }
-        if(remark.size()>16){
+        if(remark.size()>22){
             emit wordsOutOfLimited("群名片字数不能超过16");
             return;
         }

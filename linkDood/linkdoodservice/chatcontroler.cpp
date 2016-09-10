@@ -827,7 +827,12 @@ void ChatControler::getFileList(int64 targetid, int64 fileid, int count, int fla
 void ChatControler::getUserInfo(QString userid)
 {
     qDebug() << Q_FUNC_INFO;
-    service::IMClient::getClient()->getSearch()->getUserInfo(userid.toLongLong(), std::bind(&ChatControler::_getUserInfo, this, std::placeholders::_1, std::placeholders::_2));
+    Contact con = mStrangerCache[userid.toLongLong()];
+    if(con.name != "" && con.name != "#"){
+        emit getUserInfoBack(0, con);
+    }else{
+        service::IMClient::getClient()->getSearch()->getUserInfo(userid.toLongLong(), std::bind(&ChatControler::_getUserInfo, this, std::placeholders::_1, std::placeholders::_2));
+    }
 }
 
 void ChatControler::onSystemMessageNotice(QString info, int64 time)
@@ -1162,9 +1167,19 @@ void ChatControler::handleNotification(std::shared_ptr<service::Msg> msg)
     }
     if(msg->from_name !=""&& msg->from_name !="#"){
         notificationMsg(QString::fromStdString(msg->from_name),msg);
-    }else{
+    }else if(msg->fromid == getMyId().toLongLong()){
+        notificationMsg("我",msg);
+    }
+    else{
         if(!IS_MSG_GROUP(msg->targetid)){
-            getUserProfile(QString::number(msg->fromid),msg);
+            QString userId = QString::number(msg->fromid);
+            Contact user = mStrangerCache.value(msg->fromid);
+            if(user.name != ""&& user.name != "#"){
+                notificationMsg(user.name,msg);
+            }else{
+                getUserProfile(userId,msg);
+            }
+
         }else{
             service::IMClient::getClient()->getGroup()->getGroupInfo(msg->targetid,std::bind(&ChatControler::_getGroupInfo,this,std::placeholders::_1,std::placeholders::_2,msg));
         }
@@ -1382,6 +1397,7 @@ void ChatControler::_getUserInfo(service::ErrorInfo& info, service::User& user)
     contact.extends = QString::fromStdString(user.extends);
     contact.thumbAvatar = QString::fromStdString(user.thumb_avatar);
 
+    mStrangerCache[user.id] = contact;
     emit getUserInfoBack(info.code(), contact);
 }
 
@@ -1425,6 +1441,13 @@ void ChatControler::notificationMsg(QString title, std::shared_ptr<service::Msg>
 void ChatControler::_getUserProfile(service::ErrorInfo& info, service::User& user, std::shared_ptr<service::Msg> msg)
 {
     qDebug()<<Q_FUNC_INFO<<"1111111111111";
+    Contact con;
+    con.id = QString::number(user.id);
+    con.name = QString::fromStdString(user.name);
+    con.thumbAvatar = QString::fromStdString(user.thumb_avatar);
+    con.avatar = QString::fromStdString(user.avatar);
+
+    mStrangerCache[user.id] = con;
     notificationMsg(QString::fromStdString(user.name), msg);
 }
 

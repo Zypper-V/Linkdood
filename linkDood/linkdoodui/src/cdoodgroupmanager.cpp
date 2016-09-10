@@ -580,14 +580,14 @@ void CDoodGroupManager::setGroupInfo(int type, QString remark)
             emit wordsOutOfLimited("群名称首字符不能为空格");
             return;
         }
-        if(remark.size()>25){
+        if(remark.size()>26){
             emit wordsOutOfLimited("群名称字数不能超过25");
             return;
         }
         group.name=remark;
     }
     if(type==3){
-        if(remark.size()>40){
+        if(remark.size()>41){
             emit wordsOutOfLimited("群简介字数不能超过40");
             return;
         }

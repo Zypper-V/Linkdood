@@ -288,7 +288,7 @@ private:
 
 private:
     QString mSessionTargetID;
-
+    QMap<int64,Contact> mStrangerCache;
     QThread mWorkThread;
     LinkDoodServiceThread* m_pWorkControl;
 

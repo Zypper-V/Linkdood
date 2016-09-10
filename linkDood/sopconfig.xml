@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sopconfig xmlns:syberos="http://schemas.syberos.com/rpm/res/syberos" syberos:sopid="com.vrv.linkDood" syberos:versionCode="24" syberos:shareUserId="" syberos:versionName="1.0.24">
+<sopconfig xmlns:syberos="http://schemas.syberos.com/rpm/res/syberos" syberos:sopid="com.vrv.linkDood" syberos:versionCode="25" syberos:shareUserId="" syberos:versionName="1.0.25">
     <uses-permission syberos:name="syberos.permission.ACCESS_ALARM"/>
     <uses-permission syberos:name="syberos.permission.ACCESS_CAMERA"/>
     <uses-permission syberos:name="syberos.permission.ACCESS_DATA_NETWORK"/>
@@ -10,14 +10,14 @@
     <uses-permission syberos:name="syberos.permission.READ_NETWORK_STATE"/>
     <uses-permission syberos:name="syberos.permission.VIBRATE"/>
     <uses-sdk syberos:targetSdkVersion="" syberos:minSdkVersion=""/>
-    <application syberos:description="天工圆圆 for syberos." syberos:debuggable="true" syberos:name="天工圆圆" syberos:icon="res/linkdoodui.png">
-        <uiapp syberos:launcher="true" syberos:background="" syberos:exec="bin/linkdoodui" syberos:name="天工圆圆" syberos:splash="" syberos:icon="res/linkdoodui.png" syberos:id="linkdoodui">
+    <application syberos:debuggable="true" syberos:description="天工圆圆 for syberos." syberos:name="天工圆圆" syberos:icon="res/linkdoodui.png">
+        <uiapp syberos:launcher="true" syberos:splash="" syberos:id="linkdoodui" syberos:exec="bin/linkdoodui" syberos:name="天工圆圆" syberos:icon="res/linkdoodui.png" syberos:background="">
             <url syberos:id="">
                 <scheme>linkDood</scheme>
             </url>
             <doctype syberos:id=""/>
         </uiapp>
-        <service syberos:launcher="false" syberos:background="" syberos:exec="bin/linkdoodservice" syberos:name="" syberos:splash="" syberos:icon="" syberos:id="linkdoodservice">
+        <service syberos:launcher="false" syberos:splash="" syberos:id="linkdoodservice" syberos:exec="bin/linkdoodservice" syberos:name="" syberos:icon="" syberos:background="">
             <receiver syberos:id="">
                 <event>BOOT_COMPLETE</event>
             </receiver>

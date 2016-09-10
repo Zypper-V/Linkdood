@@ -18,7 +18,7 @@ public:
     * @description: 监听系统消息
     * @param[in] msg 传入消息
     *********************************************/
-    void onSysMessageNotice(SysMsg& msg,int unreadcount);
+    void onSysMessageNotice(SysMsg& msg,int unreadcount=0);
 
     /************************************
     * @brief response

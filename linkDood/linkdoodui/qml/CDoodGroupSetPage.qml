@@ -421,7 +421,7 @@ CPage {
     }
     CInputDialog{
         id:inputDialog
-
+        maximumLength:inputDialog.type===3?40:25
         property int  type
         messageTextColor:"#777777"
         onAccepted: {

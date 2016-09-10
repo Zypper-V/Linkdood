@@ -155,6 +155,8 @@ CPage {
                     id:username
                     anchors.bottom: parent.bottom
                     anchors.left:parent.left
+                    width: 500
+                    elide: Text.ElideRight
                     anchors{
                         leftMargin: 210
                         bottomMargin: 24
@@ -345,6 +347,7 @@ CPage {
             onClicked: {
                 console.log("org name:"+userdataManager.name+"thm:"+userdataManager.thumbAvatar);
                 chatManager.switchToChatPage(userdataManager.id,userdataManager.name,"1","0",0,userdataManager.thumbAvatar);
+                addContactManager.contactListClear();
             }
         }
         CButton{
@@ -595,6 +598,7 @@ CPage {
         property string id: ""
         property string groupid: ""
         property string remark: ""
+        maximumLength:20
         titleText: qsTr("修改群名片")
         messageTextColor:"#777777"
         onAccepted: {

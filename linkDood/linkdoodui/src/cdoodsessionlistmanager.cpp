@@ -313,13 +313,13 @@ void CDoodSessionListManager::onSessionMessageNotice(QString targetId, QString m
                     item->setUnReadCount(QString::number(count));
                 }
                 item->setUnreadMsgCOunt(count);
-                int index = indexOf(item);
-                if(index>0 && index <itemCount()){
-                    item = (CDoodSessionListItem*)takeItemAt(index);
-                    //addItemBegin(item);
-                    insertItemByTime(item);
-                }
                 setUnreadCount(1);
+            }
+            int index = indexOf(item);
+            if(index>0 && index <itemCount()){
+                item = (CDoodSessionListItem*)takeItemAt(index);
+                //addItemBegin(item);
+                insertItemByTime(item);
             }
         }
     }else
